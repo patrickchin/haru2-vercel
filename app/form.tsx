@@ -1,10 +1,12 @@
 export function Form({
   action,
   children,
+  confirmPassword,
   extraStyle,
 }: {
   action: any;
   children: React.ReactNode;
+  confirmPassword?: boolean;
   extraStyle?: string;
 }) {
   return (
@@ -44,6 +46,21 @@ export function Form({
           className="mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black text-sm"
         />
       </div>
+      {confirmPassword && (<div>
+        <label
+          htmlFor="confirm password"
+          className="block text-xs text-gray-600 uppercase"
+        >
+          Confirm Password -- <span className="text-red-500">TODO check locally</span>
+        </label>
+        <input
+          id="confirm-password"
+          name="confirm-password"
+          type="password"
+          required
+          className="mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black text-sm"
+        />
+      </div>)}
       {children}
     </form>
   );
