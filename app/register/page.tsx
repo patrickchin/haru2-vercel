@@ -4,8 +4,10 @@ import { redirect } from 'next/navigation';
 import { createUser, getUser } from 'app/db';
 import { SubmitButton } from 'app/components/submit-button';
 import Header from 'app/components/header';
+import Footer from '../components/footer';
 
-export default function Login() {
+export default function Page() {
+
   async function register(formData: FormData) {
     'use server';
     let email = formData.get('email') as string;
@@ -27,30 +29,31 @@ export default function Login() {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col items-start justify-start bg-gray-50">
+    <div className="flex flex-col h-screen">
       <Header/>
-      <main className="h-full w-[32rem] min-w-[60%] flex justify-end items-center overflow-hidden border border-gray-100 shadow-xl">
-        <div className="h-min w-[32rem] bg-blue">
+      <main className="flex flex-col w-screen mx-auto my-auto max-w-5xl justify-center items-center">
+        <div className="z-10 w-screen max-w-md rounded-2xl border border-gray-100 shadow-xl overflow-hidden">
 
-          <div className="flex flex-col items-center justify-center space-y-3 border border-r-0 border-gray-200 rounded-tl-2xl bg-white px-4 py-6 pt-8 text-center sm:px-16">
+          <div className="flex flex-col h-fit items-center justify-center space-y-3 border-b border-gray-200 bg-white px-4 py-6 pt-8 text-center sm:px-16">
             <h3 className="text-xl font-semibold">Create an Account</h3>
             <p className="text-sm text-gray-500">
               Create an account with your email and password
             </p>
           </div>
-          <Form action={register} confirmPassword={true} extraStyle="border border-r-0 border-gray-200 rounded-bl-2xl">
+
+          <Form action={register} confirmPassword={true}>
             <SubmitButton>Sign Up</SubmitButton>
             <p className="text-center text-sm text-gray-600">
-              {'Already have an account? '}
+              {"Already have an account? "}
               <Link href="/login" className="font-semibold text-gray-800">
                 Login
               </Link>
-              {' instead.'}
+              {" instead."}
             </p>
           </Form>
         </div>
       </main>
-      <footer></footer>
+      {/* <Footer/> */}
     </div>
   );
 }
