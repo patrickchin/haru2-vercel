@@ -198,7 +198,7 @@ function questions() {
 
       <div>
         <label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-gray-900">
-          Do you have any drawings to attach?
+          Do you have any files to attach?
         </label>
         <p className="block text-sm text-gray-900">Archutectural docments, land survey documents, legal documents</p>
 
