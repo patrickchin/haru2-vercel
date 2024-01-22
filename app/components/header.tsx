@@ -18,7 +18,7 @@ function classNames(...classes: string[]) {
 
 export default function Header({ currentHref } : { currentHref?: string }) {
   return (
-    <Disclosure as="nav" className="bg-gray-800">
+    <Disclosure as="nav" className="bg-gray-800 grow-0">
       {({ open }) => (
         <>
           <div className="mx-auto max-w-5xl px-2 sm:px-6 lg:px-8">

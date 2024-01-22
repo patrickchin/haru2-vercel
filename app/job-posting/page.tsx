@@ -51,8 +51,8 @@ function questions() {
           Lifestyle
         </label>
         <ul className="list-disc list-inside text-sm text-gray-600">
-          <li>How many people will be living in the house?</li>
-          <li>Are there any other specific lifestyle preferences or routines to consider?</li>
+          <li key={0}>How many people will be living in the house?</li>
+          <li key={1}>Are there any other specific lifestyle preferences or routines to consider?</li>
         </ul>
         <textarea
           name="lifestyle"
@@ -66,8 +66,8 @@ function questions() {
           Future Plans
         </label>
         <ul className="list-disc list-inside text-sm text-gray-600">
-          <li>Are there any plans for future expansions or modifications to the house?</li>
-          <li>Do you have any long-term considerations, such as aging in place?</li>
+          <li key={0}>Are there any plans for future expansions or modifications to the house?</li>
+          <li key={1}>Do you have any long-term considerations, such as aging in place?</li>
         </ul>
         <textarea
           name="future"
@@ -82,8 +82,8 @@ function questions() {
           Budget and Timeline
         </label>
         <ul className="list-disc list-inside text-sm text-gray-600">
-          <li>What is your budget for the project, including construction and materials?</li>
-          <li>Is there a specific timeline or deadline for completing the project?</li>
+          <li key={0}>What is your budget for the project, including construction and materials?</li>
+          <li key={1}>Is there a specific timeline or deadline for completing the project?</li>
         </ul>
         <textarea
           name="budget"
@@ -97,8 +97,8 @@ function questions() {
           Energy Efficiency and Sustainability
         </label>
         <ul className="list-disc list-inside text-sm text-gray-600">
-          <li>Are you interested in incorporating energy-efficient or sustainable design elements?</li>
-          <li>Do you have any preferences for eco-friendly materials?</li>
+          <li key={0}>Are you interested in incorporating energy-efficient or sustainable design elements?</li>
+          <li key={1}>Do you have any preferences for eco-friendly materials?</li>
         </ul>
         <textarea
           name="energy"
@@ -112,8 +112,8 @@ function questions() {
           Technology Integratioy
         </label>
         <ul className="list-disc list-inside text-sm text-gray-600">
-          <li>Are there specific technology features you would like to integrate into your home?</li>
-          <li>Smart home systems, automation, etc.</li>
+          <li key={0}>Are there specific technology features you would like to integrate into your home?</li>
+          <li key={1}>Smart home systems, automation, etc.</li>
         </ul>
         <textarea
           name="technology"
@@ -127,8 +127,8 @@ function questions() {
           Outdoor Spaces
         </label>
         <ul className="list-disc list-inside text-sm text-gray-600">
-          <li>Do you have any preferences for outdoor spaces such as gardens, patios, or decks?</li>
-          <li>Are there specific views or orientations you would like to take advantage of?</li>
+          <li key={0}>Do you have any preferences for outdoor spaces such as gardens, patios, or decks?</li>
+          <li key={1}>Are there specific views or orientations you would like to take advantage of?</li>
         </ul>
         <textarea
           name="outdoors"
@@ -142,8 +142,8 @@ function questions() {
           Privacy and Security
         </label>
         <ul className="list-disc list-inside text-sm text-gray-600">
-          <li>How important is privacy to you?</li>
-          <li>Aretherespecificsecurityconsiderationsweshouldaddress?</li>
+          <li key={0}>How important is privacy to you?</li>
+          <li key={1}>Aretherespecificsecurityconsiderationsweshouldaddress?</li>
         </ul>
         <textarea
           name="security"
@@ -157,8 +157,8 @@ function questions() {
           Regulatory and Zoning Requirement
         </label>
         <ul className="list-disc list-inside text-sm text-gray-600">
-          <li>Are there any local zoning or regulatory requirements we need to consider in the design?</li>
-          <li>Have you already obtained necessary permits for the construction?</li>
+          <li key={0}>Are there any local zoning or regulatory requirements we need to consider in the design?</li>
+          <li key={1}>Have you already obtained necessary permits for the construction?</li>
         </ul>
         <textarea
           name="security"
@@ -172,8 +172,8 @@ function questions() {
           Maintenance Preference
         </label>
         <ul className="list-disc list-inside text-sm text-gray-600">
-          <li>Are there specific materials or finishes you prefer for ease of maintenance?</li>
-          <li>What level of maintenance are you comfortable with for the long term?</li>
+          <li key={0}>Are there specific materials or finishes you prefer for ease of maintenance?</li>
+          <li key={1}>What level of maintenance are you comfortable with for the long term?</li>
         </ul>
         <textarea
           name="maintenance"
@@ -187,7 +187,7 @@ function questions() {
           Special Requirements
         </label>
         <ul className="list-disc list-inside text-sm text-gray-600">
-          <li>Do you have any specific needs such as accessibility features or special accommodations?</li>
+          <li key={0}>Do you have any specific needs such as accessibility features or special accommodations?</li>
         </ul>
         <textarea
           name="special"
