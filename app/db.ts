@@ -1,3 +1,5 @@
+'use server';
+
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { pgTable, serial, varchar } from 'drizzle-orm/pg-core';
 import { eq } from 'drizzle-orm';
