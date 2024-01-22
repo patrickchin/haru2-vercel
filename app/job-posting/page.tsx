@@ -184,7 +184,7 @@ function questions() {
 
       <div className="flex flex-col space-y-2">
         <label htmlFor="special" className="block text-sm font-medium text-gray-900">
-          Maintenance Preference
+          Special Requirements
         </label>
         <ul className="list-disc list-inside text-sm text-gray-600">
           <li>Do you have any specific needs such as accessibility features or special accommodations?</li>
