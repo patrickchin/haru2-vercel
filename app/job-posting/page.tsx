@@ -1,13 +1,12 @@
-'use client';
-
-import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
+import { PhotoIcon, } from '@heroicons/react/24/solid';
 import SimpleLayout from '@/app/components/layout';
+import { submitJobPost } from '@/app/actions';
 
 function questions() {
   return (
     <>
       <div className="flex flex-col space-y-2">
-        <label htmlFor="about" className="text-sm font-medium text-gray-900">
+        <label htmlFor="lifestyle" className="text-sm font-medium text-gray-900">
           Lifestyle
         </label>
         <ul className="list-disc list-inside text-sm text-gray-600">
@@ -185,7 +184,7 @@ function questions() {
 
 function Form() {
   return (
-    <form className="flex flex-col space-y-8">
+    <form action={submitJobPost} className="flex flex-col space-y-8">
       {questions()}
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <button type="button" className="text-sm font-semibold leading-6 text-gray-900">
@@ -202,7 +201,8 @@ function Form() {
   )
 }
 
-export default function Page() {
+export default async function Page() {
+
   return (
     <SimpleLayout>
       <section className="text-gray-600 body-font flex flex-col mx-auto space-y-8 mt-12 justify-center">

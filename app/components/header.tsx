@@ -13,7 +13,7 @@ import avatar from '@/app/assets/avatar2.png';
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', },
   { name: 'Team', href: '/team', },
-  // { name: 'Projects', href: '#', },
+  { name: 'Jobs', href: '/jobs', },
   // { name: 'Calendar', href: '#', },
 ]
 

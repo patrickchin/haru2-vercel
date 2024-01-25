@@ -6,7 +6,7 @@ import SubmitButton  from '@/app/components/submit-button';
 import SimpleLayout from '@/app/components/layout';
 
 export default function Login() {
-  
+
   const signInAction = async (formData: FormData) => {
     'use server';
     await signIn('credentials', {
