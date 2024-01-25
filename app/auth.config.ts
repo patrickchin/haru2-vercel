@@ -9,9 +9,10 @@ export const authConfig = {
     // while this file is also used in non-Node.js environments
   ],
   callbacks: {
+
     authorized({ auth, request: { nextUrl } }) {
       let isLoggedIn = !!auth?.user;
-      let isOnDashboard = nextUrl.pathname.startsWith('/protected');
+      let isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
 
       if (isOnDashboard) {
          if (isLoggedIn)
@@ -20,16 +21,13 @@ export const authConfig = {
           return false;
       }
 
-      if (isLoggedIn) 
-        return Response.redirect(new URL('/protected', nextUrl));
-
       return true;
     },
 
-    async redirect({ url, baseUrl }) {
-      // TODO how to specify callbackUrl in signOut function?
-      return baseUrl;
-    },
+    // async redirect({ url, baseUrl }) {
+    //   // TODO how to specify callbackUrl in signOut function?
+    //   return baseUrl;
+    // },
 
   },
 } satisfies NextAuthConfig;
