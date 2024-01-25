@@ -95,11 +95,23 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: { slug: string }
+  params: { id: string }
   searchParams: { [key: string]: string | string[] | undefined }
 }) {
 
-  const jobid: number = parseInt(searchParams?.id);
+  // TODO show invalid id rather than going to 404
+
+  if (params.id === undefined)
+    redirect('/404');
+
+  if (Array.isArray(params.id))
+    redirect('/404');
+
+  const jobid: number = parseInt(params.id);
+
+  if (Number.isNaN(jobid))
+    redirect('/404');
+
   const jobinfo = await getJob(jobid);
 
   if (jobinfo.length != 1)

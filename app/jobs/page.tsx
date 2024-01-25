@@ -12,7 +12,7 @@ function JobItem(job: any) {
   return (
     <li key={job.id} className="flex p-5 hover:bg-gray-200 items-center overflow-hidden">
       <Image className="h-8 w-auto m-4" src={houseIcon} alt="building" />
-      <Link href={{ pathname: "/job-status", query: { id: job.id } }}>
+      <Link href={`/job/${job.id}`}>
         <div className="text-sm font-semibold leading-6 text-gray-900">
           <p>Job ID: {job.id} User {job.userId}</p>
           <p>{JSON.stringify(job.info)}</p>
