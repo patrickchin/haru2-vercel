@@ -2,7 +2,7 @@
 
 import { useFormStatus } from 'react-dom';
 
-export function SubmitButton({ children, enabled }: { children: React.ReactNode; enabled?: boolean }) {
+export default function SubmitButton({ children, enabled }: { children: React.ReactNode; enabled?: boolean }) {
   const { pending } = useFormStatus();
 
   return (

@@ -1,9 +1,9 @@
 import Link from 'next/link';
-import { Form } from 'app/form';
 import { signIn } from 'app/auth';
-import { SubmitButton } from 'app/components/submit-button';
-import Header from 'app/components/header';
-import Footer from 'app/components/footer';
+
+import LoginForm from '@/app/components/login-form';
+import SubmitButton  from '@/app/components/submit-button';
+import SimpleLayout from '@/app/components/layout';
 
 export default function Login() {
   
@@ -17,10 +17,8 @@ export default function Login() {
   };
 
   return (
-    <div className="flex flex-col h-screen">
-      <Header />
-      <main className="flex flex-col w-screen mx-auto my-auto max-w-5xl justify-center items-center">
-        <div className="z-10 w-screen max-w-md rounded-2xl border border-gray-100 shadow-xl overflow-hidden">
+    <SimpleLayout>
+        <div className="w-screen max-w-md rounded-2xl border border-gray-100 shadow-xl overflow-hidden self-center">
 
           <div className="flex flex-col h-fit items-center justify-center space-y-3 border-b border-gray-200 bg-white px-4 py-6 pt-8 text-center sm:px-16">
             <h3 className="text-xl font-semibold">Login</h3>
@@ -29,7 +27,7 @@ export default function Login() {
             </p>
           </div>
 
-          <Form action={signInAction}>
+          <LoginForm action={signInAction}>
             <SubmitButton>Login</SubmitButton>
             <p className="text-center text-sm text-gray-600">
               {"Don't have an account? "}
@@ -38,10 +36,9 @@ export default function Login() {
               </Link>
               {" for free."}
             </p>
-          </Form>
+          </LoginForm>
+
         </div>
-      </main>
-      {/* <Footer /> */}
-    </div>
+    </SimpleLayout>
   );
 }

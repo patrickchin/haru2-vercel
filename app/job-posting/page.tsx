@@ -1,47 +1,7 @@
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
 'use client';
 
 import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
-import Footer from '../components/footer'
-import Header from '../components/header'
-
-function questionCountry() {
-  return (
-    <>
-        <label htmlFor="country" className="block text-sm font-medium leading-6 text-gray-900">
-          Country
-        </label>
-        <div className="mt-2">
-          <select
-            id="country"
-            name="country"
-            autoComplete="country-name"
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 max-w-xs text-sm leading-6"
-          >
-            <option>Kenya</option>
-            <option>Canada</option>
-            <option>Mexico</option>
-            <option>China</option>
-            <option>Pakistan</option>
-          </select>
-        </div>
-    </>
-  );
-      
-}
+import SimpleLayout from '@/app/components/layout';
 
 function questions() {
   return (
@@ -226,9 +186,7 @@ function questions() {
 function Form() {
   return (
     <form className="flex flex-col space-y-8">
-
       {questions()}
-
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <button type="button" className="text-sm font-semibold leading-6 text-gray-900">
           Cancel
@@ -240,27 +198,17 @@ function Form() {
           Save
         </button>
       </div>
-
     </form>
   )
 }
 
-
 export default function Page() {
-    return (
-    <>
-      <Header />
-      <main className="flex flex-col w-screen mx-auto max-w-5xl">
-
-        <section className="text-gray-600 body-font flex flex-col mx-auto space-y-8 mt-12 justify-center">
-          
-            <h1>New Job Posting</h1>
-            {Form()}
-          
-        </section>
-
-      </main>
-      <Footer />
-    </>
-    )
+  return (
+    <SimpleLayout>
+      <section className="text-gray-600 body-font flex flex-col mx-auto space-y-8 mt-12 justify-center">
+        <h1>New Job Posting</h1>
+        {Form()}
+      </section>
+    </SimpleLayout>
+  )
 }

@@ -1,10 +1,9 @@
 import Link from 'next/link';
-import { Form } from 'app/form';
+import LoginForm from '@/app/components/login-form';
 import { redirect } from 'next/navigation';
 import { createUser, getUser } from 'app/db';
-import { SubmitButton } from 'app/components/submit-button';
-import Header from 'app/components/header';
-import Footer from '../components/footer';
+import  SubmitButton  from '@/app/components/submit-button';
+import SimpleLayout from '@/app/components/layout';
 
 export default function Page() {
 
@@ -29,31 +28,28 @@ export default function Page() {
   }
 
   return (
-    <div className="flex flex-col h-screen">
-      <Header/>
-      <main className="flex flex-col w-screen mx-auto my-auto max-w-5xl justify-center items-center">
-        <div className="z-10 w-screen max-w-md rounded-2xl border border-gray-100 shadow-xl overflow-hidden">
+    <SimpleLayout>
+      <div className="z-10 w-screen max-w-md rounded-2xl border border-gray-100 shadow-xl overflow-hidden self-center">
 
-          <div className="flex flex-col h-fit items-center justify-center space-y-3 border-b border-gray-200 bg-white px-4 py-6 pt-8 text-center sm:px-16">
-            <h3 className="text-xl font-semibold">Create an Account</h3>
-            <p className="text-sm text-gray-500">
-              Create an account with your email and password
-            </p>
-          </div>
-
-          <Form action={register} confirmPassword={true}>
-            <SubmitButton>Sign Up</SubmitButton>
-            <p className="text-center text-sm text-gray-600">
-              {"Already have an account? "}
-              <Link href="/login" className="font-semibold text-gray-800">
-                Login
-              </Link>
-              {" instead."}
-            </p>
-          </Form>
+        <div className="flex flex-col h-fit items-center justify-center space-y-3 border-b border-gray-200 bg-white px-4 py-6 pt-8 text-center sm:px-16">
+          <h3 className="text-xl font-semibold">Create an Account</h3>
+          <p className="text-sm text-gray-500">
+            Create an account with your email and password
+          </p>
         </div>
-      </main>
-      {/* <Footer/> */}
-    </div>
+
+        <LoginForm action={register} confirmPassword={true}>
+          <SubmitButton>Sign Up</SubmitButton>
+          <p className="text-center text-sm text-gray-600">
+            {"Already have an account? "}
+            <Link href="/login" className="font-semibold text-gray-800">
+              Login
+            </Link>
+            {" instead."}
+          </p>
+        </LoginForm>
+
+      </div>
+    </SimpleLayout>
   );
 }

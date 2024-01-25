@@ -1,4 +1,4 @@
-export function Form({
+export default function LoginForm({
   action,
   children,
   confirmPassword,

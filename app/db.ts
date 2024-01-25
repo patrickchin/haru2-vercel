@@ -28,23 +28,3 @@ export async function createUser(email: string, password: string) {
 
   return await db.insert(usersTable).values({ email, password: hash });
 }
-
-/*
-import { sql } from '@vercel/postgres'
-import { InferSelectModel } from 'drizzle-orm'
-
-export type User = InferSelectModel<typeof usersTable>;
-
-async function seed() {
-  // Create table with raw SQL
-  const newTable = await sql.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        email VARCHAR(255) UNIQUE NOT NULL,
-        password VARCHAR(255),
-        "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      );
-  `);
-  console.log(`Created "users" table`);
-}
-*/

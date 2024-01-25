@@ -1,11 +1,6 @@
 'use client';
 
-import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
-import Footer from '../components/footer'
-import Header from '../components/header'
-
-
-
+import SimpleLayout from '@/app/components/layout';
 
 const people = [
   {
@@ -95,28 +90,14 @@ function List() {
   )
 }
 
-
-
-
-
-
-
-
-
 export default function Page() {
-    return (
-    <>
-      <Header />
-      <main className="flex flex-col w-screen mx-auto max-w-5xl">
-
-        <section className="text-gray-600 body-font flex justify-center items-center">
-          <div className="container px-24 py-24 mx-auto max-w-5xl bg-white">
-            {List()}
-          </div>
-        </section>
-
-      </main>
-      <Footer />
-    </>
-    )
+  return (
+    <SimpleLayout>
+      <section className="text-gray-600 body-font flex justify-center items-center">
+        <div className="container px-24 py-24 mx-auto max-w-5xl bg-white">
+          {List()}
+        </div>
+      </section>
+    </SimpleLayout>
+  )
 }
