@@ -16,7 +16,7 @@ export const metadata = {
     description,
   },
   metadataBase: new URL('https://haru2-kappa.vercel.app'),
-  // metadataBase: new URL('https://localhost:3000'),
+  // metadataBase: new URL('http://localhost:3000'),
 };
 
 export default function RootLayout({
