@@ -1,6 +1,7 @@
-'use client';
+import { redirect } from 'next/navigation';
 
 import SimpleLayout from '@/app/components/layout';
+import { getJob } from '@/app/db';
 
 const people = [
   {
@@ -90,10 +91,24 @@ function List() {
   )
 }
 
-export default function Page() {
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: { slug: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}) {
+
+  const jobid: number = parseInt(searchParams?.id);
+  const jobinfo = await getJob(jobid);
+
+  if (jobinfo.length != 1)
+    redirect('/404');
+
   return (
     <SimpleLayout>
-      <section className="text-gray-600 body-font flex justify-center items-center">
+      <section className="text-gray-600 body-font flex flex-col justify-center items-center">
+        <h1>Job {jobinfo[0].id}</h1>
         <div className="container px-24 py-24 mx-auto max-w-5xl bg-white">
           {List()}
         </div>

@@ -1,32 +1,35 @@
 
-import SimpleLayout from '@/app/components/layout';
 import { Suspense } from 'react';
-// import { Suspense } from 'react';
-import { getAllJobs } from '../db';
+import Image from "next/image"
+import Link from 'next/link';
 
-async function List() {
+import { getAllJobs } from '@/app/db';
+import SimpleLayout from '@/app/components/layout';
 
+import houseIcon from "@/app/assets/house.png"
+
+function JobItem(job: any) {
+  return (
+    <li key={job.id} className="flex p-5 hover:bg-gray-200 items-center overflow-hidden">
+      <Image className="h-8 w-auto m-4" src={houseIcon} alt="building" />
+      <Link href={{ pathname: "/job-status", query: { id: job.id } }}>
+        <div className="text-sm font-semibold leading-6 text-gray-900">
+          <p>Job ID: {job.id} User {job.userId}</p>
+          <p>{JSON.stringify(job.info)}</p>
+        </div>
+      </Link>
+    </li>
+  )
+}
+
+async function JobList() {
   const jobs = await getAllJobs();
-
   return (
     <ul role="list" className="divide-y divide-gray-100">
-      {jobs.reverse().map((job) => (
-        <li key={job.id} className="flex justify-between gap-x-6 py-5">
-          <div className="text-sm font-semibold leading-6 text-gray-900">
-            <p>Job ID: {job.id} User {job.userId}</p>
-            <p>{JSON.stringify(job.info)}</p>
-          </div>
-        </li>
-      ))}
+      {jobs.reverse().map(JobItem)}
     </ul>
   );
 }
-
-// async function Fallback() {
-//   return (
-//     <p>Loading ...</p>
-//   );
-// }
 
 export default async function Page() {
   return (
@@ -36,7 +39,7 @@ export default async function Page() {
       <section className="text-gray-600 body-font flex justify-center items-center">
         <div className="container px-24 py-24 mx-auto max-w-5xl bg-white">
           <Suspense fallback={<p>Loading ...</p>}>
-            {await List()}
+            <JobList />
           </Suspense>
         </div>
       </section>
