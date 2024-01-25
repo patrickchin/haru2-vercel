@@ -107,7 +107,7 @@ export default function Page() {
     return (
     <>
       <Header />
-      <main className="flex flex-col">
+      <main className="flex flex-col w-screen mx-auto max-w-5xl">
 
         <section className="text-gray-600 body-font flex justify-center items-center">
           <div className="container px-24 py-24 mx-auto max-w-5xl bg-white">
