@@ -119,11 +119,13 @@ export default async function Page({
 
   return (
     <SimpleLayout>
-      <section className="text-gray-600 body-font flex flex-col justify-center items-center">
-        <h1>Job {jobinfo[0].id}</h1>
-        <div className="container px-24 py-24 mx-auto max-w-5xl bg-white">
-          {List()}
-        </div>
+      <section className="grow flex flex-col text-gray-600 bg-white shadow-xl p-16 gap-12">
+
+        <h1 className="text-3xl">
+          Job {jobinfo[0].id}
+        </h1>
+
+        <List />
       </section>
     </SimpleLayout>
   )

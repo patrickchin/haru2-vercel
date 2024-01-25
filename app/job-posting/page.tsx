@@ -205,9 +205,13 @@ export default async function Page() {
 
   return (
     <SimpleLayout>
-      <section className="text-gray-600 body-font flex flex-col mx-auto space-y-8 mt-12 justify-center">
-        <h1>New Job Posting</h1>
-        {Form()}
+      <section className="grow flex flex-col text-gray-600 bg-white shadow-xl p-16 gap-12">
+
+        <h1 className="text-3xl">
+          New Job Posting
+        </h1>
+
+        <Form />
       </section>
     </SimpleLayout>
   )

@@ -20,7 +20,8 @@ const people = [
 export default function Page() {
   return (
     <SimpleLayout>
-      <section className="bg-white py-24 sm:py-32">
+      <section className="grow flex flex-col bg-gray-50 shadow-xl p-16 gap-12">
+        
         <div className="mx-auto grid max-w-7xl gap-x-8 gap-y-20 px-6 lg:px-8 xl:grid-cols-3">
           <div className="max-w-2xl">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Meet our leadership</h2>
