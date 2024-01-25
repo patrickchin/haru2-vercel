@@ -14,13 +14,22 @@ export const authConfig = {
       let isOnDashboard = nextUrl.pathname.startsWith('/protected');
 
       if (isOnDashboard) {
-        if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login page
-      } else if (isLoggedIn) {
-        return Response.redirect(new URL('/protected', nextUrl));
+         if (isLoggedIn)
+          return true;
+        else
+          return false;
       }
+
+      if (isLoggedIn) 
+        return Response.redirect(new URL('/protected', nextUrl));
 
       return true;
     },
+
+    async redirect({ url, baseUrl }) {
+      // TODO how to specify callbackUrl in signOut function?
+      return baseUrl;
+    },
+
   },
 } satisfies NextAuthConfig;

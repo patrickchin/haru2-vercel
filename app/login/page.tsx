@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { Form } from 'app/form';
 import { signIn } from 'app/auth';
-import { SubmitButton } from 'app/submit-button';
-import Header from '@/app/components/header';
+import { SubmitButton } from 'app/components/submit-button';
+import Header from 'app/components/header';
 
 export default function Login() {
   return (

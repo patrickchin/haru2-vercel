@@ -2,14 +2,20 @@ import Link from 'next/link';
 import { Form } from 'app/form';
 import { redirect } from 'next/navigation';
 import { createUser, getUser } from 'app/db';
-import { SubmitButton } from 'app/submit-button';
-import Header from '../components/header';
+import { SubmitButton } from 'app/components/submit-button';
+import Header from 'app/components/header';
 
 export default function Login() {
   async function register(formData: FormData) {
     'use server';
     let email = formData.get('email') as string;
     let password = formData.get('password') as string;
+    let confirmPassword = formData.get('confirm-password') as string;
+    
+    // TODO do this locally??
+    if (confirmPassword !== password)
+      return 'Passwords do not match';
+
     let user = await getUser(email);
 
     if (user.length > 0) {
@@ -32,7 +38,7 @@ export default function Login() {
               Create an account with your email and password
             </p>
           </div>
-          <Form action={register} extraStyle="border border-r-0 border-gray-200 rounded-bl-2xl">
+          <Form action={register} confirmPassword={true} extraStyle="border border-r-0 border-gray-200 rounded-bl-2xl">
             <SubmitButton>Sign Up</SubmitButton>
             <p className="text-center text-sm text-gray-600">
               {'Already have an account? '}
