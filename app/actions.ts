@@ -1,5 +1,6 @@
 'use server';
 
+import { redirect } from 'next/navigation'
 import { createJob } from '@/app/db';
 
 export async function submitJobPost(formData: FormData) {
@@ -16,5 +17,7 @@ export async function submitJobPost(formData: FormData) {
     special: formData.get('special'),
   };
 
-  createJob(2, rawFormData);
+  await createJob(2, rawFormData);
+
+  redirect("/jobs");
 }

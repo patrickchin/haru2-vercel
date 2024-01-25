@@ -7,11 +7,10 @@ import { getAllJobs } from '../db';
 async function List() {
 
   const jobs = await getAllJobs();
-  console.log(jobs);
 
   return (
     <ul role="list" className="divide-y divide-gray-100">
-      {jobs.map((job) => (
+      {jobs.reverse().map((job) => (
         <li key={job.id} className="flex justify-between gap-x-6 py-5">
           <div className="text-sm font-semibold leading-6 text-gray-900">
             <p>Job ID: {job.id} User {job.userId}</p>
