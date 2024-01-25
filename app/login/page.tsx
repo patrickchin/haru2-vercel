@@ -18,7 +18,8 @@ export default function Login() {
 
   return (
     <SimpleLayout>
-        <div className="w-screen max-w-md rounded-2xl border border-gray-100 shadow-xl overflow-hidden self-center">
+      <div className="grow flex justify-center items-center">
+        <div className="w-screen max-w-md rounded-2xl border border-gray-100 shadow-xl overflow-hidden">
 
           <div className="flex flex-col h-fit items-center justify-center space-y-3 border-b border-gray-200 bg-white px-4 py-6 pt-8 text-center sm:px-16">
             <h3 className="text-xl font-semibold">Login</h3>
@@ -39,6 +40,7 @@ export default function Login() {
           </LoginForm>
 
         </div>
+      </div>
     </SimpleLayout>
   );
 }
