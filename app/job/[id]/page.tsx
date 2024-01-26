@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 
 import SimpleLayout from '@/app/components/layout';
 import { getJob } from '@/app/db';
+import { Suspense } from 'react';
 
 const people = [
   {
@@ -91,6 +92,22 @@ function List() {
   )
 }
 
+async function JobDescription({ jobid }: { jobid: number }) {
+
+  const jobinfo = await getJob(jobid);
+  if (jobinfo.length != 1)
+    redirect('/404');
+
+  return (
+    <>
+      <h1 className="text-3xl">
+        Job {jobinfo[0].id}
+      </h1>
+      <List />
+    </>
+  )
+}
+
 export default async function Page({
   params,
   searchParams,
@@ -99,33 +116,16 @@ export default async function Page({
   searchParams: { [key: string]: string | string[] | undefined }
 }) {
 
-  // TODO show invalid id rather than going to 404
-
-  if (params.id === undefined)
-    redirect('/404');
-
-  if (Array.isArray(params.id))
-    redirect('/404');
-
   const jobid: number = parseInt(params.id);
-
   if (Number.isNaN(jobid))
-    redirect('/404');
-
-  const jobinfo = await getJob(jobid);
-
-  if (jobinfo.length != 1)
-    redirect('/404');
+    redirect('/jobs');
 
   return (
     <SimpleLayout>
       <section className="grow flex flex-col text-gray-600 bg-white shadow-xl p-16 gap-12">
-
-        <h1 className="text-3xl">
-          Job {jobinfo[0].id}
-        </h1>
-
-        <List />
+        <Suspense fallback={<p>Loading ...</p>}>
+          <JobDescription jobid={jobid}/>
+        </Suspense>
       </section>
     </SimpleLayout>
   )
