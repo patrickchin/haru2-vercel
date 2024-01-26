@@ -1,5 +1,5 @@
 
-import { Key, Suspense } from 'react';
+import { Suspense } from 'react';
 import Image from "next/image"
 import Link from 'next/link';
 
@@ -7,13 +7,14 @@ import { getAllJobs } from '@/app/db';
 import SimpleLayout from '@/app/components/layout';
 
 import houseIcon from "@/app/assets/house.png"
+import { redirect } from 'next/navigation';
 
 function JobItem({ job } : any) {
   return (
     <Link href={`/job/${job.id}`} className="flex justify-between gap-x-6 p-8 hover:bg-gray-300">
 
       <div className="flex min-w-0 gap-x-4">
-        <Image className="h-12 w-12 flex-none rounded-full" src={houseIcon} alt="building" />
+        {false && <Image className="h-12 w-12 flex-none rounded-full" src={houseIcon} alt="building" />}
         <div className="min-w-0 flex-auto">
           <p className="text-sm font-semibold leading-6 text-gray-900">Job ID: {job.id} - Kenya - 2 Story building</p>
           <p className="mt-1 truncate text-xs leading-5 text-gray-500">Owner ID: {job.userId} example@haru.com</p>

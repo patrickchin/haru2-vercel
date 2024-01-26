@@ -1,19 +1,19 @@
 'use client';
 
 import Link from 'next/link';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, MouseEventHandler, SetStateAction, useState } from 'react';
 import SimpleLayout from '@/app/components/layout';
 
 const linkStyle: string = "px-12 py-6 my-24 border border-gray-300 rounded-xl text-2xl text-center bg-gray-50 hover:bg-gray-300 hover:shadow";
 const sectionStyle: string = "flex flex-col mx-auto my-auto py-12 justify-center";
 
-function chooseCountry(setCountry: Dispatch<SetStateAction<null>>) {
+function ChooseCountry({ setCountry } : { setCountry :  Dispatch<SetStateAction<null>> }) {
 
-  const handleCountryButton = (e: any) => {
+  const handleCountryButton: MouseEventHandler<HTMLButtonElement> = (e: any) => {
     setCountry(e.target.name);
   };
 
-  const countries = ["Kenya", "Pakistan", "China"];
+  const countries: string[] = ["Kenya", "Pakistan", "China"];
 
   return (<section className={sectionStyle}>
     <h1 className="text-4xl">Where do you want to build?</h1>
@@ -25,7 +25,7 @@ function chooseCountry(setCountry: Dispatch<SetStateAction<null>>) {
   </section>);
 }
 
-function chooseStep(country: string) {
+function ChooseStep({ country } : { country : string }) {
 
   const steps = [
     { key: "build", text: "Building Design", href: "/job-posting" },
@@ -55,7 +55,11 @@ export default function Page() {
   const [country, setCountry] = useState(null);
   return (
     <SimpleLayout>
-        {!country ?  chooseCountry(setCountry) : chooseStep(country)}
+      {
+        !country ? 
+        <ChooseCountry setCountry={setCountry} /> :
+        <ChooseStep country={country} />
+      }
     </SimpleLayout>
   );
 }
