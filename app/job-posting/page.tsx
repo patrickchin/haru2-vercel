@@ -2,22 +2,31 @@ import { PhotoIcon, } from '@heroicons/react/24/solid';
 import SimpleLayout from '@/app/components/layout';
 import { submitJobPost } from '@/app/actions';
 
-function questions() {
+// const questions = [
+//   { name: "lifestyle", title: "Lifestyle", hints: [
+//     "How many people will be living in the house?",
+//     "Are there any other specific lifestyle preferences or routines to consider?"
+//   ]}
+// ];
+
+function Questions() {
   return (
     <>
       <div className="flex flex-col space-y-2">
         <label htmlFor="lifestyle" className="text-sm font-medium text-gray-900">
           Lifestyle
         </label>
-        <ul className="list-disc list-inside text-sm text-gray-600">
-          <li key={0}>How many people will be living in the house?</li>
-          <li key={1}>Are there any other specific lifestyle preferences or routines to consider?</li>
-        </ul>
-        <textarea
-          name="lifestyle"
-          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm"
-          defaultValue={''}
-        />
+        <div className="grid grid-cols-2">
+          <ul className="list-disc text-sm text-gray-600">
+            <li key={0}>How many people will be living in the house?</li>
+            <li key={1}>Are there any other specific lifestyle preferences or routines to consider?</li>
+          </ul>
+          <textarea
+            name="lifestyle"
+            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm"
+            defaultValue={''}
+          />
+        </div>
       </div>
       
       <div className="flex flex-col space-y-2">
@@ -185,7 +194,7 @@ function questions() {
 function Form() {
   return (
     <form action={submitJobPost} className="flex flex-col space-y-8">
-      {questions()}
+      <Questions />
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <button type="button" className="text-sm font-semibold leading-6 text-gray-900">
           Cancel

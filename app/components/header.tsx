@@ -104,9 +104,14 @@ function LoginSignup() {
 
 function LoginOrUserSettings() {
   const { data: session, status } = useSession()
-  return status === "authenticated" ?
-    <UserAvatarSection session={session} status={status} /> :
-    <LoginSignup />
+
+  if (status === "authenticated")
+    return <UserAvatarSection session={session} status={status} />;
+
+  if (status === "loading")
+    return null;
+
+  return <LoginSignup />;
 }
 
 export default function Header() {
