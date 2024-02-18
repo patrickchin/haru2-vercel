@@ -10,30 +10,36 @@ export const authConfig = {
   ],
   callbacks: {
 
+    // async session({ session, user, token }) {
+    //   // console.log( session, user, token );
+    //   return session
+    // },
+    // async jwt({ token, user, account, profile, isNewUser }) {
+    //   // console.log( token, user, account, profile, isNewUser );
+    //   return token
+    // },
+
     authorized({ auth, request: { nextUrl } }) {
 
       const isLoggedIn = !!auth?.user;
+      const pathname: string = nextUrl.pathname;
 
-      const isOnDashboard =
-        nextUrl.pathname.startsWith('/dashboard') ||
-        nextUrl.pathname.startsWith('/jobs') ||
-        nextUrl.pathname.startsWith('/job') ||
+      console.log("pathname");
+      console.log(pathname);
+
+      const isPublic =
+        pathname === '/' ||
+        pathname === '/_not-found' ||
+        pathname === '/job-posting' ||
+        pathname === '/login' ||
+        pathname === '/register' ||
+        pathname === '/team' ||
+        pathname.startsWith('/job-posting') ||
+        // pathname.startsWith('/assets') ||
         false;
 
-      if (isOnDashboard) {
-         if (isLoggedIn)
-          return true;
-        else
-          return false;
-      }
-
-      return true;
+      return isPublic || isLoggedIn;
     },
-
-    // async redirect({ url, baseUrl }) {
-    //   // TODO how to specify callbackUrl in signOut function?
-    //   return baseUrl;
-    // },
 
   },
 } satisfies NextAuthConfig;
