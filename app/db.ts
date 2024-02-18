@@ -44,6 +44,10 @@ export async function getJob(id: number) {
   return await db.select().from(jobsTable).where(eq(jobsTable.id, id));
 }
 
+export async function getJobForUser(userId: number) {
+  return await db.select().from(jobsTable).where(eq(jobsTable.userId, userId));
+}
+
 export async function createJob(userId1: number, info1: any) {
   return await db.insert(jobsTable).values({ userId: userId1, info: info1 });
 }
