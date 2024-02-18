@@ -5,6 +5,8 @@ import { submitJobPost } from '@/app/actions';
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { cn } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
 
 function HouseTypeSelection() {
 
@@ -71,23 +73,23 @@ function HouseTypeSelection() {
   };
 
   return (
-    <RadioGroup defaultValue="single-family-home"
-        className={cn("grid gap-4 grid-cols-4 grid-rows-1"
-        )}>
+    <RadioGroup defaultValue="single-family-home" className="grid gap-4 grid-cols-4 grid-rows-1 py-8">
       <div>
-        <h2 className="py-4 px-8">Residential</h2>
-        {residentialTypes.map((n, i) => <RadioOption key={i} id={i} name={n} />)}
+        <h2 className="py-4">Residential</h2>
+        <div>
+          {residentialTypes.map((n, i) => <RadioOption key={i} id={i} name={n} />)}
+        </div>
       </div>
       <div>
-        <h2 className="py-4 px-8">Commercial</h2>
+        <h2 className="py-4">Commercial</h2>
         {commercialTypes.map((n, i) => <RadioOption key={i} id={i+100} name={n} />)}
       </div>
       <div>
-        <h2 className="py-4 px-8">Entertainment</h2>
+        <h2 className="py-4">Entertainment</h2>
         {entertainmentTypes.map((n, i) => <RadioOption key={i} id={i+200} name={n} />)}
       </div>
       <div>
-        <h2 className="py-4 px-8">Industrial</h2>
+        <h2 className="py-4">Industrial</h2>
         {industrialTypes.map((n, i) => <RadioOption key={i} id={i+300} name={n} />)}
       </div>
     </RadioGroup>
@@ -116,20 +118,25 @@ function Questions() {
     <>
       {questions.map(
         (qa, i) => (
-          <div key={i} className="flex flex-col space-y-2">
-            <label htmlFor={qa.name} className="text-sm font-medium text-gray-900">
-              {qa.title}
-            </label>
-            <div className="grid grid-cols-2">
-              <ul className="list-disc text-sm text-gray-600">
-                {qa.hints.map((hint, i) => (<li key={i}>{hint}</li>))}
-              </ul>
-              <textarea
-                name={qa.name}
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm"
-                defaultValue={''}
-              />
+          <div key={i} className="flex flex-col">
+            <div className="flex flex">
+              <div className="w-1/2 flex flex-col space-y-2">
+                <label htmlFor={qa.name} className="text-sm font-medium text-gray-900">
+                  {qa.title}
+                </label>
+                <ul className="list-disc text-sm text-gray-600">
+                  {qa.hints.map((hint, i) => (<li key={i}>{hint}</li>))}
+                </ul>
+              </div>
+              <div className="w-1/2 flex flex-col pt-3">
+                <Textarea
+                  name={qa.name}
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm"
+                  defaultValue={''}
+                />
+              </div>
             </div>
+            <Separator className="my-4" />
           </div>
         )
       )}
@@ -149,6 +156,8 @@ function Questions() {
         />
       </div>
 
+      <Separator className="my-4" />
+
       <div className="flex flex-col space-y-2">
         <label htmlFor="outdoors" className="block text-sm font-medium text-gray-900">
           Outdoor Spaces
@@ -163,6 +172,8 @@ function Questions() {
           defaultValue={''}
         />
       </div>
+
+      <Separator className="my-4" />
 
       <div className="flex flex-col space-y-2">
         <label htmlFor="security" className="block text-sm font-medium text-gray-900">
@@ -179,6 +190,8 @@ function Questions() {
         />
       </div>
 
+      <Separator className="my-4" />
+
       <div className="flex flex-col space-y-2">
         <label htmlFor="security" className="block text-sm font-medium text-gray-900">
           Regulatory and Zoning Requirement
@@ -193,6 +206,8 @@ function Questions() {
           defaultValue={''}
         />
       </div>
+
+      <Separator className="my-4" />
 
       <div className="flex flex-col space-y-2">
         <label htmlFor="maintenance" className="block text-sm font-medium text-gray-900">
@@ -209,6 +224,8 @@ function Questions() {
         />
       </div>
 
+      <Separator className="my-4" />
+
       <div className="flex flex-col space-y-2">
         <label htmlFor="special" className="block text-sm font-medium text-gray-900">
           Special Requirements
@@ -222,6 +239,8 @@ function Questions() {
           defaultValue={''}
         />
       </div>
+
+      <Separator className="my-4" />
 
       <div>
         <label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-gray-900">
@@ -252,9 +271,14 @@ function Questions() {
 
 function Form() {
   return (
-    <form action={submitJobPost} className="flex flex-col space-y-8">
+    <form action={submitJobPost} className="flex flex-col">
+
       <HouseTypeSelection />
+
+      <Separator className="my-4" />
+
       <Questions />
+
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <button type="button" className="text-sm font-semibold leading-6 text-gray-900">
           Cancel
@@ -274,7 +298,7 @@ export default async function Page() {
 
   return (
     <SimpleLayout>
-      <section className="grow flex flex-col text-gray-600 bg-white shadow-xl p-16 gap-12">
+      <section className="grow flex flex-col text-gray-600 bg-white shadow-xl p-16">
 
         <h1 className="text-3xl">
           New Job Posting
