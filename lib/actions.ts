@@ -12,8 +12,8 @@ export async function submitJobPost(formData: FormData) {
 
   const rawFormData = {
 
+    title: formData.get('title'),
     type: formData.get('type'),
-    subtype: formData.get('subtype'),
 
     lifestyle: formData.get('lifestyle'),
     future: formData.get('future'),

@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 function HouseTypeSelection() {
 
@@ -72,8 +74,12 @@ function HouseTypeSelection() {
   };
 
   return (
-    <>
-      <RadioGroup defaultValue="single-family-home" className="grid gap-4 grid-cols-4 grid-rows-1 py-8">
+    <div>
+      <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+        Building Type
+      </h4>
+
+      <RadioGroup name="type" defaultValue="single-family-home" className="grid gap-4 grid-cols-4 grid-rows-1">
         <div>
           <h2 className="py-4">Residential</h2>
           <div>
@@ -93,7 +99,7 @@ function HouseTypeSelection() {
           {industrialTypes.map((n, i) => <RadioOption key={i} id={i + 300} name={n} />)}
         </div>
       </RadioGroup>
-    </>
+    </div>
   )
 }
 
@@ -206,7 +212,14 @@ function ExtraFiles() {
 
 function Form() {
   return (
-    <form action={submitJobPost} className="flex flex-col">
+    <form action={submitJobPost} className="flex flex-col space-x-8">
+
+      <div className="flex flex-row h-16 items-center">
+        <h2 className="w-36 text-lg">Project name:</h2>
+        <Input name="title" className="text-lg"/>
+      </div>
+
+      <Separator className="my-4" />
 
       <HouseTypeSelection />
 
@@ -218,16 +231,13 @@ function Form() {
 
       <Separator className="my-4" />
 
-      <div className="mt-6 flex items-center justify-end gap-x-6">
-        <button type="button" className="text-sm font-semibold leading-6 text-gray-900">
+      <div className="mt-6 flex items-center justify-end gap-x-3">
+        <Button type="button" variant="secondary" >
           Cancel
-        </button>
-        <button
-          type="submit"
-          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
+        </Button>
+        <Button type="submit" >
           Save
-        </button>
+        </Button>
       </div>
     </form>
   )
@@ -239,9 +249,9 @@ export default async function Page() {
     <SimpleLayout>
       <section className="grow flex flex-col text-gray-600 bg-white shadow-xl p-16">
 
-        <h1 className="text-3xl">
-          New Job Posting
-        </h1>
+        <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-8">
+          New Project
+        </h2>
 
         <Form />
       </section>

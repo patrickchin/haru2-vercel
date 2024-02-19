@@ -49,7 +49,7 @@ export async function getJob(id: number) {
   return await db.select().from(jobsTable).where(eq(jobsTable.id, id));
 }
 
-export async function getJobForUser(userId: number) {
+export async function getJobsForUser(userId: number) {
   return await db.select().from(jobsTable).where(eq(jobsTable.userId, userId));
 }
 

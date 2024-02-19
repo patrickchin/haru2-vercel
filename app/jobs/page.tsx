@@ -3,11 +3,11 @@ import { Suspense } from 'react';
 import Image from "next/image"
 import Link from 'next/link';
 
-import { getAllJobs } from '@/lib/db';
+import { getJobsForUser } from '@/lib/db';
 import SimpleLayout from '@/components/layout';
 
 import houseIcon from "@/app/assets/house.png"
-import { redirect } from 'next/navigation';
+import { auth } from '@/lib/auth';
 
 function JobItem({ job } : any) {
   return (
@@ -18,6 +18,7 @@ function JobItem({ job } : any) {
         <div className="min-w-0 flex-auto">
           <p className="text-sm font-semibold leading-6 text-gray-900">Job ID: {job.id} - Kenya - 2 Story building</p>
           <p className="mt-1 truncate text-xs leading-5 text-gray-500">Owner ID: {job.userId} example@haru.com</p>
+          {JSON.stringify(job)}
         </div>
       </div>
 
@@ -35,7 +36,15 @@ function JobItem({ job } : any) {
 }
 
 async function JobList() {
-  const jobs = await getAllJobs();
+  const session = await auth();
+  const userId = Number(session?.user?.id);
+
+  if (Number.isNaN(userId)) {
+    console.log("User id is not a number: ", session);
+    return <p>invalid user</p>;
+  }
+
+  const jobs = await getJobsForUser(userId);
   return (
     <ul role="list" className="divide-y divide-gray-100">
       {jobs.reverse().map((job) =>
