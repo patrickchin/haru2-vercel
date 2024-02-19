@@ -1,7 +1,7 @@
 'use server';
 
 import { redirect } from 'next/navigation'
-import { createJob } from '@/app/db';
+import { createJob } from '@/lib/db';
 import { auth } from './auth';
 
 export async function submitJobPost(formData: FormData) {

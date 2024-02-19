@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
 
 import SimpleLayout from '@/app/components/layout';
-import { getJobForUser } from '@/app/db';
-import { auth } from '@/app/auth';
+import { getJobForUser } from '@/lib/db';
+import { auth } from '@/lib/auth';
 
 async function Dashboard() {
   const session = await auth();

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { signIn } from 'app/auth';
+import { signIn } from '@/lib/auth';
 
 import LoginForm from '@/app/components/login-form';
 import SubmitButton  from '@/app/components/submit-button';

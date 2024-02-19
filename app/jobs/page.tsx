@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import Image from "next/image"
 import Link from 'next/link';
 
-import { getAllJobs } from '@/app/db';
+import { getAllJobs } from '@/lib/db';
 import SimpleLayout from '@/app/components/layout';
 
 import houseIcon from "@/app/assets/house.png"

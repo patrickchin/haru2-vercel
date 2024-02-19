@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 
 import SimpleLayout from '@/app/components/layout';
-import { getJob } from '@/app/db';
+import { getJob } from '@/lib/db';
 import { Suspense } from 'react';
 
 async function JobDescription({ jobid }: { jobid: number }) {
