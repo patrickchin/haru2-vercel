@@ -1,5 +1,5 @@
 import { PhotoIcon, } from '@heroicons/react/24/solid';
-import SimpleLayout from '@/app/components/layout';
+import SimpleLayout from '@/components/layout';
 import { submitJobPost } from '@/lib/actions';
 
 import { Label } from "@/components/ui/label"

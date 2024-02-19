@@ -1,9 +1,9 @@
 import Link from 'next/link';
-import LoginForm from '@/app/components/login-form';
+import LoginForm from '@/components/login-form';
 import { redirect } from 'next/navigation';
 import { createUser, getUser } from '@/lib/db';
-import  SubmitButton  from '@/app/components/submit-button';
-import SimpleLayout from '@/app/components/layout';
+import  SubmitButton  from '@/components/submit-button';
+import SimpleLayout from '@/components/layout';
 
 export default function Page() {
 

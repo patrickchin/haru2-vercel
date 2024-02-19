@@ -1,4 +1,4 @@
-import SimpleLayout from "@/app/components/layout";
+import SimpleLayout from "@/components/layout";
 
 export default async function Page() {
   return (

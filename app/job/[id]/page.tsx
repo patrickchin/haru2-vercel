@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-import SimpleLayout from '@/app/components/layout';
+import SimpleLayout from '@/components/layout';
 import { getJob } from '@/lib/db';
 import { Suspense } from 'react';
 

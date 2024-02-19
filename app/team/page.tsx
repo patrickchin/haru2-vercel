@@ -1,6 +1,6 @@
 import Image from "next/image"
 
-import SimpleLayout from "@/app/components/layout"
+import SimpleLayout from "@/components/layout"
 
 import avatar from "@/app/assets/avatar2.png"
 

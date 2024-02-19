@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { signIn } from '@/lib/auth';
 
-import LoginForm from '@/app/components/login-form';
-import SubmitButton  from '@/app/components/submit-button';
-import SimpleLayout from '@/app/components/layout';
+import LoginForm from '@/components/login-form';
+import SubmitButton  from '@/components/submit-button';
+import SimpleLayout from '@/components/layout';
 
 export default function Login() {
 

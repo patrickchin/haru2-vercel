@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Dispatch, MouseEventHandler, SetStateAction, useState } from 'react';
-import SimpleLayout from '@/app/components/layout';
+import SimpleLayout from '@/components/layout';
 
 const linkStyle: string = "px-12 py-6 my-24 border border-gray-300 rounded-xl text-2xl text-center bg-gray-50 hover:bg-gray-300 hover:shadow";
 const sectionStyle: string = "flex flex-col mx-auto my-auto py-12 justify-center";

@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import SimpleLayout from '@/app/components/layout';
+import SimpleLayout from '@/components/layout';
 import { getJobForUser } from '@/lib/db';
 import { auth } from '@/lib/auth';
 

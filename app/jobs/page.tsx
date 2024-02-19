@@ -4,7 +4,7 @@ import Image from "next/image"
 import Link from 'next/link';
 
 import { getAllJobs } from '@/lib/db';
-import SimpleLayout from '@/app/components/layout';
+import SimpleLayout from '@/components/layout';
 
 import houseIcon from "@/app/assets/house.png"
 import { redirect } from 'next/navigation';

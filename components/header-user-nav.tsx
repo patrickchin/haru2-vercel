@@ -60,8 +60,7 @@ function LoginSignup() {
 }
 
 export function LoginOrUserSettings() {
-  // const { data: session, status } = useSession()
-  const status = undefined;
+  const { data: session, status } = useSession()
 
   if (status === "authenticated")
     return <UserNav />;

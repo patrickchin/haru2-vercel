@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { LoginOrUserSettings, MainNav } from './header-user-nav';
+import { SessionProvider } from 'next-auth/react';
 
 export default function Header() {
   return (
@@ -16,7 +17,9 @@ export default function Header() {
         <MainNav />
 
         <div className="ml-auto flex items-center space-x-4">
-          <LoginOrUserSettings />
+          <SessionProvider>
+            <LoginOrUserSettings />
+          </SessionProvider>
         </div>
       </div>
     </div>
