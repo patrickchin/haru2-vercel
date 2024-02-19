@@ -6,9 +6,9 @@ import { useSession } from "next-auth/react"
 import { Button } from '@/components/ui/button';
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', },
-  { name: 'Team', href: '/team', },
+  { name: 'New Project', href: '/new-project', },
   { name: 'Projects', href: '/projects', },
+  { name: 'Team', href: '/team', },
   // { name: 'Calendar', href: '#', },
 ]
 

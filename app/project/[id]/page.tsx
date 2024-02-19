@@ -11,18 +11,24 @@ async function ProjectDescription({ projectid }: { projectid: number }) {
   {
     if (projectInfoArr.length > 1)
       console.log(`Found ${projectInfoArr.length} projects with id ${projectid}`);
-    redirect('/404');
+    redirect('/project');
   }
 
-  const projectInfo: any = projectInfoArr[0];
+  const projectInfo: any = projectInfoArr[0].info;
 
   return (
     <>
-      <h1 className="text-3xl">
-        Project {projectInfoArr[0].id}
-      </h1>
-      {Object.entries(projectInfo.info).map((desc) =>
-        <div key={desc[0]}>
+      <h2 className="scroll-m-20 border-b pb-2 px-12 text-3xl font-semibold tracking-tight first:mt-0">
+        {projectInfo.title || "Untitled"}
+      </h2 >
+      <p>
+        {projectInfo.country || "Unspecified location"}
+      </p>
+      <p>
+        {projectInfo.type || "Unspecified construction type"}
+      </p>
+      {Object.entries(projectInfo).map((desc, i) =>
+        <div key={i}>
           <h2>{desc[0]}</h2>
           <p>{desc[1] as string}</p>
         </div>

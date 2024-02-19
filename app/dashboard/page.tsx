@@ -23,9 +23,9 @@ export default async function Page() {
   return (
     <SimpleLayout>
       <section className="grow flex flex-col text-gray-600 bg-white shadow-xl p-16 gap-12">
-        <h1 className="text-3xl">
+        <h2 className="scroll-m-20 border-b pb-2 px-12 text-3xl font-semibold tracking-tight first:mt-0">
           Dashboard
-        </h1>
+        </h2>
         <Suspense fallback={<p>Loading ...</p>}>
           <Dashboard />
         </Suspense>

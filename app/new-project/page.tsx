@@ -216,25 +216,23 @@ function Form() {
   return (
     <form action={submitProjectPost} className="flex flex-col space-y-4">
 
-      <CountrySelector />
-
       <div className="flex flex-row h-16 items-center space-x-4">
         <Label className="text-lg">Project Title:</Label>
         <div className="flex-grow">
           <Input name="title" className="text-lg"/>
         </div>
       </div>
+      <Separator className="my-4" />
 
+      <CountrySelector />
       <Separator className="my-4" />
 
       <HouseTypeSelection />
-
       <Separator className="my-4" />
 
       <Questions />
 
       <ExtraFiles />
-
       <Separator className="my-4" />
 
       <div className="mt-6 flex items-center justify-end gap-x-3">
@@ -256,11 +254,9 @@ export default async function Page() {
   return (
     <SimpleLayout>
       <section className="grow flex flex-col text-gray-600 bg-white shadow-xl p-16">
-
-        <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-8">
+        <h2 className="scroll-m-20 border-b pb-2 px-12 text-3xl font-semibold tracking-tight first:mt-0 mb-6">
           New Project
         </h2>
-
         <Form />
       </section>
     </SimpleLayout>

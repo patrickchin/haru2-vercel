@@ -10,15 +10,21 @@ import houseIcon from "@/app/assets/house.png"
 import { auth } from '@/lib/auth';
 
 function ProjectItem({ project } : any) {
+
+  const info = project.info;
+  const title = info.title || "Untitled";
+  const where = info.country || "Unknown Location";
+  const type = info.type || "";
+
   return (
-    <Link href={`/project/${project.id}`} className="flex justify-between gap-x-6 p-8 hover:bg-gray-300">
+    <Link href={`/project/${project.id}`} className="flex justify-between gap-6 p-8 border rounded-lg hover:bg-accent">
 
       <div className="flex min-w-0 gap-x-4">
         {false && <Image className="h-12 w-12 flex-none rounded-full" src={houseIcon} alt="building" />}
         <div className="min-w-0 flex-auto">
-          <p className="text-sm font-semibold leading-6 text-gray-900">Project ID: {project.id} - Kenya - 2 Story building</p>
-          <p className="mt-1 truncate text-xs leading-5 text-gray-500">Owner ID: {project.userId} example@haru.com</p>
-          {JSON.stringify(project)}
+          <p className="text-md font-semibold leading-6">{title} - {where} - {type}</p>
+          <p className="mt-1 truncate text-xs leading-5">Owner ID: {project.userId} example@haru.com</p>
+          {/* {JSON.stringify(project)} */}
         </div>
       </div>
 
@@ -40,13 +46,13 @@ async function ProjectList() {
   const userId = Number(session?.user?.id);
 
   if (Number.isNaN(userId)) {
-    console.log("User id is not a number: ", session);
-    return <p>invalid user</p>;
+    console.log("User id is invalid: ", session);
+    return <p>Invalid user</p>;
   }
 
   const projects = await getProjectsForUser(userId);
   return (
-    <ul role="list" className="divide-y divide-gray-100">
+    <ul role="list" className="space-y-3">
       {projects.reverse().map((project) =>
         <li key={project.id}>
           <ProjectItem project={project} />
@@ -61,9 +67,9 @@ export default async function Page() {
     <SimpleLayout>
       <section className="grow flex flex-col text-gray-600 bg-white shadow-xl p-16 gap-12">
         
-        <h1 className="text-3xl">
-          List of Available Projects
-        </h1>
+        <h2 className="scroll-m-20 border-b pb-2 px-12 text-3xl font-semibold tracking-tight first:mt-0">
+          My Projects
+        </h2>
 
         <Suspense fallback={<p>Loading ...</p>}>
           <ProjectList />
