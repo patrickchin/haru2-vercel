@@ -23,7 +23,7 @@ export default function CountrySelector() {
   const countries: string[] = [
     "Kenya", "China", "Pakistan"
   ];
-  const defaultCountry = (search && countries.includes(search)) ? search : "";
+  const defaultCountry = search && countries.some(c => c.toLowerCase() == search.toLowerCase()) ? search : "";
 
   return (
     <RadioGroup name="country" defaultValue={defaultCountry} className="flex flex-row space-x-4">
