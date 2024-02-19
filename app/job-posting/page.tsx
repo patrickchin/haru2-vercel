@@ -8,6 +8,9 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import CountrySelector from './country-selector-simple';
+// import CountrySelector from './country-selector';
 
 function HouseTypeSelection() {
 
@@ -106,7 +109,6 @@ function HouseTypeSelection() {
 
 
 function Questions() {
-
 
   const questions = [
     {
@@ -212,11 +214,15 @@ function ExtraFiles() {
 
 function Form() {
   return (
-    <form action={submitJobPost} className="flex flex-col space-x-8">
+    <form action={submitJobPost} className="flex flex-col space-y-4">
 
-      <div className="flex flex-row h-16 items-center">
-        <h2 className="w-36 text-lg">Project name:</h2>
-        <Input name="title" className="text-lg"/>
+      <CountrySelector />
+
+      <div className="flex flex-row h-16 items-center space-x-4">
+        <Label className="text-lg">Project Title:</Label>
+        <div className="flex-grow">
+          <Input name="title" className="text-lg"/>
+        </div>
       </div>
 
       <Separator className="my-4" />
@@ -232,8 +238,10 @@ function Form() {
       <Separator className="my-4" />
 
       <div className="mt-6 flex items-center justify-end gap-x-3">
-        <Button type="button" variant="secondary" >
-          Cancel
+        <Button asChild type="button" variant="secondary" >
+          <Link href="/">
+            Cancel
+          </Link>
         </Button>
         <Button type="submit" >
           Save

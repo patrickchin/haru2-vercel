@@ -14,6 +14,7 @@ export async function submitJobPost(formData: FormData) {
 
     title: formData.get('title'),
     type: formData.get('type'),
+    country: formData.get('country'),
 
     lifestyle: formData.get('lifestyle'),
     future: formData.get('future'),
