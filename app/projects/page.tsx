@@ -11,7 +11,7 @@ import { auth } from '@/lib/auth';
 
 function JobItem({ job } : any) {
   return (
-    <Link href={`/job/${job.id}`} className="flex justify-between gap-x-6 p-8 hover:bg-gray-300">
+    <Link href={`/project/${job.id}`} className="flex justify-between gap-x-6 p-8 hover:bg-gray-300">
 
       <div className="flex min-w-0 gap-x-4">
         {false && <Image className="h-12 w-12 flex-none rounded-full" src={houseIcon} alt="building" />}
@@ -62,7 +62,7 @@ export default async function Page() {
       <section className="grow flex flex-col text-gray-600 bg-white shadow-xl p-16 gap-12">
         
         <h1 className="text-3xl">
-          List of Available Jobs
+          List of Available Projects
         </h1>
 
         <Suspense fallback={<p>Loading ...</p>}>

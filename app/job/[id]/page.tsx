@@ -10,7 +10,7 @@ async function JobDescription({ jobid }: { jobid: number }) {
   if (jobInfoArr.length != 1)
   {
     if (jobInfoArr.length > 1)
-      console.log(`Found ${jobInfoArr.length} jobs with id ${jobid}`);
+      console.log(`Found ${jobInfoArr.length} projects with id ${jobid}`);
     redirect('/404');
   }
 
@@ -19,7 +19,7 @@ async function JobDescription({ jobid }: { jobid: number }) {
   return (
     <>
       <h1 className="text-3xl">
-        Job {jobInfoArr[0].id}
+        Project {jobInfoArr[0].id}
       </h1>
       {Object.entries(jobInfo.info).map((desc) =>
         <div key={desc[0]}>
@@ -41,7 +41,7 @@ export default async function Page({
 
   const jobid: number = parseInt(params.id);
   if (Number.isNaN(jobid))
-    redirect('/jobs');
+    redirect('/projects');
 
   return (
     <SimpleLayout>

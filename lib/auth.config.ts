@@ -29,11 +29,11 @@ export const authConfig = {
       const isPublic =
         pathname === '/' ||
         pathname === '/_not-found' ||
-        pathname === '/job-posting' ||
+        pathname === '/new-project' ||
         pathname === '/login' ||
         pathname === '/register' ||
         pathname === '/team' ||
-        pathname.startsWith('/job-posting') ||
+        pathname.startsWith('/new-project') ||
         // pathname.startsWith('/assets') ||
         false;
 

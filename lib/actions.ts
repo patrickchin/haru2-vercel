@@ -30,5 +30,5 @@ export async function submitJobPost(formData: FormData) {
   if (session?.user?.id)
     await createJob(Number(session.user.id), rawFormData);
 
-  redirect("/jobs");
+  redirect("/projects");
 }
