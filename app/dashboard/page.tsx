@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 
 import SimpleLayout from '@/components/layout';
-import { getJobsForUser as getJobsForUser } from '@/lib/db';
+import { getProjectsForUser } from '@/lib/db';
 import { auth } from '@/lib/auth';
 
 async function Dashboard() {
@@ -12,8 +12,8 @@ async function Dashboard() {
 
   if (session?.user?.id) {
     const userId = Number(session?.user?.id);
-    const currentUserJobs = await getJobsForUser(userId);
-    return JSON.stringify(currentUserJobs);
+    const currentUserProjects = await getProjectsForUser(userId);
+    return JSON.stringify(currentUserProjects);
   }
 
   return null;

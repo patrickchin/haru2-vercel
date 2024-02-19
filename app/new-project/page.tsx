@@ -1,6 +1,6 @@
 import { PhotoIcon, } from '@heroicons/react/24/solid';
 import SimpleLayout from '@/components/layout';
-import { submitJobPost } from '@/lib/actions';
+import { submitProjectPost } from '@/lib/actions';
 
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -214,7 +214,7 @@ function ExtraFiles() {
 
 function Form() {
   return (
-    <form action={submitJobPost} className="flex flex-col space-y-4">
+    <form action={submitProjectPost} className="flex flex-col space-y-4">
 
       <CountrySelector />
 

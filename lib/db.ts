@@ -35,26 +35,26 @@ export async function createUser(email: string, password: string) {
 }
 
 
-let jobsTable = pgTable('jobs1', {
+let projectsTable = pgTable('jobs1', {
   id: serial('id').primaryKey(),
   userId: integer('userid').references(() => usersTable.id),
   info: json('info'),
 });
 
-export async function getAllJobs() {
-  return await db.select().from(jobsTable);
+export async function getAllProjects() {
+  return await db.select().from(projectsTable);
 }
 
-export async function getJob(id: number) {
-  return await db.select().from(jobsTable).where(eq(jobsTable.id, id));
+export async function getProject(id: number) {
+  return await db.select().from(projectsTable).where(eq(projectsTable.id, id));
 }
 
-export async function getJobsForUser(userId: number) {
-  return await db.select().from(jobsTable).where(eq(jobsTable.userId, userId));
+export async function getProjectsForUser(userId: number) {
+  return await db.select().from(projectsTable).where(eq(projectsTable.userId, userId));
 }
 
-export async function createJob(userId1: number, info1: any) {
-  return await db.insert(jobsTable).values({ userId: userId1, info: info1 });
+export async function createProject(userId1: number, info1: any) {
+  return await db.insert(projectsTable).values({ userId: userId1, info: info1 });
 }
 
 
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS users(
   "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS jobs1(
+CREATE TABLE IF NOT EXISTS projects1(
   id SERIAL PRIMARY KEY,
   userId INTEGER REFERENCES users,
   info JSON NOT NULL,

@@ -1,10 +1,10 @@
 'use server';
 
 import { redirect } from 'next/navigation'
-import { createJob } from '@/lib/db';
+import { createProject } from '@/lib/db';
 import { auth } from './auth';
 
-export async function submitJobPost(formData: FormData) {
+export async function submitProjectPost(formData: FormData) {
 
   const session = await auth();
   if (!session?.user)
@@ -28,7 +28,7 @@ export async function submitJobPost(formData: FormData) {
   };
 
   if (session?.user?.id)
-    await createJob(Number(session.user.id), rawFormData);
+    await createProject(Number(session.user.id), rawFormData);
 
   redirect("/projects");
 }

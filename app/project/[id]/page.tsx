@@ -1,27 +1,27 @@
 import { redirect } from 'next/navigation';
 
 import SimpleLayout from '@/components/layout';
-import { getJob } from '@/lib/db';
+import { getProject } from '@/lib/db';
 import { Suspense } from 'react';
 
-async function JobDescription({ jobid }: { jobid: number }) {
+async function ProjectDescription({ projectid }: { projectid: number }) {
 
-  const jobInfoArr = await getJob(jobid);
-  if (jobInfoArr.length != 1)
+  const projectInfoArr = await getProject(projectid);
+  if (projectInfoArr.length != 1)
   {
-    if (jobInfoArr.length > 1)
-      console.log(`Found ${jobInfoArr.length} projects with id ${jobid}`);
+    if (projectInfoArr.length > 1)
+      console.log(`Found ${projectInfoArr.length} projects with id ${projectid}`);
     redirect('/404');
   }
 
-  const jobInfo: any = jobInfoArr[0];
+  const projectInfo: any = projectInfoArr[0];
 
   return (
     <>
       <h1 className="text-3xl">
-        Project {jobInfoArr[0].id}
+        Project {projectInfoArr[0].id}
       </h1>
-      {Object.entries(jobInfo.info).map((desc) =>
+      {Object.entries(projectInfo.info).map((desc) =>
         <div key={desc[0]}>
           <h2>{desc[0]}</h2>
           <p>{desc[1] as string}</p>
@@ -39,15 +39,15 @@ export default async function Page({
   searchParams: { [key: string]: string | string[] | undefined }
 }) {
 
-  const jobid: number = parseInt(params.id);
-  if (Number.isNaN(jobid))
+  const projectid: number = parseInt(params.id);
+  if (Number.isNaN(projectid))
     redirect('/projects');
 
   return (
     <SimpleLayout>
       <section className="grow flex flex-col text-gray-600 bg-white shadow-xl p-16 gap-12">
         <Suspense fallback={<p>Loading ...</p>}>
-          <JobDescription jobid={jobid}/>
+          <ProjectDescription projectid={projectid}/>
         </Suspense>
       </section>
     </SimpleLayout>
