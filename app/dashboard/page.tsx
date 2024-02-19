@@ -13,8 +13,7 @@ async function Dashboard() {
   if (!session?.user)
     return (<p>Not logged in.</p>);
 
-  // session.id instead of 2
-  const currentUserJobs = await getJobForUser(2);
+  const currentUserJobs = await getJobForUser(session?.user?.id);
 
   return null;
 }

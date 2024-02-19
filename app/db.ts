@@ -12,7 +12,7 @@ import { genSaltSync, hashSync } from 'bcrypt-ts';
 let client = postgres(`${process.env.POSTGRES_URL!}?sslmode=require`);
 let db = drizzle(client);
 
-let usersTable = pgTable('users', {
+let usersTable = pgTable('users1', {
   id: serial('id').primaryKey(),
   email: varchar('email', { length: 255 }),
   password: varchar('password', { length: 255 }),
@@ -20,6 +20,11 @@ let usersTable = pgTable('users', {
 
 export async function getUser(email: string) {
   return await db.select().from(usersTable).where(eq(usersTable.email, email));
+  return await db.select({
+    id: usersTable.id,
+    email: usersTable.email,
+    password: usersTable.password
+  }).from(usersTable).where(eq(usersTable.email, email));
 }
 
 export async function createUser(email: string, password: string) {

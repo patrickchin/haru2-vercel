@@ -7,6 +7,8 @@ import { auth } from './auth';
 export async function submitJobPost(formData: FormData) {
 
   const session = await auth();
+  if (!session?.user)
+    console.log("Can't submit a post without being logged in.");
 
   const rawFormData = {
 
@@ -25,7 +27,7 @@ export async function submitJobPost(formData: FormData) {
   };
 
   // session.id instead of 2
-  await createJob(2, rawFormData);
+  await createJob(session?.user?.id, rawFormData);
 
   redirect("/jobs");
 }

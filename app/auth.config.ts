@@ -10,10 +10,12 @@ export const authConfig = {
   ],
   callbacks: {
 
-    // async session({ session, user, token }) {
-    //   // console.log( session, user, token );
-    //   return session
-    // },
+    async session({ session, user, token }) {
+      if (session.user !== undefined)
+        session.user.id = Number(token.sub);
+
+      return session
+    },
     // async jwt({ token, user, account, profile, isNewUser }) {
     //   // console.log( token, user, account, profile, isNewUser );
     //   return token
@@ -23,9 +25,6 @@ export const authConfig = {
 
       const isLoggedIn = !!auth?.user;
       const pathname: string = nextUrl.pathname;
-
-      console.log("pathname");
-      console.log(pathname);
 
       const isPublic =
         pathname === '/' ||

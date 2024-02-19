@@ -7,6 +7,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth/pg-adapter": "^0.6.0",
     "@headlessui/react": "^1.7.18",
     "@heroicons/react": "^2.1.1",
     "@radix-ui/react-label": "^2.0.2",
@@ -24,7 +25,9 @@
     "geist": "^1.2.0",
     "lucide-react": "^0.331.0",
     "next": "^14.0.4",
-    "next-auth": "5.0.0-beta.4",
+    "next-auth": "^5.0.0-beta.4",
+    "nodemailer": "^6.9.9",
+    "pg": "^8.11.3",
     "postgres": "^3.4.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
