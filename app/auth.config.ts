@@ -12,7 +12,7 @@ export const authConfig = {
 
     async session({ session, user, token }) {
       if (session.user !== undefined)
-        session.user.id = Number(token.sub);
+        session.user.id = token.sub || "";
 
       return session
     },

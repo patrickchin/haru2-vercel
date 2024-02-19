@@ -5,15 +5,16 @@ import { getJobForUser } from '@/app/db';
 import { auth } from '@/app/auth';
 
 async function Dashboard() {
-
   const session = await auth();
-  console.log("dashboard session");
-  console.log(session);
 
   if (!session?.user)
     return (<p>Not logged in.</p>);
 
-  const currentUserJobs = await getJobForUser(session?.user?.id);
+  if (session?.user?.id) {
+    const userId = Number(session?.user?.id);
+    const currentUserJobs = await getJobForUser(userId);
+    return JSON.stringify(currentUserJobs);
+  }
 
   return null;
 }

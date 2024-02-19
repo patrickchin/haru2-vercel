@@ -26,8 +26,8 @@ export async function submitJobPost(formData: FormData) {
     special: formData.get('special'),
   };
 
-  // session.id instead of 2
-  await createJob(session?.user?.id, rawFormData);
+  if (session?.user?.id)
+    await createJob(Number(session.user.id), rawFormData);
 
   redirect("/jobs");
 }
