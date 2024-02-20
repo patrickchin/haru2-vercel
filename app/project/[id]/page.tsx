@@ -18,7 +18,7 @@ async function ProjectDescription({ projectid }: { projectid: number }) {
 
   return (
     <>
-      <h2 className="scroll-m-20 border-b pb-2 px-12 text-3xl font-semibold tracking-tight first:mt-0">
+      <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
         {projectInfo.title || "Untitled"}
       </h2 >
       <p>
@@ -29,7 +29,7 @@ async function ProjectDescription({ projectid }: { projectid: number }) {
       </p>
       {Object.entries(projectInfo).map((desc, i) =>
         <div key={i}>
-          <h2>{desc[0]}</h2>
+          <h4>{desc[0]}</h4>
           <p>{desc[1] as string}</p>
         </div>
       )}

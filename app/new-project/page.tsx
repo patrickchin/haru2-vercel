@@ -84,21 +84,21 @@ function HouseTypeSelection() {
 
       <RadioGroup name="type" defaultValue="single-family-home" className="grid gap-4 grid-cols-4 grid-rows-1">
         <div>
-          <h2 className="py-4">Residential</h2>
+          <h4 className="py-4">Residential</h4>
           <div>
             {residentialTypes.map((n, i) => <RadioOption key={i} id={i} name={n} />)}
           </div>
         </div>
         <div>
-          <h2 className="py-4">Commercial</h2>
+          <h4 className="py-4">Commercial</h4>
           {commercialTypes.map((n, i) => <RadioOption key={i} id={i + 100} name={n} />)}
         </div>
         <div>
-          <h2 className="py-4">Entertainment</h2>
+          <h4 className="py-4">Entertainment</h4>
           {entertainmentTypes.map((n, i) => <RadioOption key={i} id={i + 200} name={n} />)}
         </div>
         <div>
-          <h2 className="py-4">Industrial</h2>
+          <h4 className="py-4">Industrial</h4>
           {industrialTypes.map((n, i) => <RadioOption key={i} id={i + 300} name={n} />)}
         </div>
       </RadioGroup>
@@ -254,7 +254,7 @@ export default async function Page() {
   return (
     <SimpleLayout>
       <section className="grow flex flex-col text-gray-600 bg-white shadow-xl p-16">
-        <h2 className="scroll-m-20 border-b pb-2 px-12 text-3xl font-semibold tracking-tight first:mt-0 mb-6">
+        <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-6">
           New Project
         </h2>
         <Form />
