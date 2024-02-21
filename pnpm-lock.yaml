@@ -62,6 +62,9 @@ dependencies:
   drizzle-orm:
     specifier: ^0.29.2
     version: 0.29.2(@types/react@18.2.45)(expo-sqlite@13.2.0)(pg@8.11.3)(postgres@3.4.3)(react@18.2.0)
+  embla-carousel-react:
+    specifier: 8.0.0-rc23
+    version: 8.0.0-rc23(react@18.2.0)
   geist:
     specifier: ^1.2.0
     version: 1.2.0(next@14.0.4)
@@ -4287,6 +4290,28 @@ packages:
 
   /electron-to-chromium@1.4.616:
     resolution: {integrity: sha512-1n7zWYh8eS0L9Uy+GskE0lkBUNK83cXTVJI0pU3mGprFsbfSdAc15VTFbo+A+Bq4pwstmL30AVcEU3Fo463lNg==}
+
+  /embla-carousel-react@8.0.0-rc23(react@18.2.0):
+    resolution: {integrity: sha512-EmtIx4oYkBAUi9R31Tg1lh2HCw0Q01bOftXRDhIlNfB+gsDRS76AgeYU+mQc9qW6yeI5C/W5BqtPZU+ymR0E2Q==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.1 || ^18.0.0
+    dependencies:
+      embla-carousel: 8.0.0-rc23
+      embla-carousel-reactive-utils: 8.0.0-rc23(embla-carousel@8.0.0-rc23)
+      react: 18.2.0
+    dev: false
+
+  /embla-carousel-reactive-utils@8.0.0-rc23(embla-carousel@8.0.0-rc23):
+    resolution: {integrity: sha512-/NPejNksrw1iWthTtrps5LNj6gJzylvfCuNTh2+P0FLSPbX/+RlT84Ab5qnbSS/vdmEs8daJbVvb5Bol9v0OdQ==}
+    peerDependencies:
+      embla-carousel: 8.0.0-rc23
+    dependencies:
+      embla-carousel: 8.0.0-rc23
+    dev: false
+
+  /embla-carousel@8.0.0-rc23:
+    resolution: {integrity: sha512-ybuDHm+udElyH+XpuemS/W+x8ZhB3a/4UzeTBvsoZUxDSty12ch1f2T0CZxGqIs2FfdaofEOmpLMSvuEPVTMCg==}
+    dev: false
 
   /emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}

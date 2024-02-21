@@ -26,6 +26,7 @@
     "clsx": "^2.1.0",
     "cmdk": "^0.2.1",
     "drizzle-orm": "^0.29.2",
+    "embla-carousel-react": "8.0.0-rc23",
     "geist": "^1.2.0",
     "lucide-react": "^0.331.0",
     "next": "^14.0.4",
