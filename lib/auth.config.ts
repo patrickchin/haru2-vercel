@@ -32,7 +32,7 @@ export const authConfig = {
         pathname === '/new-project' ||
         pathname === '/login' ||
         pathname === '/register' ||
-        pathname === '/team' ||
+        pathname === '/about' ||
         pathname.startsWith('/new-project') ||
         // pathname.startsWith('/assets') ||
         false;
