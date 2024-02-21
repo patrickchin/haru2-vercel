@@ -13,7 +13,9 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardHeader
+  CardFooter,
+  CardHeader,
+  CardTitle
 } from '@/components/ui/card';
 
 import { getProject } from '@/lib/db';
@@ -23,9 +25,62 @@ import Example2 from '@/app/assets/example-3d.png';
 import { questions } from 'content/questions';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { MoveRight, SquareUserRound, User } from 'lucide-react';
 
-async function ProjectDesignViews({ imageArray }:{ imageArray: StaticImageData[] }) {
+function ProjectRequestStatus() {
+  return (
+    <div className='flex flex-col'>
+      <p>TODO only show this after they click hire a design team</p>
+      <div className='flex flex-row justify-between items-center'>
 
+        <Card className='flex flex-col items-center'>
+          <CardContent>
+            <User className="h-32 w-32 pt-4" />
+          </CardContent>
+          <CardFooter>
+            <CardDescription>Client</CardDescription>
+          </CardFooter>
+        </Card>
+
+        <div className='flex flex-row grow-0'>
+          <MoveRight className='h-20 w-20' />
+        </div>
+        <div className='flex flex-row space-x-2'>
+          <Link href='/portfolio'>
+            <Card className='flex flex-col items-center hover:bg-accent'>
+              <CardContent>
+                <SquareUserRound className="h-32 w-32 pt-4" />
+              </CardContent>
+              <CardFooter className='flex-col'>
+                <h4>Designer 1</h4>
+                <p>Pending</p>
+              </CardFooter>
+            </Card>
+          </Link>
+
+          <Link href='/portfolio'>
+            <Card className='flex flex-col items-center hover:bg-accent'>
+              <CardContent>
+                <SquareUserRound className="h-32 w-32 pt-4" />
+              </CardContent>
+              <CardFooter className='flex-col'>
+                <h4>Designer 2</h4>
+                <p>Pending</p>
+              </CardFooter>
+            </Card>
+          </Link>
+        </div>
+      </div>
+
+      <div>
+        <p>schedule an interview</p>
+        <p>task management button</p>
+      </div>
+    </div>
+  );
+}
+
+function ProjectDesignViews({ imageArray }:{ imageArray: StaticImageData[] }) {
   return (
     <div className='flex flex-col space-y-4'>
       <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
@@ -53,7 +108,7 @@ async function ProjectDesignViews({ imageArray }:{ imageArray: StaticImageData[]
   );
 }
 
-async function ProjectDescription({ projectInfo }: { projectInfo: any }) {
+function ProjectDescription({ projectInfo }: { projectInfo: any }) {
   return (
     <>
       <div className='flex flex-col space-y-3'>
@@ -82,11 +137,7 @@ async function ProjectDescription({ projectInfo }: { projectInfo: any }) {
   )
 }
 
-async function ProjectPage({
-  projectId,
-}: {
-  projectId: number
-}) {
+async function ProjectPage({ projectId, }: { projectId: number }) {
 
   const projectInfoArr = await getProject(projectId);
   if (projectInfoArr.length != 1) {
@@ -101,6 +152,8 @@ async function ProjectPage({
 
   return (
     <>
+      <ProjectRequestStatus />
+
       <ProjectDesignViews imageArray={imageArray} />
 
       <ProjectDescription projectInfo={projectInfo} />
