@@ -2,7 +2,7 @@ import Image from "next/image"
 
 import SimpleLayout from "@/components/layout"
 
-import avatar from "@/assets/avatar2.png"
+import avatar from "@/app/assets/avatar2.png"
 
 const people = [
   {
