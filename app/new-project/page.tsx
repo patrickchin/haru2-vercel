@@ -160,6 +160,29 @@ function NewProjectForm2() {
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="picture"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Picture</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Picture"
+                  type="file"
+                  accept="image/*, application/pdf"
+                  onChange={(event) =>
+                    console.log(event)
+                  }
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+
         <CountrySelector form={form} />
         <DetailedQuestions form={form} />
         <div className="mt-6 flex items-center justify-end gap-x-3">
