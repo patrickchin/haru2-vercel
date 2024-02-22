@@ -17,7 +17,7 @@ export function CountrySelector2() {
   );
 }
 
-export default function CountrySelector() {
+export default function CountrySelectorSimple() {
   const searchParams = useSearchParams();
   const search: string | null = searchParams.get('country');
   const countries: string[] = [

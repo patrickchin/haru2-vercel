@@ -27,8 +27,11 @@ export async function submitProjectPost(formData: FormData) {
     special: formData.get('special'),
   };
 
-  if (session?.user?.id)
-    await createProject(Number(session.user.id), rawFormData);
+  if (session?.user?.id) {
+    const ret = await createProject(Number(session.user.id), rawFormData);
+    console.log(ret);
+  } else {
+    redirect("/projects");
+  }
 
-  redirect("/projects");
 }
