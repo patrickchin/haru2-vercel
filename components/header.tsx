@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { LoginOrUserSettings, MainNav } from './header-user-nav';
-import { SessionProvider } from 'next-auth/react';
+import { Construction } from 'lucide-react';
 
 export default function Header() {
   return (
@@ -8,7 +8,7 @@ export default function Header() {
       <div className="flex h-16 items-center px-4 mx-auto max-w-5xl">
 
         <Link href="/" className="mr-6 flex items-center space-x-2">
-          {/* <Image className="h-6 w-6" src={icon} alt="logo" /> */}
+          <Construction className="h-6 w-6" />
           <span className="hidden font-bold sm:inline-block">
             Haru Construction
           </span>
@@ -17,9 +17,7 @@ export default function Header() {
         <MainNav />
 
         <div className="ml-auto flex items-center space-x-4">
-          <SessionProvider>
-            <LoginOrUserSettings />
-          </SessionProvider>
+          <LoginOrUserSettings />
         </div>
       </div>
     </div>
