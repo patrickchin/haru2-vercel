@@ -1,6 +1,7 @@
 "use client"
 
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { PhotoIcon, } from '@heroicons/react/24/solid';
 import { submitProjectPost } from '@/lib/actions';
 
@@ -198,8 +199,20 @@ function NewProjectForm2() {
 }
 
 function NewProjectForm() {
+  
+  async function submitForm(formData: FormData) {
+    // 'use server'
+    const newPost = await submitProjectPost(formData);
+    if (newPost && newPost.length == 1) {
+      redirect(`/project/${newPost[0].id}`);
+    } else {
+      console.log("Failed to submit a new project post\n");
+      redirect("/");
+    }
+  }
+
   return (
-    <form action={submitProjectPost} className="flex flex-col space-y-4">
+    <form action={submitForm} className="flex flex-col space-y-4">
 
       <div className="flex flex-row h-16 items-center space-x-4">
         <Label className="text-lg">Project Title:</Label>

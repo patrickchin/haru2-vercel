@@ -54,7 +54,7 @@ export async function getProjectsForUser(userId: number) {
 }
 
 export async function createProject(userId1: number, info1: any) {
-  return await db.insert(projectsTable).values({ userId: userId1, info: info1 });
+  return await db.insert(projectsTable).values({ userId: userId1, info: info1 }).returning();
 }
 
 

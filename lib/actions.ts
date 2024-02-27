@@ -28,10 +28,8 @@ export async function submitProjectPost(formData: FormData) {
   };
 
   if (session?.user?.id) {
-    const ret = await createProject(Number(session.user.id), rawFormData);
-    console.log(ret);
-  } else {
-    redirect("/projects");
+    return await createProject(Number(session.user.id), rawFormData);
   }
 
+  return null;
 }
