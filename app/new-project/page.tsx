@@ -111,6 +111,7 @@ const FormSchema = z.object({
   bio: z.string().max(160, {
     message: "Bio must not be longer than 30 characters.",
   }),
+  picture: z.instanceof(File),
 })
 
 function NewProjectForm2() {
