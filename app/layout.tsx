@@ -1,4 +1,5 @@
 import { SessionProvider } from 'next-auth/react';
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import './globals.css';
 
 import { GeistSans } from 'geist/font/sans';
@@ -29,6 +30,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={GeistSans.variable}>
+        <SpeedInsights />
         <SessionProvider session={session} >
           {children}
         </SessionProvider>
