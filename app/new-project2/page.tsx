@@ -14,13 +14,13 @@ import { countries } from "content/countries";
 
 function allFilesSmall(list: FileList | undefined) {
   if (list === undefined) return true;
-  return Array.from(list).every((f) => f.size < 4_500_000);
+  return Array.from(list).every((f: any) => f.size < 4_500_000);
 }
 
 const FormSchema = z.object({
   country: z.string(),
-  designFiles: z.instanceof(FileList).optional().refine(allFilesSmall),
-  legalFiles: z.instanceof(FileList).optional().refine(allFilesSmall),
+  designFiles: z.any().transform((f) => f as FileList).optional().refine(allFilesSmall),
+  legalFiles: z.any().transform((f) => f as FileList).optional().refine(allFilesSmall),
   description: z.string().min(3),
 })
 type FormSchemaType = z.infer<typeof FormSchema>;
@@ -77,10 +77,6 @@ function NewProjectForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
 
-        <pre>isSubmitting {form.formState.isSubmitting ? "yes" : "no"}</pre>
-        <pre>isSubmitted {form.formState.isSubmitted ? "yes" : "no"}</pre>
-        <pre>isSubmitSuccessful {form.formState.isSubmitSuccessful ? "yes" : "no"}</pre>
-
         <CountrySelector form={form}/>
 
         <FormField
@@ -90,7 +86,7 @@ function NewProjectForm() {
             <FormItem>
               <FormLabel>Design Documents</FormLabel>
               <FormControl>
-                <Input type="file" multiple accept="*" {...form.register(field.name)} />
+                <Input type="file" multiple {...form.register(field.name)} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -104,7 +100,7 @@ function NewProjectForm() {
             <FormItem>
               <FormLabel>Legal Documents</FormLabel>
               <FormControl>
-                <Input type="file" accept="*" {...form.register(field.name)} />
+                <Input type="file" multiple {...form.register(field.name)} />
               </FormControl>
               <FormMessage />
             </FormItem>
