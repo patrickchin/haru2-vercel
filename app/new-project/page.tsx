@@ -9,38 +9,12 @@ import { Label } from "@/components/ui/label"
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-
+import { Button } from "@/components/ui/button"
 import SimpleLayout from '@/components/layout';
-
-import CountrySelector from './components/country-selector-complex';
-import HouseTypeSelection from './components/building-type-selector';
 
 import { questions } from 'content/questions';
 
-
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-
-import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { toast } from '@/components/ui/use-toast';
-import DetailedQuestions from './components/detailed-questions';
+import HouseTypeSelection from './components/building-type-selector';
 import CountrySelectorSimple from './components/country-selector-simple';
 
 function Questions() {
@@ -102,102 +76,6 @@ function ExtraFiles() {
   );
 }
 
-const FormSchema = z.object({
-  email: z.string({
-    required_error: "Please select an email to display.",
-  }).email(),
-  country: z.string({
-    required_error: "Please select a country.",
-  }),
-  bio: z.string().max(160, {
-    message: "Bio must not be longer than 30 characters.",
-  }),
-  picture: z.instanceof(File),
-})
-
-function NewProjectForm2() {
-
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-  })
-
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data)
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
-  }
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a verified email to display" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="m@example.com">m@example.com</SelectItem>
-                  <SelectItem value="m@google.com">m@google.com</SelectItem>
-                  <SelectItem value="m@support.com">m@support.com</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormDescription>
-                You can manage email addresses in your{" "}
-                <Link href="/examples/forms">email settings</Link>.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="picture"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Picture</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Picture"
-                  type="file"
-                  accept="image/*, application/pdf"
-                  onChange={(event) =>
-                    console.log(event)
-                  }
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-
-        <CountrySelector form={form} />
-        <DetailedQuestions form={form} />
-        <div className="mt-6 flex items-center justify-end gap-x-3">
-          {/* <Button asChild type="button" variant="secondary" >
-            <Link href="/">Cancel</Link>
-          </Button> */}
-          <Button type="submit" >Save</Button>
-        </div>
-      </form>
-    </Form>
-  )
-}
-
 function NewProjectForm() {
   
   async function submitForm(formData: FormData) {
@@ -246,7 +124,6 @@ function NewProjectForm() {
     </form>
   )
 }
-
 
 export default function Page() {
   return (
