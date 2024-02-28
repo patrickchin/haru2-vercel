@@ -65,7 +65,7 @@ function NewProjectForm() {
     console.log(data);
     // const { url } = await put('articles/blob.txt', 'Hello World!', {
     //   access: 'public',
-    //   token: 'vercel_blob_rw_RZEAI2El6QqESEXV_PCDS238bzWkF2bA4wQK98Sa3EeR02b'
+    //   token: ''
     // });
     // console.log("uploaded to ", url);
     // router.push("/");
