@@ -14,7 +14,7 @@ export const buildingTypes: { type: string, subtypes: string[] }[] = [
       "Student Housing",
       "Duplexe",
       "Mansion",
-      "Others (specify)",
+      "Other",
     ]
   },
 
@@ -31,7 +31,7 @@ export const buildingTypes: { type: string, subtypes: string[] }[] = [
       "Educational Building",
       "Retail Building",
       "Parking Structure",
-      "Others (specify)",
+      "Other",
     ]
   },
 
@@ -48,7 +48,7 @@ export const buildingTypes: { type: string, subtypes: string[] }[] = [
       "Theme Park",
       "Concert Hall",
       "Library",
-      "Others (specify)",
+      "Other",
     ]
   },
 
@@ -61,7 +61,7 @@ export const buildingTypes: { type: string, subtypes: string[] }[] = [
       "Cold Storage Facility",
       "Data Center",
       "Warehouse",
-      "Others (specify)",
+      "Other",
     ]
   },
 
