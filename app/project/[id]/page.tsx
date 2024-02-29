@@ -178,8 +178,9 @@ export default async function Page({
 }) {
 
   const projectid: number = parseInt(params.id);
-  if (Number.isNaN(projectid))
+  if (Number.isNaN(projectid)) {
     redirect('/project/not-found');
+  }
 
   return (
     <SimpleLayout>
