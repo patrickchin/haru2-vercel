@@ -3,6 +3,8 @@
 import { createProject } from '@/lib/db';
 import { auth } from './auth';
 import { put } from '@vercel/blob';
+import { z } from "zod"
+import { NewProjectFormSchema } from './types';
 
 export async function submitNewProject(info: string) {
   const session = await auth();
@@ -51,6 +53,25 @@ export async function submitProjectForm2(info: string, files: any[]) {
 
 }
 
+
+
 export async function submitProjectForm3(formData: FormData) {
-  console.log(formData);
+
+  const formObj = {
+    ...Object.fromEntries(formData),
+    files: formData.getAll('files')
+  };
+
+  const parsed = NewProjectFormSchema.safeParse(formObj);
+
+  if (!parsed.success) {
+    console.log("error", parsed.error);
+  } else {
+    console.log("data", parsed.data);
+  }
+
+  // const files = formData.getAll('files') as File[];
+  // console.log(files);
+  // const str = Buffer.from(await files.arrayBuffer()).toString('base64')
+  // console.log(str);
 }

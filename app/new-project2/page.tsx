@@ -2,8 +2,7 @@
 
 import { useSearchParams } from 'next/navigation';
 import { zodResolver } from "@hookform/resolvers/zod"
-import { UseFormReturn, useForm } from "react-hook-form"
-import { z } from "zod"
+import { useForm } from "react-hook-form"
 import SimpleLayout from '@/components/layout';
 import { Button } from "@/components/ui/button"
 import { Input } from '@/components/ui/input';
@@ -13,23 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { countries } from "content/countries";
 import { buildingTypes } from 'content/buildingTypes';
 import { submitProjectForm, submitProjectForm2, submitProjectForm3 } from '@/lib/actions';
+import { NewProjectFormSchema, NewProjectFormSchemaType, NewProjectFormType } from '@/lib/types';
 
-function allFilesSmall(list: FileList | undefined) {
-  if (list === undefined) return true;
-  return Array.from(list).every((f: any) => f.size < 4_500_000);
-}
-
-const FormSchema = z.object({
-  country: z.string(),
-  buildingType: z.string(), // enum?
-  buildingSubtype: z.string().optional(), // enum?
-  description: z.string().min(3),
-  files: z.any().transform((f) => f as FileList).optional().refine(allFilesSmall),
-})
-type FormSchemaType = z.infer<typeof FormSchema>;
-type FormType = UseFormReturn<FormSchemaType>;
-
-function CountrySelector({ form }: { form: FormType }) {
+function CountrySelector({ form }: { form: NewProjectFormType }) {
 
   const searchParams = useSearchParams();
   const countryParam: string | null = searchParams.get('country');
@@ -59,7 +44,7 @@ function CountrySelector({ form }: { form: FormType }) {
   );
 }
 
-function BuildingTypeSelector({ form }: { form: FormType }) {
+function BuildingTypeSelector({ form }: { form: NewProjectFormType }) {
 
   const curBuildingType: string = form.watch("buildingType");
   const curBuildingSubtypeList: string[] | undefined = buildingTypes.find((v) => v.type.startsWith(curBuildingType))?.subtypes;
@@ -116,7 +101,7 @@ function BuildingTypeSelector({ form }: { form: FormType }) {
   );
 }
 
-function ProjectDescription({ form }:{ form: FormType }) {
+function ProjectDescription({ form }:{ form: NewProjectFormType }) {
   return (
     <FormField
       control={form.control}
@@ -139,7 +124,7 @@ function ProjectDescription({ form }:{ form: FormType }) {
   )
 }
 
-function ProjectDocuments({ form }:{ form: FormType }) {
+function ProjectDocuments({ form }:{ form: NewProjectFormType }) {
   return (
     <FormField
       control={form.control}
@@ -158,8 +143,8 @@ function ProjectDocuments({ form }:{ form: FormType }) {
 }
 
 function NewProjectForm() {
-  const form = useForm<FormSchemaType>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<NewProjectFormSchemaType>({
+    resolver: zodResolver(NewProjectFormSchema),
   })
 
   return (
