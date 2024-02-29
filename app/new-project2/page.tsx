@@ -11,7 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { countries } from "content/countries";
 import { buildingTypes } from 'content/buildingTypes';
-import { submitProjectForm, submitProjectForm2, submitProjectForm3 } from '@/lib/actions';
+import { submitProjectForm2 } from '@/lib/actions';
 import { NewProjectFormSchema, NewProjectFormSchemaType, NewProjectFormType } from '@/lib/types';
 
 function CountrySelector({ form }: { form: NewProjectFormType }) {
@@ -149,7 +149,7 @@ function NewProjectForm() {
 
   return (
     <Form {...form}>
-      <form action={submitProjectForm3} className="w-2/3 space-y-6">
+      <form action={submitProjectForm2} className="w-2/3 space-y-6">
         <CountrySelector form={form}/>
         <BuildingTypeSelector form={form} />
         <ProjectDescription form={form} />

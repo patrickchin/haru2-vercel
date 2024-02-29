@@ -3,21 +3,10 @@
 import { createProject } from '@/lib/db';
 import { auth } from './auth';
 import { put } from '@vercel/blob';
-import { z } from "zod"
 import { NewProjectFormSchema } from './types';
+import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 
-export async function submitNewProject(info: string) {
-  const session = await auth();
-  if (!session?.user) {
-    console.log("Can't submit a post without being logged in.");
-    return null;
-  }
-  if (!session?.user?.id) {
-    console.log("Invalid user.");
-    return null;
-  }
-  return await createProject(Number(session.user.id), info);
-}
 
 export async function submitProjectForm(formData: FormData) {
   console.log(formData.get('files'));
@@ -35,43 +24,62 @@ export async function submitProjectForm(formData: FormData) {
     maintenance: formData.get('maintenance'),
     special: formData.get('special'),
   };
-  return submitNewProject(JSON.stringify(formDataFiltered));
-}
 
-export async function submitProjectForm2(info: string, files: any[]) {
-  console.log("files", files);
-  const projectId = submitNewProject(info);
-  if (!projectId) {
-    console.log("asdf");
+  const session = await auth();
+  if (!session?.user) {
+    console.log("Can't submit a post without being logged in.");
     return null;
   }
-
-  const { url } = await put('articles/blob.txt', 'Hello World!', {
-    access: 'public',
-  });
-  console.log("uploaded to ", url);
-
+  if (!session?.user?.id) {
+    console.log("Invalid user.");
+    return null;
+  }
+  return await createProject(Number(session.user.id), formDataFiltered);
 }
 
 
+export async function submitProjectForm2(formData: FormData) {
 
-export async function submitProjectForm3(formData: FormData) {
+  const session = await auth();
+  if (!session?.user) {
+    console.error("submitProjectForm Can't submit a post without being logged in.");
+    return null;
+  }
+  if (!session?.user?.id) {
+    console.error("submitProjectForm Invalid user.");
+    return null;
+  }
 
   const formObj = {
     ...Object.fromEntries(formData),
     files: formData.getAll('files')
   };
-
   const parsed = NewProjectFormSchema.safeParse(formObj);
-
   if (!parsed.success) {
-    console.log("error", parsed.error);
-  } else {
-    console.log("data", parsed.data);
+    console.error("submitProjectForm validation error", parsed.error);
+    return null;
   }
 
-  // const files = formData.getAll('files') as File[];
-  // console.log(files);
-  // const str = Buffer.from(await files.arrayBuffer()).toString('base64')
-  // console.log(str);
+  const { files, ...projectInfo } = { ...parsed.data }
+  const newProjectArr = await createProject(Number(session.user.id), projectInfo);
+  if (newProjectArr.length != 1) {
+    console.error("Failed to submit a new project post\n");
+    return null;
+  }
+
+  const newProjectId = newProjectArr[0].id;
+
+  if (files) {
+    for (const file of files) {
+      const filename = file.name; // TODO sanitize? as this is user input
+      const { url } = await put(`project/${newProjectId}/${filename}`,
+        await file.arrayBuffer(), { access: 'public', });
+      console.log("file uploaded", file, url);
+    }
+  }
+
+  console.log("redirecting to new project page");
+  revalidatePath("/new-project");
+  revalidatePath("/new-project2");
+  redirect(`/project/${newProjectId}`);
 }
