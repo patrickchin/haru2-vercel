@@ -1,21 +1,28 @@
 'use server';
 
-import { redirect } from 'next/navigation'
 import { createProject } from '@/lib/db';
 import { auth } from './auth';
+import { put } from '@vercel/blob';
 
-export async function submitProjectPost(formData: FormData) {
-
+export async function submitNewProject(info: string) {
   const session = await auth();
-  if (!session?.user)
+  if (!session?.user) {
     console.log("Can't submit a post without being logged in.");
+    return null;
+  }
+  if (!session?.user?.id) {
+    console.log("Invalid user.");
+    return null;
+  }
+  return await createProject(Number(session.user.id), info);
+}
 
-  const rawFormData = {
-
+export async function submitProjectForm(formData: FormData) {
+  console.log(formData.get('files'));
+  const formDataFiltered = {
     title: formData.get('title'),
     type: formData.get('type'),
     country: formData.get('country'),
-
     lifestyle: formData.get('lifestyle'),
     future: formData.get('future'),
     budget: formData.get('budget'),
@@ -26,10 +33,24 @@ export async function submitProjectPost(formData: FormData) {
     maintenance: formData.get('maintenance'),
     special: formData.get('special'),
   };
+  return submitNewProject(JSON.stringify(formDataFiltered));
+}
 
-  if (session?.user?.id) {
-    return await createProject(Number(session.user.id), rawFormData);
+export async function submitProjectForm2(info: string, files: any[]) {
+  console.log("files", files);
+  const projectId = submitNewProject(info);
+  if (!projectId) {
+    console.log("asdf");
+    return null;
   }
 
-  return null;
+  const { url } = await put('articles/blob.txt', 'Hello World!', {
+    access: 'public',
+  });
+  console.log("uploaded to ", url);
+
+}
+
+export async function submitProjectForm3(formData: FormData) {
+  console.log(formData);
 }

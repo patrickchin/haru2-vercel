@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { PhotoIcon, } from '@heroicons/react/24/solid';
-import { submitProjectPost } from '@/lib/actions';
+import { submitProjectForm } from '@/lib/actions';
 
 import { Label } from "@/components/ui/label"
 import { Separator } from '@/components/ui/separator';
@@ -79,8 +79,8 @@ function ExtraFiles() {
 function NewProjectForm() {
   
   async function submitForm(formData: FormData) {
-    // 'use server'
-    const newPost = await submitProjectPost(formData);
+    console.log(formData);
+    const newPost = await submitProjectForm(formData);
     if (newPost && newPost.length == 1) {
       redirect(`/project/${newPost[0].id}`);
     } else {
