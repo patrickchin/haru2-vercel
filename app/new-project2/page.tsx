@@ -112,7 +112,7 @@ function ProjectDescription({ form }:{ form: NewProjectFormType }) {
           <FormControl>
             <Textarea
               placeholder="Tell us a little bit about your project"
-              className="resize-none"
+              className="resize-y h-36"
               name={field.name}
               onChange={field.onChange}
             />
@@ -166,9 +166,7 @@ export default function Page() {
   return (
     <SimpleLayout>
       <section className="grow flex flex-col text-gray-600 bg-white shadow-xl p-16">
-        <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-6">
-          Create a New Project
-        </h2>
+        <h2>Create a New Project</h2>
         <NewProjectForm />
       </section>
     </SimpleLayout>

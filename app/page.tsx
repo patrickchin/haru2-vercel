@@ -16,7 +16,7 @@ function ChooseCountry({ setCountry } : { setCountry :  Dispatch<SetStateAction<
   const countries: string[] = ["Kenya", "Pakistan", "China"];
 
   return (<section className={sectionStyle}>
-    <h1 className="text-4xl">Where do you want to build?</h1>
+    <h1>Where do you want to build?</h1>
     <div className="grid grid-cols-3 gap-8 justify-center items-center">
       {countries.map((country) => (
         <button className={linkStyle} key={country.toLowerCase()} name={country.toLowerCase()} onClick={handleCountryButton}>{country}</button>
@@ -34,7 +34,7 @@ function ChooseStep({ country } : { country : string }) {
   ];
 
   return (<section className={sectionStyle}>
-    <h1 className="text-4xl">Choose a build step</h1>
+    <h1>Choose a build step</h1>
     <div className="grid grid-cols-3 gap-8 justify-center items-center">
       {steps.map((step) => (
         <Link

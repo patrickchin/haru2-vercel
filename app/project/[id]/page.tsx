@@ -83,9 +83,7 @@ function ProjectRequestStatus() {
 function ProjectDesignViews({ imageArray }:{ imageArray: StaticImageData[] }) {
   return (
     <div className='flex flex-col space-y-4'>
-      <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-        Design Views
-      </h4 >
+      <h4>Design Views</h4>
       <Carousel>
         <CarouselContent>
           {imageArray.map((image, index) => (
@@ -112,23 +110,23 @@ function ProjectDescription({ projectInfo }: { projectInfo: any }) {
   return (
     <>
       <div className='flex flex-col space-y-3'>
-        <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
+        <h2>
           {projectInfo.title || "Untitled"}
         </h2 >
 
         <div>
-          <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Location:</h4>
+          <h4>Location:</h4>
           <p>{projectInfo.country || "Unspecified location"}</p>
         </div>
 
         <div>
-          <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Building Type:</h4>
+          <h4>Building Type:</h4>
           <p>{projectInfo.type || "Unspecified construction type"}</p>
         </div>
 
         {questions.map((qa, i) => (
           <div key={i}>
-            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">{qa.title}</h4>
+            <h4>{qa.title}</h4>
             <p>{projectInfo[qa.name] || `nothing specified`}</p>
           </div>
         ))}

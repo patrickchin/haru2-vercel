@@ -18,7 +18,7 @@ export default function HouseTypeSelection() {
 
   return (
     <div>
-      <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+      <h4>
         What is the purpose of the building?
       </h4>
 
