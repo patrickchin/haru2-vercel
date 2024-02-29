@@ -6,23 +6,21 @@ import { useSession } from "next-auth/react"
 import { Button } from '@/components/ui/button';
 
 const navigation = [
-  { name: 'New Project', href: '/new-project', },
-  { name: 'New Project 2', href: '/new-project2', },
-  { name: 'Projects', href: '/projects', },
-  { name: 'About', href: '/about', },
+  { name: 'New Project', href: 'new-project', },
+  { name: 'New Project 2', href: 'new-project2', },
+  { name: 'Projects', href: 'projects', },
+  { name: 'About', href: 'about', },
   // { name: 'Calendar', href: '#', },
 ]
 
 export function MainNav() {
   const pathname = usePathname();
+  const firstPath = pathname.split('/', 2)[1]; // make sure length > 1 ?
   return (
     <div className="flex items-center mx-6">
       {navigation.map((item, i) => (
-        <Button key={i} asChild variant={pathname.startsWith(item.href) ? "outline" : "link"}>
-          <Link href={item.href} >
-            {/* className={cn(
-                  (pathname.startsWith(item.href) ? '' : 'text-muted-foreground'),
-                  "text-sm font-medium transition-colors hover:text-primary")} > */}
+        <Button key={i} asChild variant="link" className={(firstPath == item.href ? 'underline' : '')}>
+          <Link href={item.href}>
             {item.name}
           </Link>
         </Button>
