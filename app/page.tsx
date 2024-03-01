@@ -28,7 +28,7 @@ function ChooseCountry({ setCountry } : { setCountry :  Dispatch<SetStateAction<
 function ChooseStep({ country } : { country : string }) {
 
   const steps = [
-    { key: "build", text: "Building Design", href: "/new-project" },
+    { key: "build", text: "Building Design", href: "/new-project2" },
     { key: "procure", text: "Procurement", href: "/" },
     { key: "track", text: "Track Your Build", href: "/" },
   ];
