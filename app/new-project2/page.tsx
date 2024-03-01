@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -223,6 +224,7 @@ function DetailedQuestions({ form }:{ form: NewProjectFormType }) {
 }
 
 function NewProjectForm() {
+  const session = useSession();
   const form = useForm<NewProjectFormSchemaType>({
     resolver: zodResolver(NewProjectFormSchema),
   })
@@ -237,7 +239,10 @@ function NewProjectForm() {
         <ProjectDocuments form={form} />
         <DetailedQuestions form={form} />
         <div className="mt-6 flex items-center justify-end gap-x-3">
-          <Button type="submit" >Submit</Button>
+          {session.data?.user?
+            <Button type="submit" >Submit</Button> :
+            <Button disabled>Signin to Submit (TODO)</Button>
+          }
         </div>
       </form>
     </Form>
