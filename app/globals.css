@@ -89,6 +89,6 @@
     @apply text-xl font-semibold;
   }
   p {
-    @apply text-lg;
+    /* @apply text-lg; */
   }
 }

@@ -20,12 +20,11 @@ import {
 
 import { getProject } from '@/lib/db';
 import SimpleLayout from '@/components/layout';
-import Example1 from '@/app/assets/example-floor-plan.png';
-import Example2 from '@/app/assets/example-3d.png';
 import { questions } from 'content/questions';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { MoveRight, SquareUserRound, User } from 'lucide-react';
+import { getProjectFiles } from '@/lib/actions';
 
 function ProjectRequestStatus() {
   return (
@@ -80,17 +79,17 @@ function ProjectRequestStatus() {
   );
 }
 
-function ProjectDesignViews({ imageArray }:{ imageArray: StaticImageData[] }) {
+function ProjectDesignViews({ imageUrlArray }:{ imageUrlArray: string[] }) {
   return (
     <div className='flex flex-col space-y-4'>
       <h4>Design Views</h4>
       <Carousel>
         <CarouselContent>
-          {imageArray.map((image, index) => (
+          {imageUrlArray.map((url, index) => (
             <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
               <Card className='flex flex-col aspect-square items-center justify-center p-2 hover:bg-accent'>
                 <CardContent>
-                  <Image src={image} alt={''} height={300} width={300} />
+                  <Image src={url} alt={''} height={300} width={300} />
                 </CardContent>
                 <CardHeader className='p-3 pb-0'>
                   <CardDescription>Floor Plan</CardDescription>
@@ -145,14 +144,13 @@ async function ProjectPage({ projectId, }: { projectId: number }) {
   }
 
   const projectInfo: any = projectInfoArr[0].info;
-  // const imageArray = await getProjectImages(projectid);
-  const imageArray: StaticImageData[] = [Example1, Example2, Example1, Example2, Example1];
+  const imageUrlArray = await getProjectFiles(projectId, true);
 
   return (
     <>
-      <ProjectRequestStatus />
+      {/* <ProjectRequestStatus /> */}
 
-      <ProjectDesignViews imageArray={imageArray} />
+      <ProjectDesignViews imageUrlArray={imageUrlArray} />
 
       <ProjectDescription projectInfo={projectInfo} />
 
@@ -167,13 +165,7 @@ async function ProjectPage({ projectId, }: { projectId: number }) {
   );
 }
 
-export default async function Page({
-  params,
-  searchParams,
-}: {
-  params: { id: string }
-  searchParams: { [key: string]: string | string[] | undefined }
-}) {
+export default async function Page({ params, }:{ params: { id: string } }) {
 
   const projectid: number = parseInt(params.id);
   if (Number.isNaN(projectid)) {

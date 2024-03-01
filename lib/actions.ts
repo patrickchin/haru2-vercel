@@ -1,11 +1,10 @@
 'use server';
 
-import { createProject } from '@/lib/db';
+import { addFileUrlToProject, createProject, getFilesUrlsForProject, getImageUrlsForProject, getUserProject } from '@/lib/db';
 import { auth } from './auth';
 import { put } from '@vercel/blob';
 import { NewProjectFormSchema } from './types';
 import { redirect } from 'next/navigation';
-import { revalidatePath } from 'next/cache';
 
 
 export async function submitProjectForm(formData: FormData) {
@@ -41,14 +40,11 @@ export async function submitProjectForm(formData: FormData) {
 export async function submitProjectForm2(formData: FormData) {
 
   const session = await auth();
-  if (!session?.user) {
-    console.error("submitProjectForm Can't submit a post without being logged in.");
-    return null;
-  }
   if (!session?.user?.id) {
-    console.error("submitProjectForm Invalid user.");
+    console.log("Invalid session on project form submit");
     return null;
   }
+  const userId = Number(session.user.id); // error?
 
   const formObj = {
     ...Object.fromEntries(formData),
@@ -61,7 +57,7 @@ export async function submitProjectForm2(formData: FormData) {
   }
 
   const { files, ...projectInfo } = { ...parsed.data }
-  const newProjectArr = await createProject(Number(session.user.id), projectInfo);
+  const newProjectArr = await createProject(userId, projectInfo);
   if (newProjectArr.length != 1) {
     console.error("Failed to submit a new project post\n");
     return null;
@@ -75,11 +71,38 @@ export async function submitProjectForm2(formData: FormData) {
       const { url } = await put(`project/${newProjectId}/${filename}`,
         await file.arrayBuffer(), { access: 'public', });
       console.log("file uploaded", file, url);
+
+      // todo await outside the loop?
+      const newFileRow = await addFileUrlToProject(userId, newProjectId, url, file.type);
+      console.log(newFileRow.type);
     }
   }
 
-  console.log("redirecting to new project page");
-  revalidatePath("/new-project");
-  revalidatePath("/new-project2");
   redirect(`/project/${newProjectId}`);
+}
+
+export async function getProjectFiles(projectId: number, imagesOnly: boolean) {
+
+  const session = await auth();
+  if (!session?.user?.id) {
+    console.log("Invalid session on project form submit");
+    return null;
+  }
+  const userId = Number(session.user.id);
+
+  // this checks that user owns this project, kinda
+  const project = getUserProject(userId, projectId);
+  console.log(project);
+  if (!project) {
+    console.log("User project not found when getting project files");
+    return null;
+  }
+
+  // const fileUrls = await getFilesUrlsForProject(projectId, );
+  const imageUrlRows = await getImageUrlsForProject(projectId);
+  const urls = imageUrlRows.map(o => o.url);
+
+  console.log("project image files", urls);
+
+  return urls;
 }
