@@ -16,29 +16,5 @@ export const authConfig = {
 
       return session
     },
-    // async jwt({ token, user, account, profile, isNewUser }) {
-    //   // console.log( token, user, account, profile, isNewUser );
-    //   return token
-    // },
-
-    authorized({ auth, request: { nextUrl } }) {
-
-      const isLoggedIn = !!auth?.user;
-      const pathname: string = nextUrl.pathname;
-
-      const isPublic =
-        pathname === '/' ||
-        pathname === '/_not-found' ||
-        pathname === '/new-project' ||
-        pathname === '/login' ||
-        pathname === '/register' ||
-        pathname === '/about' ||
-        pathname.startsWith('/new-project') ||
-        // pathname.startsWith('/assets') ||
-        false;
-
-      return isPublic || isLoggedIn;
-    },
-
   },
 } satisfies NextAuthConfig;
