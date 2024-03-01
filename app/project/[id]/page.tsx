@@ -79,13 +79,13 @@ function ProjectRequestStatus() {
   );
 }
 
-function ProjectDesignViews({ imageUrlArray }:{ imageUrlArray: string[] }) {
+function ProjectDesignViews({ imageUrlArray }:{ imageUrlArray: (string | null)[] | null }) {
   return (
     <div className='flex flex-col space-y-4'>
       <h4>Design Views</h4>
       <Carousel>
         <CarouselContent>
-          {imageUrlArray.map((url, index) => (
+          {imageUrlArray && imageUrlArray.map((url, index) => url && (
             <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
               <Card className='flex flex-col aspect-square items-center justify-center p-2 hover:bg-accent'>
                 <CardContent>

@@ -74,7 +74,7 @@ export async function submitProjectForm2(formData: FormData) {
 
       // todo await outside the loop?
       const newFileRow = await addFileUrlToProject(userId, newProjectId, url, file.type);
-      console.log(newFileRow.type);
+      console.log(newFileRow.at(0)?.type);
     }
   }
 
