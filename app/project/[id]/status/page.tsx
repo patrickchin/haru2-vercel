@@ -8,6 +8,7 @@ import {
   CardDescription,
   CardFooter} from '@/components/ui/card';
 import SimpleLayout from '@/components/layout';
+import { Button } from '@/components/ui/button';
 
 function ProjectRequestStatus() {
   return (
@@ -65,14 +66,33 @@ function ProjectRequestStatus() {
 
 export default async function Page({ params, }:{ params: { id: string } }) {
 
-  const projectid: number = parseInt(params.id);
-  if (Number.isNaN(projectid)) {
+  const projectId: number = parseInt(params.id);
+  if (Number.isNaN(projectId)) {
     redirect('/project/not-found');
   }
 
   return (
     <SimpleLayout>
       <section className="grow flex flex-col text-gray-600 bg-white shadow-xl p-16 gap-12">
+
+        <div className="mt-6 flex items-center justify-end gap-x-3">
+          <Button asChild>
+            <Link href={`/project/${projectId}`}>
+              Project Description
+            </Link>
+          </Button>
+          <Button asChild disabled variant="ghost">
+            <Link href={`/project/${projectId}/status`}>
+              Project Acceptance Status
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link href={`/project/${projectId}/tasks`}>
+              Project Tasks
+            </Link>
+          </Button>
+        </div>
+
         <Suspense fallback={<p>Loading ...</p>}>
           <ProjectRequestStatus />
         </Suspense>

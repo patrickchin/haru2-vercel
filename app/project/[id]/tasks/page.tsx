@@ -37,6 +37,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import Link from "next/link";
 
 const data: Payment[] = [
   {
@@ -314,16 +315,37 @@ export function DataTableDemo() {
 }
 
 
-export default async function Page({ params, }:{ params: { id: string } }) {
+export default function Page({ params, }:{ params: { id: string } }) {
 
-  const projectid: number = parseInt(params.id);
-  if (Number.isNaN(projectid)) {
+  const projectId: number = parseInt(params.id);
+  if (Number.isNaN(projectId)) {
     redirect('/project/not-found');
   }
 
   return (
     <SimpleLayout>
       <section className="grow flex flex-col text-gray-600 bg-white shadow-xl p-16 gap-12">
+
+
+        <div className="mt-6 flex items-center justify-end gap-x-3">
+          <Button asChild>
+            <Link href={`/project/${projectId}`}>
+              Project Description
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link href={`/project/${projectId}/status`}>
+              Project Acceptance Status
+            </Link>
+          </Button>
+          <Button asChild disabled variant="ghost">
+            <Link href={`/project/${projectId}/tasks`}>
+              Project Tasks
+            </Link>
+          </Button>
+        </div>
+
+
         <React.Suspense fallback={<p>Loading ...</p>}>
           <DataTableDemo />
         </React.Suspense>

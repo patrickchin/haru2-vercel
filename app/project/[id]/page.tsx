@@ -154,17 +154,28 @@ async function ProjectPage({ projectId, }: { projectId: number }) {
 
   return (
     <>
-      <ProjectDesignViews imageUrlArray={imageUrlArray} />
-
-      <ProjectDescription projectInfo={projectInfo} />
 
       <div className="mt-6 flex items-center justify-end gap-x-3">
-        <Button asChild type="button">
+        <Button asChild disabled variant="ghost">
+          <Link href={`/project/${projectId}`}>
+            Project Description
+          </Link>
+        </Button>
+        <Button asChild>
           <Link href={`/project/${projectId}/status`}>
-            Hire a Design Team
+            Project Acceptance Status
+          </Link>
+        </Button>
+        <Button asChild>
+          <Link href={`/project/${projectId}/tasks`}>
+            Project Tasks
           </Link>
         </Button>
       </div>
+
+      <ProjectDesignViews imageUrlArray={imageUrlArray} />
+
+      <ProjectDescription projectInfo={projectInfo} />
     </>
   );
 }
