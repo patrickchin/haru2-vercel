@@ -154,15 +154,13 @@ async function ProjectPage({ projectId, }: { projectId: number }) {
 
   return (
     <>
-      <ProjectRequestStatus />
-
       <ProjectDesignViews imageUrlArray={imageUrlArray} />
 
       <ProjectDescription projectInfo={projectInfo} />
 
       <div className="mt-6 flex items-center justify-end gap-x-3">
         <Button asChild type="button">
-          <Link href="#">
+          <Link href={`/project/${projectId}/status`}>
             Hire a Design Team
           </Link>
         </Button>
