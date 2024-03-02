@@ -30,6 +30,7 @@ function ProjectRequestStatus() {
   return (
     <div className='flex flex-col'>
       <p>TODO only show this after they click hire a design team</p>
+      <p>TODO have some actual project status in the db</p>
       <div className='flex flex-row justify-between items-center'>
 
         <Card className='flex flex-col items-center'>
@@ -85,6 +86,8 @@ function ProjectDesignViews({ imageUrlArray }:{ imageUrlArray: (string | null)[]
       <h4>Design Views</h4>
       <Carousel>
         <CarouselContent>
+          {/* TODO click image to view or download */}
+          {/* TODO preview images other than image files */}
           {imageUrlArray && imageUrlArray.map((url, index) => url && (
             <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
               <Card className='flex flex-col aspect-square items-center justify-center p-2 hover:bg-accent'>
@@ -92,7 +95,9 @@ function ProjectDesignViews({ imageUrlArray }:{ imageUrlArray: (string | null)[]
                   <Image src={url} alt={''} height={300} width={300} />
                 </CardContent>
                 <CardHeader className='p-3 pb-0'>
-                  <CardDescription>Floor Plan</CardDescription>
+                  <CardDescription>
+                    Floor Plan
+                  </CardDescription>
                 </CardHeader>
               </Card>
             </CarouselItem>
@@ -106,6 +111,7 @@ function ProjectDesignViews({ imageUrlArray }:{ imageUrlArray: (string | null)[]
 }
 
 function ProjectDescription({ projectInfo }: { projectInfo: any }) {
+  // TDOO what exactly to show here, it is a bit sparse
   return (
     <>
       <div className='flex flex-col space-y-3'>
@@ -148,7 +154,7 @@ async function ProjectPage({ projectId, }: { projectId: number }) {
 
   return (
     <>
-      {/* <ProjectRequestStatus /> */}
+      <ProjectRequestStatus />
 
       <ProjectDesignViews imageUrlArray={imageUrlArray} />
 

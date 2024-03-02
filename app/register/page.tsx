@@ -13,14 +13,15 @@ export default function Page() {
     let password = formData.get('password') as string;
     let confirmPassword = formData.get('confirm-password') as string;
     
-    // TODO do this locally??
+    // TODO do confirm password checking locally with react-hook-forms
     if (confirmPassword !== password)
       return 'Passwords do not match';
 
     let user = await getUser(email);
 
     if (user.length > 0) {
-      return 'User already exists'; // TODO: Handle errors with useFormStatus
+      // TODO: Handle errors with useFormStatus
+      return 'User already exists';
     } else {
       await createUser(email, password);
       redirect('/login');

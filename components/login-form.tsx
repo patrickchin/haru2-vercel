@@ -9,6 +9,7 @@ export default function LoginForm({
   confirmPassword?: boolean;
   extraStyle?: string;
 }) {
+  // TODO use shadcn
   return (
     <form
       action={action}
@@ -51,7 +52,7 @@ export default function LoginForm({
           htmlFor="confirm password"
           className="block text-xs text-gray-600 uppercase"
         >
-          Confirm Password -- <span className="text-red-500">TODO check locally</span>
+          Confirm Password
         </label>
         <input
           id="confirm-password"

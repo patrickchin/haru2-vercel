@@ -225,6 +225,8 @@ function DetailedQuestions({ form }:{ form: NewProjectFormType }) {
 
 function NewProjectForm() {
   const session = useSession();
+
+  // TODO save form data to local storage so it's not lost on refresh
   const form = useForm<NewProjectFormSchemaType>({
     resolver: zodResolver(NewProjectFormSchema),
   })

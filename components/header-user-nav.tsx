@@ -41,6 +41,7 @@ function UserNav() {
   );
 }
 
+// TODO user profile avatar and settings dropdown instead of login
 function LoginSignup() {
   return (
     <div className='flex gap-x-3'>

@@ -52,6 +52,7 @@ function ChooseStep({ country } : { country : string }) {
 }
 
 export default function Page() {
+  // TODO go straight into the questionaire, can make questionairre more interactive
   const [country, setCountry] = useState(null);
   return (
     <SimpleLayout>

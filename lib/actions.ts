@@ -65,6 +65,7 @@ export async function submitProjectForm2(formData: FormData) {
 
   const newProjectId = newProjectArr[0].id;
 
+  // TODO client upload directly to server! 4.5 MB limit currently
   if (files) {
     for (const file of files) {
       const filename = file.name; // TODO sanitize? as this is user input
@@ -72,7 +73,7 @@ export async function submitProjectForm2(formData: FormData) {
         await file.arrayBuffer(), { access: 'public', });
       console.log("file uploaded", file, url);
 
-      // todo await outside the loop?
+      // TODO optimise - await outside the loop?
       const newFileRow = await addFileUrlToProject(userId, newProjectId, url, file.type);
       console.log(newFileRow.at(0)?.type);
     }
