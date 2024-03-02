@@ -79,7 +79,6 @@ function ExtraFiles() {
 function NewProjectForm() {
   
   async function submitForm(formData: FormData) {
-    console.log(formData);
     const newPost = await submitProjectForm(formData);
     if (newPost && newPost.length == 1) {
       redirect(`/project/${newPost[0].id}`);

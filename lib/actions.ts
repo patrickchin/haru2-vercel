@@ -8,7 +8,6 @@ import { redirect } from 'next/navigation';
 
 
 export async function submitProjectForm(formData: FormData) {
-  console.log(formData.get('files'));
   const formDataFiltered = {
     title: formData.get('title'),
     type: formData.get('type'),
@@ -71,7 +70,7 @@ export async function submitProjectForm2(formData: FormData) {
       const filename = file.name; // TODO sanitize? as this is user input
       const { url } = await put(`project/${newProjectId}/${filename}`,
         await file.arrayBuffer(), { access: 'public', });
-      console.log("file uploaded", file, url);
+      console.log("file uploaded", file.name, url);
 
       // TODO optimise - await outside the loop?
       const newFileRow = await addFileUrlToProject(userId, newProjectId, url, file.type);
@@ -93,7 +92,6 @@ export async function getProjectFiles(projectId: number, imagesOnly: boolean) {
 
   // this checks that user owns this project, kinda
   const project = getUserProject(userId, projectId);
-  console.log(project);
   if (!project) {
     console.log("User project not found when getting project files");
     return null;
