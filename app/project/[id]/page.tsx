@@ -26,60 +26,6 @@ import Link from 'next/link';
 import { MoveRight, SquareUserRound, User } from 'lucide-react';
 import { getProjectFiles } from '@/lib/actions';
 
-function ProjectRequestStatus() {
-  return (
-    <div className='flex flex-col'>
-      <p>TODO only show this after they click hire a design team</p>
-      <p>TODO have some actual project status in the db</p>
-      <div className='flex flex-row justify-between items-center'>
-
-        <Card className='flex flex-col items-center'>
-          <CardContent>
-            <User className="h-32 w-32 pt-4" />
-          </CardContent>
-          <CardFooter>
-            <CardDescription>Client</CardDescription>
-          </CardFooter>
-        </Card>
-
-        <div className='flex flex-row grow-0'>
-          <MoveRight className='h-20 w-20' />
-        </div>
-        <div className='flex flex-row space-x-2'>
-          <Link href='/portfolio'>
-            <Card className='flex flex-col items-center hover:bg-accent'>
-              <CardContent>
-                <SquareUserRound className="h-32 w-32 pt-4" />
-              </CardContent>
-              <CardFooter className='flex-col'>
-                <h4>Designer 1</h4>
-                <p>Pending</p>
-              </CardFooter>
-            </Card>
-          </Link>
-
-          <Link href='/portfolio'>
-            <Card className='flex flex-col items-center hover:bg-accent'>
-              <CardContent>
-                <SquareUserRound className="h-32 w-32 pt-4" />
-              </CardContent>
-              <CardFooter className='flex-col'>
-                <h4>Designer 2</h4>
-                <p>Pending</p>
-              </CardFooter>
-            </Card>
-          </Link>
-        </div>
-      </div>
-
-      <div>
-        <p>schedule an interview</p>
-        <p>task management button</p>
-      </div>
-    </div>
-  );
-}
-
 function ProjectDesignViews({ imageUrlArray }:{ imageUrlArray: (string | null)[] | null }) {
   return (
     <div className='flex flex-col space-y-4'>
@@ -87,6 +33,7 @@ function ProjectDesignViews({ imageUrlArray }:{ imageUrlArray: (string | null)[]
       <Carousel>
         <CarouselContent>
           {/* TODO click image to view or download */}
+          {/* TODO name and description for each file */}
           {/* TODO preview images other than image files */}
           {imageUrlArray && imageUrlArray.map((url, index) => url && (
             <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
