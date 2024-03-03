@@ -1,145 +1,49 @@
 import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
-import Image, { StaticImageData } from "next/image"
-
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
-
-import { getProject } from '@/lib/db';
 import SimpleLayout from '@/components/layout';
-import { questions } from 'content/questions';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { MoveRight, SquareUserRound, User } from 'lucide-react';
-import { getProjectFiles } from '@/lib/actions';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ProjectDescription from './project-description';
+import ProjectAcceptance from './project-acceptance';
+import ProjectProgress from './project-progress';
 
-function ProjectDesignViews({ imageUrlArray }:{ imageUrlArray: (string | null)[] | null }) {
-  return (
-    <div className='flex flex-col space-y-4'>
-      <h4>Design Views</h4>
-      <Carousel>
-        <CarouselContent>
-          {/* TODO click image to view or download */}
-          {/* TODO name and description for each file */}
-          {/* TODO preview images other than image files */}
-          {imageUrlArray && imageUrlArray.map((url, index) => url && (
-            <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-              <Card className='flex flex-col aspect-square items-center justify-center p-2 hover:bg-accent'>
-                <CardContent>
-                  <Image src={url} alt={''} height={300} width={300} />
-                </CardContent>
-                <CardHeader className='p-3 pb-0'>
-                  <CardDescription>
-                    Floor Plan
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
-    </div>
-  );
-}
-
-function ProjectDescription({ projectInfo }: { projectInfo: any }) {
-  // TDOO what exactly to show here, it is a bit sparse
-  return (
-    <>
-      <div className='flex flex-col space-y-3'>
-        <h2>
-          {projectInfo.title || "Untitled"}
-        </h2 >
-
-        <div>
-          <h4>Location:</h4>
-          <p>{projectInfo.country || "Unspecified location"}</p>
-        </div>
-
-        <div>
-          <h4>Building Type:</h4>
-          <p>{projectInfo.type || "Unspecified construction type"}</p>
-        </div>
-
-        {questions.map((qa, i) => (
-          <div key={i}>
-            <h4>{qa.title}</h4>
-            <p>{projectInfo[qa.name] || `nothing specified`}</p>
-          </div>
-        ))}
-      </div>
-    </>
-  )
-}
-
-async function ProjectPage({ projectId, }: { projectId: number }) {
-
-  const projectInfoArr = await getProject(projectId);
-  if (projectInfoArr.length != 1) {
-    if (projectInfoArr.length > 1)
-      console.log(`Found ${projectInfoArr.length} projects with id ${projectId}`);
-    redirect('/project/not-found');
-  }
-
-  const projectInfo: any = projectInfoArr[0].info;
-  const imageUrlArray = await getProjectFiles(projectId, true);
-
-  return (
-    <>
-
-      <div className="mt-6 flex items-center justify-end gap-x-3">
-        <Button asChild disabled variant="ghost">
-          <Link href={`/project/${projectId}`}>
-            Project Description
-          </Link>
-        </Button>
-        <Button asChild>
-          <Link href={`/project/${projectId}/status`}>
-            Project Acceptance Status
-          </Link>
-        </Button>
-        <Button asChild>
-          <Link href={`/project/${projectId}/tasks`}>
-            Project Tasks
-          </Link>
-        </Button>
-      </div>
-
-      <ProjectDesignViews imageUrlArray={imageUrlArray} />
-
-      <ProjectDescription projectInfo={projectInfo} />
-    </>
-  );
-}
 
 export default async function Page({ params, }:{ params: { id: string } }) {
 
-  const projectid: number = parseInt(params.id);
-  if (Number.isNaN(projectid)) {
+  const projectId: number = parseInt(params.id);
+  if (Number.isNaN(projectId)) {
     redirect('/project/not-found');
   }
 
   return (
     <SimpleLayout>
       <section className="grow flex flex-col text-gray-600 bg-white shadow-xl p-16 gap-12">
-        <Suspense fallback={<p>Loading ...</p>}>
-          <ProjectPage projectId={projectid}/>
-        </Suspense>
+
+        <h1>Project Page</h1>
+
+        <Tabs defaultValue="description" className="w-full space-y-8">
+          <TabsList>
+            <TabsTrigger value="description">Description</TabsTrigger>
+            <TabsTrigger value="acceptance">Acceptance Status</TabsTrigger>
+            <TabsTrigger value="progress">Progress</TabsTrigger>
+          </TabsList>
+          <TabsContent value="description">
+            <Suspense fallback={<p>Loading ...</p>}>
+              <ProjectDescription projectId={projectId} />
+            </Suspense>
+          </TabsContent>
+          <TabsContent value="acceptance">
+            <Suspense fallback={<p>Loading ...</p>}>
+              <ProjectAcceptance projectId={projectId} />
+            </Suspense>
+          </TabsContent>
+          <TabsContent value="progress">
+            <Suspense fallback={<p>Loading ...</p>}>
+              <ProjectProgress projectId={projectId} />
+            </Suspense>
+          </TabsContent>
+        </Tabs>
+
+
       </section>
     </SimpleLayout>
   )

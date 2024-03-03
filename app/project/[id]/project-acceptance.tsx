@@ -1,19 +1,59 @@
-import { Suspense } from 'react';
+"use client"
+
+import { cn } from "@/lib/utils"
+import * as React from "react"
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { format } from "date-fns"
 import { MoveRight, SquareUserRound, User } from 'lucide-react';
+import { Calendar as CalendarIcon } from "lucide-react"
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter} from '@/components/ui/card';
+  CardFooter
+} from '@/components/ui/card';
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import SimpleLayout from '@/components/layout';
-import { Button } from '@/components/ui/button';
 
-function ProjectRequestStatus() {
+export function DatePickerDemo() {
+  const [date, setDate] = React.useState<Date>()
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant={"outline"}
+          className={cn(
+            "w-[280px] justify-start text-left font-normal",
+            !date && "text-muted-foreground"
+          )}
+        >
+          <CalendarIcon className="mr-2 h-4 w-4" />
+          {date ? format(date, "PPP") : <span>Pick a date</span>}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0">
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={setDate}
+          initialFocus
+        />
+      </PopoverContent>
+    </Popover>
+  )
+}
+
+export default function ProjectAcceptance({ projectId, }: { projectId: number }) {
   return (
     <div className='flex flex-col'>
-      <p>TODO only show this after they click hire a design team</p>
       <p>TODO have some actual project status in the db</p>
       <div className='flex flex-row justify-between items-center'>
 
@@ -57,46 +97,13 @@ function ProjectRequestStatus() {
       </div>
 
       <div>
-        <p>schedule an interview</p>
+        <p>Schedule an interview</p>
+        <DatePickerDemo />
+      </div>
+
+      <div>
         <p>task management button</p>
       </div>
     </div>
   );
-}
-
-export default async function Page({ params, }:{ params: { id: string } }) {
-
-  const projectId: number = parseInt(params.id);
-  if (Number.isNaN(projectId)) {
-    redirect('/project/not-found');
-  }
-
-  return (
-    <SimpleLayout>
-      <section className="grow flex flex-col text-gray-600 bg-white shadow-xl p-16 gap-12">
-
-        <div className="mt-6 flex items-center justify-end gap-x-3">
-          <Button asChild>
-            <Link href={`/project/${projectId}`}>
-              Project Description
-            </Link>
-          </Button>
-          <Button asChild disabled variant="ghost">
-            <Link href={`/project/${projectId}/status`}>
-              Project Acceptance Status
-            </Link>
-          </Button>
-          <Button asChild>
-            <Link href={`/project/${projectId}/tasks`}>
-              Project Tasks
-            </Link>
-          </Button>
-        </div>
-
-        <Suspense fallback={<p>Loading ...</p>}>
-          <ProjectRequestStatus />
-        </Suspense>
-      </section>
-    </SimpleLayout>
-  )
 }
