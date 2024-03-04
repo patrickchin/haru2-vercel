@@ -1,14 +1,4 @@
-
-
-
-
-type QuestionNames = "lifestyle" | "future" | "energy" | "outdoors" | "security" | "maintenance" | "special";
-
-export const questions: {
-    name: QuestionNames;
-    title: string;
-    hints: string[];
-}[] = [
+export const questions = [
     {
         name: "lifestyle", title: "Lifestyle", hints: [
             "How many people will be living in the house?",
@@ -50,4 +40,4 @@ export const questions: {
             "Do you have any specific needs such as accessibility features or special accommodations?",
         ]
     },
-];
+] as const;

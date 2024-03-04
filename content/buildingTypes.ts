@@ -1,6 +1,5 @@
 
-export const buildingTypes: { type: string, subtypes: string[] }[] = [
-
+export const buildingTypes = [
   {
     type: "Residential",
     subtypes: [
@@ -65,4 +64,4 @@ export const buildingTypes: { type: string, subtypes: string[] }[] = [
     ]
   },
 
-]
+] as const;

@@ -15,12 +15,12 @@ function ProjectDesignViews({ imageUrlArray }: { imageUrlArray: (string | null)[
         <CarouselContent>
           {/* TODO click image to view or download */}
           {/* TODO name and description for each file */}
-          {/* TODO preview images other than image files */}
-          {imageUrlArray && imageUrlArray.map((url, index) => url && (
+          {/* TODO preview files other than image files */}
+          {imageUrlArray?.map((url, index) => 
             <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
               <Card className='flex flex-col items-center justify-center p-2 opacity-65 hover:opacity-100'>
                 <CardContent>
-                  <Image src={url} alt={''} height={180} width={180} />
+                  <Image src={url || ''} alt={''} height={180} width={180} />
                 </CardContent>
                 <CardHeader className='p-3 pb-0'>
                   <CardDescription>
@@ -29,7 +29,7 @@ function ProjectDesignViews({ imageUrlArray }: { imageUrlArray: (string | null)[
                 </CardHeader>
               </Card>
             </CarouselItem>
-          ))}
+          )}
         </CarouselContent>
         <CarouselPrevious />
         <CarouselNext />

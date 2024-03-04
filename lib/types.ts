@@ -3,7 +3,7 @@ import { z } from "zod"
 
 function allFilesSmall(list: FileList | undefined) {
   if (list === undefined) return true;
-  return Array.from(list).every((f: any) => f.size < 4_500_000);
+  return Array.from(list).every((f: File) => f.size < 4_500_000);
 }
 
 export const NewProjectFormSchema = z.object({
@@ -12,7 +12,7 @@ export const NewProjectFormSchema = z.object({
   buildingType: z.string(), // enum?
   buildingSubtype: z.string().optional(), // enum?
   description: z.string().min(2),
-  files: z.any().transform((f) => f as FileList).optional().refine(allFilesSmall),
+  files: z.any().transform(f => f as FileList).optional().refine(allFilesSmall),
 
   lifestyle: z.string().optional(),
   future: z.string().optional(),

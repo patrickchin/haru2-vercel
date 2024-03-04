@@ -86,7 +86,7 @@ export async function getProjectFiles(projectId: number, imagesOnly: boolean) {
   const session = await auth();
   if (!session?.user?.id) {
     console.log("Invalid session on project form submit");
-    return null;
+    return [];
   }
   const userId = Number(session.user.id);
 
@@ -94,14 +94,12 @@ export async function getProjectFiles(projectId: number, imagesOnly: boolean) {
   const project = getUserProject(userId, projectId);
   if (!project) {
     console.log("User project not found when getting project files");
-    return null;
+    return [];
   }
 
   // const fileUrls = await getFilesUrlsForProject(projectId, );
   const imageUrlRows = await getImageUrlsForProject(projectId);
-  const urls = imageUrlRows.map(o => o.url);
-
+  const urls: string[] = imageUrlRows.map(o => o?.url as string);
   console.log("project image files", urls);
-
   return urls;
 }
