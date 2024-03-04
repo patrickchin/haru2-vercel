@@ -73,7 +73,7 @@ export async function submitProjectForm2(formData: FormData) {
       console.log("file uploaded", file.name, url);
 
       // TODO optimise - await outside the loop?
-      const newFileRow = await addFileUrlToProject(userId, newProjectId, url, file.type);
+      const newFileRow = await addFileUrlToProject(userId, newProjectId, filename, url, file.type);
       console.log(newFileRow.at(0)?.type);
     }
   }
@@ -99,7 +99,9 @@ export async function getProjectFiles(projectId: number, imagesOnly: boolean) {
 
   // const fileUrls = await getFilesUrlsForProject(projectId, );
   const imageUrlRows = await getImageUrlsForProject(projectId);
-  const urls: string[] = imageUrlRows.map(o => o?.url as string);
-  console.log("project image files", urls);
-  return urls;
+  const images = imageUrlRows.map(o => {
+    return { url: o.url, filename: o.filename };
+  });
+  console.log("project image files", images);
+  return images;
 }

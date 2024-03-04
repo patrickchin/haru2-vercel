@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 import Image from "next/image";
 import { Suspense } from "react";
 
-function ProjectDesignViews({ imageUrlArray }: { imageUrlArray: (string | null)[] | null }) {
+function ProjectDesignViews({ imageUrlArray }: { imageUrlArray: any[] }) {
   return (
     <div className='flex flex-col space-y-4 bg-accent rounded-lg px-6 py-4'>
       <h4>Design Views</h4>
@@ -16,15 +16,15 @@ function ProjectDesignViews({ imageUrlArray }: { imageUrlArray: (string | null)[
           {/* TODO click image to view or download */}
           {/* TODO name and description for each file */}
           {/* TODO preview files other than image files */}
-          {imageUrlArray?.map((url, index) => 
+          {imageUrlArray?.map((image, index) => 
             <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
               <Card className='flex flex-col items-center justify-center p-2'>
                 <CardContent>
-                  <Image src={url || ''} alt={''} height={180} width={180} className="opacity-80 saturate-[.75]"/>
+                  <Image src={image.url || ''} alt={''} height={180} width={180} className="opacity-80 saturate-[.75]"/>
                 </CardContent>
-                <CardHeader className='p-3 pb-0'>
+                <CardHeader className='p-3 pb-0 overflow-hidden'>
                   <CardDescription>
-                    Floor Plan
+                    {image.filename}
                   </CardDescription>
                 </CardHeader>
               </Card>

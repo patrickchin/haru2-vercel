@@ -56,10 +56,11 @@ export async function createProject(userId1: number, info1: any) {
   return await db.insert(Schemas.projects1).values({ userid: userId1, info: info1 }).returning();
 }
 
-export async function addFileUrlToProject(userId: number, projectId: number, fileUrl: string, fileType: string) {
+export async function addFileUrlToProject(userId: number, projectId: number, filename: string, fileUrl: string, fileType: string) {
   return await db.insert(Schemas.files1).values({
     uploaderid: userId,
     projectid: projectId,
+    filename: filename,
     url: fileUrl,
     type: fileType
   }).returning();
