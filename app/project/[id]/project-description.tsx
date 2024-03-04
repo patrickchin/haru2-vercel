@@ -61,12 +61,6 @@ export default async function ProjectDescription({ projectId, }: { projectId: nu
         </h2 >
 
         <div>
-          <pre className="overflow-hidden">
-            {JSON.stringify(projectInfo, null, 2)}
-          </pre>
-        </div>
-
-        <div>
           <h4>Location:</h4>
           <p>{projectInfo.country || "Unspecified location"}</p>
         </div>
@@ -82,6 +76,14 @@ export default async function ProjectDescription({ projectId, }: { projectId: nu
             <p>{projectInfo[qa.name] || `nothing specified`}</p>
           </div>
         ))}
+      
+        <div>
+          <pre className="overflow-hidden">
+            {JSON.stringify(projectInfo, null, 2)}
+          </pre>
+        </div>
+
+
       </div>
     </div>
   );
