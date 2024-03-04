@@ -4,7 +4,7 @@
 const nextConfig = {
   images: {
     remotePatterns: [{
-      hostname: process.env.VERCEL_BLOB_STORE_HOSTNAME || "",
+      hostname: process.env.BLOB_STORE_HOSTNAME || "",
     }],
   }
 
