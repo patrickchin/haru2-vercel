@@ -248,7 +248,7 @@ function NewProjectForm() {
         <div className="mt-6 flex items-center justify-end gap-x-3">
           {session.data?.user?
             <Button type="submit" >Submit</Button> :
-            <Button disabled>Signin to Submit (TODO)</Button>
+            <Button disabled className='cursor-not-allowed'>Signin to Submit (TODO)</Button>
           }
         </div>
       </form>

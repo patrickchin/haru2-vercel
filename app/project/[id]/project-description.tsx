@@ -18,9 +18,9 @@ function ProjectDesignViews({ imageUrlArray }: { imageUrlArray: (string | null)[
           {/* TODO preview files other than image files */}
           {imageUrlArray?.map((url, index) => 
             <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-              <Card className='flex flex-col items-center justify-center p-2 opacity-65 hover:opacity-100'>
+              <Card className='flex flex-col items-center justify-center p-2'>
                 <CardContent>
-                  <Image src={url || ''} alt={''} height={180} width={180} />
+                  <Image src={url || ''} alt={''} height={180} width={180} className="opacity-80 saturate-[.75]"/>
                 </CardContent>
                 <CardHeader className='p-3 pb-0'>
                   <CardDescription>
