@@ -36,7 +36,7 @@
     "clsx": "^2.1.0",
     "cmdk": "^0.2.1",
     "date-fns": "^3.3.1",
-    "drizzle-orm": "^0.29.2",
+    "dotenv": "^16.4.5",
     "embla-carousel-react": "8.0.0-rc23",
     "geist": "^1.2.0",
     "lucide-react": "^0.331.0",
@@ -55,6 +55,8 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.16",
+    "drizzle-kit": "^0.20.14",
+    "drizzle-orm": "^0.29.2",
     "eslint": "8.56.0",
     "eslint-config-next": "^14.0.4",
     "postcss": "^8.4.32",
