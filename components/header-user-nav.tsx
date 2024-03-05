@@ -8,8 +8,6 @@ import { Button } from '@/components/ui/button';
 const navigation = [
   { name: 'New Project', href: '/new-project', },
   { name: 'Projects', href: '/projects', },
-  { name: 'About', href: '/about', },
-  // { name: 'Calendar', href: '#', },
 ]
 
 export function MainNav() {
