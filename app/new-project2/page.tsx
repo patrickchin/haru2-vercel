@@ -66,7 +66,7 @@ function CountrySelector({ form }: { form: NewProjectFormType }) {
 function BuildingTypeSelector({ form }: { form: NewProjectFormType }) {
 
   const curBuildingType: string = form.watch("buildingType");
-  const curBuildingSubtypeList = buildingTypes.find(v => v.type.startsWith(curBuildingType))?.subtypes;
+  const curBuildingSubtypeList: string[] | null = buildingTypes[curBuildingType]?.subtypes;
 
   return (
     <div className="flex flex-row space-x-4">
@@ -83,8 +83,8 @@ function BuildingTypeSelector({ form }: { form: NewProjectFormType }) {
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                {buildingTypes.map((t, i) => (
-                  <SelectItem key={i} value={t.type}>{t.type}</SelectItem>
+                {Object.values(buildingTypes).map((v, i) => (
+                  <SelectItem key={i} value={v.type}>{v.type}</SelectItem>
                 ))}
               </SelectContent>
             </Select>

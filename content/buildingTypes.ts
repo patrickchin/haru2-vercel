@@ -1,6 +1,11 @@
+export const buildingTypes: {
+  [key: string]: {
+    type: string,
+    subtypes: string[],
+  }
+} = {
 
-export const buildingTypes = [
-  {
+  ["residential"]: {
     type: "Residential",
     subtypes: [
       "Single Family Home",
@@ -17,7 +22,7 @@ export const buildingTypes = [
     ]
   },
 
-  {
+  ["commercial"]: {
     type: "Commercial",
     subtypes: [
       "Office Building",
@@ -34,7 +39,7 @@ export const buildingTypes = [
     ]
   },
 
-  {
+  ["entertainment"]: {
     type: "Entertainment",
     subtypes: [
       "Theater",
@@ -51,7 +56,7 @@ export const buildingTypes = [
     ]
   },
 
-  {
+  ["industrial"]: {
     type: "Industrial",
     subtypes: [
       "Factory",
@@ -64,4 +69,4 @@ export const buildingTypes = [
     ]
   },
 
-] as const;
+} as const;

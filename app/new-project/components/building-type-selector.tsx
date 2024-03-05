@@ -23,11 +23,11 @@ export default function HouseTypeSelection() {
       </h4>
 
       <RadioGroup name="type" defaultValue="single-family-home" className="grid gap-4 grid-cols-4 grid-rows-1">
-        {buildingTypes.map((t, i) => (
+        {Object.values(buildingTypes).map((v, i) => (
           <div key={i}>
-            <h4 className="py-4">{t.type}</h4>
+            <h4 className="py-4">{v.type}</h4>
             <div>
-              {t.subtypes.map((n, j) => <RadioOption key={j} id={i*100+j} name={n} />)}
+              {v.subtypes.map((n, j) => <RadioOption key={j} id={i*100+j} name={n} />)}
             </div>
           </div>
         ))}
