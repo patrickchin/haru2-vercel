@@ -7,6 +7,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth/core": "^0.28.0",
+    "@auth/drizzle-adapter": "^0.8.0",
     "@auth/pg-adapter": "^0.6.0",
     "@headlessui/react": "^1.7.18",
     "@heroicons/react": "^2.1.1",

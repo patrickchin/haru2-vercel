@@ -11,8 +11,8 @@ import * as Schemas from 'drizzle/schema';
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
 // https://authjs.dev/reference/adapter/drizzle
-let client = postgres(`${process.env.POSTGRES_URL!}?sslmode=require`);
-let db = drizzle(client);
+const client = postgres(`${process.env.POSTGRES_URL!}?sslmode=require`);
+export const db = drizzle(client);
 
 export async function getUser(email: string) {
   return await db.select().from(Schemas.users1).where(eq(Schemas.users1.email, email));
