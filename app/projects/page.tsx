@@ -65,12 +65,11 @@ async function ProjectList() {
 export default async function Page() {
   return (
     <SimpleLayout>
-      <section className="grow flex flex-col text-gray-600 bg-white shadow-xl p-16 gap-12">
-        <h2>My Projects</h2>
+      <section className="grow flex flex-col gap-12">
+        <h3>My Projects</h3>
         <Suspense fallback={<p>Loading ...</p>}>
           <ProjectList />
         </Suspense>
-        
       </section>
     </SimpleLayout>
   )

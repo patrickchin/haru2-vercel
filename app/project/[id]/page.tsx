@@ -16,9 +16,8 @@ export default async function Page({ params, }:{ params: { id: string } }) {
 
   return (
     <SimpleLayout>
-      <section className="grow flex flex-col text-gray-600 bg-white shadow-xl p-16 gap-12">
-
-        <h1>Project Page</h1>
+      <section className="grow flex flex-col gap-12">
+        <h3>Project Page</h3>
 
         <Tabs defaultValue="description" className="w-full space-y-8">
           <TabsList>
@@ -42,7 +41,6 @@ export default async function Page({ params, }:{ params: { id: string } }) {
             </Suspense>
           </TabsContent>
         </Tabs>
-
 
       </section>
     </SimpleLayout>

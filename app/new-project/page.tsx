@@ -83,8 +83,8 @@ function BuildingTypeSelector({ form }: { form: NewProjectFormType }) {
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                {Object.values(buildingTypes).map((v, i) => (
-                  <SelectItem key={i} value={v.type}>{v.type}</SelectItem>
+                {Object.entries(buildingTypes).map(([k, v], i) => (
+                  <SelectItem key={i} value={k}>{v.type}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -259,9 +259,11 @@ function NewProjectForm() {
 export default function Page() {
   return (
     <SimpleLayout>
-      <section className="grow flex flex-col p-16 max-w-3xl">
-        <h3 className='pb-10'>Create a New Project</h3>
-        <NewProjectForm />
+      <section className="grow flex flex-col gap-12">
+        <h3>Create a New Project</h3>
+        <div className="max-w-2xl">
+          <NewProjectForm />
+        </div>
       </section>
     </SimpleLayout>
   )
