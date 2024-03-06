@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('check can log in', async ({ page }) => {
-  await page.goto('http://localhost:3000/');
+  await page.goto('/');
   await expect(page.locator('body')).toContainText('Login');
   await expect(page.locator('body')).toContainText('Sign Up');
   await page.getByRole('link', { name: 'Login' }).click();
@@ -23,13 +23,13 @@ test('check can log in', async ({ page }) => {
 });
 
 test.fixme('check incorrect credentials', async ({ page }) => {
-  await page.goto('http://localhost:3000/');
+  await page.goto('/');
   await page.getByRole('link', { name: 'Login' }).click();
   await page.getByPlaceholder('user@acme.com').click();
   await page.getByPlaceholder('user@acme.com').fill('notauser@notawebsite.fake');
   await page.getByPlaceholder('user@acme.com').press('Tab');
   await page.getByLabel('Password').fill('notapassword');
   await page.getByLabel('Password').press('Enter');
-  await expect(page).toHaveURL('http://localhost:3000/login');
+  await expect(page).toHaveURL('/login');
   await expect(page.getByText('Use your email and password').isVisible())
 });
