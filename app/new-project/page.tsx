@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { FieldValues, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Loader2 } from 'lucide-react';
 import { CenteredLayout } from '@/components/layout';
 import { Button } from "@/components/ui/button"
 import { Input } from '@/components/ui/input';
@@ -231,25 +231,31 @@ function NewProjectForm() {
     }
   })
 
-  function handleSubmitProjectForm(data: FieldValues, event?: React.BaseSyntheticEvent) {
+  async function handleSubmitProjectForm(data: FieldValues, event?: React.BaseSyntheticEvent) {
     const fdata = new FormData(event?.target);
-    submitProjectForm2(fdata);
+    const submitSuccess = await submitProjectForm2(fdata);
+    if (submitSuccess === null) {
+      return Promise.reject("Error submitting project, server returned null");
+    }
   }
+
+  // if submit is successful we should redirect to the project page
+  const isWaitingRedirect = form.formState.isSubmitting || (form.formState.isSubmitted && form.formState.isSubmitSuccessful);
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmitProjectForm)} className="space-y-6" >
         <ProjectTitle form={form} />
-        <CountrySelector form={form}/>
+        <CountrySelector form={form} />
         <BuildingTypeSelector form={form} />
         <ProjectDescription form={form} />
         <ProjectDocuments form={form} />
         <DetailedQuestions form={form} />
         <div className="mt-6 flex items-center justify-end gap-x-3">
-          {session.data?.user?
-            <Button type="submit" >Submit</Button> :
-            <Button disabled className='cursor-not-allowed'>Signin to Submit (TODO)</Button>
-          }
+          <Button type="submit" disabled={isWaitingRedirect} className='flex flex-row gap-3'>
+            {session.data?.user ? "Submit" : "Signin to Submit"}
+            <Loader2 className={cn('animate-spin h-4', isWaitingRedirect ? '' : 'hidden')}/>
+          </Button>
         </div>
       </form>
     </Form>
