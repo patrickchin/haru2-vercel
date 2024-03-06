@@ -10,6 +10,7 @@ env:
   BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
   AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
   NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+  TESTENVVAR: "Hello World"
 jobs:
   test:
     timeout-minutes: 60
@@ -22,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: npm install -g pnpm && pnpm install
     - name: Build app
-      run: pnpm run build
+      run: env && pnpm run build
     - name: Install Playwright Browsers
       run: pnpm exec playwright install --with-deps
     - name: Run Playwright tests
