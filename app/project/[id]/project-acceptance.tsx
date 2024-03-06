@@ -20,7 +20,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import SimpleLayout from '@/components/layout';
+import { CenteredLayout } from '@/components/layout';
 
 export function DatePickerDemo() {
   const [date, setDate] = React.useState<Date>()

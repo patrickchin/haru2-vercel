@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { FieldValues, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ChevronDown } from 'lucide-react';
-import SimpleLayout from '@/components/layout';
+import { CenteredLayout } from '@/components/layout';
 import { Button } from "@/components/ui/button"
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -258,13 +258,13 @@ function NewProjectForm() {
 
 export default function Page() {
   return (
-    <SimpleLayout>
+    <CenteredLayout>
       <section className="grow flex flex-col gap-12">
         <h3>Create a New Project</h3>
         <div className="max-w-2xl">
           <NewProjectForm />
         </div>
       </section>
-    </SimpleLayout>
+    </CenteredLayout>
   )
 }

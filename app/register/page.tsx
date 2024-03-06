@@ -3,7 +3,7 @@ import LoginForm from '@/components/login-form';
 import { redirect } from 'next/navigation';
 import { createUser, getUser } from '@/lib/db';
 import  SubmitButton  from '@/components/submit-button';
-import SimpleLayout from '@/components/layout';
+import { CenteredLayout } from '@/components/layout';
 
 export default function Page() {
 
@@ -29,7 +29,7 @@ export default function Page() {
   }
 
   return (
-    <SimpleLayout>
+    <CenteredLayout>
       <div className="grow flex justify-center items-center">
         <div className="z-10 w-screen max-w-md rounded-2xl border border-gray-100 shadow-xl overflow-hidden">
 
@@ -53,6 +53,6 @@ export default function Page() {
 
         </div>
       </div>
-    </SimpleLayout>
+    </CenteredLayout>
   );
 }

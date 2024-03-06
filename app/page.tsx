@@ -1,66 +1,26 @@
 'use client';
 
 import Link from 'next/link';
-import { Dispatch, MouseEventHandler, SetStateAction, useState } from 'react';
-import SimpleLayout from '@/components/layout';
-
-const linkStyle: string = "px-12 py-6 my-24 border border-gray-300 rounded-xl text-2xl text-center bg-gray-50 hover:bg-gray-300 hover:shadow";
-const sectionStyle: string = "flex flex-col mx-auto my-auto py-12 justify-center";
-
-function ChooseCountry({ setCountry } : { setCountry :  Dispatch<SetStateAction<null>> }) {
-
-  const handleCountryButton: MouseEventHandler<HTMLButtonElement> = (e: any) => {
-    setCountry(e.target.name);
-  };
-
-  const countries: string[] = ["Kenya", "Pakistan", "China"];
-
-  return (<section className={sectionStyle}>
-    <h1>Where do you want to build?</h1>
-    <div className="grid grid-cols-3 gap-8 justify-center items-center">
-      {countries.map((country) => (
-        <button className={linkStyle} key={country.toLowerCase()} name={country.toLowerCase()} onClick={handleCountryButton}>{country}</button>
-      ))}
-    </div>
-  </section>);
-}
-
-function ChooseStep({ country } : { country : string }) {
-
-  const steps = [
-    { key: "build", text: "Building Design", href: "/new-project" },
-    { key: "procure", text: "Procurement", href: "/" },
-    { key: "track", text: "Track Your Build", href: "/" },
-  ];
-
-  return (<section className={sectionStyle}>
-    <h1>Choose a build step</h1>
-    <div className="grid grid-cols-3 gap-8 justify-center items-center">
-      {steps.map((step) => (
-        <Link
-          href={{
-            pathname: step.href,
-            query: { country: country },
-          }}
-          className={linkStyle} key={step.key}
-        >
-          {step.text}
-        </Link>
-      ))}
-    </div>
-  </section>)
-}
+import { useState } from 'react';
+import { SimpleLayout } from '@/components/layout';
+import { Button } from '@/components/ui/button';
 
 export default function Page() {
   // TODO go straight into the questionaire, can make questionairre more interactive
   const [country, setCountry] = useState(null);
   return (
     <SimpleLayout>
-      {
-        !country ? 
-        <ChooseCountry setCountry={setCountry} /> :
-        <ChooseStep country={country} />
-      }
+      <div className="grow flex flex-col space-y-12 w-screen mx-auto max-w-4xl px-12 pt-52">
+        <h1 className='text-6xl'>Streamlined Construction Management</h1>
+        <p className='font-bold text-lg'>
+          {"Tell us about your project and let's"}
+          <Button asChild className='w-fit ml-2 font-bold text-base'>
+            <Link href="/new-project">
+              get started
+            </Link>
+          </Button>
+        </p>
+      </div>
     </SimpleLayout>
   );
 }

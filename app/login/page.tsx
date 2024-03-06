@@ -3,7 +3,7 @@ import { signIn } from '@/lib/auth';
 
 import LoginForm from '@/components/login-form';
 import SubmitButton  from '@/components/submit-button';
-import SimpleLayout from '@/components/layout';
+import { CenteredLayout } from '@/components/layout';
 
 export default function Login() {
 
@@ -17,7 +17,7 @@ export default function Login() {
   };
 
   return (
-    <SimpleLayout>
+    <CenteredLayout>
       <div className="grow flex justify-center items-center">
         <div className="w-screen max-w-md rounded-2xl border border-gray-100 shadow-xl overflow-hidden">
 
@@ -41,6 +41,6 @@ export default function Login() {
 
         </div>
       </div>
-    </SimpleLayout>
+    </CenteredLayout>
   );
 }

@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
-import SimpleLayout from '@/components/layout';
+import { CenteredLayout } from '@/components/layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ProjectDescription from './project-description';
 import ProjectAcceptance from './project-acceptance';
@@ -15,7 +15,7 @@ export default async function Page({ params, }:{ params: { id: string } }) {
   }
 
   return (
-    <SimpleLayout>
+    <CenteredLayout>
       <section className="grow flex flex-col gap-12">
         <h3>Project Page</h3>
 
@@ -43,6 +43,6 @@ export default async function Page({ params, }:{ params: { id: string } }) {
         </Tabs>
 
       </section>
-    </SimpleLayout>
+    </CenteredLayout>
   )
 }

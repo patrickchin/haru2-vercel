@@ -4,7 +4,7 @@ import Image from "next/image"
 import Link from 'next/link';
 
 import { getProjectsForUser } from '@/lib/db';
-import SimpleLayout from '@/components/layout';
+import { CenteredLayout } from '@/components/layout';
 
 import houseIcon from "@/app/assets/house.png"
 import { auth } from '@/lib/auth';
@@ -64,13 +64,13 @@ async function ProjectList() {
 
 export default async function Page() {
   return (
-    <SimpleLayout>
+    <CenteredLayout>
       <section className="grow flex flex-col gap-12">
         <h3>My Projects</h3>
         <Suspense fallback={<p>Loading ...</p>}>
           <ProjectList />
         </Suspense>
       </section>
-    </SimpleLayout>
+    </CenteredLayout>
   )
 }
