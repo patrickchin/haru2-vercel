@@ -311,6 +311,6 @@ export function DataTableDemo() {
   )
 }
 
-export default function ProjectProgress({ projectId, }: { projectId: number }) {
+export default function ProjectProgress({ project, }: { project: any }) {
   return (<DataTableDemo />);
 }

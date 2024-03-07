@@ -5,9 +5,43 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ProjectDescription from './project-description';
 import ProjectAcceptance from './project-acceptance';
 import ProjectProgress from './project-progress';
+import { getProject } from '@/lib/db';
 
 
-export default async function Page({ params, }:{ params: { id: string } }) {
+async function ProjectPage({ projectId, }:{ projectId: number }) {
+
+  const projectInfoArr = await getProject(projectId);
+  if (projectInfoArr.length != 1) {
+    if (projectInfoArr.length > 1)
+      console.log(`Found ${projectInfoArr.length} projects with id ${projectId}`);
+    redirect('/project/not-found');
+  }
+  const project: any = projectInfoArr[0];
+
+  return (
+    <section className="grow flex flex-col gap-12">
+      <h3>Project Page - {project.info.title}</h3>
+      <Tabs defaultValue="description" className="w-full space-y-8">
+        <TabsList>
+          <TabsTrigger value="description">Description</TabsTrigger>
+          <TabsTrigger value="acceptance">Acceptance Status</TabsTrigger>
+          <TabsTrigger value="progress">Progress</TabsTrigger>
+        </TabsList>
+        <TabsContent value="description">
+          <ProjectDescription project={project} />
+        </TabsContent>
+        <TabsContent value="acceptance">
+          <ProjectAcceptance project={project} />
+        </TabsContent>
+        <TabsContent value="progress">
+          <ProjectProgress project={project} />
+        </TabsContent>
+      </Tabs>
+    </section>
+  )
+}
+
+export default function Page({ params, }:{ params: { id: string } }) {
 
   const projectId: number = parseInt(params.id);
   if (Number.isNaN(projectId)) {
@@ -16,33 +50,9 @@ export default async function Page({ params, }:{ params: { id: string } }) {
 
   return (
     <CenteredLayout>
-      <section className="grow flex flex-col gap-12">
-        <h3>Project Page</h3>
-
-        <Tabs defaultValue="description" className="w-full space-y-8">
-          <TabsList>
-            <TabsTrigger value="description">Description</TabsTrigger>
-            <TabsTrigger value="acceptance">Acceptance Status</TabsTrigger>
-            <TabsTrigger value="progress">Progress</TabsTrigger>
-          </TabsList>
-          <TabsContent value="description">
-            <Suspense fallback={<p>Loading ...</p>}>
-              <ProjectDescription projectId={projectId} />
-            </Suspense>
-          </TabsContent>
-          <TabsContent value="acceptance">
-            <Suspense fallback={<p>Loading ...</p>}>
-              <ProjectAcceptance projectId={projectId} />
-            </Suspense>
-          </TabsContent>
-          <TabsContent value="progress">
-            <Suspense fallback={<p>Loading ...</p>}>
-              <ProjectProgress projectId={projectId} />
-            </Suspense>
-          </TabsContent>
-        </Tabs>
-
-      </section>
+      <Suspense fallback={(<p>Loading ...</p>)} >
+        <ProjectPage projectId={projectId} />
+      </Suspense>
     </CenteredLayout>
   )
 }

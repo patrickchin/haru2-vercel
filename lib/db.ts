@@ -1,7 +1,6 @@
 import 'server-only';
 
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { pgTable, serial, varchar, integer, json } from 'drizzle-orm/pg-core';
 import { and, eq, or } from 'drizzle-orm';
 import postgres from 'postgres';
 import { genSaltSync, hashSync } from 'bcrypt-ts';
@@ -16,11 +15,6 @@ export const db = drizzle(client);
 
 export async function getUser(email: string) {
   return await db.select().from(Schemas.users1).where(eq(Schemas.users1.email, email));
-  return await db.select({
-    id: Schemas.users1.id,
-    email: Schemas.users1.email,
-    password: Schemas.users1.password
-  }).from(Schemas.users1).where(eq(Schemas.users1.email, email));
 }
 
 export async function createUser(email: string, password: string) {

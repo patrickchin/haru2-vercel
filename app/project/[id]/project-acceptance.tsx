@@ -2,7 +2,6 @@
 
 import { cn } from "@/lib/utils"
 import * as React from "react"
-import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { format } from "date-fns"
 import { MoveRight, SquareUserRound, User } from 'lucide-react';
@@ -20,7 +19,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { CenteredLayout } from '@/components/layout';
 
 export function DatePickerDemo() {
   const [date, setDate] = React.useState<Date>()
@@ -51,7 +49,7 @@ export function DatePickerDemo() {
   )
 }
 
-export default function ProjectAcceptance({ projectId, }: { projectId: number }) {
+export default function ProjectAcceptance({ project }: { project: any }) {
   return (
     <div className='flex flex-col'>
       <p>TODO have some actual project status in the db</p>
