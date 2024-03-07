@@ -29,7 +29,13 @@ export const users1 = pgTable("users1", {
 export const projects1 = pgTable("projects1", {
 	id: serial("id").primaryKey().notNull(),
 	userid: integer("userid").references(() => users1.id),
-	info: json("info").notNull().notNull(),
+	title: varchar("title", { length: 255 }),
+	description: text("description"),
+	type: varchar("type", { length: 64 }),
+	subtype: varchar("subtype", { length: 64 }),
+	countrycode: varchar("countrycode", { length: 64 }),
+	status: varchar("status", { length: 128 }).default("pending"),
+	extrainfo: json("info").notNull(),
 	createdat: timestamp("createdat", { withTimezone: true, mode: 'string' }).defaultNow(),
 });
 

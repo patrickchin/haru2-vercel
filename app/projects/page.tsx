@@ -11,10 +11,9 @@ import { auth } from '@/lib/auth';
 
 function ProjectItem({ project } : any) {
 
-  const info = project.info;
-  const title = info.title || "Untitled";
-  const where = info.country || "Unknown Location";
-  const type = info.type || "";
+  const title = project.title || "Untitled";
+  const where = project.country || "Unknown Location";
+  const type = project.type || "";
 
   return (
     <Link href={`/project/${project.id}`} className="flex justify-between gap-6 p-8 border rounded-lg hover:bg-accent">
@@ -53,7 +52,7 @@ async function ProjectList() {
   const projects = await getProjectsForUser(userId);
   return (
     <ul role="list" className="space-y-3">
-      {projects.reverse().map((project) =>
+      {projects.map((project) =>
         <li key={project.id}>
           <ProjectItem project={project} />
         </li>

@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { and, eq, or } from 'drizzle-orm';
+import { and, eq, desc } from 'drizzle-orm';
 import postgres from 'postgres';
 import { genSaltSync, hashSync } from 'bcrypt-ts';
 
@@ -25,16 +25,11 @@ export async function createUser(email: string, password: string) {
 }
 
 
-export async function getAllProjects() {
-  return await db.select().from(Schemas.projects1);
-}
-
-export async function getProject(id: number) {
-  return await db.select().from(Schemas.projects1).where(eq(Schemas.projects1.id, id));
-}
-
-export async function getProjectsForUser(userId: number) {
-  return await db.select().from(Schemas.projects1).where(eq(Schemas.projects1.userid, userId));
+export async function getProjectsForUser(userId: number, pagenum: number = 0) {
+  const pagesize = 30;
+  return await db.select().from(Schemas.projects1).where(
+    eq(Schemas.projects1.userid, userId)
+  ).orderBy(desc(Schemas.projects1.id)).limit(pagesize).offset(pagesize*pagenum)
 }
 
 export async function getUserProject(userId: number, projectId: number) {
@@ -46,33 +41,33 @@ export async function getUserProject(userId: number, projectId: number) {
   ).limit(1);
 }
 
-export async function createProject(userId1: number, info1: any) {
-  return await db.insert(Schemas.projects1).values({ userid: userId1, info: info1 }).returning();
+export async function createProject(values: {
+  userid: number,
+  title: string,
+  description: string,
+	buildingtype: string,
+	buildingsubtype: string | undefined,
+	countrycode: string,
+  extrainfo: any
+}) {
+  return await db.insert(Schemas.projects1).values(values).returning();
 }
 
-export async function addFileUrlToProject(userId: number, projectId: number, filename: string, fileUrl: string, fileType: string) {
-  return await db.insert(Schemas.files1).values({
-    uploaderid: userId,
-    projectid: projectId,
-    filename: filename,
-    url: fileUrl,
-    type: fileType
-  }).returning();
+export async function addFileUrlToProject(values: {
+	uploaderid: number,
+	projectid: number,
+	filename: string,
+	url: string,
+	type: string,
+}) {
+  return await db.insert(Schemas.files1).values(values).returning();
 }
 
-export async function getFilesUrlsForProject(projectId: number) {
-  return await db.select().from(Schemas.files1).where(eq(Schemas.files1.projectid, projectId));
-}
-
-export async function getImageUrlsForProject(projectId: number) {
+export async function getFilesUrlsForProject(userId: number, projectId: number) {
   return await db.select().from(Schemas.files1).where(
     and(
       eq(Schemas.files1.projectid, projectId),
-      or(
-        eq(Schemas.files1.type, "image/png"),
-        eq(Schemas.files1.type, "image/jpeg"),
-        eq(Schemas.files1.type, "image/jpg"),
-      )
+      eq(Schemas.files1.uploaderid, userId),
     )
   );
 }

@@ -51,11 +51,10 @@ export function DatePickerDemo() {
 
 export default function ProjectAcceptance({ project }: { project: any }) {
   return (
-    <div className='flex flex-col'>
-      <p>TODO have some actual project status in the db</p>
+    <div className='flex flex-col space-y-12'>
       <div className='flex flex-row justify-between items-center'>
 
-        <Card className='flex flex-col items-center'>
+        <Card className='flex flex-col items-center mx-12'>
           <CardContent>
             <User className="h-32 w-32 pt-4" />
           </CardContent>
@@ -67,7 +66,8 @@ export default function ProjectAcceptance({ project }: { project: any }) {
         <div className='flex flex-row grow-0'>
           <MoveRight className='h-20 w-20' />
         </div>
-        <div className='flex flex-row space-x-2'>
+
+        <div className='flex flex-row space-x-2 mx-12'>
           <Link href='/portfolio'>
             <Card className='flex flex-col items-center hover:bg-accent'>
               <CardContent>
@@ -94,13 +94,13 @@ export default function ProjectAcceptance({ project }: { project: any }) {
         </div>
       </div>
 
-      <div>
-        <p>Schedule an interview</p>
-        <DatePickerDemo />
+      <div className="flex flex-row space-x-5 items-center">
+        <h4>Status: {project.status}</h4>
       </div>
 
-      <div>
-        <p>task management button</p>
+      <div className="flex flex-row space-x-5 items-center">
+        <h4>Schedule an interview</h4>
+        <DatePickerDemo />
       </div>
     </div>
   );

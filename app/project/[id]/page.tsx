@@ -5,12 +5,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ProjectDescription from './project-description';
 import ProjectAcceptance from './project-acceptance';
 import ProjectProgress from './project-progress';
-import { getProject } from '@/lib/db';
+import { getUserProject } from '@/lib/db';
+import { auth } from '@/lib/auth';
 
 
 async function ProjectPage({ projectId, }:{ projectId: number }) {
 
-  const projectInfoArr = await getProject(projectId);
+  const session = await auth();
+  const userId = Number(session?.user?.id);
+
+  if (!session?.user || Number.isNaN(userId)) {
+    console.log("User id is invalid: ", session);
+    return <p>Unauthorized</p>;
+  }
+
+  const projectInfoArr = await getUserProject(userId, projectId);
   if (projectInfoArr.length != 1) {
     if (projectInfoArr.length > 1)
       console.log(`Found ${projectInfoArr.length} projects with id ${projectId}`);
@@ -20,8 +29,8 @@ async function ProjectPage({ projectId, }:{ projectId: number }) {
 
   return (
     <section className="grow flex flex-col gap-12">
-      <h3>Project Page - {project.info.title}</h3>
-      <Tabs defaultValue="description" className="w-full space-y-8">
+      <h3>Project {project.id} - {project.title || session.user.email}</h3>
+      <Tabs defaultValue="description" className="w-full space-y-5">
         <TabsList>
           <TabsTrigger value="description">Description</TabsTrigger>
           <TabsTrigger value="acceptance">Acceptance Status</TabsTrigger>

@@ -6,36 +6,6 @@ import { put } from '@vercel/blob';
 import { NewProjectFormSchema } from './types';
 import { redirect } from 'next/navigation';
 
-
-export async function submitProjectForm(formData: FormData) {
-  const formDataFiltered = {
-    title: formData.get('title'),
-    type: formData.get('type'),
-    country: formData.get('country'),
-    lifestyle: formData.get('lifestyle'),
-    future: formData.get('future'),
-    budget: formData.get('budget'),
-    energy: formData.get('energy'),
-    technology: formData.get('technology'),
-    outdoors: formData.get('outdoors'),
-    security: formData.get('security'),
-    maintenance: formData.get('maintenance'),
-    special: formData.get('special'),
-  };
-
-  const session = await auth();
-  if (!session?.user) {
-    console.log("Can't submit a post without being logged in.");
-    return null;
-  }
-  if (!session?.user?.id) {
-    console.log("Invalid user.");
-    return null;
-  }
-  return await createProject(Number(session.user.id), formDataFiltered);
-}
-
-
 export async function submitProjectForm2(formData: FormData) {
 
   const session = await auth();
@@ -55,8 +25,24 @@ export async function submitProjectForm2(formData: FormData) {
     return null;
   }
 
-  const { files, ...projectInfo } = { ...parsed.data }
-  const newProjectArr = await createProject(userId, projectInfo);
+  const { files, ...projectInfo } = { ...parsed.data };
+  const newProjectArr = await createProject({
+    userid: userId,
+    title: projectInfo.title,
+    description: projectInfo.description,
+    buildingtype: projectInfo.buildingType,
+    buildingsubtype: projectInfo.buildingSubtype,
+    countrycode: projectInfo.country,
+    extrainfo: {
+      lifestyle: projectInfo.lifestyle,
+      future: projectInfo.future,
+      energy: projectInfo.energy,
+      outdoors: projectInfo.outdoors,
+      security: projectInfo.security,
+      maintenance: projectInfo.maintenance,
+      special: projectInfo.special,
+    }
+  });
   if (newProjectArr.length != 1) {
     console.error("Failed to submit a new project post\n");
     return null;
@@ -67,13 +53,19 @@ export async function submitProjectForm2(formData: FormData) {
   // TODO client upload directly to server! 4.5 MB limit currently
   if (files) {
     for (const file of files) {
-      const filename = file.name; // TODO sanitize? as this is user input
-      const { url } = await put(`project/${newProjectId}/${filename}`,
-        await file.arrayBuffer(), { access: 'public', });
+      const data = await file.arrayBuffer();
+      // private access isn't supported by vercel atm
+      const { url } = await put(`project/${newProjectId}/${file.name}`, data, { access: 'public', });
       console.log("file uploaded", file.name, url);
 
       // TODO optimise - await outside the loop?
-      const newFileRow = await addFileUrlToProject(userId, newProjectId, filename, url, file.type);
+      const newFileRow = await addFileUrlToProject({
+        uploaderid: userId,
+        projectid: newProjectId,
+        filename: file.name,
+        url: url,
+        type: file.type
+      });
       console.log(newFileRow.at(0)?.type);
     }
   }
@@ -81,27 +73,13 @@ export async function submitProjectForm2(formData: FormData) {
   redirect(`/project/${newProjectId}`);
 }
 
-export async function getProjectFiles(projectId: number, imagesOnly: boolean) {
-
+export async function getProjectFiles(projectId: number) {
   const session = await auth();
   if (!session?.user?.id) {
     console.log("Invalid session on project form submit");
     return [];
   }
   const userId = Number(session.user.id);
-
-  // this checks that user owns this project, kinda
-  const project = getUserProject(userId, projectId);
-  if (!project) {
-    console.log("User project not found when getting project files");
-    return [];
-  }
-
-  // const fileUrls = await getFilesUrlsForProject(projectId, );
-  const imageUrlRows = await getImageUrlsForProject(projectId);
-  const images = imageUrlRows.map(o => {
-    return { url: o.url, filename: o.filename };
-  });
-  console.log("project image files", images);
-  return images;
+  const fileUrls = await getFilesUrlsForProject(userId, projectId);
+  return fileUrls;
 }

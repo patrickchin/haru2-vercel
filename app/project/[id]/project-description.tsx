@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import { getProjectFiles } from "@/lib/actions";
-import { questions } from "content/questions";
 import Image from "next/image";
 import { Suspense } from "react";
-import { Link } from "lucide-react";
+import * as Lucide from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 function ProjectDesignViewsFallbackContent() {
   return (<CarouselItem>
@@ -13,7 +13,7 @@ function ProjectDesignViewsFallbackContent() {
 }
 
 async function ProjectDesignViewsContent({ projectId }: { projectId: number }) {
-  const imageUrlArray = await getProjectFiles(projectId, true);
+  const imageUrlArray = await getProjectFiles(projectId);
   console.log(imageUrlArray, projectId);
   return (
     <>
@@ -24,8 +24,11 @@ async function ProjectDesignViewsContent({ projectId }: { projectId: number }) {
         <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
           <Card className='flex flex-col items-center justify-center p-2'>
             <CardContent className="flex justify-center items-center aspect-square overflow-hidden">
-              <Link href={image.url}></Link>
-              <Image src={image.url!} alt={''} height={180} width={180} className="opacity-90 saturate-[.75]" />
+              {
+                image.type.startsWith("image/") ? 
+                <Image src={image.url!} alt={''} height={180} width={180} className="opacity-90 saturate-[.75]" /> :
+                <Lucide.File />
+              }
             </CardContent>
             <CardHeader className='p-3 pb-0 overflow-hidden'>
               <CardDescription>
@@ -62,36 +65,31 @@ function ProjectDesignViews({ projectId }: { projectId: number }) {
 
 export default async function ProjectDescription({ project }: { project: any }) {
   return (
-    <div className="flex flex-col gap-y-4">
+    <div className="flex flex-col gap-5">
       <ProjectDesignViews projectId={project.id} />
 
-      <div className='flex flex-col space-y-3'>
+      <div className='flex flex-row'>
 
-        <div>
-          <h4>Location:</h4>
-          <p>{project.info.country || "Unspecified location"}</p>
+        <div className="flex-none w-56 p-5 font-bold bg-accent rounded-lg px-6 py-4">
+          <ul>
+            <li>Id:        <span className="font-normal">{project.id}</span></li>
+            <li>Owner:     <span className="font-normal">{project.userId}</span></li>
+            <li>Country:   <span className="font-normal">{project.extrainfo.country}</span></li>
+            <li>Industry:  <span className="font-normal">{project.extrainfo.buildingType}</span></li>
+            <li>Type:      <span className="font-normal">{project.extrainfo.buildingSubtype}</span></li>
+            <li>Created:   <span className="font-normal">{project.extrainfo.createdat}</span></li>
+          </ul>
         </div>
 
-        <div>
-          <h4>Building Type:</h4>
-          <p>{project.info.type || "Unspecified construction type"}</p>
-        </div>
+        <Separator orientation="vertical" />
 
-        {questions.map((qa, i) => (
-          <div key={i}>
-            <h4>{qa.title}</h4>
-            <p>{project.info[qa.name] || `nothing specified`}</p>
-          </div>
-        ))}
-      
-        <div>
-          <pre className="overflow-hidden">
-            {JSON.stringify(project, null, 2)}
-          </pre>
+        <div className="overflow-hidden p-5">
+          {project.description}
         </div>
-
 
       </div>
+
+      <pre className="overflow-hidden">{JSON.stringify(project, null, 2)}</pre>
     </div>
   );
 }
