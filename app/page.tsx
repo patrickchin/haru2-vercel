@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { SimpleLayout } from '@/components/layout';
 import { Button } from '@/components/ui/button';
+import { ArrowRightIcon } from 'lucide-react';
 
 export default function Page() {
   return (
@@ -11,7 +12,7 @@ export default function Page() {
           {"Tell us about your project and let's"}
           <Button asChild className='w-fit ml-2 font-bold text-base'>
             <Link href="/new-project">
-              get started
+              get started <ArrowRightIcon className='ml-2' />
             </Link>
           </Button>
         </p>
