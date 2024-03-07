@@ -7,12 +7,13 @@ function allFilesSmall(list: FileList | undefined) {
 }
 
 export const NewProjectFormSchema = z.object({
-  title: z.string(),
+  title: z.string().max(255),
   country: z.string(),
   buildingType: z.string(), // enum?
   buildingSubtype: z.string().optional(), // enum?
   description: z.string().min(2),
-  files: z.any().transform(f => f as FileList).optional().refine(allFilesSmall),
+  files: z.any().transform(f => f as FileList).optional()
+    .refine(allFilesSmall, "Max file size 4.5MB"),
 
   lifestyle: z.string().optional(),
   future: z.string().optional(),
