@@ -1,6 +1,6 @@
 'use server';
 
-import { addFileUrlToProject, createProject, getFilesUrlsForProject, getImageUrlsForProject, getUserProject } from '@/lib/db';
+import { addFileUrlToProject, createProject, getFilesUrlsForProject } from '@/lib/db';
 import { auth } from './auth';
 import { put } from '@vercel/blob';
 import { NewProjectFormSchema } from './types';
