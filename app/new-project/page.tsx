@@ -27,7 +27,7 @@ function ProjectTitle({ form }:{ form: NewProjectFormType }) {
       name="title"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Project Title</FormLabel>
+          <FormLabel>Project Title/Owner</FormLabel>
           <FormControl>
             <Input onChange={field.onChange} name={field.name} placeholder='Untitled'/>
           </FormControl>
@@ -159,8 +159,6 @@ function ProjectDocuments({ form }:{ form: NewProjectFormType }) {
 }
 
 function DetailedQuestion({ form, qa }:{ form: NewProjectFormType, qa : any }) {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
     <FormField
       control={form.control}

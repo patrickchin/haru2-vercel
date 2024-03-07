@@ -1,13 +1,8 @@
-'use client';
-
 import Link from 'next/link';
-import { useState } from 'react';
 import { SimpleLayout } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 
 export default function Page() {
-  // TODO go straight into the questionaire, can make questionairre more interactive
-  const [country, setCountry] = useState(null);
   return (
     <SimpleLayout>
       <div className="grow flex flex-col space-y-12 w-screen mx-auto max-w-4xl px-12 pt-52">
