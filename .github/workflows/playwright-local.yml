@@ -1,0 +1,41 @@
+name: Playwright Tests
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: pnpm/action-setup@v3
+      with:
+        version: 8
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 18
+        cache: 'pnpm'
+    - name: Install dependencies
+      run: pnpm install
+    - uses: some/secret-store@v1
+      with:
+        POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+        BLOB_STORE_HOSTNAME: ${{ secrets.BLOB_STORE_HOSTNAME }}
+        BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+        AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+        NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+        TESTENVVAR: "Hello World"
+    - name: Install dependencies
+      run: pnpm run build && pnpm run start
+    - name: Install Playwright Browsers
+      run: pnpm exec playwright install --with-deps
+    - name: Run Playwright tests
+      run: pnpm exec playwright test
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
