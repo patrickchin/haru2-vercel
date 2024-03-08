@@ -19,16 +19,15 @@ jobs:
         cache: 'pnpm'
     - name: Install dependencies
       run: pnpm install
-    - uses: some/secret-store@v1
-      with:
+    - name: Install dependencies
+      run: env && pnpm run build && pnpm run start
+      env:
         POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
         BLOB_STORE_HOSTNAME: ${{ secrets.BLOB_STORE_HOSTNAME }}
         BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
         AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
         NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
         TESTENVVAR: "Hello World"
-    - name: Install dependencies
-      run: pnpm run build && pnpm run start
     - name: Install Playwright Browsers
       run: pnpm exec playwright install --with-deps
     - name: Run Playwright tests
