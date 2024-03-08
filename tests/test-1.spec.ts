@@ -8,13 +8,11 @@ test('check can log in', async ({ page }) => {
   await page.getByPlaceholder('user@acme.com').click();
   await page.getByPlaceholder('user@acme.com').fill('user1@haru.com');
   await page.getByPlaceholder('user@acme.com').press('Tab');
+  // TODO credentials as env variables!!
   await page.getByLabel('Password').fill('asdf');
   await page.getByLabel('Password').press('Enter');
-  await page.getByRole('button', { name: 'Kenya' }).click();
-  await page.getByRole('link', { name: 'Building Design' }).click();
+  await page.getByRole('button', { name: 'get started' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
-  await expect(page.getByLabel('Country')).toContainText('Kenya');
-  await page.locator('html').click();
   await page.getByPlaceholder('Untitled').click();
   await page.getByPlaceholder('Untitled').fill('Mr Haru');
   await page.getByRole('link', { name: 'Logout' }).click();
