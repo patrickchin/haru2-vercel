@@ -8,6 +8,7 @@ import { CenteredLayout } from '@/components/layout';
 
 import houseIcon from "@/app/assets/house.png"
 import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 function ProjectItem({ project } : any) {
 
@@ -41,8 +42,12 @@ function ProjectItem({ project } : any) {
 }
 
 async function ProjectList() {
+
   const session = await auth();
   const userId = Number(session?.user?.id);
+
+  if (!session?.user)
+    redirect('/login');
 
   if (Number.isNaN(userId)) {
     console.log("User id is invalid: ", session);

@@ -9,22 +9,25 @@ import { getUserProject } from '@/lib/db';
 import { auth } from '@/lib/auth';
 
 
-async function ProjectPage({ projectId, }:{ projectId: number }) {
+async function ProjectPage({ projectId }:{ projectId: number }) {
 
   const session = await auth();
   const userId = Number(session?.user?.id);
 
-  if (!session?.user || Number.isNaN(userId)) {
+  if (!session?.user)
+    redirect('/login');
+
+  if (Number.isNaN(userId)) {
     console.log("User id is invalid: ", session);
-    return <p>Unauthorized</p>;
+    return <p>Invalid user</p>;
   }
 
   const projectInfoArr = await getUserProject(userId, projectId);
-  if (projectInfoArr.length != 1) {
-    if (projectInfoArr.length > 1)
-      console.log(`Found ${projectInfoArr.length} projects with id ${projectId}`);
-    redirect('/project/not-found');
-  }
+  if (projectInfoArr.length < 1)
+    redirect('/project/not-found'); // it might not be the users project
+  if (projectInfoArr.length > 1)
+    console.log(`Found ${projectInfoArr.length} projects with id ${projectId}`);
+
   const project: any = projectInfoArr[0];
 
   return (
@@ -50,7 +53,7 @@ async function ProjectPage({ projectId, }:{ projectId: number }) {
   )
 }
 
-export default function Page({ params, }:{ params: { id: string } }) {
+export default function Page({ params }:{ params: { id: string } }) {
 
   const projectId: number = parseInt(params.id);
   if (Number.isNaN(projectId)) {

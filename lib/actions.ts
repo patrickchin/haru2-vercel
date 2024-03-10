@@ -25,6 +25,7 @@ export async function submitProjectForm2(formData: FormData) {
     return null;
   }
 
+  // not the prettiest ...
   const { files, ...projectInfo } = { ...parsed.data };
   const newProjectArr = await createProject({
     userid: userId,
@@ -76,7 +77,7 @@ export async function submitProjectForm2(formData: FormData) {
 export async function getProjectFiles(projectId: number) {
   const session = await auth();
   if (!session?.user?.id) {
-    console.log("Invalid session on project form submit");
+    console.log("Invalid session on get project files");
     return [];
   }
   const userId = Number(session.user.id);
