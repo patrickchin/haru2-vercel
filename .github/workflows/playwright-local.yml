@@ -22,11 +22,11 @@ jobs:
         version: 8
     - uses: actions/setup-node@v4
       with:
-        node-version: 18
+        node-version: 20
         cache: 'pnpm'
     - name: Install dependencies
       run: pnpm install
-    - name: Install dependencies
+    - name: Building
       run: env && pnpm run build
     - name: Install Playwright Browsers
       run: pnpm exec playwright install --with-deps

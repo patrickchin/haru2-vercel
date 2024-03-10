@@ -73,6 +73,6 @@ export default defineConfig({
   webServer: {
     command: 'pnpm run start',
     url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !process.env.CI || !!process.env.PLAYWRIGHT_TEST_BASE_URL,
   },
 });

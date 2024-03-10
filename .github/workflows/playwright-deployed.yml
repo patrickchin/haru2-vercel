@@ -5,20 +5,34 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    environment: production
+    env:
+      POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+      BLOB_STORE_HOSTNAME: ${{ secrets.BLOB_STORE_HOSTNAME }}
+      BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+      AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+      NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
     if: github.event.deployment_status.state == 'success'
     steps:
     - uses: actions/checkout@v4
+    - uses: pnpm/action-setup@v3
+      with:
+        version: 8
     - uses: actions/setup-node@v4
       with:
         node-version: 20
+        cache: 'pnpm'
     - name: Install dependencies
-      run: npm install -g pnpm && pnpm install
+      run: pnpm install
+    - name: Building # otherwise playwright complains about missing BUILD_ID
+      run: env && pnpm run build
     - name: Install Playwright Browsers
       run: pnpm exec playwright install --with-deps
     - name: Run Playwright tests
       run: pnpm exec playwright test
       env:
-        PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
+        # PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
+        PLAYWRIGHT_TEST_BASE_URL: 'https://haru2-kappa.vercel.app/'
     - uses: actions/upload-artifact@v4
       if: always()
       with:
