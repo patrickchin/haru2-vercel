@@ -36,47 +36,67 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-const data: Payment[] = [
+const data: DesignTask[] = [
   {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
+    id: 1234,
+    title: "Structual Analysis",
+    status: "complete",
     email: "ken99@yahoo.com",
+    priority: "high",
+    lastUpdated: Date.now()-34487,
   },
   {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@gmail.com",
+    id: 1235,
+    title: "Some other analysis",
+    status: "in progress",
+    email: "ken99@yahoo.com",
+    priority: "normal",
+    lastUpdated: Date.now()-3048,
   },
   {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@gmail.com",
+    id: 1236,
+    title: "Later task",
+    status: "pending",
+    email: "ken99@yahoo.com",
+    priority: "low",
+    lastUpdated: Date.now()-98,
   },
   {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
-    email: "Silas22@gmail.com",
+    id: 1234,
+    title: "Structual Analysis",
+    status: "complete",
+    email: "ken99@yahoo.com",
+    priority: "high",
+    lastUpdated: Date.now()-34487,
   },
   {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@hotmail.com",
+    id: 1235,
+    title: "Some other analysis",
+    status: "in progress",
+    email: "ken99@yahoo.com",
+    priority: "normal",
+    lastUpdated: Date.now()-3048,
+  },
+  {
+    id: 1236,
+    title: "Later task",
+    status: "pending",
+    email: "ken99@yahoo.com",
+    priority: "low",
+    lastUpdated: Date.now()-98,
   },
 ]
 
-export type Payment = {
-  id: string
-  amount: number
-  status: "pending" | "processing" | "success" | "failed"
+export type DesignTask = {
+  id: number
+  title: string
+  status: "pending" | "in progress" | "complete" | "canceled"
   email: string
+  priority: "high" | "normal" | "low"
+  lastUpdated: number
 }
 
-/* export */ const columns: ColumnDef<Payment>[] = [
+const columns: ColumnDef<DesignTask>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -100,11 +120,12 @@ export type Payment = {
     enableHiding: false,
   },
   {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
-    ),
+    accessorKey: "title",
+    header: () => <div className="text-right">Title</div>,
+    cell: ({ row }) => {
+      const title: string = row.getValue("title")
+      return <div className="text-right font-medium">{title}</div>
+    },
   },
   {
     accessorKey: "email",
@@ -114,7 +135,7 @@ export type Payment = {
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Email
+          Lead
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -122,48 +143,25 @@ export type Payment = {
     cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
   },
   {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"))
-
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount)
-
-      return <div className="text-right font-medium">{formatted}</div>
-    },
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("status")}</div>
+    ),
   },
   {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
+    accessorKey: "priority",
+    header: "Priority",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("priority")}</div>
+    ),
+  },
+  {
+    accessorKey: "lastUpdated",
+    header: "Last Updated",
+    cell: ({ row }) => (
+      <div className="capitalize">{new Date(row.getValue("lastUpdated")).toDateString()}</div>
+    ),
   },
 ]
 
