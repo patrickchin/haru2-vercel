@@ -16,7 +16,6 @@ import {
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -41,6 +40,10 @@ import {
   AvatarImage
 } from "@/components/ui/avatar"
 
+import TimeAgo from 'javascript-time-ago'
+import en from 'javascript-time-ago/locale/en'
+TimeAgo.addDefaultLocale(en)
+import ReactTimeAgo from 'react-time-ago'
 
 const data: DesignTask[] = [
   {
@@ -50,7 +53,7 @@ const data: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: [],
     priority: "high",
-    lastUpdated: Date.now()-34487,
+    lastUpdated: Date.now()-3487*1000,
   },
   {
     id: 1235,
@@ -59,7 +62,7 @@ const data: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa"],
     priority: "normal",
-    lastUpdated: Date.now()-3048,
+    lastUpdated: Date.now()-3048*1000,
   },
   {
     id: 1236,
@@ -68,7 +71,7 @@ const data: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
-    lastUpdated: Date.now()-98,
+    lastUpdated: Date.now()-98*1000,
   },
   {
     id: 1234,
@@ -77,7 +80,7 @@ const data: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "high",
-    lastUpdated: Date.now()-97,
+    lastUpdated: Date.now()-97*1000,
   },
   {
     id: 1235,
@@ -86,7 +89,7 @@ const data: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc", "dd", "ee"],
     priority: "normal",
-    lastUpdated: Date.now()-96,
+    lastUpdated: Date.now()-96*1000,
   },
   {
     id: 1236,
@@ -95,7 +98,7 @@ const data: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
-    lastUpdated: Date.now()-95,
+    lastUpdated: Date.now(),
   },
 ]
 
@@ -187,7 +190,9 @@ const columns: ColumnDef<DesignTask>[] = [
       )
     },
     cell: ({ row }) => (
-      <div className="capitalize">{new Date(row.getValue("lastUpdated")).toDateString()}</div>
+      <div className="capitalize">
+        {<ReactTimeAgo date={new Date(row.getValue("lastUpdated"))} locale="en-US" />}
+      </div>
     ),
   },
 ]
@@ -219,6 +224,8 @@ export function DataTableDemo() {
       rowSelection,
     },
   })
+
+  const timeAgo = new TimeAgo('en-US')
 
   return (
     <div className="w-full">
