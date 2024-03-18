@@ -74,7 +74,7 @@ export default async function ProjectDescription({ project }: { project: any }) 
           <ul>
             <li>Id:        <span className="font-normal">{project.id}</span></li>
             <li>Owner:     <span className="font-normal">{project.userid}</span></li>
-            <li>Country:   <span className="font-normal">{project.country}</span></li>
+            <li>Country:   <span className="font-normal">{project.countrycode}</span></li>
             <li>Industry:  <span className="font-normal">{project.type}</span></li>
             <li>Type:      <span className="font-normal">{project.subtype}</span></li>
             <li>Created:   <span className="font-normal">{project.createdat.toString()}</span></li>

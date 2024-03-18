@@ -13,7 +13,7 @@ import { redirect } from 'next/navigation';
 function ProjectItem({ project } : any) {
 
   const title = project.title || "Untitled";
-  const where = project.country || "Unknown Location";
+  const where = project.countrycode || "Unknown Location";
   const type = project.type || "";
 
   return (
