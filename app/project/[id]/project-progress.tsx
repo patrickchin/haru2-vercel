@@ -98,34 +98,10 @@ export type DesignTask = {
 
 const columns: ColumnDef<DesignTask>[] = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
     accessorKey: "title",
-    header: () => <div className="text-right">Title</div>,
-    cell: ({ row }) => {
-      const title: string = row.getValue("title")
-      return <div className="text-right font-medium">{title}</div>
-    },
+    header: () => <div>Title</div>,
+    cell: ({ row }) => <div className="font-medium">{row.getValue("title")}</div>
+    ,
   },
   {
     accessorKey: "email",
@@ -145,16 +121,14 @@ const columns: ColumnDef<DesignTask>[] = [
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
-    ),
+    cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>
+    ,
   },
   {
     accessorKey: "priority",
     header: "Priority",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("priority")}</div>
-    ),
+    cell: ({ row }) => <div className="capitalize">{row.getValue("priority")}</div>
+    ,
   },
   {
     accessorKey: "lastUpdated",
