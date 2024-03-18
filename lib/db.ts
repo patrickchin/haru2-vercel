@@ -45,8 +45,8 @@ export async function createProject(values: {
   userid: number,
   title: string,
   description: string,
-	buildingtype: string,
-	buildingsubtype: string | undefined,
+	type: string,
+	subtype: string | undefined,
 	countrycode: string,
   extrainfo: any
 }) {

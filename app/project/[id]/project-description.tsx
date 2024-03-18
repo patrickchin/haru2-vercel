@@ -73,11 +73,11 @@ export default async function ProjectDescription({ project }: { project: any }) 
         <div className="flex-none w-56 p-5 font-bold bg-accent rounded-lg px-6 py-4">
           <ul>
             <li>Id:        <span className="font-normal">{project.id}</span></li>
-            <li>Owner:     <span className="font-normal">{project.userId}</span></li>
-            <li>Country:   <span className="font-normal">{project.extrainfo.country}</span></li>
-            <li>Industry:  <span className="font-normal">{project.extrainfo.buildingType}</span></li>
-            <li>Type:      <span className="font-normal">{project.extrainfo.buildingSubtype}</span></li>
-            <li>Created:   <span className="font-normal">{project.extrainfo.createdat}</span></li>
+            <li>Owner:     <span className="font-normal">{project.userid}</span></li>
+            <li>Country:   <span className="font-normal">{project.country}</span></li>
+            <li>Industry:  <span className="font-normal">{project.type}</span></li>
+            <li>Type:      <span className="font-normal">{project.subtype}</span></li>
+            <li>Created:   <span className="font-normal">{project.createdat.toString()}</span></li>
           </ul>
         </div>
 

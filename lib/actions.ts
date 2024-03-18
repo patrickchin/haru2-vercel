@@ -31,8 +31,8 @@ export async function submitProjectForm2(formData: FormData) {
     userid: userId,
     title: projectInfo.title,
     description: projectInfo.description,
-    buildingtype: projectInfo.buildingType,
-    buildingsubtype: projectInfo.buildingSubtype,
+    type: projectInfo.buildingType,
+    subtype: projectInfo.buildingSubtype,
     countrycode: projectInfo.country,
     extrainfo: {
       lifestyle: projectInfo.lifestyle,
