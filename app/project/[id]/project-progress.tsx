@@ -35,13 +35,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage
+} from "@/components/ui/avatar"
+
 
 const data: DesignTask[] = [
   {
     id: 1234,
     title: "Structual Analysis",
     status: "complete",
-    email: "ken99@yahoo.com",
+    lead: "ken99@yahoo.com",
+    members: [],
     priority: "high",
     lastUpdated: Date.now()-34487,
   },
@@ -49,7 +56,8 @@ const data: DesignTask[] = [
     id: 1235,
     title: "Some other analysis",
     status: "in progress",
-    email: "ken99@yahoo.com",
+    lead: "ken99@yahoo.com",
+    members: ["aa"],
     priority: "normal",
     lastUpdated: Date.now()-3048,
   },
@@ -57,7 +65,8 @@ const data: DesignTask[] = [
     id: 1236,
     title: "Later task",
     status: "pending",
-    email: "ken99@yahoo.com",
+    lead: "ken99@yahoo.com",
+    members: ["aa", "bb", "cc"],
     priority: "low",
     lastUpdated: Date.now()-98,
   },
@@ -65,25 +74,28 @@ const data: DesignTask[] = [
     id: 1234,
     title: "Structual Analysis",
     status: "complete",
-    email: "ken99@yahoo.com",
+    lead: "ken99@yahoo.com",
+    members: ["aa", "bb", "cc"],
     priority: "high",
-    lastUpdated: Date.now()-34487,
+    lastUpdated: Date.now()-97,
   },
   {
     id: 1235,
     title: "Some other analysis",
     status: "in progress",
-    email: "ken99@yahoo.com",
+    lead: "ken99@yahoo.com",
+    members: ["aa", "bb", "cc", "dd", "ee"],
     priority: "normal",
-    lastUpdated: Date.now()-3048,
+    lastUpdated: Date.now()-96,
   },
   {
     id: 1236,
     title: "Later task",
     status: "pending",
-    email: "ken99@yahoo.com",
+    lead: "ken99@yahoo.com",
+    members: ["aa", "bb", "cc"],
     priority: "low",
-    lastUpdated: Date.now()-98,
+    lastUpdated: Date.now()-95,
   },
 ]
 
@@ -91,7 +103,8 @@ export type DesignTask = {
   id: number
   title: string
   status: "pending" | "in progress" | "complete" | "canceled"
-  email: string
+  lead: string // user ids
+  members: string[] // user ids
   priority: "high" | "normal" | "low"
   lastUpdated: number
 }
@@ -104,35 +117,75 @@ const columns: ColumnDef<DesignTask>[] = [
     ,
   },
   {
-    accessorKey: "email",
+    accessorKey: "lead",
+    header: ({ column }) => {
+      return (
+        <Button
+          className="flex flex-row overflow-hidden w-18 p-2"
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Lead
+          <ArrowUpDown className="ml-1 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => (
+      <div className="flex flex-row overflow-hidden w-12 items-center justify-center">
+        <Avatar>
+          {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
+          <AvatarFallback>{(row.getValue("lead") as string).slice(0,2).toUpperCase()}</AvatarFallback>
+        </Avatar>
+      </div>
+    )
+  },
+  {
+    accessorKey: "members",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Lead
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          Members
+          <ArrowUpDown className="ml-1 h-4 w-4" />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    cell: ({ row }) => (
+      <div className="flex flex-row overflow-hidden w-24">
+        {(row.getValue("members") as string[]).map((mem, i) =>
+          <Avatar key={i}>
+            {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
+            <AvatarFallback>{mem.slice(0, 2).toUpperCase()}</AvatarFallback>
+          </Avatar>
+        )}
+      </div>
+    )
   },
   {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>
-    ,
   },
   {
     accessorKey: "priority",
     header: "Priority",
     cell: ({ row }) => <div className="capitalize">{row.getValue("priority")}</div>
-    ,
   },
   {
     accessorKey: "lastUpdated",
-    header: "Last Updated",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Last Updated
+          <ArrowUpDown className="ml-1 h-4 w-4" />
+        </Button>
+      )
+    },
     cell: ({ row }) => (
       <div className="capitalize">{new Date(row.getValue("lastUpdated")).toDateString()}</div>
     ),
@@ -171,10 +224,10 @@ export function DataTableDemo() {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter lead..."
+          value={(table.getColumn("lead")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("lead")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
