@@ -16,12 +16,16 @@ export function SimpleLayout({ children } : { children : React.ReactNode; }) {
 
 export function CenteredLayout({ children } : { children : React.ReactNode; }) {
   return (
-    <SimpleLayout>
-      <div className="grow flex flex-col w-screen mx-auto max-w-7xl px-12">
-        <div className="grow flex flex-col bg-background shadow-xl p-16">
-          {children}
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main className="grow flex flex-col">
+        <div className="grow flex flex-col w-screen mx-auto max-w-7xl px-12">
+          <div className="grow flex flex-col bg-background p-16">
+            {children}
+          </div>
         </div>
-      </div>
-    </SimpleLayout>
+      </main>
+      <Footer />
+    </div>
   )
 }

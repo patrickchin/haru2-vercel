@@ -263,9 +263,9 @@ function NewProjectForm() {
 export default function Page() {
   return (
     <CenteredLayout>
-      <section className="grow flex flex-col gap-12">
-        <h3>Create a New Project</h3>
-        <div className="max-w-2xl">
+      <section className="grow flex flex-row items-center justify-center">
+        <div className="flex flex-col gap-12 w-full max-w-2xl">
+          <h3>Create a New Project</h3>
           <NewProjectForm />
         </div>
       </section>
