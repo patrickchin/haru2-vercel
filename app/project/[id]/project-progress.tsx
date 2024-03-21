@@ -45,72 +45,8 @@ import en from 'javascript-time-ago/locale/en'
 TimeAgo.addDefaultLocale(en)
 import ReactTimeAgo from 'react-time-ago'
 
-const data: DesignTask[] = [
-  {
-    id: 1234,
-    title: "Structual Analysis",
-    status: "complete",
-    lead: "ken99@yahoo.com",
-    members: [],
-    priority: "high",
-    lastUpdated: Date.now()-3487*1000,
-  },
-  {
-    id: 1235,
-    title: "Some other analysis",
-    status: "in progress",
-    lead: "ken99@yahoo.com",
-    members: ["aa"],
-    priority: "normal",
-    lastUpdated: Date.now()-3048*1000,
-  },
-  {
-    id: 1236,
-    title: "Later task",
-    status: "pending",
-    lead: "ken99@yahoo.com",
-    members: ["aa", "bb", "cc"],
-    priority: "low",
-    lastUpdated: Date.now()-98*1000,
-  },
-  {
-    id: 1234,
-    title: "Structual Analysis",
-    status: "complete",
-    lead: "ken99@yahoo.com",
-    members: ["aa", "bb", "cc"],
-    priority: "high",
-    lastUpdated: Date.now()-97*1000,
-  },
-  {
-    id: 1235,
-    title: "Some other analysis",
-    status: "in progress",
-    lead: "ken99@yahoo.com",
-    members: ["aa", "bb", "cc", "dd", "ee"],
-    priority: "normal",
-    lastUpdated: Date.now()-96*1000,
-  },
-  {
-    id: 1236,
-    title: "Later task",
-    status: "pending",
-    lead: "ken99@yahoo.com",
-    members: ["aa", "bb", "cc"],
-    priority: "low",
-    lastUpdated: Date.now(),
-  },
-]
-
-export type DesignTask = {
-  id: number
-  title: string
-  status: "pending" | "in progress" | "complete" | "canceled"
-  lead: string // user ids
-  members: string[] // user ids
-  priority: "high" | "normal" | "low"
-  lastUpdated: number
-}
+import { DesignTask, data } from "./task-details"
+import { Separator } from "@/components/ui/separator"
 
 const columns: ColumnDef<DesignTask>[] = [
   {
@@ -156,7 +92,7 @@ const columns: ColumnDef<DesignTask>[] = [
       )
     },
     cell: ({ row }) => (
-      <div className="flex flex-row overflow-hidden w-24">
+      <div className="flex flex-row overflow-hidden w-32 space-x-1">
         {(row.getValue("members") as string[]).map((mem, i) =>
           <Avatar key={i}>
             {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
@@ -272,7 +208,7 @@ export function DataTableDemo() {
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="px-1">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -293,7 +229,7 @@ export function DataTableDemo() {
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="px-2">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -344,5 +280,13 @@ export function DataTableDemo() {
 }
 
 export default function ProjectProgress({ project, }: { project: any }) {
-  return (<DataTableDemo />);
+  return (
+    <div className="flex flex-col space-y-4">
+      <h4>Architectural Tasks</h4>
+      <DataTableDemo />
+      <Separator />
+      <h4>Legal Tasks</h4>
+      <DataTableDemo />
+    </div>
+  );
 }
