@@ -14,7 +14,6 @@ function ProjectDesignViewsFallbackContent() {
 
 async function ProjectDesignViewsContent({ projectId }: { projectId: number }) {
   const imageUrlArray = await getProjectFiles(projectId);
-  console.log(imageUrlArray, projectId);
   return (
     <>
       {/* TODO click image to view or download */}
@@ -25,9 +24,9 @@ async function ProjectDesignViewsContent({ projectId }: { projectId: number }) {
           <Card className='flex flex-col items-center justify-center p-2'>
             <CardContent className="flex justify-center items-center aspect-square overflow-hidden">
               {
-                image.type.startsWith("image/") ? 
-                <Image src={image.url!} alt={''} height={180} width={180} className="opacity-90 saturate-[.75]" /> :
-                <Lucide.File />
+                // image.type.startsWith("image/") ? 
+                // <Image src={image.url!} alt={''} height={180} width={180} className="opacity-90 saturate-[.75]" /> :
+                <Lucide.File className="h-24 w-24" />
               }
             </CardContent>
             <CardHeader className='p-3 pb-0 overflow-hidden'>
@@ -73,11 +72,11 @@ export default async function ProjectDescription({ project }: { project: any }) 
         <div className="flex-none w-56 p-5 font-bold bg-accent rounded-lg px-6 py-4">
           <ul>
             <li>Id:        <span className="font-normal">{project.id}</span></li>
-            <li>Owner:     <span className="font-normal">{project.userid}</span></li>
-            <li>Country:   <span className="font-normal">{project.countrycode}</span></li>
-            <li>Industry:  <span className="font-normal">{project.type}</span></li>
-            <li>Type:      <span className="font-normal">{project.subtype}</span></li>
-            <li>Created:   <span className="font-normal">{project.createdat.toString()}</span></li>
+            <li>Owner:     <span className="font-normal">{project.userId}</span></li>
+            <li>Country:   <span className="font-normal">{project.extrainfo.country}</span></li>
+            <li>Industry:  <span className="font-normal">{project.extrainfo.buildingType}</span></li>
+            <li>Type:      <span className="font-normal">{project.extrainfo.buildingSubtype}</span></li>
+            <li>Created:   <span className="font-normal">{project.extrainfo.createdat}</span></li>
           </ul>
         </div>
 
