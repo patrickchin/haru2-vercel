@@ -45,7 +45,7 @@ import en from 'javascript-time-ago/locale/en'
 TimeAgo.addDefaultLocale(en)
 import ReactTimeAgo from 'react-time-ago'
 
-import { DesignTask, architecturalColumns, architecturalData  } from "./task-details"
+import { DesignTask, taskColumns, architecturalData, legalData  } from "./task-details"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export function DataTableDemo({ columns, data }:{
@@ -205,10 +205,10 @@ export default function ProjectProgress({ project, }: { project: any }) {
           <TabsTrigger value="mechanical">MEP Tasks</TabsTrigger>
         </TabsList>
         <TabsContent value="legal">
-          <DataTableDemo columns={[]} data={[]} />
+          <DataTableDemo columns={taskColumns} data={legalData} />
         </TabsContent>
         <TabsContent value="architectural">
-          <DataTableDemo columns={architecturalColumns} data={architecturalData} />
+          <DataTableDemo columns={taskColumns} data={architecturalData} />
         </TabsContent>
         <TabsContent value="structural">
           <DataTableDemo columns={[]} data={[]} />

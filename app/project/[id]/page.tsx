@@ -2,9 +2,9 @@ import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import { CenteredLayout } from '@/components/layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import ProjectDescription from './project-description';
-import ProjectAcceptance from './project-acceptance';
-import ProjectProgress from './project-progress';
+import ProjectDescription from './components/project-description';
+import ProjectAcceptance from './components/project-acceptance';
+import ProjectProgress from './components/project-progress';
 import { getUserProject } from '@/lib/db';
 import { auth } from '@/lib/auth';
 
