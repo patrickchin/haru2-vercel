@@ -40,13 +40,9 @@ import {
   AvatarImage
 } from "@/components/ui/avatar"
 
-import TimeAgo from 'javascript-time-ago'
-import en from 'javascript-time-ago/locale/en'
-TimeAgo.addDefaultLocale(en)
-import ReactTimeAgo from 'react-time-ago'
-
-import { DesignTask, taskColumns, architecturalData, legalData  } from "./task-details"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { DesignTask, taskColumns } from "../data/types"
+import { architecturalData, getProjectTasks, legalData } from "../data/tasks-legal"
 
 export function DataTableDemo({ columns, data }:{
   columns: ColumnDef<DesignTask>[],
@@ -199,10 +195,10 @@ export default function ProjectProgress({ project, }: { project: any }) {
 
       <Tabs defaultValue="architectural" className="w-full space-y-5">
         <TabsList>
-          <TabsTrigger value="legal">Legal Tasks</TabsTrigger>
-          <TabsTrigger value="architectural">Architectural Tasks</TabsTrigger>
-          <TabsTrigger value="structural">Structural Tasks</TabsTrigger>
-          <TabsTrigger value="mechanical">MEP Tasks</TabsTrigger>
+          <TabsTrigger value="legal">Legal</TabsTrigger>
+          <TabsTrigger value="architectural">Architectural</TabsTrigger>
+          <TabsTrigger value="structural">Structural</TabsTrigger>
+          <TabsTrigger value="mechanical">MEP</TabsTrigger>
         </TabsList>
         <TabsContent value="legal">
           <DataTableDemo columns={taskColumns} data={legalData} />
