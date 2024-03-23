@@ -42,7 +42,7 @@ import {
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { DesignTask, taskColumns } from "../data/types"
-import { architecturalData, getProjectTasks, legalData } from "../data/tasks-legal"
+import { architecturalData, legalData } from "../data/tasks-legal"
 
 export function DataTableDemo({ columns, data }:{
   columns: ColumnDef<DesignTask>[],

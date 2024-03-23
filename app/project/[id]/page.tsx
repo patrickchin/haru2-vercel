@@ -37,7 +37,7 @@ async function ProjectPage({ projectId }:{ projectId: number }) {
         <TabsList>
           <TabsTrigger value="description">Description</TabsTrigger>
           <TabsTrigger value="acceptance">Acceptance Status</TabsTrigger>
-          <TabsTrigger value="progress">Task Progress</TabsTrigger>
+          <TabsTrigger value="progress">Progress</TabsTrigger>
         </TabsList>
         <TabsContent value="description">
           <ProjectDescription project={project} />
