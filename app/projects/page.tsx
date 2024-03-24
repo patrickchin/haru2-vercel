@@ -3,15 +3,17 @@ import { Suspense } from 'react';
 import Image from "next/image"
 import Link from 'next/link';
 
-import { getProjectsForUser } from '@/lib/db';
+import { getProjectsJoinUserForUser } from '@/lib/db';
 import { CenteredLayout } from '@/components/layout';
 
 import houseIcon from "@/app/assets/house.png"
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
-function ProjectItem({ project } : any) {
+function ProjectItem({ projectUser } : any) {
 
+  const project = projectUser.projects1;
+  const user = projectUser.users1;
   const title = project.title || "Untitled";
   const where = project.countrycode || "Unknown Location";
   const type = project.type || "";
@@ -23,17 +25,18 @@ function ProjectItem({ project } : any) {
         {false && <Image className="h-12 w-12 flex-none rounded-full" src={houseIcon} alt="building" />}
         <div className="min-w-0 flex-auto">
           <p className="text-md font-semibold leading-6">{title} - {where} - {type}</p>
-          <p className="mt-1 truncate text-xs leading-5">Owner ID: {project.userId} example@haru.com</p>
-          {/* {JSON.stringify(project)} */}
+          <p className="mt-1 truncate text-xs leading-5">Owner ID: {project.userId} {user.email}</p>
+          {/* <pre>{JSON.stringify(project, null, 2)} {JSON.stringify(user, null, 2)}</pre> */}
         </div>
       </div>
 
       <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
         <p className="text-sm leading-6 text-gray-900">
-          Status: pending
+          Status: {project.status}
         </p>
         <p className="mt-1 text-xs leading-5 text-gray-500">
-          Last updated <time dateTime="2023-01-23T13:23Z">3h ago</time>
+          Submitted date <time dateTime={project.createdat}>
+            {new Date(project.createdat).toLocaleDateString()} </time>
         </p>
       </div>
 
@@ -54,12 +57,12 @@ async function ProjectList() {
     return <p>Invalid user</p>;
   }
 
-  const projects = await getProjectsForUser(userId);
+  const projectusers = await getProjectsJoinUserForUser(userId);
   return (
     <ul role="list" className="space-y-3">
-      {projects.map((project) =>
-        <li key={project.id}>
-          <ProjectItem project={project} />
+      {projectusers.map((pu) =>
+        <li key={pu.projects1.id}>
+          <ProjectItem projectUser={pu} />
         </li>
       )}
     </ul>

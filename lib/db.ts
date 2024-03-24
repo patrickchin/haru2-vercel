@@ -32,6 +32,16 @@ export async function getProjectsForUser(userId: number, pagenum: number = 0) {
   ).orderBy(desc(Schemas.projects1.id)).limit(pagesize).offset(pagesize*pagenum)
 }
 
+export async function getProjectsJoinUserForUser(userId: number, pagenum: number = 0) {
+  const pagesize = 30;
+  // TODO maybe don't select things like password and createdat ...
+  return await db.select().from(Schemas.projects1)
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.projects1.userid))
+    .where(eq(Schemas.projects1.userid, userId))
+    .orderBy(desc(Schemas.projects1.id))
+    .limit(pagesize).offset(pagesize * pagenum)
+}
+
 export async function getUserProject(userId: number, projectId: number) {
   return await db.select().from(Schemas.projects1).where(
     and(
