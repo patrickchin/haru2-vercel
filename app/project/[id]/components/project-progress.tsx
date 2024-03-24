@@ -103,6 +103,18 @@ const taskColumns: ColumnDef<DesignTask>[] = [
     header: "Status",
     cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>
   },
+  {
+    accessorKey: "duration",
+    size: 50,
+    header: "Duration",
+    cell: ({ row }) => <div className="capitalize">2 days</div>
+  },
+  {
+    accessorKey: "estimation",
+    size: 50,
+    header: "Estimation",
+    cell: ({ row }) => <div className="capitalize">3 days</div>
+  },
   // {
   //   accessorKey: "priority",
   //   size: 50,
