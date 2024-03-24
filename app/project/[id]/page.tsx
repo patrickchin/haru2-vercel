@@ -8,7 +8,6 @@ import ProjectProgress from './components/project-progress';
 import { getUserProject } from '@/lib/db';
 import { auth } from '@/lib/auth';
 
-
 async function ProjectPage({ projectId }:{ projectId: number }) {
 
   const session = await auth();

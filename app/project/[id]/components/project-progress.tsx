@@ -207,10 +207,10 @@ export default function ProjectProgress({ project, }: { project: any }) {
           <DataTableDemo columns={taskColumns} data={architecturalData} />
         </TabsContent>
         <TabsContent value="structural">
-          <DataTableDemo columns={[]} data={[]} />
+          <DataTableDemo columns={taskColumns} data={[]} />
         </TabsContent>
         <TabsContent value="mechanical">
-          <DataTableDemo columns={[]} data={[]} />
+          <DataTableDemo columns={taskColumns} data={[]} />
         </TabsContent>
       </Tabs>
     </div>

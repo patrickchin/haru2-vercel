@@ -4,6 +4,7 @@ import { DesignTask, DesignTaskSpec } from "./types"
 export const legalData: DesignTask[] = [
   {
     id: 1234,
+    type: "legal",
     title: "Title Search",
     status: "complete",
     lead: "ken99@yahoo.com",
@@ -13,6 +14,7 @@ export const legalData: DesignTask[] = [
   },
   {
     id: 1235,
+    type: "legal",
     title: "Land Survey",
     status: "in progress",
     lead: "ken99@yahoo.com",
@@ -22,6 +24,7 @@ export const legalData: DesignTask[] = [
   },
   {
     id: 1236,
+    type: "legal",
     title: "Zoning Compliance",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -31,6 +34,7 @@ export const legalData: DesignTask[] = [
   },
   {
     id: 1234,
+    type: "legal",
     title: "Due Diligence",
     status: "complete",
     lead: "ken99@yahoo.com",
@@ -40,6 +44,7 @@ export const legalData: DesignTask[] = [
   },
   {
     id: 1235,
+    type: "legal",
     title: "Financial Verification",
     status: "in progress",
     lead: "ken99@yahoo.com",
@@ -49,6 +54,7 @@ export const legalData: DesignTask[] = [
   },
   {
     id: 1236,
+    type: "legal",
     title: "Drafting and Reviewing Contracts",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -58,6 +64,7 @@ export const legalData: DesignTask[] = [
   },
   {
     id: 1236,
+    type: "legal",
     title: "Inspections",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -67,6 +74,7 @@ export const legalData: DesignTask[] = [
   },
   {
     id: 1237,
+    type: "legal",
     title: "Closing Preparation",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -76,6 +84,7 @@ export const legalData: DesignTask[] = [
   },
   {
     id: 1237,
+    type: "legal",
     title: "Title Insurance",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -85,6 +94,7 @@ export const legalData: DesignTask[] = [
   },
   {
     id: 1237,
+    type: "legal",
     title: "Recording Documents",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -94,6 +104,7 @@ export const legalData: DesignTask[] = [
   },
   {
     id: 1237,
+    type: "legal",
     title: "Payment Transactions",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -103,6 +114,7 @@ export const legalData: DesignTask[] = [
   },
   {
     id: 1237,
+    type: "legal",
     title: "Compliance with Building Codes",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -112,6 +124,7 @@ export const legalData: DesignTask[] = [
   },
   {
     id: 1237,
+    type: "legal",
     title: "Occupancy Permits",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -121,6 +134,7 @@ export const legalData: DesignTask[] = [
   },
   {
     id: 1237,
+    type: "legal",
     title: "Notarization",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -130,6 +144,7 @@ export const legalData: DesignTask[] = [
   },
   {
     id: 1237,
+    type: "legal",
     title: "Communication with Stakeholders",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -139,6 +154,7 @@ export const legalData: DesignTask[] = [
   },
   {
     id: 1237,
+    type: "legal",
     title: "Post-Closing Documentation",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -151,6 +167,7 @@ export const legalData: DesignTask[] = [
 export const architecturalData: DesignTask[] = [
   {
     id: 1234,
+    type: "architectural",
     title: "Site Analysis",
     status: "complete",
     lead: "ken99@yahoo.com",
@@ -160,6 +177,7 @@ export const architecturalData: DesignTask[] = [
   },
   {
     id: 1235,
+    type: "architectural",
     title: "Program Development",
     status: "in progress",
     lead: "ken99@yahoo.com",
@@ -169,6 +187,7 @@ export const architecturalData: DesignTask[] = [
   },
   {
     id: 1236,
+    type: "architectural",
     title: "Conceptual Design",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -178,6 +197,7 @@ export const architecturalData: DesignTask[] = [
   },
   {
     id: 1234,
+    type: "architectural",
     title: "Schematic Design",
     status: "complete",
     lead: "ken99@yahoo.com",
@@ -187,6 +207,7 @@ export const architecturalData: DesignTask[] = [
   },
   {
     id: 1235,
+    type: "architectural",
     title: "Design Development",
     status: "in progress",
     lead: "ken99@yahoo.com",
@@ -196,6 +217,7 @@ export const architecturalData: DesignTask[] = [
   },
   {
     id: 1236,
+    type: "architectural",
     title: "Coordination with Consultants",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -205,6 +227,7 @@ export const architecturalData: DesignTask[] = [
   },
   {
     id: 1236,
+    type: "architectural",
     title: "Regulatory Compliance",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -214,6 +237,7 @@ export const architecturalData: DesignTask[] = [
   },
   {
     id: 1237,
+    type: "architectural",
     title: "Regulatory Compliance",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -223,6 +247,7 @@ export const architecturalData: DesignTask[] = [
   },
   {
     id: 1237,
+    type: "architectural",
     title: "Construction Documents",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -232,6 +257,7 @@ export const architecturalData: DesignTask[] = [
   },
   {
     id: 1237,
+    type: "architectural",
     title: "Material Specifications",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -241,6 +267,7 @@ export const architecturalData: DesignTask[] = [
   },
   {
     id: 1237,
+    type: "architectural",
     title: "Cost Estimation",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -250,6 +277,7 @@ export const architecturalData: DesignTask[] = [
   },
   {
     id: 1237,
+    type: "architectural",
     title: "Contractor Selection",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -259,6 +287,7 @@ export const architecturalData: DesignTask[] = [
   },
   {
     id: 1237,
+    type: "architectural",
     title: "Construction Administration",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -268,6 +297,7 @@ export const architecturalData: DesignTask[] = [
   },
   {
     id: 1237,
+    type: "architectural",
     title: "Quality Control",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -277,6 +307,7 @@ export const architecturalData: DesignTask[] = [
   },
   {
     id: 1237,
+    type: "architectural",
     title: "As-Built Drawings",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -286,6 +317,7 @@ export const architecturalData: DesignTask[] = [
   },
   {
     id: 1237,
+    type: "architectural",
     title: "Project Closeout",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -295,6 +327,7 @@ export const architecturalData: DesignTask[] = [
   },
   {
     id: 1237,
+    type: "architectural",
     title: "Documentation and Archiving",
     status: "pending",
     lead: "ken99@yahoo.com",

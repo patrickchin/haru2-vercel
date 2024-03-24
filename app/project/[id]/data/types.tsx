@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { ColumnDef } from "@tanstack/react-table"
 import { LucideArrowUpDown, LucideChevronRight } from "lucide-react"
 import Link from "next/link"
@@ -7,16 +8,19 @@ import Link from "next/link"
 import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en'
 TimeAgo.addDefaultLocale(en)
+
+
 import ReactTimeAgo from "react-time-ago"
 
 export type DesignTask = {
-  id: number
+  id: number,
+  type: "legal" | "architectural" | "structural" | "mep" | "other",
   title: string,
-  status: "pending" | "in progress" | "complete" | "canceled"
-  lead: string // user ids
-  members: string[] // user ids
-  priority: "high" | "normal" | "low"
-  lastUpdated: number
+  status: "pending" | "in progress" | "complete" | "canceled",
+  lead: string, // user ids
+  members: string[], // user ids
+  priority: "high" | "normal" | "low",
+  lastUpdated: number,
 }
 
 export type DesignTaskSpec = {
@@ -36,8 +40,11 @@ export const taskColumns: ColumnDef<DesignTask>[] = [
     accessorKey: "title",
     size: 300,
     header: () => <div>Title</div>,
-    cell: ({ row }) => <Link href="#" className="font-medium">{row.getValue("title")}</Link>
-    ,
+    cell: ({ row }) =>
+    <div className="space-x-1">
+      <Badge variant="secondary" className="capitalize">{row.original.type}</Badge>
+      <Link href="#" className="font-medium">{row.getValue("title")}</Link>
+    </div>
   },
   {
     accessorKey: "lead",
@@ -94,12 +101,12 @@ export const taskColumns: ColumnDef<DesignTask>[] = [
     header: "Status",
     cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>
   },
-  {
-    accessorKey: "priority",
-    size: 50,
-    header: "Priority",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("priority")}</div>
-  },
+  // {
+  //   accessorKey: "priority",
+  //   size: 50,
+  //   header: "Priority",
+  //   cell: ({ row }) => <div className="capitalize">{row.getValue("priority")}</div>
+  // },
   {
     accessorKey: "lastUpdated",
     size: 50,
