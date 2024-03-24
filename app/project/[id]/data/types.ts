@@ -1,0 +1,17 @@
+export type DesignTask = {
+  id: number,
+  type: "legal" | "architectural" | "structural" | "mep" | "other",
+  title: string,
+  status: "pending" | "in progress" | "complete" | "canceled",
+  lead: string, // user ids
+  members: string[], // user ids
+  priority: "high" | "normal" | "low",
+  lastUpdated: number,
+}
+
+export type DesignTaskSpec = {
+  id: number,
+  designType: "legal" | "architectural" | "structural" | "mep",
+  title: string,
+  description: string[],
+}
