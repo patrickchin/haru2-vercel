@@ -172,6 +172,14 @@ export function DataTableDemo({ columns, data }:{
     },
   })
 
+  const filterButtonValues = [
+    { value: undefined, label: "All"},
+    { value: "legal", label: "Legal"},
+    { value: "architectural", label: "Architectural"},
+    { value: "structural", label: "Structural"},
+    { value: "mep", label: "MEP"},
+  ]
+
   return (
     <div className="w-full">
       <div className="flex items-center py-4 space-x-4">
@@ -187,35 +195,14 @@ export function DataTableDemo({ columns, data }:{
           className="max-w-sm"
         />
 
-        <Button variant="outline"
-          onClick={() => table.getColumn("type")?.setFilterValue(undefined)}
-        >
-          All
-        </Button>
-
-        <Button variant="outline"
-          onClick={() => table.getColumn("type")?.setFilterValue("legal")}
-        >
-          Legal
-        </Button>
-
-        <Button variant="outline"
-          onClick={() => table.getColumn("type")?.setFilterValue("architectural")}
-        >
-          Architectural
-        </Button>
-
-        <Button variant="outline"
-          onClick={() => table.getColumn("type")?.setFilterValue("structural")}
-        >
-          Structural
-        </Button>
-
-        <Button variant="outline"
-          onClick={() => table.getColumn("type")?.setFilterValue("mechanical")}
-        >
-          MEP
-        </Button>
+        {filterButtonValues.map((filter) =>
+          <Button variant="outline" key={filter.value}
+            className={(table.getColumn("type")?.getFilterValue() as string) == filter.value ? "bg-accent" : ""}
+            onClick={() => table.getColumn("type")?.setFilterValue(filter.value)}
+          >
+            {filter.label}
+          </Button>
+        )}
 
         <div className="flex-1 text-sm text-muted-foreground">
           Selected {table.getRowCount()} row(s)

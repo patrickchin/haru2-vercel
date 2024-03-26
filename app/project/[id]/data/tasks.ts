@@ -423,7 +423,7 @@ const data: DesignTask[] = [
   // ======================== MEP ========================
   {
     id: 1237,
-    type: "mechanical",
+    type: "mep",
     title: "Something Mechanical",
     status: "pending",
     lead: "ken99@yahoo.com",
