@@ -137,9 +137,10 @@ const taskColumns: ColumnDef<DesignTask>[] = [
   {
     accessorKey: "details",
     header: () => <div className="w-8">Details</div>,
-    cell: () => <Button asChild variant="outline" className="h-8 w-8 p-0">
-      <Link href="#">
+    cell: ({ row, projectid }: any) => <Button asChild variant="outline" className="h-8 w-8 p-0">
+      <Link href={`/project/${projectid}/task/${row.original.id}`}>
         <LucideChevronRight className="h-4 w-4" />
+      {/* <pre>{JSON.stringify(row, null, 2)}</pre> */}
       </Link>
     </Button>
     ,
@@ -147,7 +148,8 @@ const taskColumns: ColumnDef<DesignTask>[] = [
 ]
 
 
-export function DataTableDemo({ columns, data }:{
+export function DataTableDemo({ projectid, columns, data }:{
+  projectid: number,
   columns: ColumnDef<DesignTask>[],
   data: DesignTask[]
 }) {
@@ -203,6 +205,28 @@ export function DataTableDemo({ columns, data }:{
             {filter.label}
           </Button>
         )}
+
+        { // horrible and ugly, quick and dirty, but works
+          (table.getColumn("status")?.getFilterValue() as string) == "in progress" ?
+            <Button variant="outline" className="bg-accent"
+              onClick={() => table.getColumn("status")?.setFilterValue(undefined)}
+            >
+              In Progress
+            </Button>
+            :
+            <Button variant="outline" className=""
+              onClick={() => table.getColumn("status")?.setFilterValue("in progress")}
+            >
+              In Progress
+            </Button>
+        }
+
+        {/* <Button variant="outline"
+          className={(table.getColumn("status")?.getFilterValue() as string) == "in progress" ? "bg-accent" : ""}
+          onClick={() => table.getColumn("status")?.setFilterValue("in progress")}
+        >
+          In Progress
+        </Button> */}
 
         <div className="flex-1 text-sm text-muted-foreground">
           Selected {table.getRowCount()} row(s)
@@ -270,7 +294,7 @@ export function DataTableDemo({ columns, data }:{
                     <TableCell key={cell.id} className="px-2 first:pl-8 last:pr-8">
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        { ...cell.getContext(), projectid, }
                       )}
                     </TableCell>
                   ))}
@@ -320,7 +344,7 @@ export default function ProjectProgress({ project, }: { project: any }) {
   return (
     <div className="flex flex-col space-y-4">
 
-      <DataTableDemo columns={taskColumns} data={getProjectTasks(0)} />
+      <DataTableDemo projectid={project.id} columns={taskColumns} data={getProjectTasks(0)} />
 
       {/* <Tabs defaultValue="architectural" className="w-full space-y-5">
         <TabsList>
