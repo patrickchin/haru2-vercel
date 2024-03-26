@@ -4,6 +4,8 @@ const day = 60*60*24;
 
 // TODO put this in the database
 const data: DesignTask[] = [
+
+  // ======================== legal ========================
   {
     id: 1234,
     type: "legal",
@@ -197,9 +199,7 @@ const data: DesignTask[] = [
     lastUpdated: Date.now(),
   },
 
-
-
-
+  // ======================== architectural ========================
   {
     id: 1234,
     type: "architectural",
@@ -404,6 +404,37 @@ const data: DesignTask[] = [
     estimation: 5*day,
     lastUpdated: Date.now(),
   },
+
+  // ======================== structural ========================
+  {
+    id: 1237,
+    type: "structural",
+    title: "Something Structural",
+    status: "pending",
+    lead: "ken99@yahoo.com",
+    members: ["aa", "bb", "cc"],
+    priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
+    lastUpdated: Date.now(),
+  },
+
+
+  // ======================== MEP ========================
+  {
+    id: 1237,
+    type: "mechanical",
+    title: "Something Mechanical",
+    status: "pending",
+    lead: "ken99@yahoo.com",
+    members: ["aa", "bb", "cc"],
+    priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
+    lastUpdated: Date.now(),
+  },
+
+
 ];
 
 export function getProjectTasks(projectid: number) {

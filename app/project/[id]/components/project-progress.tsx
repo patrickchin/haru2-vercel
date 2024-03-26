@@ -176,7 +176,6 @@ export function DataTableDemo({ columns, data }:{
     <div className="w-full">
       <div className="flex items-center py-4 space-x-4">
 
-
         {/* row filter input box */}
         <Input
           placeholder="Filter table..."
@@ -188,11 +187,41 @@ export function DataTableDemo({ columns, data }:{
           className="max-w-sm"
         />
 
+        <Button variant="outline"
+          onClick={() => table.getColumn("type")?.setFilterValue(undefined)}
+        >
+          All
+        </Button>
+
+        <Button variant="outline"
+          onClick={() => table.getColumn("type")?.setFilterValue("legal")}
+        >
+          Legal
+        </Button>
+
+        <Button variant="outline"
+          onClick={() => table.getColumn("type")?.setFilterValue("architectural")}
+        >
+          Architectural
+        </Button>
+
+        <Button variant="outline"
+          onClick={() => table.getColumn("type")?.setFilterValue("structural")}
+        >
+          Structural
+        </Button>
+
+        <Button variant="outline"
+          onClick={() => table.getColumn("type")?.setFilterValue("mechanical")}
+        >
+          MEP
+        </Button>
+
         <div className="flex-1 text-sm text-muted-foreground">
           Selected {table.getRowCount()} row(s)
         </div>
 
-        {/* Select columns to show dropdown */}
+        {/* Select columns to show dropdown
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -219,6 +248,8 @@ export function DataTableDemo({ columns, data }:{
               })}
           </DropdownMenuContent>
         </DropdownMenu>
+        */}
+
       </div>
 
 
