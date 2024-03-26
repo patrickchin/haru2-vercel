@@ -12,6 +12,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
@@ -25,7 +26,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 
 import { DesignTask } from "../data/types"
-import { architecturalData, legalData } from "../data/tasks"
+import { getProjectTasks } from "../data/tasks" // todo put in actions.ts
 
 import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en'
@@ -39,18 +40,17 @@ import ReactTimeAgo from "react-time-ago"
 // this could be the common columns and can be extended upon
 const taskColumns: ColumnDef<DesignTask>[] = [
   {
+    accessorKey: "type",
+    header: () => <div>Type</div>,
+    cell: ({ row }) => <Badge variant="secondary" className="capitalize">{row.getValue("type")}</Badge>
+  },
+  {
     accessorKey: "title",
-    size: 300,
     header: () => <div>Title</div>,
-    cell: ({ row }) =>
-    <div className="space-x-1">
-      <Badge variant="secondary" className="capitalize">{row.original.type}</Badge>
-      <Link href="#" className="font-medium">{row.getValue("title")}</Link>
-    </div>
+    cell: ({ row }) => <Link href="#" className="font-medium">{row.getValue("title")}</Link>
   },
   {
     accessorKey: "lead",
-    size: 50,
     header: ({ column }) => {
       return (
         <Button
@@ -74,7 +74,6 @@ const taskColumns: ColumnDef<DesignTask>[] = [
   },
   {
     accessorKey: "members",
-    size: 50,
     header: ({ column }) => {
       return (
         <Button
@@ -99,31 +98,26 @@ const taskColumns: ColumnDef<DesignTask>[] = [
   },
   {
     accessorKey: "status",
-    size: 50,
     header: "Status",
     cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>
   },
   {
     accessorKey: "duration",
-    size: 50,
     header: "Duration",
-    cell: ({ row }) => <div className="capitalize">2 days</div>
+    cell: ({ row }) => <div>{(row.getValue("duration") as number) / (60*60*24)} days</div>
   },
   {
     accessorKey: "estimation",
-    size: 50,
     header: "Estimation",
-    cell: ({ row }) => <div className="capitalize">3 days</div>
+    cell: ({ row }) => <div>{(row.getValue("estimation") as number) / (60*60*24)} days</div>
   },
   // {
   //   accessorKey: "priority",
-  //   size: 50,
   //   header: "Priority",
   //   cell: ({ row }) => <div className="capitalize">{row.getValue("priority")}</div>
   // },
   {
     accessorKey: "lastUpdated",
-    size: 50,
     header: ({ column }) => {
       return (
         <Button variant="ghost" className="px-1"
@@ -142,7 +136,6 @@ const taskColumns: ColumnDef<DesignTask>[] = [
   },
   {
     accessorKey: "details",
-    size: 50,
     header: () => <div className="w-8">Details</div>,
     cell: () => <Button asChild variant="outline" className="h-8 w-8 p-0">
       <Link href="#">
@@ -168,6 +161,7 @@ export function DataTableDemo({ columns, data }:{
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
@@ -195,7 +189,7 @@ export function DataTableDemo({ columns, data }:{
         />
 
         <div className="flex-1 text-sm text-muted-foreground">
-          Showing {table.getRowCount()} row(s)
+          Selected {table.getRowCount()} row(s)
         </div>
 
         {/* Select columns to show dropdown */}
@@ -277,7 +271,12 @@ export function DataTableDemo({ columns, data }:{
 
       <div className="flex items-center justify-end space-x-2 py-4">
 
-        {/* pagination
+        <div className="flex-1 text-sm text-muted-foreground">
+          Showing {table.getPaginationRowModel().rows.length} of{" "}
+          {table.getRowCount()} row(s) displayed.
+        </div>
+
+        {/* pagination */}
         <div className="space-x-2">
           <Button variant="outline" size="sm"
             onClick={() => table.previousPage()}
@@ -285,6 +284,7 @@ export function DataTableDemo({ columns, data }:{
           >
             Previous
           </Button>
+          {/* <span>TODO number of pages</span> */}
           <Button variant="outline" size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
@@ -292,7 +292,6 @@ export function DataTableDemo({ columns, data }:{
             Next
           </Button>
         </div>
-        */}
 
       </div>
     </div>
@@ -303,7 +302,9 @@ export default function ProjectProgress({ project, }: { project: any }) {
   return (
     <div className="flex flex-col space-y-4">
 
-      <Tabs defaultValue="architectural" className="w-full space-y-5">
+      <DataTableDemo columns={taskColumns} data={getProjectTasks(0)} />
+
+      {/* <Tabs defaultValue="architectural" className="w-full space-y-5">
         <TabsList>
           <TabsTrigger value="legal">Legal</TabsTrigger>
           <TabsTrigger value="architectural">Architectural</TabsTrigger>
@@ -322,7 +323,8 @@ export default function ProjectProgress({ project, }: { project: any }) {
         <TabsContent value="mechanical">
           <DataTableDemo columns={taskColumns} data={[]} />
         </TabsContent>
-      </Tabs>
+      </Tabs> */}
+
     </div>
   );
 }

@@ -1,7 +1,9 @@
 import { DesignTask, DesignTaskSpec } from "./types"
 
+const day = 60*60*24;
+
 // TODO put this in the database
-export const legalData: DesignTask[] = [
+const data: DesignTask[] = [
   {
     id: 1234,
     type: "legal",
@@ -10,6 +12,8 @@ export const legalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: [],
     priority: "high",
+    duration: 2*day, // seconds, better units?
+    estimation: 1*day,
     lastUpdated: Date.now()-3487*1000,
   },
   {
@@ -20,6 +24,8 @@ export const legalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa"],
     priority: "normal",
+    duration: 2*day,
+    estimation: 7*day,
     lastUpdated: Date.now()-3048*1000,
   },
   {
@@ -30,6 +36,8 @@ export const legalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 2*day,
+    estimation: 2*day,
     lastUpdated: Date.now()-98*1000,
   },
   {
@@ -40,6 +48,8 @@ export const legalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "high",
+    duration: 3*day,
+    estimation: 2*day,
     lastUpdated: Date.now()-97*1000,
   },
   {
@@ -50,6 +60,8 @@ export const legalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc", "dd", "ee"],
     priority: "normal",
+    duration: 3*day,
+    estimation: 2*day,
     lastUpdated: Date.now()-96*1000,
   },
   {
@@ -60,6 +72,8 @@ export const legalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
   {
@@ -70,6 +84,8 @@ export const legalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
   {
@@ -80,6 +96,8 @@ export const legalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
   {
@@ -90,6 +108,8 @@ export const legalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
   {
@@ -100,6 +120,8 @@ export const legalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
   {
@@ -110,6 +132,8 @@ export const legalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
   {
@@ -120,6 +144,8 @@ export const legalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
   {
@@ -130,6 +156,8 @@ export const legalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
   {
@@ -140,6 +168,8 @@ export const legalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
   {
@@ -150,6 +180,8 @@ export const legalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
   {
@@ -160,11 +192,14 @@ export const legalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
-]
 
-export const architecturalData: DesignTask[] = [
+
+
+
   {
     id: 1234,
     type: "architectural",
@@ -173,6 +208,8 @@ export const architecturalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: [],
     priority: "high",
+    duration: 2*day,
+    estimation: 5*day,
     lastUpdated: Date.now()-3487*1000,
   },
   {
@@ -183,6 +220,8 @@ export const architecturalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa"],
     priority: "normal",
+    duration: 4*day,
+    estimation: 5*day,
     lastUpdated: Date.now()-3048*1000,
   },
   {
@@ -193,6 +232,8 @@ export const architecturalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 3*day,
+    estimation: 8*day,
     lastUpdated: Date.now()-98*1000,
   },
   {
@@ -203,6 +244,8 @@ export const architecturalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "high",
+    duration: 2*day,
+    estimation: 7*day,
     lastUpdated: Date.now()-97*1000,
   },
   {
@@ -213,6 +256,8 @@ export const architecturalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc", "dd", "ee"],
     priority: "normal",
+    duration: 3*day,
+    estimation: 8*day,
     lastUpdated: Date.now()-96*1000,
   },
   {
@@ -223,6 +268,8 @@ export const architecturalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 1*day,
+    estimation: 6*day,
     lastUpdated: Date.now(),
   },
   {
@@ -233,6 +280,8 @@ export const architecturalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 1*day,
     lastUpdated: Date.now(),
   },
   {
@@ -243,6 +292,8 @@ export const architecturalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
   {
@@ -253,6 +304,8 @@ export const architecturalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
   {
@@ -263,6 +316,8 @@ export const architecturalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
   {
@@ -273,6 +328,8 @@ export const architecturalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
   {
@@ -283,6 +340,8 @@ export const architecturalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
   {
@@ -293,6 +352,8 @@ export const architecturalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
   {
@@ -303,6 +364,8 @@ export const architecturalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
   {
@@ -313,6 +376,8 @@ export const architecturalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
   {
@@ -323,6 +388,8 @@ export const architecturalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
   {
@@ -333,9 +400,15 @@ export const architecturalData: DesignTask[] = [
     lead: "ken99@yahoo.com",
     members: ["aa", "bb", "cc"],
     priority: "low",
+    duration: 0*day,
+    estimation: 5*day,
     lastUpdated: Date.now(),
   },
-]
+];
+
+export function getProjectTasks(projectid: number) {
+  return data;
+}
 
 
 // be very careful with changing the ids as they are referenced elsewhere

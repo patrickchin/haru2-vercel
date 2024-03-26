@@ -6,6 +6,8 @@ export type DesignTask = {
   lead: string, // user ids
   members: string[], // user ids
   priority: "high" | "normal" | "low",
+  duration: number,
+  estimation: number,
   lastUpdated: number,
 }
 
