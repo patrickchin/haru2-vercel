@@ -54,6 +54,16 @@ export async function submitProjectForm2(formData: FormData) {
   // TODO client upload directly to server! 4.5 MB limit currently
   if (files) {
     for (const file of files) {
+
+      // TODO hack
+      // FormData constructor from event.target adds a file with no filename
+      // ignore that file here
+      // the improved file upload should not hit this error
+      if (file.name == "undefined" && file.size == 0) {
+        console.log("ignoring fake file from FormData constructor");
+        continue;
+      }
+
       const data = await file.arrayBuffer();
       // private access isn't supported by vercel atm
       const { url } = await put(`project/${newProjectId}/${file.name}`, data, { access: 'public', });
