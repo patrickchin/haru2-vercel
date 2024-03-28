@@ -200,7 +200,7 @@ function DetailedQuestions({ form }:{ form: NewProjectFormType }) {
           <h4 className="text-sm font-semibold">
             Detailed Questions
           </h4>
-          <Button variant="ghost" size="sm" className="w-9 p-0">
+          <Button type="button" variant="ghost" size="sm" className="w-9 p-0">
             <ChevronDown className="h-4 w-4" />
             <span className="sr-only">Toggle</span>
           </Button>
