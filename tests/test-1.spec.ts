@@ -68,7 +68,7 @@ test('submit and wander around', async ({ page }) => {
   await page.getByRole('tab', { name: 'Progress' }).click();
   await page.getByRole('link', { name: 'Projects' }).click();
   await page.getByRole('heading', { name: 'My Projects' }).click();
-  await page.getByRole('link', { name: 'asdf - Unknown Location -' }).first().click();
+  await page.getByRole('link', { name: 'asdf - china - commercial' }).first().click();
 
 });
 
