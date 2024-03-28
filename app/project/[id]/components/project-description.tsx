@@ -82,7 +82,7 @@ export default async function ProjectDescription({ project }: { project: any }) 
 
         <Separator orientation="vertical" />
 
-        <div className="overflow-hidden p-5">
+        <div className="overflow-hidden p-5 whitespace-break-spaces">
           {project.description}
         </div>
 
