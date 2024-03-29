@@ -8,8 +8,6 @@ import ProjectProgress from './components/project-progress';
 import { getUserProject } from '@/lib/db';
 import { auth } from '@/lib/auth';
 import { Separator } from '@/components/ui/separator';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Button } from '@/components/ui/button';
 import ProjectSettings from './components/project-settings';
 
 async function ProjectPage({ projectId }:{ projectId: number }) {
@@ -54,23 +52,6 @@ async function ProjectPage({ projectId }:{ projectId: number }) {
           <ProjectSettings project={project} />
         </TabsContent>
       </Tabs>
-
-
-      <Collapsible className="border rounded-md">
-        <CollapsibleTrigger asChild>
-          <Button variant="ghost" className="w-full justify-start rounded-none">
-            <pre>Raw Database Data</pre>
-          </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent className="space-y-2">
-          <Separator />
-          <pre className="px-4 py-2 overflow-hidden">
-            {JSON.stringify(project, null, 2)}
-          </pre>
-        </CollapsibleContent>
-      </Collapsible>
-
-
 
     </section>
   )
