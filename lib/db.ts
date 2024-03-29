@@ -63,6 +63,12 @@ export async function createProject(values: {
   return await db.insert(Schemas.projects1).values(values).returning();
 }
 
+export async function deleteProject(projectId: number) {
+  return await db.delete(Schemas.projects1).where(
+    eq(Schemas.projects1.id, projectId)
+  ).returning();
+}
+
 export async function addFileUrlToProject(values: {
 	uploaderid: number,
 	projectid: number,
@@ -80,4 +86,10 @@ export async function getFilesUrlsForProject(userId: number, projectId: number) 
       eq(Schemas.files1.uploaderid, userId),
     )
   );
+}
+
+export async function deleteAllFilesFromProject(projectId: number) {
+  return await db.delete(Schemas.files1).where(
+    eq(Schemas.files1.projectid, projectId)
+  ).returning();
 }

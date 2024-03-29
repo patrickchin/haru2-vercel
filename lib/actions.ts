@@ -1,6 +1,12 @@
 'use server';
 
-import { addFileUrlToProject, createProject, getFilesUrlsForProject } from '@/lib/db';
+import {
+  addFileUrlToProject,
+  createProject,
+  deleteAllFilesFromProject,
+  deleteProject,
+  getFilesUrlsForProject
+} from '@/lib/db';
 import { auth } from './auth';
 import { put } from '@vercel/blob';
 import { NewProjectFormSchema } from './types';
@@ -93,4 +99,20 @@ export async function getProjectFiles(projectId: number) {
   const userId = Number(session.user.id);
   const fileUrls = await getFilesUrlsForProject(userId, projectId);
   return fileUrls;
+}
+
+export async function deleteFullProject(projectId: number) {
+  // A lot more thought has to go into deleting projects.
+  // - what happens if something fails in the middle?
+  // - what happens if ... what else?
+
+  console.log("DELETING PROJECT", projectId);
+
+  const deletedFiles = await deleteAllFilesFromProject(projectId);
+  deletedFiles.map((f) => console.log("TODO delete file from store", f));
+
+  const deletedProject = await deleteProject(projectId);
+  console.log("DELETED PROJECT", deletedProject);
+
+  redirect('/projects');
 }

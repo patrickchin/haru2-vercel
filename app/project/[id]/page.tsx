@@ -10,6 +10,7 @@ import { auth } from '@/lib/auth';
 import { Separator } from '@/components/ui/separator';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
+import ProjectSettings from './components/project-settings';
 
 async function ProjectPage({ projectId }:{ projectId: number }) {
 
@@ -39,6 +40,7 @@ async function ProjectPage({ projectId }:{ projectId: number }) {
         <TabsList>
           <TabsTrigger value="description">Description</TabsTrigger>
           <TabsTrigger value="progress">Progress</TabsTrigger>
+          <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
         <TabsContent value="description" className="space-y-8">
           <ProjectDescription project={project} />
@@ -47,6 +49,9 @@ async function ProjectPage({ projectId }:{ projectId: number }) {
         </TabsContent>
         <TabsContent value="progress">
           <ProjectProgress project={project} />
+        </TabsContent>
+        <TabsContent value="settings">
+          <ProjectSettings project={project} />
         </TabsContent>
       </Tabs>
 
