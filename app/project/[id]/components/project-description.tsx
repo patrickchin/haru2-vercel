@@ -87,8 +87,6 @@ export default async function ProjectDescription({ project }: { project: any }) 
         </div>
 
       </div>
-
-      <pre className="overflow-hidden">{JSON.stringify(project, null, 2)}</pre>
     </div>
   );
 }

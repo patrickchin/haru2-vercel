@@ -7,6 +7,9 @@ import ProjectAcceptance from './components/project-acceptance';
 import ProjectProgress from './components/project-progress';
 import { getUserProject } from '@/lib/db';
 import { auth } from '@/lib/auth';
+import { Separator } from '@/components/ui/separator';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Button } from '@/components/ui/button';
 
 async function ProjectPage({ projectId }:{ projectId: number }) {
 
@@ -35,19 +38,35 @@ async function ProjectPage({ projectId }:{ projectId: number }) {
       <Tabs defaultValue="description" className="w-full space-y-5">
         <TabsList>
           <TabsTrigger value="description">Description</TabsTrigger>
-          <TabsTrigger value="acceptance">Acceptance Status</TabsTrigger>
           <TabsTrigger value="progress">Progress</TabsTrigger>
         </TabsList>
-        <TabsContent value="description">
+        <TabsContent value="description" className="space-y-8">
           <ProjectDescription project={project} />
-        </TabsContent>
-        <TabsContent value="acceptance">
+          <Separator />
           <ProjectAcceptance project={project} />
         </TabsContent>
         <TabsContent value="progress">
           <ProjectProgress project={project} />
         </TabsContent>
       </Tabs>
+
+
+      <Collapsible className="border rounded-md">
+        <CollapsibleTrigger asChild>
+          <Button variant="ghost" className="w-full justify-start rounded-none">
+            <pre>Raw Database Data</pre>
+          </Button>
+        </CollapsibleTrigger>
+        <CollapsibleContent className="space-y-2">
+          <Separator />
+          <pre className="px-4 py-2 overflow-hidden">
+            {JSON.stringify(project, null, 2)}
+          </pre>
+        </CollapsibleContent>
+      </Collapsible>
+
+
+
     </section>
   )
 }

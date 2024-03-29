@@ -63,7 +63,6 @@ test('submit and wander around', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByRole('heading', { name: 'Design Views' }).click();
   await page.getByText('asdf', { exact: true }).click();
-  await page.getByRole('tab', { name: 'Acceptance Status' }).click();
   await page.getByRole('heading', { name: 'Status: pending' }).click();
   await page.getByRole('tab', { name: 'Progress' }).click();
   await page.getByRole('link', { name: 'Projects' }).click();
