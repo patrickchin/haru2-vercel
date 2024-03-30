@@ -17,11 +17,11 @@ export async function getUser(email: string) {
   return await db.select().from(Schemas.users1).where(eq(Schemas.users1.email, email));
 }
 
-export async function createUser(email: string, password: string) {
+export async function createUser(name: string, email: string, password: string) {
   let salt = genSaltSync(10);
   let hash = hashSync(password, salt);
 
-  return await db.insert(Schemas.users1).values({ email, password: hash });
+  return await db.insert(Schemas.users1).values({ name, email, password: hash });
 }
 
 

@@ -9,6 +9,7 @@ export default function Page() {
 
   async function register(formData: FormData) {
     'use server';
+    let name = formData.get('name') as string;
     let email = formData.get('email') as string;
     let password = formData.get('password') as string;
     let confirmPassword = formData.get('confirm-password') as string;
@@ -23,7 +24,7 @@ export default function Page() {
       // TODO: Handle errors with useFormStatus
       return 'User already exists';
     } else {
-      await createUser(email, password);
+      await createUser(name, email, password);
       redirect('/login');
     }
   }
