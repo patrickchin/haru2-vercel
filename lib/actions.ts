@@ -8,7 +8,7 @@ import {
   getFilesUrlsForProject
 } from '@/lib/db';
 import { auth } from './auth';
-import { put } from '@vercel/blob';
+import { del, put } from '@vercel/blob';
 import { NewProjectFormSchema } from './types';
 import { redirect } from 'next/navigation';
 
@@ -109,7 +109,10 @@ export async function deleteFullProject(projectId: number) {
   console.log("DELETING PROJECT", projectId);
 
   const deletedFiles = await deleteAllFilesFromProject(projectId);
-  deletedFiles.map((f) => console.log("TODO delete file from store", f));
+  deletedFiles.map((f) => {
+    console.log("deleting file from store", f);
+    del(f.url)
+  });
 
   const deletedProject = await deleteProject(projectId);
   console.log("DELETED PROJECT", deletedProject);
