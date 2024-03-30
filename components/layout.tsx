@@ -1,12 +1,14 @@
 import React from "react";
 import Footer from "./footer";
 import Header from "./header";
+import { cn } from "@/lib/utils";
 
 export function SimpleLayout({ children } : { children : React.ReactNode; }) {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="grow flex flex-col bg-gradient-to-r from-cyan-100 to-red-100">
+      <main className={cn("grow flex flex-col justify-center items-center",
+                          "bg-gradient-to-r from-cyan-100 to-red-100")}>
         {children}
       </main>
       <Footer />

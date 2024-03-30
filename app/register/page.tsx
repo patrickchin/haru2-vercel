@@ -1,9 +1,10 @@
 import Link from 'next/link';
-import LoginForm from '@/components/login-form';
 import { redirect } from 'next/navigation';
 import { createUser, getUser } from '@/lib/db';
-import  SubmitButton  from '@/components/submit-button';
 import { SimpleLayout } from '@/components/layout';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 export default function Page() {
 
@@ -31,28 +32,53 @@ export default function Page() {
 
   return (
     <SimpleLayout>
-      <div className="grow flex justify-center items-center">
-        <div className="z-10 w-screen max-w-md rounded-2xl border border-gray-100 shadow-xl overflow-hidden">
-
-          <div className="flex flex-col h-fit items-center justify-center space-y-3 border-b border-gray-200 bg-white px-4 py-6 pt-8 text-center sm:px-16">
+      <div className="w-screen max-w-md rounded-2xl shadow-xl overflow-hidden">
+        <div className="flex flex-col py-6 space-y-3 bg-background text-center border-b border-border">
             <h3>Create an Account</h3>
-            <p>
-              Create an account with your email and password
-            </p>
+            <p>Create an account with your email and password</p>
+        </div>
+
+        <form action={register} className="flex flex-col gap-y-4 bg-gray-50 px-16 py-6">
+
+          <div>
+            <Label htmlFor="name" className="text-xs uppercase">
+              Name
+            </Label>
+            <Input name="name" required className="text-sm" />
           </div>
 
-          <LoginForm action={register} confirmPassword={true}>
-            <SubmitButton>Sign Up</SubmitButton>
-            <p className="text-center text-sm text-gray-600">
-              {"Already have an account? "}
-              <Link href="/login" className="font-semibold text-gray-800">
-                Login
-              </Link>
-              {" instead."}
-            </p>
-          </LoginForm>
+          <div>
+            <Label htmlFor="email" className="text-xs uppercase">
+              Email Address
+            </Label>
+            <Input name="email" type="email" placeholder="user@acme.com"
+              autoComplete="email" required className="text-sm" />
+          </div>
 
-        </div>
+          <div>
+            <Label htmlFor="password" className="text-xs uppercase">
+              Password
+            </Label>
+            <Input name="password" type="password" required className="text-sm" />
+          </div>
+
+          <div>
+            <Label htmlFor="confirm-password" className="text-xs uppercase">
+              Confirm Password
+            </Label>
+            <Input name="confirm-password" type="password" required className="text-sm" />
+          </div>
+
+          <Button className="text-sm mt-2">Sign Up</Button>
+
+          <p className="text-center text-sm text-gray-600">
+            {"Already have an account? "}
+            <Link href="/login" className="font-bold hover:underline">
+              {"Login"}
+            </Link>
+            {" instead."}
+          </p>
+        </form>
       </div>
     </SimpleLayout>
   );
