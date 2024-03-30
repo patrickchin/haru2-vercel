@@ -198,7 +198,7 @@ export function DataTableDemo({ projectid, columns, data }:{
         />
 
         {filterButtonValues.map((filter) =>
-          <Button variant="outline" key={filter.value}
+          <Button variant="outline" key={filter.value || ""}
             className={(table.getColumn("type")?.getFilterValue() as string) == filter.value ? "bg-accent" : ""}
             onClick={() => table.getColumn("type")?.setFilterValue(filter.value)}
           >
