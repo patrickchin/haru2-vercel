@@ -8,8 +8,9 @@ test('submit and wander around', async ({ page }) => {
   await page.getByPlaceholder('user@acme.com').click();
   await page.getByPlaceholder('user@acme.com').fill('user1@haru.com');
   await page.getByPlaceholder('user@acme.com').press('Tab');
-  await page.getByLabel('Password').fill('asdf');
-  await page.getByLabel('Password').press('Enter');
+  // TODO credentials as env variables!!
+  await page.locator('input[name="password"]').fill('thisisalongpassword1');;
+  await page.locator('input[name="password"]').press('Enter');
   await page.getByRole('link', { name: 'get started' }).click();
   await page.getByPlaceholder('Untitled').click();
   await page.getByPlaceholder('Untitled').dblclick();
@@ -23,11 +24,11 @@ test('submit and wander around', async ({ page }) => {
   await page.getByLabel('Building Type').click();
   await page.getByLabel('Office Building').getByText('Office Building').click();
   await page.getByPlaceholder('Tell us a little bit about').click();
-  await page.getByPlaceholder('Tell us a little bit about').fill('asdf');
+  await page.getByPlaceholder('Tell us a little bit about').fill('this is the description of my project');
   await page.getByLabel('Additional Documents').click();
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByRole('heading', { name: 'Design Views' }).click();
-  await page.getByText('asdf', { exact: true }).click();
+  await page.getByText('this is the description of my project', { exact: true }).click();
   await page.getByRole('heading', { name: 'Status: pending' }).click();
   await page.getByRole('tab', { name: 'Progress' }).click();
   await page.getByRole('link', { name: 'Projects' }).click();
@@ -46,8 +47,8 @@ test('check can log in', async ({ page }) => {
   await page.getByPlaceholder('user@acme.com').fill('user1@haru.com');
   await page.getByPlaceholder('user@acme.com').press('Tab');
   // TODO credentials as env variables!!
-  await page.getByLabel('Password').fill('asdf');
-  await page.getByLabel('Password').press('Enter');
+  await page.locator('input[name="password"]').fill('thisisalongpassword1');;
+  await page.locator('input[name="password"]').press('Enter');
   await page.getByRole('link', { name: 'get started' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByPlaceholder('Untitled').click();
