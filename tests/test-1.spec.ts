@@ -27,10 +27,11 @@ test('submit and wander around', async ({ page }) => {
   await page.getByPlaceholder('Tell us a little bit about').fill('this is the description of my project');
   await page.getByLabel('Additional Documents').click();
   await page.getByRole('button', { name: 'Submit' }).click();
-  await page.getByRole('heading', { name: 'Design Views' }).click();
-  await page.getByText('this is the description of my project', { exact: true }).click();
-  await page.getByRole('heading', { name: 'Status: pending' }).click();
+
+  await expect(page.getByLabel('Description')).toContainText('this is the description of my project');
+  await page.getByText('Type: Office Building').click();
   await page.getByRole('tab', { name: 'Progress' }).click();
+
   await page.getByRole('link', { name: 'Projects' }).click();
   await page.getByRole('heading', { name: 'My Projects' }).click();
   await page.getByRole('link', { name: 'd4b46c21-4cf1-4436-801d-fcf17241e41b - china - commercial' }).first().click();

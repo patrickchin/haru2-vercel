@@ -93,7 +93,6 @@ export default async function ProjectDescription({ project }: { project: any }) 
         </CardContent>
       </Card>
 
-
       <Card>
         <CardHeader>Description</CardHeader>
         <CardContent>
