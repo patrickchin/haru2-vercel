@@ -44,8 +44,6 @@ async function ProjectPage({ projectId }:{ projectId: number }) {
         </TabsList>
         <TabsContent value="description" className="space-y-8">
           <ProjectDescription project={project} />
-          <Separator />
-          <ProjectAcceptance project={project} />
         </TabsContent>
         <TabsContent value="progress">
           <ProjectProgress project={project} />
