@@ -74,15 +74,26 @@ export default async function ProjectDescription({ project }: { project: any }) 
         </CardHeader>
       </Card>
 
-      <Card>
-        <CardHeader>Status</CardHeader>
-        <CardContent>
-          <CardDescription>
-            <p>Your project is in a list waiting to be picked up.</p>
-            <p>Check back later for updates</p>
-          </CardDescription>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 grid-rows-2 md:grid-cols-2 md:grid-rows-1 gap-5">
+        <Card>
+          <CardHeader>Status</CardHeader>
+          <CardContent>
+            <CardDescription>
+              <p>Your project is in a list waiting to be picked up.</p>
+              <p>Check back later for updates</p>
+            </CardDescription>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>Updates</CardHeader>
+          <CardContent>
+            <CardDescription>
+              Here you will see the latest updates to your project
+            </CardDescription>
+          </CardContent>
+        </Card>
+      </div>
 
       <Card>
         <CardHeader>Design Views</CardHeader>
