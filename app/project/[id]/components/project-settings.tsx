@@ -170,10 +170,10 @@ export default function ProjectSettings({ project, }: { project: any }) {
           <CardDescription>
             <p>Requesting deletion will request a manual deletion of all this projects after 30 days.</p>
             <p>We will ask you to confirm the deletion via email.</p>
-            <p>The button does not work atm</p>
+            <p>TODO Make user confirm delete project</p>
           </CardDescription>
           <div className="flex space-x-4">
-            <Button variant="destructive">Request Project Deletion</Button>
+            <Button variant="destructive" disabled>Request Project Deletion</Button>
             <Button variant="destructive" onClick={clickDeleteProject}>Delete Project</Button>
           </div>
         </CardContent>
