@@ -65,7 +65,7 @@ export default async function ProjectDescription({ project }: { project: any }) 
             <ul className="inline-block">
               <li className="inline-block border-r px-2"><span className="font-bold">Id:       </span>{project.id}</li>
               <li className="inline-block border-r px-2"><span className="font-bold">Owner:    </span>{project.userid || "<unknown>"}</li>
-              <li className="inline-block border-r px-2"><span className="font-bold">Country:  </span>{project.country || "<unknown>"}</li>
+              <li className="inline-block border-r px-2"><span className="font-bold">Country:  </span>{project.countrycode || "<unknown>"}</li>
               <li className="inline-block border-r px-2"><span className="font-bold">Industry: </span>{project.type || "<unknown>"}</li>
               <li className="inline-block border-r px-2"><span className="font-bold">Type:     </span>{project.subtype || "<unknown>"}</li>
               <li className="inline-block border-none px-2"><span className="font-bold">Created:  </span>{project.createdat.toDateString() || "<unknown>"}</li>
