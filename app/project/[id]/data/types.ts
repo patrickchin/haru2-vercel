@@ -1,6 +1,7 @@
 export type DesignTask = {
   id: number,
   type: "legal" | "architectural" | "structural" | "mep" | "other",
+  specid: number,
   title: string,
   status: "pending" | "in progress" | "complete" | "canceled",
   lead: string, // user ids

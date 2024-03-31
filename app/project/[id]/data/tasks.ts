@@ -9,6 +9,7 @@ const data: DesignTask[] = [
   {
     id: 1234,
     type: "legal",
+    specid: 100,
     title: "Title Search",
     status: "complete",
     lead: "ken99@yahoo.com",
@@ -21,6 +22,7 @@ const data: DesignTask[] = [
   {
     id: 1235,
     type: "legal",
+    specid: 101,
     title: "Land Survey",
     status: "in progress",
     lead: "ken99@yahoo.com",
@@ -33,6 +35,7 @@ const data: DesignTask[] = [
   {
     id: 1236,
     type: "legal",
+    specid: 102,
     title: "Zoning Compliance",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -45,6 +48,7 @@ const data: DesignTask[] = [
   {
     id: 1234,
     type: "legal",
+    specid: 103,
     title: "Due Diligence",
     status: "complete",
     lead: "ken99@yahoo.com",
@@ -57,6 +61,7 @@ const data: DesignTask[] = [
   {
     id: 1235,
     type: "legal",
+    specid: 104,
     title: "Financial Verification",
     status: "in progress",
     lead: "ken99@yahoo.com",
@@ -69,6 +74,7 @@ const data: DesignTask[] = [
   {
     id: 1236,
     type: "legal",
+    specid: 105,
     title: "Drafting and Reviewing Contracts",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -81,6 +87,7 @@ const data: DesignTask[] = [
   {
     id: 1236,
     type: "legal",
+    specid: 106,
     title: "Inspections",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -93,6 +100,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "legal",
+    specid: 107,
     title: "Closing Preparation",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -105,6 +113,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "legal",
+    specid: 108,
     title: "Title Insurance",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -117,6 +126,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "legal",
+    specid: 109,
     title: "Recording Documents",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -129,6 +139,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "legal",
+    specid: 110,
     title: "Payment Transactions",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -141,6 +152,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "legal",
+    specid: 111,
     title: "Compliance with Building Codes",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -153,6 +165,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "legal",
+    specid: 112,
     title: "Occupancy Permits",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -165,6 +178,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "legal",
+    specid: 113,
     title: "Notarization",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -177,6 +191,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "legal",
+    specid: 114,
     title: "Communication with Stakeholders",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -189,6 +204,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "legal",
+    specid: 115,
     title: "Post-Closing Documentation",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -203,6 +219,7 @@ const data: DesignTask[] = [
   {
     id: 1234,
     type: "architectural",
+    specid: 116,
     title: "Site Analysis",
     status: "complete",
     lead: "ken99@yahoo.com",
@@ -215,6 +232,7 @@ const data: DesignTask[] = [
   {
     id: 1235,
     type: "architectural",
+    specid: 117,
     title: "Program Development",
     status: "in progress",
     lead: "ken99@yahoo.com",
@@ -227,6 +245,7 @@ const data: DesignTask[] = [
   {
     id: 1236,
     type: "architectural",
+    specid: 118,
     title: "Conceptual Design",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -239,6 +258,7 @@ const data: DesignTask[] = [
   {
     id: 1234,
     type: "architectural",
+    specid: 119,
     title: "Schematic Design",
     status: "complete",
     lead: "ken99@yahoo.com",
@@ -251,6 +271,7 @@ const data: DesignTask[] = [
   {
     id: 1235,
     type: "architectural",
+    specid: 120,
     title: "Design Development",
     status: "in progress",
     lead: "ken99@yahoo.com",
@@ -263,6 +284,7 @@ const data: DesignTask[] = [
   {
     id: 1236,
     type: "architectural",
+    specid: 121,
     title: "Coordination with Consultants",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -275,6 +297,7 @@ const data: DesignTask[] = [
   {
     id: 1236,
     type: "architectural",
+    specid: 122,
     title: "Regulatory Compliance",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -287,6 +310,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "architectural",
+    specid: 123,
     title: "Regulatory Compliance",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -299,6 +323,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "architectural",
+    specid: 124,
     title: "Construction Documents",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -311,6 +336,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "architectural",
+    specid: 125,
     title: "Material Specifications",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -323,6 +349,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "architectural",
+    specid: 126,
     title: "Cost Estimation",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -335,6 +362,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "architectural",
+    specid: 127,
     title: "Contractor Selection",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -347,6 +375,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "architectural",
+    specid: 128,
     title: "Construction Administration",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -359,6 +388,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "architectural",
+    specid: 129,
     title: "Quality Control",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -371,6 +401,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "architectural",
+    specid: 130,
     title: "As-Built Drawings",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -383,6 +414,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "architectural",
+    specid: 131,
     title: "Project Closeout",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -395,6 +427,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "architectural",
+    specid: 132,
     title: "Documentation and Archiving",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -409,6 +442,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "structural",
+    specid: 133,
     title: "Something Structural",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -424,6 +458,7 @@ const data: DesignTask[] = [
   {
     id: 1237,
     type: "mep",
+    specid: 134,
     title: "Something Mechanical",
     status: "pending",
     lead: "ken99@yahoo.com",
@@ -433,17 +468,19 @@ const data: DesignTask[] = [
     estimation: 5*day,
     lastUpdated: Date.now(),
   },
-
-
 ];
 
 export function getProjectTasks(projectid: number) {
   return data;
 }
 
+export function getProjectTask(projectid: number, taskid: number) {
+  return data.find((val) => val.id == taskid);
+}
+
 
 // be very careful with changing the ids as they are referenced elsewhere
-export const taskSpecs: DesignTaskSpec[] = [
+const taskSpecs: DesignTaskSpec[] = [
 
   // ======================== legal ========================
   {
@@ -727,6 +764,8 @@ export const taskSpecs: DesignTaskSpec[] = [
       "Create a comprehensive record for future reference.",
     ]
   },
-
-
 ];
+
+export function getTaskSpec(specid: number) {
+  return taskSpecs.find((val) => val.id == specid);
+}
