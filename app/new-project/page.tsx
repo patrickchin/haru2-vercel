@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { FieldValues, useForm } from "react-hook-form"
@@ -39,6 +39,11 @@ function ProjectTitle({ form }:{ form: NewProjectFormType }) {
 }
 
 function CountrySelector({ form }: { form: NewProjectFormType }) {
+
+  const displayNames = useMemo(() => {
+    return new Intl.DisplayNames(["en"], { type: "region" });
+  }, []);
+
   return (
     <FormField
       control={form.control}
@@ -53,7 +58,7 @@ function CountrySelector({ form }: { form: NewProjectFormType }) {
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {countries.map((c, i) => <SelectItem key={i} value={c.value}>{c.label}</SelectItem>)}
+              {countries.map((c) => <SelectItem key={c} value={c}>{displayNames.of(c)}</SelectItem>)}
             </SelectContent>
           </Select>
           <FormMessage />
@@ -219,7 +224,7 @@ function NewProjectForm() {
 
   const searchParams = useSearchParams();
   const countryParam: string | null = searchParams.get('country');
-  const defaultCountry: string = countryParam && countries.some(c => c.value == countryParam.toLowerCase()) ? countryParam : "";
+  const defaultCountry: string | undefined = countries.find(c => c == countryParam?.toUpperCase());
 
   // TODO save form data to local storage so it's not lost on refresh
   const form = useForm<NewProjectFormSchemaType>({

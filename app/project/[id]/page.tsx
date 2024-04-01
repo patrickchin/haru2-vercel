@@ -3,11 +3,9 @@ import { redirect } from 'next/navigation';
 import { CenteredLayout } from '@/components/layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ProjectDescription from './components/project-description';
-import ProjectAcceptance from './components/project-acceptance';
 import ProjectProgress from './components/project-progress';
 import { getUserProject } from '@/lib/db';
 import { auth } from '@/lib/auth';
-import { Separator } from '@/components/ui/separator';
 import ProjectSettings from './components/project-settings';
 import ProjectModelView from './components/project-model-view';
 

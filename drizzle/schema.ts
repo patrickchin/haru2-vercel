@@ -7,7 +7,7 @@ import {
 	unique,
 	text,
 	json,
-	primaryKey
+	char
 } from "drizzle-orm/pg-core";
 import type { AdapterAccount } from "@auth/core/adapters";
 
@@ -34,7 +34,7 @@ export const projects1 = pgTable("projects1", {
 	description: text("description"),
 	type: varchar("type", { length: 64 }),
 	subtype: varchar("subtype", { length: 64 }),
-	countrycode: varchar("countrycode", { length: 64 }),
+	countrycode: char("countrycode", { length: 2 }),
 	status: varchar("status", { length: 128 }).default("pending"),
 	extrainfo: json("info").notNull(),
 	createdat: timestamp("createdat", { withTimezone: true, mode: 'string' }).defaultNow(),

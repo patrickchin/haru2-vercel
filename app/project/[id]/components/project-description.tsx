@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import { getProjectFiles } from "@/lib/actions";
 import Image from "next/image";
-import { Suspense } from "react";
+import { Suspense, useMemo } from "react";
 import * as Lucide from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
@@ -56,6 +56,12 @@ async function ProjectDesignViews({ projectId }: { projectId: number }) {
 }
 
 export default async function ProjectDescription({ project }: { project: any }) {
+
+  const displayNames = useMemo(() => {
+    return new Intl.DisplayNames(["en"], { type: "region" });
+  }, []);
+  const country = displayNames.of(project.countrycode);
+
   return (
     <div className="flex flex-col gap-5">
 
@@ -65,7 +71,7 @@ export default async function ProjectDescription({ project }: { project: any }) 
             <ul className="inline-block">
               <li className="inline-block border-r px-2"><span className="font-bold">Id:       </span>{project.id}</li>
               <li className="inline-block border-r px-2"><span className="font-bold">Owner:    </span>{project.userid || "<unknown>"}</li>
-              <li className="inline-block border-r px-2"><span className="font-bold">Country:  </span>{project.countrycode || "<unknown>"}</li>
+              <li className="inline-block border-r px-2"><span className="font-bold">Country:  </span>{country || "<unknown>"}</li>
               <li className="inline-block border-r px-2"><span className="font-bold">Industry: </span>{project.type || "<unknown>"}</li>
               <li className="inline-block border-r px-2"><span className="font-bold">Type:     </span>{project.subtype || "<unknown>"}</li>
               <li className="inline-block border-none px-2"><span className="font-bold">Created:  </span>{project.createdat.toDateString() || "<unknown>"}</li>
@@ -107,7 +113,7 @@ export default async function ProjectDescription({ project }: { project: any }) 
       <Card>
         <CardHeader>Description</CardHeader>
         <CardContent>
-          <CardDescription>
+          <CardDescription className="whitespace-pre-line">
             {project.description}
           </CardDescription>
         </CardContent>
