@@ -7,13 +7,14 @@ import * as Lucide from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "react-day-picker";
+import { Progress } from "@/components/ui/progress";
 
 function ProjectDesignViewsFallback() {
   return (<p>Loading images ...</p>);
 }
 
-async function ProjectDesignViews({ projectId }: { projectId: number }) {
-  const imageUrlArray = await getProjectFiles(projectId);
+async function ProjectDesignViews({ project }: { project: any }) {
+  const imageUrlArray = await getProjectFiles(project.id);
 
   if (!imageUrlArray || imageUrlArray.length === 0) {
     return (<CardDescription>
@@ -53,6 +54,24 @@ async function ProjectDesignViews({ projectId }: { projectId: number }) {
       <CarouselNext />
     </Carousel>
   );
+}
+
+async function ProjectProgressSummary({ project }: { project: any }) {
+
+  const ncompleted = 13;
+  const ntotal = 35;
+  const pctcomplete = 100*13/53;
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex gap-4 justify-center items-center">
+        <Progress value={33} className="w-5/6" />
+      </div>
+      <CardDescription>
+        Completed {ncompleted} of {ntotal} total tasks ({pctcomplete.toFixed(1)} %)
+      </CardDescription>
+    </div>
+  )
 }
 
 export default async function ProjectDescription({ project }: { project: any }) {
@@ -102,10 +121,19 @@ export default async function ProjectDescription({ project }: { project: any }) 
       </div>
 
       <Card>
+        <CardHeader>Progress and Milestones</CardHeader>
+        <CardContent>
+          <Suspense fallback={<ProjectDesignViewsFallback />}>
+            <ProjectProgressSummary project={project} />
+          </Suspense>
+        </CardContent>
+      </Card>
+
+      <Card>
         <CardHeader>Design Views</CardHeader>
         <CardContent>
           <Suspense fallback={<ProjectDesignViewsFallback />}>
-            <ProjectDesignViews projectId={project.id} />
+            <ProjectDesignViews project={project} />
           </Suspense>
         </CardContent>
       </Card>
