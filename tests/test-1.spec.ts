@@ -34,7 +34,7 @@ test('submit and wander around', async ({ page }) => {
 
   await page.getByRole('link', { name: 'Projects' }).click();
   await page.getByRole('heading', { name: 'My Projects' }).click();
-  await page.getByRole('link', { name: 'd4b46c21-4cf1-4436-801d-fcf17241e41b - china - commercial' }).first().click();
+  await page.getByRole('link', { name: 'd4b46c21-4cf1-4436-801d-fcf17241e41b - China - Commercial' }).first().click();
   await page.getByRole('tab', { name: 'Settings' }).click();
   await page.getByRole('button', { name: 'Delete Project' }).click();
 });

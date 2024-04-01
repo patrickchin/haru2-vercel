@@ -1,5 +1,5 @@
 
-import { Suspense } from 'react';
+import { Suspense, useMemo } from 'react';
 import Image from "next/image"
 import Link from 'next/link';
 
@@ -12,10 +12,14 @@ import { redirect } from 'next/navigation';
 
 function ProjectItem({ projectUser } : any) {
 
+  const displayNames = useMemo(() => {
+    return new Intl.DisplayNames(["en"], { type: "region" });
+  }, []);
+
   const project = projectUser.projects1;
   const user = projectUser.users1;
   const title = project.title || "Untitled";
-  const where = project.countrycode || "Unknown Location";
+  const where = displayNames.of(project.countrycode) || "Unknown Location";
   const type = project.type || "";
 
   return (
@@ -24,7 +28,7 @@ function ProjectItem({ projectUser } : any) {
       <div className="flex min-w-0 gap-x-4">
         {false && <Image className="h-12 w-12 flex-none rounded-full" src={houseIcon} alt="building" />}
         <div className="min-w-0 flex-auto">
-          <p className="text-md font-semibold leading-6">{title} - {where} - {type}</p>
+          <p className="text-md font-semibold leading-6">{title} - {where} - <span className="capitalize">{type}</span></p>
           <p className="mt-1 truncate text-xs leading-5">Owner ID: {project.userId} {user.email}</p>
           {/* <pre>{JSON.stringify(project, null, 2)} {JSON.stringify(user, null, 2)}</pre> */}
         </div>
