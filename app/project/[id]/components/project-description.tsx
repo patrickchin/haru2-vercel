@@ -1,12 +1,8 @@
 import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import { getProjectFiles } from "@/lib/actions";
-import Image from "next/image";
 import { Suspense, useMemo } from "react";
 import * as Lucide from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "react-day-picker";
 import { Progress } from "@/components/ui/progress";
 
 function ProjectDesignViewsFallback() {
@@ -17,10 +13,14 @@ async function ProjectDesignViews({ project }: { project: any }) {
   const imageUrlArray = await getProjectFiles(project.id);
 
   if (!imageUrlArray || imageUrlArray.length === 0) {
-    return (<CardDescription>
-      <p>You have no uploaded floor plans or 3D models yet.</p>
-      <p>As progress is made on your designs, they will be displayed here.</p>
-    </CardDescription>);
+    return (<>
+      <CardDescription>
+        You have no uploaded floor plans or 3D models yet.
+      </CardDescription>
+      <CardDescription>
+        As progress is made on your designs, they will be displayed here.
+      </CardDescription>
+    </>);
   }
 
   return (
@@ -65,7 +65,7 @@ async function ProjectProgressSummary({ project }: { project: any }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-4 justify-center items-center">
-        <Progress value={33} className="w-5/6" />
+        <Progress value={33} className="w-5/6" indicatorColor="bg-gray-600"/>
       </div>
       <CardDescription>
         Completed {ncompleted} of {ntotal} total tasks ({pctcomplete.toFixed(1)} %)
@@ -85,8 +85,7 @@ export default async function ProjectDescription({ project }: { project: any }) 
     <div className="flex flex-col gap-5">
 
       <Card>
-        <CardHeader>
-          <CardDescription>
+        <CardHeader className="text-sm text-muted-foreground">
             <ul className="inline-block">
               <li className="inline-block border-r px-2"><span className="font-bold">Id:       </span>{project.id}</li>
               <li className="inline-block border-r px-2"><span className="font-bold">Owner:    </span>{project.userid || "<unknown>"}</li>
@@ -95,7 +94,6 @@ export default async function ProjectDescription({ project }: { project: any }) 
               <li className="inline-block border-r px-2"><span className="font-bold">Type:     </span>{project.subtype || "<unknown>"}</li>
               <li className="inline-block border-none px-2"><span className="font-bold">Created:  </span>{project.createdat.toDateString() || "<unknown>"}</li>
             </ul>
-          </CardDescription>
         </CardHeader>
       </Card>
 
@@ -104,8 +102,10 @@ export default async function ProjectDescription({ project }: { project: any }) 
           <CardHeader>Status</CardHeader>
           <CardContent>
             <CardDescription>
-              <p>Your project is in a list waiting to be picked up.</p>
-              <p>Check back later for updates</p>
+              Your project is in a list waiting to be picked up.
+            </CardDescription>
+            <CardDescription>
+              Check back later for updates
             </CardDescription>
           </CardContent>
         </Card>

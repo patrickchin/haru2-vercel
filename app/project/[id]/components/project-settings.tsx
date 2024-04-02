@@ -125,13 +125,6 @@ export function SwitchForm() {
 
 
 
-
-
-
-
-
-
-
 export default function ProjectSettings({ project, }: { project: any }) {
 
   function clickDeleteProject() {
@@ -168,9 +161,13 @@ export default function ProjectSettings({ project, }: { project: any }) {
         </CardHeader>
         <CardContent className="space-y-4">
           <CardDescription>
-            <p>Requesting deletion will request a manual deletion of all this projects after 30 days.</p>
-            <p>We will ask you to confirm the deletion via email.</p>
-            <p>TODO Make user confirm delete project</p>
+            Requesting deletion will request a manual deletion of all this projects after 30 days.
+          </CardDescription>
+          <CardDescription>
+            We will ask you to confirm the deletion via email.
+          </CardDescription>
+          <CardDescription>
+            TODO Make user confirm delete project
           </CardDescription>
           <div className="flex space-x-4">
             <Button variant="destructive" disabled>Request Project Deletion</Button>

@@ -2,28 +2,16 @@
 
 import * as React from "react"
 import Link from "next/link"
+import * as Tan from '@tanstack/react-table'
+
 import { ChevronDown, LucideArrowUpDown, LucideChevronRight } from "lucide-react"
-
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
-
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Progress } from "@/components/ui/progress"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table"
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
 
 import { DesignTask } from "../data/types"
 import { getProjectTasks } from "../data/tasks" // todo put in actions.ts
@@ -38,7 +26,7 @@ import ReactTimeAgo from "react-time-ago"
 
 // will architectural and legal ect colums differ?
 // this could be the common columns and can be extended upon
-const taskColumns: ColumnDef<DesignTask>[] = [
+const taskColumns: Tan.ColumnDef<DesignTask>[] = [
   {
     accessorKey: "type",
     header: () => <div>Type</div>,
@@ -72,30 +60,30 @@ const taskColumns: ColumnDef<DesignTask>[] = [
       </div>
     )
   },
-  {
-    accessorKey: "members",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Members
-          <LucideArrowUpDown className="ml-1 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => (
-      <div className="flex flex-row overflow-hidden w-32 space-x-1">
-        {(row.getValue("members") as string[]).map((mem, i) =>
-          <Avatar key={i}>
-            {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
-            <AvatarFallback>{mem.slice(0, 2).toUpperCase()}</AvatarFallback>
-          </Avatar>
-        )}
-      </div>
-    )
-  },
+  // {
+  //   accessorKey: "members",
+  //   header: ({ column }) => {
+  //     return (
+  //       <Button
+  //         variant="ghost"
+  //         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  //       >
+  //         Members
+  //         <LucideArrowUpDown className="ml-1 h-4 w-4" />
+  //       </Button>
+  //     )
+  //   },
+  //   cell: ({ row }) => (
+  //     <div className="flex flex-row overflow-hidden w-32 space-x-1">
+  //       {(row.getValue("members") as string[]).map((mem, i) =>
+  //         <Avatar key={i}>
+  //           {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
+  //           <AvatarFallback>{mem.slice(0, 2).toUpperCase()}</AvatarFallback>
+  //         </Avatar>
+  //       )}
+  //     </div>
+  //   )
+  // },
   {
     accessorKey: "status",
     header: "Status",
@@ -104,13 +92,23 @@ const taskColumns: ColumnDef<DesignTask>[] = [
   {
     accessorKey: "duration",
     header: "Duration",
-    cell: ({ row }) => <div>{(row.getValue("duration") as number) / (60*60*24)} days</div>
+    cell: ({ row }) => {
+      const duration = row.getValue("duration") as number;
+      // const estimation = row.getValue("estimation") as number;
+      const estimation = row.original.estimation as number;
+      const percent = (100 * duration / estimation);
+      const color = percent <= 100 ? "bg-green-300" : "bg-red-300";
+      return (<div>
+        <Progress value={percent} indicatorColor={color} />
+        {percent.toFixed(0)} % complete
+      </div>);
+    }
   },
-  {
-    accessorKey: "estimation",
-    header: "Estimation",
-    cell: ({ row }) => <div>{(row.getValue("estimation") as number) / (60*60*24)} days</div>
-  },
+  // {
+  //   accessorKey: "estimation",
+  //   header: "Estimation",
+  //   cell: ({ row }) => <div>{(row.getValue("estimation") as number) / (60*60*24)} days</div>
+  // },
   // {
   //   accessorKey: "priority",
   //   header: "Priority",
@@ -147,34 +145,9 @@ const taskColumns: ColumnDef<DesignTask>[] = [
   },
 ]
 
+function DataTableFilterToggles({ table }:{ table: Tan.Table<DesignTask> }) {
 
-export function DataTableDemo({ projectid, columns, data }:{
-  projectid: number,
-  columns: ColumnDef<DesignTask>[],
-  data: DesignTask[]
-}) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-
-  const table = useReactTable({
-    data,
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-    },
-  })
-
-  const filterButtonValues = [
+  const filterTypeButtonValues = [
     { value: undefined, label: "All"},
     { value: "legal", label: "Legal"},
     { value: "architectural", label: "Architectural"},
@@ -182,10 +155,17 @@ export function DataTableDemo({ projectid, columns, data }:{
     { value: "mep", label: "MEP"},
   ]
 
-  return (
-    <div className="w-full">
-      <div className="flex items-center py-4 space-x-4">
+  const filterStatusButtonValues = [
+    // { value: undefined, label: "All"},
+    { value: "pending", label: "Pending"},
+    { value: "in progress", label: "In Progress"},
+    { value: "complete", label: "Complete"},
+  ]
 
+  return (
+    <div className="flex flex-col w-full">
+
+      <div className="w-full flex items-center py-4 space-x-4">
         {/* row filter input box */}
         <Input
           placeholder="Filter table..."
@@ -197,16 +177,20 @@ export function DataTableDemo({ projectid, columns, data }:{
           className="max-w-sm"
         />
 
-        {filterButtonValues.map((filter) =>
-          <Button variant="outline" key={filter.value || ""}
-            className={(table.getColumn("type")?.getFilterValue() as string) == filter.value ? "bg-accent" : ""}
-            onClick={() => table.getColumn("type")?.setFilterValue(filter.value)}
-          >
-            {filter.label}
-          </Button>
-        )}
 
-        { // horrible and ugly, quick and dirty, but works
+        <div className="w-full flex items-center space-x-4">
+          {filterStatusButtonValues.map((filter) =>
+            <Button variant="outline" key={filter.value || ""}
+              className={(table.getColumn("status")?.getFilterValue() as string) == filter.value ? "bg-accent" : ""}
+              onClick={() => table.getColumn("status")?.setFilterValue(filter.value)}
+            >
+              {filter.label}
+            </Button>
+          )}
+        </div>
+
+
+        {/* { // horrible and ugly, quick and dirty, but works
           (table.getColumn("status")?.getFilterValue() as string) == "in progress" ?
             <Button variant="outline" className="bg-accent"
               onClick={() => table.getColumn("status")?.setFilterValue(undefined)}
@@ -219,7 +203,7 @@ export function DataTableDemo({ projectid, columns, data }:{
             >
               In Progress
             </Button>
-        }
+        } */}
 
         {/* <Button variant="outline"
           className={(table.getColumn("status")?.getFilterValue() as string) == "in progress" ? "bg-accent" : ""}
@@ -232,7 +216,22 @@ export function DataTableDemo({ projectid, columns, data }:{
           Selected {table.getRowCount()} row(s)
         </div>
 
-        {/* Select columns to show dropdown
+      </div>
+
+      <div className="w-full flex items-center py-4 justify-between">
+
+        <div className="w-full flex items-center space-x-4">
+          {filterTypeButtonValues.map((filter) =>
+            <Button variant="outline" key={filter.value || ""}
+              className={(table.getColumn("type")?.getFilterValue() as string) == filter.value ? "bg-accent" : ""}
+              onClick={() => table.getColumn("type")?.setFilterValue(filter.value)}
+            >
+              {filter.label}
+            </Button>
+          )}
+        </div>
+
+        {/* Select columns to show dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -259,11 +258,43 @@ export function DataTableDemo({ projectid, columns, data }:{
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        */}
 
       </div>
+    </div>
+  );
+}
 
 
+export function DataTableDemo({ projectid, columns, data }:{
+  projectid: number,
+  columns: Tan.ColumnDef<DesignTask>[],
+  data: DesignTask[]
+}) {
+  const [sorting, setSorting] = React.useState<Tan.SortingState>([])
+  const [columnFilters, setColumnFilters] = React.useState<Tan.ColumnFiltersState>([{ id: "status", value: "in progress" }])
+  const [columnVisibility, setColumnVisibility] = React.useState<Tan.VisibilityState>({})
+
+  const table = Tan.useReactTable({
+    data,
+    columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: Tan.getCoreRowModel(),
+    getPaginationRowModel: Tan.getPaginationRowModel(),
+    getSortedRowModel: Tan.getSortedRowModel(),
+    getFilteredRowModel: Tan.getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+    },
+  })
+
+  return (
+    <div className="w-full">
+
+      <DataTableFilterToggles table={table} />
 
       {/* The table */}
       <div className="rounded-md border">
@@ -276,7 +307,7 @@ export function DataTableDemo({ projectid, columns, data }:{
                     <TableHead key={header.id} className="px-2 first:pl-8 last:pr-8">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
+                        : Tan.flexRender(
                             header.column.columnDef.header,
                             header.getContext()
                           )}
@@ -292,7 +323,7 @@ export function DataTableDemo({ projectid, columns, data }:{
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="px-2 first:pl-8 last:pr-8">
-                      {flexRender(
+                      {Tan.flexRender(
                         cell.column.columnDef.cell,
                         { ...cell.getContext(), projectid, }
                       )}
@@ -341,6 +372,7 @@ export function DataTableDemo({ projectid, columns, data }:{
 }
 
 export default function ProjectProgress({ project, }: { project: any }) {
+
   return (
     <div className="flex flex-col space-y-4">
 
