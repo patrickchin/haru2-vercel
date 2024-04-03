@@ -11,14 +11,15 @@ import {
 } from "drizzle-orm/pg-core";
 import type { AdapterAccount } from "@auth/core/adapters";
 
-// pnpm drizzle-kit push:pg --driver=pg --schema="./drizzle/schema.ts" --connectionString="postgres://...?sslmode=require"
-// pnpm drizzle-kit introspect:pg --driver=pg --connectionString="postgres://...?sslmode=require"
+// pnpm drizzle-kit push:pg
+// pnpm drizzle-kit introspect:pg
 
 export const users1 = pgTable("users1", {
 	id: serial("id").primaryKey().notNull(),
 	name: varchar("name", { length: 255 }).notNull(),
 	email: varchar("email", { length: 255 }).notNull(),
 	password: varchar("password", { length: 255 }).notNull(),
+	phone: varchar("phone", { length: 32 }),
 	createdAt: timestamp("createdAt", { withTimezone: true, mode: 'string' }).defaultNow(),
 },
 (table) => {

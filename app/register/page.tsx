@@ -11,13 +11,15 @@ export default function Page() {
   async function register(formData: FormData) {
     'use server';
     let name = formData.get('name') as string;
+    let phone = formData.get('phone') as string;
     let email = formData.get('email') as string;
     let password = formData.get('password') as string;
     let confirmPassword = formData.get('confirm-password') as string;
     
     // TODO do confirm password checking locally with react-hook-forms
-    if (confirmPassword !== password)
+    if (confirmPassword !== password) {
       return 'Passwords do not match';
+    }
 
     let user = await getUser(email);
 
@@ -25,7 +27,7 @@ export default function Page() {
       // TODO: Handle errors with useFormStatus
       return 'User already exists';
     } else {
-      await createUser(name, email, password);
+      await createUser(name, phone, email, password);
       redirect('/login');
     }
   }
@@ -42,14 +44,24 @@ export default function Page() {
 
           <div>
             <Label htmlFor="name" className="text-xs uppercase">
-              Name
+              Name <span className="font-bold text-red-400">*</span>
             </Label>
-            <Input name="name" required className="text-sm" />
+            <Input name="name" required className="text-sm" placeholder=""/>
+          </div>
+
+          <div>
+            <Label htmlFor="phone" className="text-xs uppercase">
+              Phone Number
+            </Label>
+            <Input name="phone" className="text-sm"
+              type="tel" placeholder="+254"
+              minLength={5} maxLength={32}
+            />
           </div>
 
           <div>
             <Label htmlFor="email" className="text-xs uppercase">
-              Email Address
+              Email Address <span className="font-bold text-red-400">*</span>
             </Label>
             <Input name="email" type="email" placeholder="user@acme.com"
               autoComplete="email" required className="text-sm" />
@@ -57,14 +69,14 @@ export default function Page() {
 
           <div>
             <Label htmlFor="password" className="text-xs uppercase">
-              Password
+              Password <span className="font-bold text-red-400">*</span>
             </Label>
             <Input name="password" type="password" required className="text-sm" />
           </div>
 
           <div>
             <Label htmlFor="confirm-password" className="text-xs uppercase">
-              Confirm Password
+              Confirm Password <span className="font-bold text-red-400">*</span>
             </Label>
             <Input name="confirm-password" type="password" required className="text-sm" />
           </div>
