@@ -342,7 +342,7 @@ export function ProjectProgress2Skeleton() {
   );
 }
 
-export default async function ProjectProgress2({ project }: { project: any }) {
+export default function ProjectProgress2({ project }: { project: any }) {
 
   // const allTasks = getProjectTasks(0);
   // It's not a db function yet ... will get hard once it is

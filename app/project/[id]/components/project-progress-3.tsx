@@ -15,7 +15,7 @@ export function ProjectProgress3Skeleton() {
   );
 }
 
-export default async function ProjectProgress3({ project }: { project: any }) {
+export default function ProjectProgress3({ project }: { project: any }) {
 
   // const allTasks = getProjectTasks(0);
   // It's not a db function yet ... will get hard once it is
