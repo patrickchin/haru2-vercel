@@ -7,7 +7,7 @@ import { getProjectTask, getTaskSpec } from '../../data/tasks';
 import { DesignTask, DesignTaskSpec } from '../../data/types';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ProjectInfoBar } from '../../components/project-description';
-import { LucideAxis3D, LucideDownload, LucideFile, LucideFileAxis3D, LucideFileImage, LucideFileSpreadsheet, LucideFileText, LucideImage, LucideUpload, LucideView } from 'lucide-react';
+import { LucideAxis3D, LucideDownload, LucideFileAxis3D, LucideFileImage, LucideFileSpreadsheet, LucideFileText, LucideImage, LucidePlusCircle, LucideUpload, LucideView } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -84,12 +84,12 @@ async function ProjectPage({ projectId, taskId }:{
         </CardHeader>
         <CardContent className='grid grid-cols-3 gap-3 text-sm'>
           {taskFiles.map((f, i) => 
-            <div key={i} className="flex flex-col gap-2 py-4 px-3 border rounded-sm">
+            <div key={i} className="flex flex-col gap-2 py-4 px-3 border rounded-lg">
               <div className="flex flex-nowrap gap-2 items-center justify-start px-2">
                 <f.icon className="h-12 flex-none" />
                 <h4 className="text-ellipsis overflow-hidden">{f.name}</h4>
               </div>
-              <div className='flex flex-col'>
+              <div className='flex flex-col gap-1'>
                 <Button variant="ghost" className='flex gap-2 justify-start'>
                   <LucideView className='h-4'/>View In Browser
                 </Button>
@@ -110,6 +110,13 @@ async function ProjectPage({ projectId, taskId }:{
               </div>
             </div>
           )}
+
+          <div className="flex justify-center items-center border rounded-lg">
+            <Button variant="outline" className="h-16 flex gap-4">
+              <LucidePlusCircle className='h-full'/> Add a New File
+            </Button>
+          </div>
+
         </CardContent>
         <CardFooter>
         </CardFooter>
