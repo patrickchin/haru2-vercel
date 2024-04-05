@@ -28,11 +28,11 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 // will architectural and legal ect colums differ?
 // this could be the common columns and can be extended upon
 const taskColumns: Tan.ColumnDef<DesignTask>[] = [
-  {
-    accessorKey: "type",
-    header: () => <div>Type</div>,
-    cell: ({ row }) => <Badge variant="secondary" className="capitalize">{row.getValue("type")}</Badge>
-  },
+  // {
+  //   accessorKey: "type",
+  //   header: () => <div>Type</div>,
+  //   cell: ({ row }) => <Badge variant="secondary" className="capitalize">{row.getValue("type")}</Badge>
+  // },
   {
     accessorKey: "title",
     header: () => <div>Title</div>,
@@ -85,11 +85,11 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
   //     </div>
   //   )
   // },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>
-  },
+  // {
+  //   accessorKey: "status",
+  //   header: "Status",
+  //   cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>
+  // },
   {
     accessorKey: "duration",
     header: "Duration",
