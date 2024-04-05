@@ -31,7 +31,7 @@ export default function ProjectModelView({ project, }: { project: any }) {
         </mesh>
 
         <OrbitControls enableDamping={false} />
-        <Stats />
+        {/* <Stats /> */}
       </Canvas>
     </div>
   );
