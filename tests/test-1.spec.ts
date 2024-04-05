@@ -30,7 +30,12 @@ test('submit and wander around', async ({ page }) => {
 
   await expect(page.getByLabel('Description')).toContainText('this is the description of my project');
   await page.getByText('Type: Office Building').click();
-  await page.getByRole('tab', { name: 'Progress' }).click();
+  await page.getByRole('tab', { name: 'Progress', exact: true }).click();
+  await page.getByRole('tab', { name: 'Progress 2' }).click();
+  await page.getByRole('tab', { name: 'Progress 3' }).click();
+  await page.getByRole('tab', { name: 'Model View' }).click();
+  await page.locator('canvas').click({ position: { x: 608, y: 208 } });
+  await page.getByRole('tab', { name: 'Settings' }).click();
 
   await page.getByRole('link', { name: 'Projects' }).click();
   await page.getByRole('heading', { name: 'My Projects' }).click();
