@@ -12,6 +12,7 @@ import ProjectProgress, { ProjectProgressSkeleton } from './components/project-p
 import ProjectSettings from './components/project-settings';
 import ProjectModelView from './components/project-model-view';
 import ProjectProgress2, { ProjectProgress2Skeleton } from './components/project-progress-2';
+import ProjectProgress3, { ProjectProgress3Skeleton } from './components/project-progress-3';
 
 async function ProjectPage({ projectId, tab }:{ projectId: number, tab: string | undefined }) {
 
@@ -57,6 +58,11 @@ async function ProjectPage({ projectId, tab }:{ projectId: number, tab: string |
               Progress 2
             </Link>
           </TabsTrigger>
+          <TabsTrigger asChild value="progress3">
+            <Link href={{ query: { tab: 'progress3' } }} scroll={false} replace={false}>
+              Progress 3
+            </Link>
+          </TabsTrigger>
           <TabsTrigger asChild value="model">
             <Link href={{ query: { tab: 'model' } }} scroll={false} replace={false}>
               Model View
@@ -79,6 +85,11 @@ async function ProjectPage({ projectId, tab }:{ projectId: number, tab: string |
         <TabsContent value="progress2">
           <Suspense fallback={(<ProjectProgress2Skeleton />)} >
             <ProjectProgress2 project={project} />
+          </Suspense>
+        </TabsContent>
+        <TabsContent value="progress3">
+          <Suspense fallback={(<ProjectProgress3Skeleton />)} >
+            <ProjectProgress3 project={project} />
           </Suspense>
         </TabsContent>
         <TabsContent value="model">
