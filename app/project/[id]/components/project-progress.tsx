@@ -371,34 +371,24 @@ export function DataTableDemo({ projectid, columns, data }:{
   )
 }
 
-export default function ProjectProgress({ project, }: { project: any }) {
+export function ProjectProgressSkeleton() {
+  return (
+    <div className="flex flex-col space-y-4">
+      Loading ...
+    </div>
+  );
+}
+
+export default async function ProjectProgress({ project }: { project: any }) {
+
+  // const allTasks = getProjectTasks(0);
+  // It's not a db function yet ... will get hard once it is
+  // will probably have to move this call to the calling code as this is a client component
+  const allTasks = getProjectTasks(0);
 
   return (
     <div className="flex flex-col space-y-4">
-
-      <DataTableDemo projectid={project.id} columns={taskColumns} data={getProjectTasks(0)} />
-
-      {/* <Tabs defaultValue="architectural" className="w-full space-y-5">
-        <TabsList>
-          <TabsTrigger value="legal">Legal</TabsTrigger>
-          <TabsTrigger value="architectural">Architectural</TabsTrigger>
-          <TabsTrigger value="structural">Structural</TabsTrigger>
-          <TabsTrigger value="mechanical">MEP</TabsTrigger>
-        </TabsList>
-        <TabsContent value="legal">
-          <DataTableDemo columns={taskColumns} data={legalData} />
-        </TabsContent>
-        <TabsContent value="architectural">
-          <DataTableDemo columns={taskColumns} data={architecturalData} />
-        </TabsContent>
-        <TabsContent value="structural">
-          <DataTableDemo columns={taskColumns} data={[]} />
-        </TabsContent>
-        <TabsContent value="mechanical">
-          <DataTableDemo columns={taskColumns} data={[]} />
-        </TabsContent>
-      </Tabs> */}
-
+      <DataTableDemo projectid={project.id} columns={taskColumns} data={allTasks} />
     </div>
   );
 }
