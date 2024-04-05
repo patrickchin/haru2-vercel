@@ -4,6 +4,7 @@ import { getProjectFiles } from "@/lib/actions";
 import { Suspense, useMemo } from "react";
 import * as Lucide from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { buildingTypes } from "content/buildingTypes";
 
 function ProjectDesignViewsFallback() {
   return (<p>Loading images ...</p>);
@@ -74,28 +75,34 @@ async function ProjectProgressSummary({ project }: { project: any }) {
   )
 }
 
-export default async function ProjectDescription({ project }: { project: any }) {
-
+export function ProjectInfoBar({ project }: { project: any }) {
   const displayNames = useMemo(() => {
     return new Intl.DisplayNames(["en"], { type: "region" });
   }, []);
   const country = displayNames.of(project.countrycode);
 
   return (
+    <Card>
+      <CardHeader className="text-sm text-muted-foreground">
+        <ul className="inline-block">
+          <li className="inline-block border-r px-2"><span className="font-bold">Id:       </span>{project.id}</li>
+          <li className="inline-block border-r px-2"><span className="font-bold">Owner:    </span>{project.userid || "<unknown>"}</li>
+          <li className="inline-block border-r px-2"><span className="font-bold">Country:  </span>{country || "<unknown>"}</li>
+          <li className="inline-block border-r px-2"><span className="font-bold">Industry: </span>{buildingTypes[project.type].type || "<unknown>"}</li>
+          <li className="inline-block border-r px-2"><span className="font-bold">Type:     </span>{project.subtype || "<unknown>"}</li>
+          <li className="inline-block border-none px-2"><span className="font-bold">Created:  </span>{project.createdat.toDateString() || "<unknown>"}</li>
+        </ul>
+      </CardHeader>
+    </Card>
+  );
+}
+
+export default async function ProjectDescription({ project }: { project: any }) {
+
+  return (
     <div className="flex flex-col gap-5">
 
-      <Card>
-        <CardHeader className="text-sm text-muted-foreground">
-            <ul className="inline-block">
-              <li className="inline-block border-r px-2"><span className="font-bold">Id:       </span>{project.id}</li>
-              <li className="inline-block border-r px-2"><span className="font-bold">Owner:    </span>{project.userid || "<unknown>"}</li>
-              <li className="inline-block border-r px-2"><span className="font-bold">Country:  </span>{country || "<unknown>"}</li>
-              <li className="inline-block border-r px-2"><span className="font-bold">Industry: </span>{project.type || "<unknown>"}</li>
-              <li className="inline-block border-r px-2"><span className="font-bold">Type:     </span>{project.subtype || "<unknown>"}</li>
-              <li className="inline-block border-none px-2"><span className="font-bold">Created:  </span>{project.createdat.toDateString() || "<unknown>"}</li>
-            </ul>
-        </CardHeader>
-      </Card>
+      <ProjectInfoBar project={project} />
 
       <div className="grid grid-cols-1 grid-rows-2 md:grid-cols-2 md:grid-rows-1 gap-5">
         <Card>
