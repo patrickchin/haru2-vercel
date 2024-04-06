@@ -20,7 +20,6 @@ import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en'
 TimeAgo.addDefaultLocale(en)
 import ReactTimeAgo from "react-time-ago"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 // a company and a way they work should be able to determine
 // their own tasks saved on the platform
@@ -28,11 +27,11 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 // will architectural and legal ect colums differ?
 // this could be the common columns and can be extended upon
 const taskColumns: Tan.ColumnDef<DesignTask>[] = [
-  // {
-  //   accessorKey: "type",
-  //   header: () => <div>Type</div>,
-  //   cell: ({ row }) => <Badge variant="secondary" className="capitalize">{row.getValue("type")}</Badge>
-  // },
+  {
+    accessorKey: "type",
+    header: () => <div>Type</div>,
+    cell: ({ row }) => <Badge variant="secondary" className="capitalize">{row.getValue("type")}</Badge>
+  },
   {
     accessorKey: "title",
     header: () => <div>Title</div>,
@@ -85,11 +84,11 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
   //     </div>
   //   )
   // },
-  // {
-  //   accessorKey: "status",
-  //   header: "Status",
-  //   cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>
-  // },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>
+  },
   {
     accessorKey: "duration",
     header: "Duration",
@@ -190,8 +189,46 @@ function DataTableFilterToggles({ table }:{ table: Tan.Table<DesignTask> }) {
           )}
         </div>
 
-        <div className="text-sm text-muted-foreground">
+
+        {/* { // horrible and ugly, quick and dirty, but works
+          (table.getColumn("status")?.getFilterValue() as string) == "in progress" ?
+            <Button variant="outline" className="bg-accent"
+              onClick={() => table.getColumn("status")?.setFilterValue(undefined)}
+            >
+              In Progress
+            </Button>
+            :
+            <Button variant="outline" className=""
+              onClick={() => table.getColumn("status")?.setFilterValue("in progress")}
+            >
+              In Progress
+            </Button>
+        } */}
+
+        {/* <Button variant="outline"
+          className={(table.getColumn("status")?.getFilterValue() as string) == "in progress" ? "bg-accent" : ""}
+          onClick={() => table.getColumn("status")?.setFilterValue("in progress")}
+        >
+          In Progress
+        </Button> */}
+
+        <div className="flex-1 text-sm text-muted-foreground">
           Selected {table.getRowCount()} row(s)
+        </div>
+
+      </div>
+
+      <div className="w-full flex items-center py-4 justify-between">
+
+        <div className="w-full flex items-center space-x-4">
+          {filterTypeButtonValues.map((filter) =>
+            <Button variant="outline" key={filter.value || ""}
+              className={(table.getColumn("type")?.getFilterValue() as string) == filter.value ? "bg-accent" : ""}
+              onClick={() => table.getColumn("type")?.setFilterValue(filter.value)}
+            >
+              {filter.label}
+            </Button>
+          )}
         </div>
 
         {/* Select columns to show dropdown */}
@@ -234,7 +271,7 @@ export function DataTableDemo({ projectid, columns, data }:{
   data: DesignTask[]
 }) {
   const [sorting, setSorting] = React.useState<Tan.SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<Tan.ColumnFiltersState>([])
+  const [columnFilters, setColumnFilters] = React.useState<Tan.ColumnFiltersState>([{ id: "status", value: "in progress" }])
   const [columnVisibility, setColumnVisibility] = React.useState<Tan.VisibilityState>({})
 
   const table = Tan.useReactTable({
@@ -257,7 +294,7 @@ export function DataTableDemo({ projectid, columns, data }:{
   return (
     <div className="w-full">
 
-      {/* <DataTableFilterToggles table={table} /> */}
+      <DataTableFilterToggles table={table} />
 
       {/* The table */}
       <div className="rounded-md border">
@@ -334,7 +371,7 @@ export function DataTableDemo({ projectid, columns, data }:{
   )
 }
 
-export function ProjectProgress2Skeleton() {
+export function ProjectTaskDetailsSkeleton() {
   return (
     <div className="flex flex-col space-y-4">
       Loading ...
@@ -342,62 +379,16 @@ export function ProjectProgress2Skeleton() {
   );
 }
 
-export default function ProjectProgress2({ project }: { project: any }) {
+export default function ProjectTaskDetails({ project }: { project: any }) {
 
   // const allTasks = getProjectTasks(0);
   // It's not a db function yet ... will get hard once it is
   // will probably have to move this call to the calling code as this is a client component
   const allTasks = getProjectTasks(0);
 
-  const legalTasks = allTasks.filter((task) => task.type == "legal");
-  const architecturalTasks = allTasks.filter((task) => task.type == "architectural");
-  const structuralTasks = allTasks.filter((task) => task.type == "structural");
-  const mepTasks = allTasks.filter((task) => task.type == "mep");
-  const otherTasks = allTasks.filter((task) => task.type == "other");
-
   return (
     <div className="flex flex-col space-y-4">
-
-      <Accordion type="single" collapsible className="border rounded-lg p-6 pt-1">
-        <AccordionItem value="legal" className="px-6">
-          <AccordionTrigger>Legal</AccordionTrigger>
-          <AccordionContent className="py-4">
-            <DataTableDemo projectid={project.id} columns={taskColumns} data={legalTasks} />
-          </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="architectural" className="px-6">
-          <AccordionTrigger>Architectural</AccordionTrigger>
-          <AccordionContent className="py-4">
-            <DataTableDemo projectid={project.id} columns={taskColumns} data={architecturalTasks} />
-          </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="structural" className="px-6">
-          <AccordionTrigger>Structural</AccordionTrigger>
-          <AccordionContent className="py-4">
-            <DataTableDemo projectid={project.id} columns={taskColumns} data={structuralTasks} />
-          </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="mep" className="px-6">
-          <AccordionTrigger>Mechanical Electrical and Plumbing</AccordionTrigger>
-          <AccordionContent className="py-4">
-            <DataTableDemo projectid={project.id} columns={taskColumns} data={mepTasks} />
-          </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="other" className="px-6">
-          <AccordionTrigger>Other Tasks</AccordionTrigger>
-          <AccordionContent className="py-8">
-            <DataTableDemo projectid={project.id} columns={taskColumns} data={otherTasks} />
-          </AccordionContent>
-        </AccordionItem>
-
-      </Accordion>
-
-
-
+      <DataTableDemo projectid={project.id} columns={taskColumns} data={allTasks} />
     </div>
   );
 }

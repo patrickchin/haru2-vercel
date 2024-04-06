@@ -8,11 +8,10 @@ import { CenteredLayout } from '@/components/layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import ProjectDescription from './components/project-description';
-import ProjectProgress, { ProjectProgressSkeleton } from './components/project-progress';
 import ProjectSettings from './components/project-settings';
 import ProjectModelView from './components/project-model-view';
-import ProjectProgress2, { ProjectProgress2Skeleton } from './components/project-progress-2';
-import ProjectProgress3, { ProjectProgress3Skeleton } from './components/project-progress-3';
+import ProjectTaskDetails, { ProjectTaskDetailsSkeleton } from './components/project-task-details';
+import ProjectTeamsProgress, { ProjectTeamsProgressSkeleton } from './components/project-teams-progress';
 
 async function ProjectPage({ projectId, tab }:{ projectId: number, tab: string | undefined }) {
 
@@ -48,19 +47,19 @@ async function ProjectPage({ projectId, tab }:{ projectId: number, tab: string |
               Description
             </Link>
           </TabsTrigger>
-          <TabsTrigger asChild value="progress">
-            <Link href={{ query: { tab: 'progress' } }} scroll={false} replace={false}>
-              Progress
+          <TabsTrigger asChild value="teams-progress">
+            <Link href={{ query: { tab: 'teams-progress' } }} scroll={false} replace={false}>
+              Teams Progress
             </Link>
           </TabsTrigger>
-          <TabsTrigger asChild value="progress2">
-            <Link href={{ query: { tab: 'progress2' } }} scroll={false} replace={false}>
-              Progress 2
+          <TabsTrigger asChild value="task-details">
+            <Link href={{ query: { tab: 'task-details' } }} scroll={false} replace={false}>
+              Task Details
             </Link>
           </TabsTrigger>
-          <TabsTrigger asChild value="progress3">
-            <Link href={{ query: { tab: 'progress3' } }} scroll={false} replace={false}>
-              Progress 3
+          <TabsTrigger asChild value="files">
+            <Link href={{ query: { tab: 'files' } }} scroll={false} replace={false}>
+              All Files
             </Link>
           </TabsTrigger>
           <TabsTrigger asChild value="model">
@@ -77,20 +76,18 @@ async function ProjectPage({ projectId, tab }:{ projectId: number, tab: string |
         <TabsContent value="description" className="space-y-8">
           <ProjectDescription project={project} />
         </TabsContent>
-        <TabsContent value="progress">
-          <Suspense fallback={(<ProjectProgressSkeleton />)} >
-            <ProjectProgress project={project} />
+        <TabsContent value="teams-progress">
+          <Suspense fallback={(<ProjectTeamsProgressSkeleton />)} >
+            <ProjectTeamsProgress project={project} />
           </Suspense>
         </TabsContent>
-        <TabsContent value="progress2">
-          <Suspense fallback={(<ProjectProgress2Skeleton />)} >
-            <ProjectProgress2 project={project} />
+        <TabsContent value="task-details">
+          <Suspense fallback={(<ProjectTaskDetailsSkeleton />)} >
+            <ProjectTaskDetails project={project} />
           </Suspense>
         </TabsContent>
-        <TabsContent value="progress3">
-          <Suspense fallback={(<ProjectProgress3Skeleton />)} >
-            <ProjectProgress3 project={project} />
-          </Suspense>
+        <TabsContent value="model">
+          Loading files...
         </TabsContent>
         <TabsContent value="model">
           <ProjectModelView project={project} />

@@ -60,35 +60,6 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
       </div>
     )
   },
-  // {
-  //   accessorKey: "members",
-  //   header: ({ column }) => {
-  //     return (
-  //       <Button
-  //         variant="ghost"
-  //         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-  //       >
-  //         Members
-  //         <LucideArrowUpDown className="ml-1 h-4 w-4" />
-  //       </Button>
-  //     )
-  //   },
-  //   cell: ({ row }) => (
-  //     <div className="flex flex-row overflow-hidden w-32 space-x-1">
-  //       {(row.getValue("members") as string[]).map((mem, i) =>
-  //         <Avatar key={i}>
-  //           {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
-  //           <AvatarFallback>{mem.slice(0, 2).toUpperCase()}</AvatarFallback>
-  //         </Avatar>
-  //       )}
-  //     </div>
-  //   )
-  // },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>
-  },
   {
     accessorKey: "duration",
     header: "Duration",
@@ -104,16 +75,6 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
       </div>);
     }
   },
-  // {
-  //   accessorKey: "estimation",
-  //   header: "Estimation",
-  //   cell: ({ row }) => <div>{(row.getValue("estimation") as number) / (60*60*24)} days</div>
-  // },
-  // {
-  //   accessorKey: "priority",
-  //   header: "Priority",
-  //   cell: ({ row }) => <div className="capitalize">{row.getValue("priority")}</div>
-  // },
   {
     accessorKey: "lastUpdated",
     header: ({ column }) => {
@@ -138,14 +99,13 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
     cell: ({ row, projectid }: any) => <Button asChild variant="outline" className="h-8 w-8 p-0">
       <Link href={`/project/${projectid}/task/${row.original.id}`}>
         <LucideChevronRight className="h-4 w-4" />
-      {/* <pre>{JSON.stringify(row, null, 2)}</pre> */}
       </Link>
     </Button>
     ,
   },
 ]
 
-function DataTableFilterToggles({ table }:{ table: Tan.Table<DesignTask> }) {
+function TaskTableFilterToggles({ table }:{ table: Tan.Table<DesignTask> }) {
 
   const filterTypeButtonValues = [
     { value: undefined, label: "All"},
@@ -189,46 +149,8 @@ function DataTableFilterToggles({ table }:{ table: Tan.Table<DesignTask> }) {
           )}
         </div>
 
-
-        {/* { // horrible and ugly, quick and dirty, but works
-          (table.getColumn("status")?.getFilterValue() as string) == "in progress" ?
-            <Button variant="outline" className="bg-accent"
-              onClick={() => table.getColumn("status")?.setFilterValue(undefined)}
-            >
-              In Progress
-            </Button>
-            :
-            <Button variant="outline" className=""
-              onClick={() => table.getColumn("status")?.setFilterValue("in progress")}
-            >
-              In Progress
-            </Button>
-        } */}
-
-        {/* <Button variant="outline"
-          className={(table.getColumn("status")?.getFilterValue() as string) == "in progress" ? "bg-accent" : ""}
-          onClick={() => table.getColumn("status")?.setFilterValue("in progress")}
-        >
-          In Progress
-        </Button> */}
-
-        <div className="flex-1 text-sm text-muted-foreground">
+        <div className="text-sm text-muted-foreground">
           Selected {table.getRowCount()} row(s)
-        </div>
-
-      </div>
-
-      <div className="w-full flex items-center py-4 justify-between">
-
-        <div className="w-full flex items-center space-x-4">
-          {filterTypeButtonValues.map((filter) =>
-            <Button variant="outline" key={filter.value || ""}
-              className={(table.getColumn("type")?.getFilterValue() as string) == filter.value ? "bg-accent" : ""}
-              onClick={() => table.getColumn("type")?.setFilterValue(filter.value)}
-            >
-              {filter.label}
-            </Button>
-          )}
         </div>
 
         {/* Select columns to show dropdown */}
@@ -265,20 +187,26 @@ function DataTableFilterToggles({ table }:{ table: Tan.Table<DesignTask> }) {
 }
 
 
-export function DataTableDemo({ projectid, columns, data }:{
+export default function TaskTable({ projectid, data }:{
   projectid: number,
-  columns: Tan.ColumnDef<DesignTask>[],
   data: DesignTask[]
 }) {
   const [sorting, setSorting] = React.useState<Tan.SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<Tan.ColumnFiltersState>([{ id: "status", value: "in progress" }])
-  const [columnVisibility, setColumnVisibility] = React.useState<Tan.VisibilityState>({})
+  const [columnFilters, setColumnFilters] = React.useState<Tan.ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = React.useState<Tan.VisibilityState>({
+    type: false
+  })
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0, //initial page index
+    pageSize: 5, //default page size
+  });
 
   const table = Tan.useReactTable({
     data,
-    columns,
+    columns: taskColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
+    onPaginationChange: setPagination, //update the pagination state when internal APIs mutate the pagination state
     getCoreRowModel: Tan.getCoreRowModel(),
     getPaginationRowModel: Tan.getPaginationRowModel(),
     getSortedRowModel: Tan.getSortedRowModel(),
@@ -288,13 +216,14 @@ export function DataTableDemo({ projectid, columns, data }:{
       sorting,
       columnFilters,
       columnVisibility,
+      pagination,
     },
   })
 
   return (
     <div className="w-full">
 
-      <DataTableFilterToggles table={table} />
+      { false && <TaskTableFilterToggles table={table} /> }
 
       {/* The table */}
       <div className="rounded-md border">
@@ -333,7 +262,7 @@ export function DataTableDemo({ projectid, columns, data }:{
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell colSpan={taskColumns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
@@ -369,26 +298,4 @@ export function DataTableDemo({ projectid, columns, data }:{
       </div>
     </div>
   )
-}
-
-export function ProjectProgressSkeleton() {
-  return (
-    <div className="flex flex-col space-y-4">
-      Loading ...
-    </div>
-  );
-}
-
-export default function ProjectProgress({ project }: { project: any }) {
-
-  // const allTasks = getProjectTasks(0);
-  // It's not a db function yet ... will get hard once it is
-  // will probably have to move this call to the calling code as this is a client component
-  const allTasks = getProjectTasks(0);
-
-  return (
-    <div className="flex flex-col space-y-4">
-      <DataTableDemo projectid={project.id} columns={taskColumns} data={allTasks} />
-    </div>
-  );
 }
