@@ -30,12 +30,29 @@ test('submit and wander around', async ({ page }) => {
 
   await expect(page.getByLabel('Description')).toContainText('this is the description of my project');
   await page.getByText('Type: Office Building').click();
-  await page.getByRole('tab', { name: 'Progress', exact: true }).click();
-  await page.getByRole('tab', { name: 'Progress 2' }).click();
-  await page.getByRole('tab', { name: 'Progress 3' }).click();
+
+  await page.getByRole('tab', { name: 'Teams Progress' }).click();
+  await page.getByRole('button', { name: 'Show Legal Tasks' }).click();
+  await page.getByRole('button', { name: 'Show Legal Tasks' }).click();
+  await page.getByRole('button', { name: 'Show Architectural Tasks' }).click();
+  await page.getByRole('button', { name: 'Show Architectural Tasks' }).click();
+  await page.getByRole('button', { name: 'Show Structural Tasks' }).dblclick();
+  await page.getByRole('button', { name: 'Show Mechanical, Electrical' }).dblclick();
+  await page.getByRole('tab', { name: 'Task Details' }).click();
+  await page.getByRole('tab', { name: 'All Files' }).click();
   await page.getByRole('tab', { name: 'Model View' }).click();
-  await page.locator('canvas').click({ position: { x: 608, y: 208 } });
+  await page.locator('canvas').click({
+    position: {
+      x: 552,
+      y: 236
+    }
+  });
   await page.getByRole('tab', { name: 'Settings' }).click();
+  await page.getByRole('tab', { name: 'Task Details' }).click();
+  await page.getByRole('row', { name: 'legal Land Survey KE in' }).getByRole('link').nth(1).click();
+  await page.getByRole('button', { name: 'View In Browser' }).first().click();
+  await page.getByRole('button', { name: 'Download Latest' }).first().click();
+  await page.getByRole('button', { name: 'Upload New Version' }).first().click();
 
   await page.getByRole('link', { name: 'Projects' }).click();
   await page.getByRole('heading', { name: 'My Projects' }).click();
