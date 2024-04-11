@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress"
 
 import { getProjectTasks } from "../data/tasks" // todo put in actions.ts
 
-import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import TaskTable from "./task-table"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { LucideChevronDown } from "lucide-react"
@@ -21,19 +21,17 @@ function TeamProgress({ project, team }: any) {
 
   return (
     <Card>
-      <CardHeader>
-        {team.name}</CardHeader>
+      <CardHeader className="flex flex-row justify-between gap-16 p-8">
+        <CardTitle>
+          {team.name}
+        </CardTitle>
+        <Progress value={pct} indicatorColor={`bg-green-300`} />
+      </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <div className="flex gap-4 justify-center items-center">
-          <Progress value={pct} className="w-full md:w-5/6" indicatorColor={`bg-green-300`} />
-        </div>
-        <div className="text-sm">
-          Completed {team.completed} of {total} total tasks ({pct.toFixed(0)} %)
-        </div>
-
         <Collapsible className="space-y-4">
-          <CollapsibleTrigger className="flex justify-between w-full p-4 justify-start text-start font-semibold text-sm border rounded-md hover:bg-accent">
-            Show {team.name} Tasks <LucideChevronDown/>
+          <CollapsibleTrigger className="flex justify-between w-full p-4 justify-start text-start font-semibold text-sm rounded-md hover:bg-accent">
+            Completed {team.completed} of {total} total tasks ({pct.toFixed(0)} %)
+            <span className="flex flex-row gap-2 items-center">Expand for details <LucideChevronDown/></span>
           </CollapsibleTrigger>
           <CollapsibleContent>
             <TaskTable projectid={project.id} data={team.tasks} />
