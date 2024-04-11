@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Construction } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-import { useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 import { Button } from '@/components/ui/button';
 
 const navigation = [
@@ -30,10 +30,8 @@ export function MainNav() {
 function UserNav() {
   return (
     <div className='flex gap-x-8 text-gray-400'>
-      <Button asChild variant="secondary">
-        <Link href="/api/auth/signout">
-          Logout
-        </Link>
+      <Button variant="secondary" onClick={() => signOut()} >
+        Logout
       </Button>
     </div>
   );
