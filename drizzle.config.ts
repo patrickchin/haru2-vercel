@@ -1,8 +1,9 @@
 import type { Config } from "drizzle-kit";
 
 // needed for drizzle studio
-import * as dotenv from "dotenv";
-dotenv.config({ path: ".env.local" });
+require('dotenv').config({ path: ['.env.local'] })
+
+console.log(process.env.POSTGRES_HOST);
 
 export default {
   schema: "./drizzle/schema.ts",
