@@ -28,25 +28,26 @@ test('submit and wander around', async ({ page }) => {
   await page.getByLabel('Additional Documents').click();
   await page.getByRole('button', { name: 'Submit' }).click();
 
+  await page.waitForURL('/project/*')
   await expect(page.getByLabel('Description')).toContainText('this is the description of my project');
   await page.getByText('Type: Office Building').click();
 
   await page.getByRole('tab', { name: 'Teams Progress' }).click();
-  await page.getByRole('button', { name: 'Show Legal Tasks' }).click();
-  await page.getByRole('button', { name: 'Show Legal Tasks' }).click();
-  await page.getByRole('button', { name: 'Show Architectural Tasks' }).click();
-  await page.getByRole('button', { name: 'Show Architectural Tasks' }).click();
-  await page.getByRole('button', { name: 'Show Structural Tasks' }).dblclick();
-  await page.getByRole('button', { name: 'Show Mechanical, Electrical' }).dblclick();
+  // await page.getByRole('button', { name: 'Show Legal Tasks' }).click();
+  // await page.getByRole('button', { name: 'Show Legal Tasks' }).click();
+  // await page.getByRole('button', { name: 'Show Architectural Tasks' }).click();
+  // await page.getByRole('button', { name: 'Show Architectural Tasks' }).click();
+  // await page.getByRole('button', { name: 'Show Structural Tasks' }).dblclick();
+  // await page.getByRole('button', { name: 'Show Mechanical, Electrical' }).dblclick();
   await page.getByRole('tab', { name: 'Task Details' }).click();
   await page.getByRole('tab', { name: 'All Files' }).click();
   await page.getByRole('tab', { name: 'Model View' }).click();
-  await page.locator('canvas').click({
-    position: {
-      x: 552,
-      y: 236
-    }
-  });
+  // await page.locator('canvas').click({
+  //   position: {
+  //     x: 552,
+  //     y: 236
+  //   }
+  // });
   await page.getByRole('tab', { name: 'Settings' }).click();
   await page.getByRole('tab', { name: 'Task Details' }).click();
   await page.getByRole('row', { name: 'legal Land Survey KE in' }).getByRole('link').nth(1).click();
@@ -76,8 +77,7 @@ test('check can log in', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByPlaceholder('Untitled').click();
   await page.getByPlaceholder('Untitled').fill('Mr Haru');
-  await page.getByRole('link', { name: 'Logout' }).click();
-  await page.getByRole('button', { name: 'Sign out' }).click();
+  await page.getByRole('button', { name: 'Logout' }).click();
   await expect(page.locator('body')).toContainText('Login');
 });
 

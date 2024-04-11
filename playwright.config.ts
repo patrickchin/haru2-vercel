@@ -6,8 +6,6 @@ import { defineConfig, devices } from '@playwright/test';
  */
 require('dotenv').config({ path: ['.env.local'] })
 
-console.log(process.env);
-
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
