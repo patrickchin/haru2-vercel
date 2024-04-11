@@ -148,7 +148,7 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
 function DataTableFilterToggles({ table }:{ table: Tan.Table<DesignTask> }) {
 
   const filterTypeButtonValues = [
-    { value: undefined, label: "All"},
+    { value: undefined, label: "Any Team"},
     { value: "legal", label: "Legal"},
     { value: "architectural", label: "Architectural"},
     { value: "structural", label: "Structural"},
@@ -156,7 +156,7 @@ function DataTableFilterToggles({ table }:{ table: Tan.Table<DesignTask> }) {
   ]
 
   const filterStatusButtonValues = [
-    // { value: undefined, label: "All"},
+    { value: undefined, label: "Any Status"},
     { value: "pending", label: "Pending"},
     { value: "in progress", label: "In Progress"},
     { value: "complete", label: "Complete"},
@@ -271,7 +271,7 @@ export function DataTableDemo({ projectid, columns, data }:{
   data: DesignTask[]
 }) {
   const [sorting, setSorting] = React.useState<Tan.SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<Tan.ColumnFiltersState>([{ id: "status", value: "in progress" }])
+  const [columnFilters, setColumnFilters] = React.useState<Tan.ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<Tan.VisibilityState>({})
 
   const table = Tan.useReactTable({
