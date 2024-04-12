@@ -94,7 +94,7 @@ export default function TaskComments() {
                   <span className="font-bold">{c.username}</span>
                   <span className="text-sm">{c.createdAt}</span>
                 </div>
-                <div>
+                <div className="whitespace-pre-line">
                   {c.content}
                 </div>
               </div>
