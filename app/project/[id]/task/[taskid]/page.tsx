@@ -11,6 +11,7 @@ import TaskFiles from './components/task-files';
 import TaskComments from './components/task-comments';
 import { Avatar, AvatarFallback, AvatarImage  } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Progress } from '@/components/ui/progress';
 
 function MembersList() {
 
@@ -33,7 +34,7 @@ function MembersList() {
               <li key={i} className='flex gap-4 items-center'>
                 <Avatar>
                   <AvatarFallback />
-                  <AvatarImage />
+                  <AvatarImage src={`/tmp/avatar${(i+4)%8}.png`}/>
                 </Avatar>
                 {mem.name}
               </li>
@@ -86,18 +87,42 @@ async function ProjectPage({ projectId, taskId }:{
 
         <div className="flex flex-row gap-4">
 
-          <Card className="w-2/3">
-            <CardHeader className="font-bold">
-              Description
-            </CardHeader>
-            <CardContent className="text-sm">
-              {taskSpec && <ul>
-                {taskSpec.description.map((desc, i) => <li key={i}>{desc}</li>)}
-              </ul>}
-            </CardContent>
-            <CardFooter>
-            </CardFooter>
-          </Card>
+          <div className="w-2/3 flex flex-col gap-4">
+            <Card className="h-full">
+              <CardHeader className="font-bold">
+                Description
+              </CardHeader>
+              <CardContent>
+                {taskSpec && <ul>
+                  {taskSpec.description.map((desc, i) => <li key={i}>{desc}</li>)}
+                </ul>}
+              </CardContent>
+              <CardFooter>
+              </CardFooter>
+            </Card>
+
+
+            <Card className="h-full">
+              <CardHeader className="flex flex-col gap-4">
+                <div className="flex">
+                  <span className="border-r px-2">
+                    <span className="font-bold pr-2">Start:</span>
+                    <span>2023-01-01</span>
+                  </span>
+                  <span className="border-r px-2">
+                    <span className="font-bold pr-2">Estimated:</span>
+                    <span>4 days</span>
+                  </span>
+                  <span className="px-2">
+                    <span className="font-bold pr-2">Current:</span>
+                    <span>4 days</span>
+                  </span>
+                </div>
+                <Progress value={40} indicatorColor='bg-green-400' />
+              </CardHeader>
+            </Card>
+
+          </div>
 
           <MembersList />
         </div>
