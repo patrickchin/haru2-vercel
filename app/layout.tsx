@@ -18,7 +18,7 @@ export const metadata = {
     title,
     description,
   },
-  metadataBase: new URL('https://haru2-kappa.vercel.app'),
+  metadataBase: process.env.NEXTAUTH_URL ? new URL(process.env.NEXTAUTH_URL) : undefined,
 };
 
 export default async function RootLayout({

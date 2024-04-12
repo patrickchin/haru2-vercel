@@ -3,6 +3,7 @@ import { test, expect } from '@playwright/test';
 test('submit and wander around', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('link', { name: 'get started' }).click();
+  await page.waitForURL('/new-project')
   await page.getByRole('button', { name: 'Signin to Submit' }).click();
   await page.getByRole('link', { name: 'Login' }).click();
   await page.getByPlaceholder('user@acme.com').click();
@@ -11,6 +12,7 @@ test('submit and wander around', async ({ page }) => {
   // TODO credentials as env variables!!
   await page.locator('input[name="password"]').fill('thisisalongpassword1');;
   await page.locator('input[name="password"]').press('Enter');
+  await page.waitForURL('/')
   await page.getByRole('link', { name: 'get started' }).click();
   await page.getByPlaceholder('Untitled').click();
   await page.getByPlaceholder('Untitled').dblclick();
@@ -51,6 +53,8 @@ test('submit and wander around', async ({ page }) => {
   await page.getByRole('tab', { name: 'Settings' }).click();
   await page.getByRole('tab', { name: 'Task Details' }).click();
   await page.getByRole('row', { name: 'legal Land Survey KE in' }).getByRole('link').nth(1).click();
+
+  await page.getByRole('button', { name: 'Expand File Details' }).first().click();
   await page.getByRole('button', { name: 'View In Browser' }).first().click();
   await page.getByRole('button', { name: 'Download Latest' }).first().click();
   await page.getByRole('button', { name: 'Upload New Version' }).first().click();

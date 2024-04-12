@@ -11,7 +11,8 @@ jobs:
       BLOB_STORE_HOSTNAME: ${{ secrets.BLOB_STORE_HOSTNAME }}
       BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
       AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-      NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+      NEXTAUTH_URL: ${{ github.event.deployment_status.target_url }}
+      PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
     if: github.event.deployment_status.state == 'success'
     steps:
     - uses: actions/checkout@v4
@@ -30,9 +31,6 @@ jobs:
       run: pnpm exec playwright install --with-deps
     - name: Run Playwright tests
       run: pnpm exec playwright test
-      env:
-        PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
-        # PLAYWRIGHT_TEST_BASE_URL: 'https://haru2-kappa.vercel.app/'
     - uses: actions/upload-artifact@v4
       if: always()
       with:
