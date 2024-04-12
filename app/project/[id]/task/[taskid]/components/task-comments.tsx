@@ -82,11 +82,13 @@ export default function TaskComments() {
       <CardContent>
         <ul className="px-8">
           {comments.map((c, i) =>
-            <li key={i} className="flex gap-6 p-4 items-center border-b hover:bg-accent">
-              <Avatar>
-                <AvatarFallback />
-                <AvatarImage src={`/tmp/avatar${c.userId % 8}.png`} />
-              </Avatar>
+            <li key={i} className="flex gap-6 p-4 items-start justify-center border-b hover:bg-accent">
+              <div className="pt-2">
+                <Avatar>
+                  <AvatarFallback />
+                  <AvatarImage src={`/tmp/avatar${c.userId % 8}.png`} />
+                </Avatar>
+              </div>
               <div className="flex flex-col gap-2 w-full">
                 <div className="flex flex-row gap-4 items-end">
                   <span className="font-bold">{c.username}</span>
