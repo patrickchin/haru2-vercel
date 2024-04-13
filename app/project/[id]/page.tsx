@@ -12,6 +12,13 @@ import ProjectSettings from './components/project-settings';
 import ProjectModelView from './components/project-model-view';
 import ProjectTaskDetails, { ProjectTaskDetailsSkeleton } from './components/project-task-details';
 import ProjectTeamsProgress, { ProjectTeamsProgressSkeleton } from './components/project-teams-progress';
+import ProjectFiles, { ProjectFilesSkeleton } from './components/project-task-files';
+import { getProjectFiles } from '@/lib/actions';
+
+async function ProjectFilesWrapper({ projectId } : { projectId : number }) {
+  const files = await getProjectFiles(projectId);
+  return <ProjectFiles files={files} />
+}
 
 async function ProjectPage({ projectId, tab }:{ projectId: number, tab: string | undefined }) {
 
@@ -86,8 +93,10 @@ async function ProjectPage({ projectId, tab }:{ projectId: number, tab: string |
             <ProjectTaskDetails project={project} />
           </Suspense>
         </TabsContent>
-        <TabsContent value="model">
-          Loading files...
+        <TabsContent value="files">
+          <Suspense fallback={(<ProjectFilesSkeleton />)} >
+            <ProjectFilesWrapper projectId={projectId} />
+          </Suspense>
         </TabsContent>
         <TabsContent value="model">
           <ProjectModelView project={project} />
