@@ -8,9 +8,11 @@ import {
   getFilesUrlsForProject
 } from '@/lib/db';
 import { auth } from './auth';
-import { del, put } from '@vercel/blob';
+import * as blob  from '@vercel/blob';
 import { NewProjectFormSchema } from './types';
 import { redirect } from 'next/navigation';
+
+const ENABLE_VERCEL_BLOB = false;
 
 export async function submitProjectForm2(formData: FormData) {
 
@@ -71,8 +73,11 @@ export async function submitProjectForm2(formData: FormData) {
       }
 
       const data = await file.arrayBuffer();
-      // private access isn't supported by vercel atm
-      const { url } = await put(`project/${newProjectId}/${file.name}`, data, { access: 'public', });
+      // TODO use all the data
+      const { url } = ENABLE_VERCEL_BLOB ?
+        // private access isn't supported by vercel atm
+        await blob.put(`project/${newProjectId}/${file.name}`, data, { access: 'public', }) :
+        { url: "/tmp/demofloorplan.png" };
       console.log("file uploaded", file.name, url);
 
       // TODO optimise - await outside the loop?
@@ -102,6 +107,11 @@ export async function getProjectFiles(projectId: number) {
 }
 
 export async function deleteFullProject(projectId: number) {
+
+  // TODO needs more security
+  const session = await auth();
+  if (!session?.user?.id) return;
+  
   // A lot more thought has to go into deleting projects.
   // - what happens if something fails in the middle?
   // - what happens if ... what else?
@@ -110,8 +120,9 @@ export async function deleteFullProject(projectId: number) {
 
   const deletedFiles = await deleteAllFilesFromProject(projectId);
   deletedFiles.map((f) => {
-    console.log("deleting file from store", f);
-    del(f.url)
+    console.log("deleting file from store", ENABLE_VERCEL_BLOB, f);
+    if (ENABLE_VERCEL_BLOB)
+      blob.del(f.url)
   });
 
   const deletedProject = await deleteProject(projectId);
