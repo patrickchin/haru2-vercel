@@ -18,19 +18,22 @@ function TeamProgress({ project, team }: any) {
 
   const total = team.completed + team.inprogress + team.pending;
   const pct = 100 * team.completed / total;
+  const col = pct < 30 ? "bg-teal-300" :
+    pct < 80 ? "bg-emerald-300" : "bg-green-300";
 
   return (
     <Card>
-      <CardHeader className="flex flex-row justify-between gap-16 p-8">
+      <CardHeader className="flex flex-row justify-between gap-8 p-8">
         <CardTitle>
           {team.name}
         </CardTitle>
-        <Progress value={pct} indicatorColor={`bg-green-300`} />
+        {/* can't do the colors programatically with tailwind!! */}
+        <Progress value={pct} indicatorColor={col} />
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <Collapsible className="space-y-4">
-          <CollapsibleTrigger className="flex justify-between w-full p-4 justify-start text-start font-semibold text-sm rounded-md hover:bg-accent">
-            Completed {team.completed} of {total} total tasks ({pct.toFixed(0)} %)
+          <CollapsibleTrigger className="flex justify-between gap-8 w-full p-4 justify-start text-start font-semibold text-sm rounded-md hover:bg-accent">
+            <span>Completed {team.completed} of {total} total tasks ({pct.toFixed(0)} %)</span>
             <span className="flex flex-row gap-2 items-center">Expand for details <LucideChevronDown/></span>
           </CollapsibleTrigger>
           <CollapsibleContent>
