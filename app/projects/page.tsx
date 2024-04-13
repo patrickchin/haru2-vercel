@@ -3,7 +3,7 @@ import { Suspense, useMemo } from 'react';
 import Image from "next/image"
 import Link from 'next/link';
 
-import { getProjectsJoinUserForUser } from '@/lib/db';
+import { getUserProjects } from '@/lib/db';
 import { CenteredLayout } from '@/components/layout';
 
 import houseIcon from "@/app/assets/house.png"
@@ -61,12 +61,12 @@ async function ProjectList() {
     return <p>Invalid user</p>;
   }
 
-  const projectusers = await getProjectsJoinUserForUser(userId);
+  const projects = await getUserProjects(userId);
   return (
     <ul role="list" className="space-y-3">
-      {projectusers.map((pu) =>
-        <li key={pu.projects1.id}>
-          <ProjectItem projectUser={pu} />
+      {projects.map((p) =>
+        <li key={p.projects1.id}>
+          <ProjectItem projectUser={p} />
         </li>
       )}
     </ul>

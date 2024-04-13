@@ -25,20 +25,14 @@ export async function createUser(name: string, phone: string, email: string, pas
 }
 
 
-export async function getProjectsForUser(userId: number, pagenum: number = 0) {
-  const pagesize = 30;
-  return await db.select().from(Schemas.projects1).where(
-    eq(Schemas.projects1.userid, userId)
-  ).orderBy(desc(Schemas.projects1.id)).limit(pagesize).offset(pagesize*pagenum)
-}
-
-export async function getProjectsJoinUserForUser(userId: number, pagenum: number = 0) {
+export async function getUserProjects(userId: number, pagenum: number = 0) {
   const pagesize = 30;
   // TODO maybe don't select things like password and createdat ...
+  // TODO make a view
   return await db.select().from(Schemas.projects1)
     .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.projects1.userid))
     .where(eq(Schemas.projects1.userid, userId))
-    .orderBy(desc(Schemas.projects1.id))
+    .orderBy(desc(Schemas.projects1.id)) // created at?
     .limit(pagesize).offset(pagesize * pagenum)
 }
 
