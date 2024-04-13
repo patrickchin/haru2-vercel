@@ -9,7 +9,6 @@ import {
 	json,
 	char
 } from "drizzle-orm/pg-core";
-import type { AdapterAccount } from "@auth/core/adapters";
 
 // pnpm drizzle-kit push:pg
 // pnpm drizzle-kit introspect:pg
@@ -19,7 +18,9 @@ export const users1 = pgTable("users1", {
 	name: varchar("name", { length: 255 }).notNull(),
 	email: varchar("email", { length: 255 }).notNull(),
 	password: varchar("password", { length: 255 }).notNull(),
-	phone: varchar("phone", { length: 32 }),
+	old1phone: varchar("phone", { length: 16 }), // deprecated
+	phone: varchar("phone1", { length: 32 }),
+	// caps?
 	createdAt: timestamp("createdAt", { withTimezone: true, mode: 'string' }).defaultNow(),
 },
 (table) => {
@@ -48,4 +49,30 @@ export const files1 = pgTable("files1", {
 	filename: varchar("filename", { length: 255 }).notNull().default(""),
 	url: varchar("url", { length: 255 }).notNull().default(""),
 	type: varchar("type", { length: 255 }).notNull().default(""),
+	taskid: integer("taskid"),
+});
+
+// is this really necessary?
+export const taskspec1 = pgTable("taskspec1", {
+	id: serial("id").primaryKey().notNull(),
+	title: varchar("title", { length: 255 }),
+	description: text("description"),
+	// default duration
+});
+
+export const tasks1 = pgTable("tasks1", {
+	id: serial("id").primaryKey().notNull(),
+	specid: integer("specid").references(() => taskspec1.id),
+	projectid: integer("projectid").references(() => projects1.id),
+	owner: integer("ownerid").references(() => users1.id),
+	title: varchar("title", { length: 255 }),
+	description: text("description"),
+});
+
+export const taskcomments1 = pgTable("taskcomments", {
+	id: serial("id").primaryKey().notNull(),
+	taskid: integer("taskid").references(() => tasks1.id),
+	userid: integer("userid").references(() => users1.id),
+	createdat: timestamp("createdat", { withTimezone: true, mode: 'string' }).defaultNow(),
+	comment: text("comment"),
 });
