@@ -1,18 +1,15 @@
 "use client"
 
 import * as React from "react"
-import { Progress } from "@/components/ui/progress"
-
-import { getProjectTasks } from "../data/tasks" // todo put in actions.ts
-
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import TaskTable from "./task-table"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { LucideChevronDown } from "lucide-react"
+import { Progress } from "@/components/ui/progress"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
-
-
-
+import { getProjectTasks } from "@/lib/actions"
+import { DesignTask } from '@/lib/types'
+import { DesignProject } from '@/lib/types'
 
 function TeamProgress({ project, team }: any) {
 
@@ -57,18 +54,13 @@ export function ProjectTeamsProgressSkeleton() {
   );
 }
 
-export default function ProjectTeamsProgress({ project }: { project: any }) {
+export default function ProjectTeamsProgress({ project, tasks }: { project: DesignProject, tasks: DesignTask[] }) {
 
-  // const allTasks = getProjectTasks(0);
-  // It's not a db function yet ... will get hard once it is
-  // will probably have to move this call to the calling code as this is a client component
-  const allTasks = getProjectTasks(0);
-
-  const legalTasks = allTasks.filter((task) => task.type == "legal");
-  const architecturalTasks = allTasks.filter((task) => task.type == "architectural");
-  const structuralTasks = allTasks.filter((task) => task.type == "structural");
-  const mepTasks = allTasks.filter((task) => task.type == "mep");
-  const otherTasks = allTasks.filter((task) => task.type == "other");
+  const legalTasks = tasks.filter((task) => task.type == "legal");
+  const architecturalTasks = tasks.filter((task) => task.type == "architectural");
+  const structuralTasks = tasks.filter((task) => task.type == "structural");
+  const mepTasks = tasks.filter((task) => task.type == "mep");
+  const otherTasks = tasks.filter((task) => task.type == "other");
 
   // TODO actually put the above information into this array
   const progressValues = [

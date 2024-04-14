@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { auth } from '@/lib/auth';
-import { getUserProject } from '@/lib/db';
+import { DesignFile, DesignProject, DesignTask } from '@/lib/types';
 
 import { CenteredLayout } from '@/components/layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -13,34 +13,22 @@ import ProjectModelView from './components/project-model-view';
 import ProjectTaskDetails, { ProjectTaskDetailsSkeleton } from './components/project-task-details';
 import ProjectTeamsProgress, { ProjectTeamsProgressSkeleton } from './components/project-teams-progress';
 import ProjectFiles, { ProjectFilesSkeleton } from './components/project-task-files';
-import { getProjectFiles } from '@/lib/actions';
+import { TMPgetProjectTasksOrDefault, getProject, getProjectFiles, getProjectTasks } from '@/lib/actions';
 
-async function ProjectFilesWrapper({ projectId } : { projectId : number }) {
-  const files = await getProjectFiles(projectId);
-  return <ProjectFiles files={files} />
-}
-
-async function ProjectPage({ projectId, tab }:{ projectId: number, tab: string | undefined }) {
+async function ProjectPage({ projectId, tab }:{
+  projectId: number,
+  tab: string | undefined
+}) {
 
   const session = await auth();
-  const userId = Number(session?.user?.id);
+  if (!session?.user) redirect('/login');
 
-  //  apparently this is not good enough
-  if (!session?.user)
-    redirect('/login');
-
-  if (Number.isNaN(userId)) {
-    console.log("User id is invalid: ", session);
-    return <p>Invalid user</p>;
-  }
-
-  const projectInfoArr = await getUserProject(userId, projectId);
-  if (projectInfoArr.length < 1)
-    redirect('/project/not-found'); // it might not be the users project
-  if (projectInfoArr.length > 1)
-    console.log(`Found ${projectInfoArr.length} projects with id ${projectId}`);
-
-  const project: any = projectInfoArr[0];
+  const project: DesignProject | undefined = await getProject(projectId);
+  if (project === undefined) notFound();
+  const files: DesignFile[] | undefined = await getProjectFiles(projectId);
+  if (files === undefined) notFound();
+  const tasks: DesignTask[] | undefined = await TMPgetProjectTasksOrDefault(projectId);
+  if (tasks === undefined) notFound();
 
   // TODO validate tab it could be a stirng that is not a tab
 
@@ -85,17 +73,17 @@ async function ProjectPage({ projectId, tab }:{ projectId: number, tab: string |
         </TabsContent>
         <TabsContent value="teams-progress">
           <Suspense fallback={(<ProjectTeamsProgressSkeleton />)} >
-            <ProjectTeamsProgress project={project} />
+            <ProjectTeamsProgress project={project} tasks={tasks} />
           </Suspense>
         </TabsContent>
         <TabsContent value="task-details">
           <Suspense fallback={(<ProjectTaskDetailsSkeleton />)} >
-            <ProjectTaskDetails project={project} />
+            <ProjectTaskDetails project={project} tasks={tasks} />
           </Suspense>
         </TabsContent>
         <TabsContent value="files">
           <Suspense fallback={(<ProjectFilesSkeleton />)} >
-            <ProjectFilesWrapper projectId={projectId} />
+            <ProjectFiles files={files} />
           </Suspense>
         </TabsContent>
         <TabsContent value="model">

@@ -1,16 +1,11 @@
 'use server';
 
-import {
-  addFileUrlToProject,
-  createProject,
-  deleteAllFilesFromProject,
-  deleteProject,
-  getFilesUrlsForProject
-} from '@/lib/db';
+import * as db from '@/lib/db';
 import { auth } from './auth';
 import * as blob  from '@vercel/blob';
 import { NewProjectFormSchema } from './types';
 import { redirect } from 'next/navigation';
+import { defaulTaskSpecs, defaultDesignTasks } from './tasks';
 
 const ENABLE_VERCEL_BLOB = false;
 
@@ -34,26 +29,23 @@ export async function submitProjectForm2(formData: FormData) {
   }
 
   // not the prettiest ...
-  const { files, ...projectInfo } = { ...parsed.data };
-  const newProjectArr = await createProject({
+  const {
+    files,
+    title, description, buildingType, buildingSubtype, country,
+    lifestyle, future, energy, outdoors, security, maintenance, special,
+  } = parsed.data;
+
+  const newProjectArr = await db.createProject({
     userid: userId,
-    title: projectInfo.title,
-    description: projectInfo.description,
-    type: projectInfo.buildingType,
-    subtype: projectInfo.buildingSubtype,
-    countrycode: projectInfo.country,
-    extrainfo: {
-      lifestyle: projectInfo.lifestyle,
-      future: projectInfo.future,
-      energy: projectInfo.energy,
-      outdoors: projectInfo.outdoors,
-      security: projectInfo.security,
-      maintenance: projectInfo.maintenance,
-      special: projectInfo.special,
-    }
+    title,
+    description,
+    type: buildingType,
+    subtype: buildingSubtype,
+    countrycode: country,
+    extrainfo: { lifestyle, future, energy, outdoors, security, maintenance, special }
   });
   if (newProjectArr.length != 1) {
-    console.error("Failed to submit a new project post\n");
+    console.error("Failed to submit a new project post");
     return null;
   }
 
@@ -78,10 +70,10 @@ export async function submitProjectForm2(formData: FormData) {
         // private access isn't supported by vercel atm
         await blob.put(`project/${newProjectId}/${file.name}`, data, { access: 'public', }) :
         { url: "/tmp/demofloorplan.png" };
-      console.log("file uploaded", file.name, url);
+      console.log(`file "${file.name}" uploaded to: ${url} (ENABLE_VERCEL_BLOB ${ENABLE_VERCEL_BLOB})`);
 
       // TODO optimise - await outside the loop?
-      const newFileRow = await addFileUrlToProject({
+      const newFileRow = await db.addFileUrlToProject({
         uploaderid: userId,
         projectid: newProjectId,
         filename: file.name,
@@ -92,18 +84,19 @@ export async function submitProjectForm2(formData: FormData) {
     }
   }
 
+  // TASKS
+  ;
+
   redirect(`/project/${newProjectId}`);
 }
 
-export async function getProjectFiles(projectId: number) {
+export async function getProject(projectId: number) {
   const session = await auth();
-  if (!session?.user?.id) {
-    console.log("Invalid session on get project files");
-    return [];
-  }
+  if (!session?.user?.id) return undefined;
   const userId = Number(session.user.id);
-  const fileUrls = await getFilesUrlsForProject(userId, projectId);
-  return fileUrls;
+  const projects = await db.getUserProject(userId, projectId);
+  if (projects.length <= 0) return undefined;
+  return projects[0];
 }
 
 export async function deleteFullProject(projectId: number) {
@@ -118,15 +111,67 @@ export async function deleteFullProject(projectId: number) {
 
   console.log("DELETING PROJECT", projectId);
 
-  const deletedFiles = await deleteAllFilesFromProject(projectId);
+  const deletedFiles = await db.deleteAllFilesFromProject(projectId);
   deletedFiles.map((f) => {
     console.log("deleting file from store", ENABLE_VERCEL_BLOB, f);
     if (ENABLE_VERCEL_BLOB)
       blob.del(f.url)
   });
 
-  const deletedProject = await deleteProject(projectId);
+  const deletedProject = await db.deleteProject(projectId);
   console.log("DELETED PROJECT", deletedProject);
 
   redirect('/projects');
+}
+
+export async function getProjectFiles(projectId: number) {
+  const session = await auth();
+  if (!session?.user?.id) return undefined;
+  const userId = Number(session.user.id);
+  const fileUrls = await db.getFilesUrlsForProject(userId, projectId);
+  return fileUrls;
+}
+
+export async function getProjectTasks(projectId: number) {
+  const session = await auth();
+  if (!session?.user?.id) return undefined;
+  // const userId = Number(session.user.id);
+  // TODO check user permissions
+  const tasks = await db.getProjectTasks(projectId);
+  return tasks;
+}
+
+export async function TMPgetProjectTasksOrDefault(projectId: number) {
+  const tasks = await getProjectTasks(projectId);
+  if (!tasks) return;
+  if (tasks.length === 0) return defaultDesignTasks;
+  return tasks;
+}
+
+export async function getProjectTask(projectId: number, specId: number) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  const tasks = await db.getProjectTask(projectId, specId);
+  if (tasks.length <= 0) return;
+  return tasks[0];
+}
+
+export async function TMPgetProjectTaskOrDefault(projectId: number, specId: number) {
+  const task = await getProjectTask(projectId, specId);
+  if (!task) return defaultDesignTasks.find((t) => t.projectid == projectId && t.specid == specId)
+    return task;
+}
+
+export async function getTaskSpec(specId: number | null) {
+  if (specId === null) return;
+  const specs = await db.getTaskSpec(specId);
+  if (specs.length <= 0) return;
+  return specs[0];
+}
+
+export async function TMPgetTaskSpecOrDefault(specId: number | null) {
+  if (specId === null) return;
+  const spec = await getTaskSpec(specId);
+  if (!spec) return defaulTaskSpecs.find((s) => s.id == specId);
+  return spec;
 }

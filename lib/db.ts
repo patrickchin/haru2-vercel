@@ -13,6 +13,8 @@ import * as Schemas from 'drizzle/schema';
 const client = postgres(`${process.env.POSTGRES_URL!}?sslmode=require`);
 export const db = drizzle(client);
 
+// users ==========================================================================================
+
 export async function getUser(email: string) {
   return await db.select().from(Schemas.users1).where(eq(Schemas.users1.email, email));
 }
@@ -24,6 +26,7 @@ export async function createUser(name: string, phone: string, email: string, pas
   return await db.insert(Schemas.users1).values({ name, phone, email, password: hash });
 }
 
+// projects ==========================================================================================
 
 export async function getUserProjects(userId: number, pagenum: number = 0) {
   const pagesize = 30;
@@ -42,7 +45,7 @@ export async function getUserProject(userId: number, projectId: number) {
       eq(Schemas.projects1.userid, userId),
       eq(Schemas.projects1.id, projectId),
     )
-  ).limit(1);
+  );
 }
 
 export async function createProject(values: {
@@ -63,13 +66,38 @@ export async function deleteProject(projectId: number) {
   ).returning();
 }
 
-export async function addFileUrlToProject(values: {
-	uploaderid: number,
-	projectid: number,
-	filename: string,
-	url: string,
-	type: string,
-}) {
+// tasks ==========================================================================================
+
+export async function getTaskSpec(specid: number) { 
+  return await db.select().from(Schemas.taskspec1).where(
+    eq(Schemas.taskspec1.id, specid)
+  ).limit(1);
+}
+
+export async function createProjectTask(
+  values: typeof Schemas.tasks1.$inferInsert
+) {
+  return await db.insert(Schemas.tasks1).values(values).returning();
+}
+
+export async function getProjectTasks(projectid: number) {
+  return await db.select().from(Schemas.tasks1).where(
+    eq(Schemas.tasks1.projectid, projectid)
+  );
+}
+
+export async function getProjectTask(projectid: number, specid: number) {
+  return await db.select().from(Schemas.tasks1).where(
+    and(
+      eq(Schemas.tasks1.projectid, projectid),
+      eq(Schemas.tasks1.specid, specid),
+    )
+  );
+}
+
+// files ==========================================================================================
+
+export async function addFileUrlToProject(values: typeof Schemas.files1._.inferInsert) {
   return await db.insert(Schemas.files1).values(values).returning();
 }
 

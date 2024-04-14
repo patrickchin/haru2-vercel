@@ -9,19 +9,19 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
-
-import { DesignTask } from "../data/types"
-import { getProjectTasks } from "../data/tasks" // todo put in actions.ts
 
 import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en'
 TimeAgo.addDefaultLocale(en)
 import ReactTimeAgo from "react-time-ago"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+
 import { cn } from "@/lib/utils"
+import { DesignTask } from '@/lib/types'
+import { DesignProject } from '@/lib/types'
 
 // a company and a way they work should be able to determine
 // their own tasks saved on the platform
@@ -103,7 +103,8 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
     },
     cell: ({ row }) => (
       <div className="capitalize">
-       <ReactTimeAgo date={row.getValue("lastUpdated")} locale="en-US" />
+       {/* <ReactTimeAgo date={row.getValue("lastUpdated")} locale="en-US" /> */}
+       <ReactTimeAgo date={0} locale="en-US" />
       </div>
     ),
   },
@@ -114,7 +115,6 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
     cell: ({ row, projectid }: any) => <Button asChild variant="outline" className="h-8 w-8 p-0">
       <Link href={`/project/${projectid}/task/${row.original.id}`}>
         <LucideChevronRight className="h-4 w-4" />
-      {/* <pre>{JSON.stringify(row, null, 2)}</pre> */}
       </Link>
     </Button>
     ,
@@ -252,11 +252,13 @@ function DataTableBody({ projectid, table, columns }:{
 
   if (rows.length == 0) {
     return (
-      <TableRow>
-        <TableCell colSpan={columns.length} className="h-24 text-center">
-          No results.
-        </TableCell>
-      </TableRow>
+      <TableBody>
+        <TableRow>
+          <TableCell colSpan={columns.length} className="h-24 text-center">
+            No results.
+          </TableCell>
+        </TableRow>
+      </TableBody>
     );
   }
 
@@ -269,7 +271,6 @@ function DataTableBody({ projectid, table, columns }:{
 
   return (
     <TableBody>
-
       {rows.map((row) =>
         <TableRow key={row.id}>
           {row.getVisibleCells().map((cell) => (
@@ -283,7 +284,6 @@ function DataTableBody({ projectid, table, columns }:{
         </TableRow>
       )}
       <EmptyRows n={10-rows.length} />
-
     </TableBody>
   );
 }
@@ -291,7 +291,7 @@ function DataTableBody({ projectid, table, columns }:{
 function DataTable({ projectid, columns, data }:{
   projectid: number,
   columns: Tan.ColumnDef<DesignTask>[],
-  data: DesignTask[]
+  data: DesignTask[],
 }) {
   const [sorting, setSorting] = React.useState<Tan.SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<Tan.ColumnFiltersState>([])
@@ -364,17 +364,11 @@ export function ProjectTaskDetailsSkeleton() {
   );
 }
 
-export default function ProjectTaskDetails({ project }: { project: any }) {
-
-  // const allTasks = getProjectTasks(0);
-  // It's not a db function yet ... will get hard once it is
-  // will probably have to move this call to the calling code as this is a client component
-  const allTasks = getProjectTasks(0);
-
+export default function ProjectTaskDetails({ project, tasks }: { project: DesignProject, tasks: DesignTask[] }) {
   return (
     <Card>
       <CardContent className="pt-8">
-        <DataTable projectid={project.id} columns={taskColumns} data={allTasks} />
+        <DataTable projectid={project.id} columns={taskColumns} data={tasks} />
       </CardContent>
     </Card>
   );

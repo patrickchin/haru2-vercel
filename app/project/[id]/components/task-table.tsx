@@ -13,13 +13,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
 
-import { DesignTask } from "../data/types"
-import { getProjectTasks } from "../data/tasks" // todo put in actions.ts
-
 import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en'
 TimeAgo.addDefaultLocale(en)
 import ReactTimeAgo from "react-time-ago"
+
+import { DesignTask } from "@/lib/types"
 
 // a company and a way they work should be able to determine
 // their own tasks saved on the platform
@@ -89,7 +88,8 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
     },
     cell: ({ row }) => (
       <div className="capitalize">
-        <ReactTimeAgo date={new Date(row.getValue("lastUpdated"))} locale="en-US" />
+        {/* <ReactTimeAgo date={new Date(row.getValue("lastUpdated"))} locale="en-US" /> */}
+        <ReactTimeAgo date={0} locale="en-US" />
       </div>
     ),
   },

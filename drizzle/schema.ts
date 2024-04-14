@@ -55,6 +55,7 @@ export const files1 = pgTable("files1", {
 // is this really necessary?
 export const taskspec1 = pgTable("taskspec1", {
 	id: serial("id").primaryKey().notNull(),
+	type:  varchar("type", { length: 255 }),
 	title: varchar("title", { length: 255 }),
 	description: text("description"),
 	// default duration
@@ -64,12 +65,19 @@ export const tasks1 = pgTable("tasks1", {
 	id: serial("id").primaryKey().notNull(),
 	specid: integer("specid").references(() => taskspec1.id),
 	projectid: integer("projectid").references(() => projects1.id),
-	owner: integer("ownerid").references(() => users1.id),
+	lead: varchar("lead", { length: 255 }),
+	// owner: integer("ownerid").references(() => users1.id),
+	// members: integer("ownerid").references(() => users1.id),
+	type: varchar("type", { length: 255 }),
+	status: varchar("status", { length: 255 }).default("pending"),
+	duration: integer("duration").default(0),
+	estimation: integer("estimation"),
 	title: varchar("title", { length: 255 }),
 	description: text("description"),
+	// updated: timestamp("updated", { withTimezone: true, mode: 'string' }).defaultNow(),
 });
 
-export const taskcomments1 = pgTable("taskcomments", {
+export const taskcomments1 = pgTable("taskcomments1", {
 	id: serial("id").primaryKey().notNull(),
 	taskid: integer("taskid").references(() => tasks1.id),
 	userid: integer("userid").references(() => users1.id),

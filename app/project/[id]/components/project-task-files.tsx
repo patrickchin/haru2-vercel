@@ -5,6 +5,7 @@ import * as Tan from '@tanstack/react-table'
 
 import { LucideChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import {
   Table,
   TableBody,
@@ -15,12 +16,9 @@ import {
 } from "@/components/ui/table"
 
 import { getProjectFiles } from "@/lib/actions"
-import { Card, CardContent } from "@/components/ui/card"
+import { DesignFile } from "@/lib/types"
 
-type FileInfoArr = Awaited<ReturnType<typeof getProjectFiles>>;
-type FileInfo = FileInfoArr[0];
-
-const taskColumns: Tan.ColumnDef<FileInfo>[] = [
+const taskColumns: Tan.ColumnDef<DesignFile>[] = [
   {
     accessorKey: "filename",
     header: () => <div>Filename</div>,
@@ -46,8 +44,8 @@ const taskColumns: Tan.ColumnDef<FileInfo>[] = [
 ]
 
 function DataTable({ columns, data }:{
-  columns: Tan.ColumnDef<FileInfo>[],
-  data: FileInfoArr
+  columns: Tan.ColumnDef<DesignFile>[],
+  data: DesignFile[]
 }) {
 
   const table = Tan.useReactTable({
@@ -144,7 +142,7 @@ export function ProjectFilesSkeleton() {
   );
 }
 
-export default function ProjectFiles({ files }: { files: FileInfoArr }) {
+export default function ProjectFiles({ files }: { files: DesignFile[] }) {
   return (
     <Card>
       <CardContent className="pt-8">
