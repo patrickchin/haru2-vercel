@@ -113,7 +113,7 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
     size: 1,
     header: () => <div className="w-8">Details</div>,
     cell: ({ row, projectid }: any) => <Button asChild variant="outline" className="h-8 w-8 p-0">
-      <Link href={`/project/${projectid}/task/${row.original.id}`}>
+      <Link href={`/project/${projectid}/task/${row.original.specid}`}>
         <LucideChevronRight className="h-4 w-4" />
       </Link>
     </Button>

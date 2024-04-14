@@ -158,7 +158,7 @@ export async function getProjectTask(projectId: number, specId: number) {
 
 export async function TMPgetProjectTaskOrDefault(projectId: number, specId: number) {
   const task = await getProjectTask(projectId, specId);
-  if (!task) return defaultDesignTasks.find((t) => t.projectid == projectId && t.specid == specId)
+  if (!task) return defaultDesignTasks.find((t) => t.specid == specId)
     return task;
 }
 

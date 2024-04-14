@@ -48,9 +48,9 @@ function MembersList() {
   );
 }
 
-async function ProjectPage({ projectId, taskId }:{
+async function ProjectPage({ projectId, specId }:{
   projectId: number
-  taskId: number
+  specId: number
 }) {
 
   const session = await auth();
@@ -58,8 +58,8 @@ async function ProjectPage({ projectId, taskId }:{
 
   const project: DesignProject | undefined = await getProject(projectId);
   if (!project) { console.log("task: can't find project"); notFound(); }
-  const task: DesignTask | undefined = await TMPgetProjectTaskOrDefault(projectId, taskId);
-  if (!task) { console.log("task: can't find task", projectId, taskId); notFound(); }
+  const task: DesignTask | undefined = await TMPgetProjectTaskOrDefault(projectId, specId);
+  if (!task) { console.log("task: can't find task", projectId, specId); notFound(); }
   const taskSpec: DesignTaskSpec | undefined = await TMPgetTaskSpecOrDefault(task.specid);
 
   return (
@@ -67,7 +67,7 @@ async function ProjectPage({ projectId, taskId }:{
 
       <div className="flex flex-col gap-12 pb-8">
         <h3>Project {project.id} - {project.title || session.user.email}</h3>
-        <h4>Task {taskId} - {task.title}</h4>
+        <h4>Task {specId} - {task.title}</h4>
       </div>
 
       <ProjectInfoBar project={project} />
@@ -124,13 +124,13 @@ export default function Page({ params }:{ params: { id: string, taskid: string }
   const projectId: number = parseInt(params.id)
   if (Number.isNaN(projectId)) notFound();
 
-  const taskId: number = parseInt(params.taskid)
-  if (Number.isNaN(taskId)) notFound();
+  const specId: number = parseInt(params.taskid)
+  if (Number.isNaN(specId)) notFound();
 
   return (
     <CenteredLayout>
       <Suspense fallback={(<p>Loading ...</p>)} >
-        <ProjectPage projectId={projectId} taskId={taskId} />
+        <ProjectPage projectId={projectId} specId={specId} />
       </Suspense>
     </CenteredLayout>
   )
