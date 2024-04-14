@@ -99,7 +99,7 @@ async function ProjectPage({ projectId, tab }:{ projectId: number, tab: string |
           </Suspense>
         </TabsContent>
         <TabsContent value="model">
-          <ProjectModelView project={project} />
+          <ProjectModelView />
         </TabsContent>
         <TabsContent value="settings">
           <ProjectSettings project={project} />
