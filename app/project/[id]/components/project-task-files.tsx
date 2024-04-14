@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/table"
 
 import { getProjectFiles } from "@/lib/actions"
+import { Card, CardContent } from "@/components/ui/card"
 
 type FileInfoArr = Awaited<ReturnType<typeof getProjectFiles>>;
 type FileInfo = FileInfoArr[0];
@@ -145,8 +146,10 @@ export function ProjectFilesSkeleton() {
 
 export default function ProjectFiles({ files }: { files: FileInfoArr }) {
   return (
-    <div className="flex flex-col space-y-4">
-      <DataTable columns={taskColumns} data={files} />
-    </div>
+    <Card>
+      <CardContent className="pt-8">
+        <DataTable columns={taskColumns} data={files} />
+      </CardContent>
+    </Card>
   );
 }

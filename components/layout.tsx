@@ -20,7 +20,7 @@ export function CenteredLayout({ children } : { children : React.ReactNode; }) {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="grow flex flex-col">
+      <main className="grow flex flex-col bg-gradient-to-bl from-white to-gray-100">
         <div className="grow flex flex-col w-screen mx-auto max-w-6xl py-16 px-4 sm:px-12">
           {children}
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { Construction } from 'lucide-react';
+import { LucideConstruction } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { signOut, useSession } from "next-auth/react"
 import { Button } from '@/components/ui/button';
@@ -73,7 +73,7 @@ export default function Header() {
       <div className="flex h-16 items-center px-4 mx-auto max-w-5xl">
 
         <Link href="/" className="mr-6 flex items-center space-x-2">
-          <Construction className="h-6 w-6" />
+          <LucideConstruction className="h-6 w-6" />
           <span className="hidden font-bold sm:inline-block">
             Haru Construction
           </span>

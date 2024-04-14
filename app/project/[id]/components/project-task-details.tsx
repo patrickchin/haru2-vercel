@@ -20,6 +20,7 @@ import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en'
 TimeAgo.addDefaultLocale(en)
 import ReactTimeAgo from "react-time-ago"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 
 // a company and a way they work should be able to determine
 // their own tasks saved on the platform
@@ -165,18 +166,12 @@ function DataTableFilterToggles({ table }:{ table: Tan.Table<DesignTask> }) {
   return (
     <div className="flex flex-col w-full">
 
-      <div className="w-full flex items-center py-4 space-x-4">
-        {/* row filter input box */}
+      <div className="w-full flex space-x-4">
         <Input
           placeholder="Filter table..."
-          // value={(table.getColumn("lead")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            // table.getColumn("lead")?.setFilterValue(event.target.value)
-            table.setGlobalFilter(event.target.value)
-          }
+          onChange={(event) => table.setGlobalFilter(event.target.value)}
           className="max-w-sm"
         />
-
 
         <div className="w-full flex items-center space-x-4">
           {filterStatusButtonValues.map((filter) =>
@@ -189,30 +184,7 @@ function DataTableFilterToggles({ table }:{ table: Tan.Table<DesignTask> }) {
           )}
         </div>
 
-
-        {/* { // horrible and ugly, quick and dirty, but works
-          (table.getColumn("status")?.getFilterValue() as string) == "in progress" ?
-            <Button variant="outline" className="bg-accent"
-              onClick={() => table.getColumn("status")?.setFilterValue(undefined)}
-            >
-              In Progress
-            </Button>
-            :
-            <Button variant="outline" className=""
-              onClick={() => table.getColumn("status")?.setFilterValue("in progress")}
-            >
-              In Progress
-            </Button>
-        } */}
-
-        {/* <Button variant="outline"
-          className={(table.getColumn("status")?.getFilterValue() as string) == "in progress" ? "bg-accent" : ""}
-          onClick={() => table.getColumn("status")?.setFilterValue("in progress")}
-        >
-          In Progress
-        </Button> */}
-
-        <div className="flex-1 text-sm text-muted-foreground">
+        <div className="text-sm text-muted-foreground hidden sm:visible">
           Selected {table.getRowCount()} row(s)
         </div>
 
@@ -300,22 +272,20 @@ export function DataTableDemo({ projectid, columns, data }:{
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id} className="px-2 first:pl-8 last:pr-8">
-                      {header.isPlaceholder
-                        ? null
-                        : Tan.flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
+            <TableRow>
+              {table.getFlatHeaders().map((header) => {
+                return (
+                  <TableHead key={header.id} className="px-2 first:pl-8 last:pr-8">
+                    {header.isPlaceholder
+                      ? null
+                      : Tan.flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                  </TableHead>
+                )
+              })}
+            </TableRow>
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
@@ -387,8 +357,10 @@ export default function ProjectTaskDetails({ project }: { project: any }) {
   const allTasks = getProjectTasks(0);
 
   return (
-    <div className="flex flex-col space-y-4">
-      <DataTableDemo projectid={project.id} columns={taskColumns} data={allTasks} />
-    </div>
+    <Card>
+      <CardContent className="pt-8">
+        <DataTableDemo projectid={project.id} columns={taskColumns} data={allTasks} />
+      </CardContent>
+    </Card>
   );
 }
