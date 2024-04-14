@@ -45,7 +45,7 @@ const taskColumns: Tan.ColumnDef<FileInfo>[] = [
   // which team
 ]
 
-export function DataTable({ columns, data }:{
+function DataTable({ columns, data }:{
   columns: Tan.ColumnDef<FileInfo>[],
   data: FileInfoArr
 }) {
@@ -69,13 +69,13 @@ export function DataTable({ columns, data }:{
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id} className="px-2 first:pl-8 last:pr-8"
-                        style={{ width: header.getSize() }} >
+                      style={{ width: header.getSize() }} >
                       {header.isPlaceholder
                         ? null
                         : Tan.flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   )
                 })}

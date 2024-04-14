@@ -21,6 +21,7 @@ import en from 'javascript-time-ago/locale/en'
 TimeAgo.addDefaultLocale(en)
 import ReactTimeAgo from "react-time-ago"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
 
 // a company and a way they work should be able to determine
 // their own tasks saved on the platform
@@ -30,16 +31,19 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 const taskColumns: Tan.ColumnDef<DesignTask>[] = [
   {
     accessorKey: "type",
+    size: 1,
     header: () => <div>Type</div>,
-    cell: ({ row }) => <Badge variant="secondary" className="capitalize">{row.getValue("type")}</Badge>
+    cell: ({ row }) => <Badge variant="secondary" className="capitalize">{row.getValue("type")}</Badge>,
   },
   {
     accessorKey: "title",
+    size: 3,
     header: () => <div>Title</div>,
-    cell: ({ row }) => <Link href="#" className="font-medium">{row.getValue("title")}</Link>
+    cell: ({ row }) => <Link href="#" className="font-medium">{row.getValue("title")}</Link>,
   },
   {
     accessorKey: "lead",
+    size: 1,
     header: ({ column }) => {
       return (
         <Button
@@ -61,80 +65,51 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
       </div>
     )
   },
-  // {
-  //   accessorKey: "members",
-  //   header: ({ column }) => {
-  //     return (
-  //       <Button
-  //         variant="ghost"
-  //         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-  //       >
-  //         Members
-  //         <LucideArrowUpDown className="ml-1 h-4 w-4" />
-  //       </Button>
-  //     )
-  //   },
-  //   cell: ({ row }) => (
-  //     <div className="flex flex-row overflow-hidden w-32 space-x-1">
-  //       {(row.getValue("members") as string[]).map((mem, i) =>
-  //         <Avatar key={i}>
-  //           {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
-  //           <AvatarFallback>{mem.slice(0, 2).toUpperCase()}</AvatarFallback>
-  //         </Avatar>
-  //       )}
-  //     </div>
-  //   )
-  // },
   {
     accessorKey: "status",
+    size: 1,
     header: "Status",
     cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>
   },
-  {
-    accessorKey: "duration",
-    header: "Duration",
-    cell: ({ row }) => {
-      const duration = row.getValue("duration") as number;
-      // const estimation = row.getValue("estimation") as number;
-      const estimation = row.original.estimation as number;
-      const percent = (100 * duration / estimation);
-      const color = percent <= 100 ? "bg-green-300" : "bg-red-300";
-      return (<div>
-        <Progress value={percent} indicatorColor={color} />
-        {percent.toFixed(0)} % complete
-      </div>);
-    }
-  },
   // {
-  //   accessorKey: "estimation",
-  //   header: "Estimation",
-  //   cell: ({ row }) => <div>{(row.getValue("estimation") as number) / (60*60*24)} days</div>
-  // },
-  // {
-  //   accessorKey: "priority",
-  //   header: "Priority",
-  //   cell: ({ row }) => <div className="capitalize">{row.getValue("priority")}</div>
+  //   accessorKey: "duration",
+  //   size: 2,
+  //   header: "Duration",
+  //   cell: ({ row }) => {
+  //     const duration = row.getValue("duration") as number;
+  //     // const estimation = row.getValue("estimation") as number;
+  //     const estimation = row.original.estimation as number;
+  //     const percent = (100 * duration / estimation);
+  //     const color = percent <= 100 ? "bg-green-300" : "bg-red-300";
+  //     const daysremaining = (estimation - duration) / (3600*24*1000);
+  //     return (<div>
+  //       <Progress value={percent} indicatorColor={color} />
+  //       {percent > 100 ? "overdue" : `${daysremaining} days left`}
+  //     </div>);
+  //   }
   // },
   {
     accessorKey: "lastUpdated",
+    size: 1,
     header: ({ column }) => {
       return (
         <Button variant="ghost" className="px-1"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Last Updated
+          Updated
           <LucideArrowUpDown className="ml-1 h-4 w-4" />
         </Button>
       )
     },
     cell: ({ row }) => (
       <div className="capitalize">
-        <ReactTimeAgo date={new Date(row.getValue("lastUpdated"))} locale="en-US" />
+       <ReactTimeAgo date={row.getValue("lastUpdated")} locale="en-US" />
       </div>
     ),
   },
   {
     accessorKey: "details",
+    size: 1,
     header: () => <div className="w-8">Details</div>,
     cell: ({ row, projectid }: any) => <Button asChild variant="outline" className="h-8 w-8 p-0">
       <Link href={`/project/${projectid}/task/${row.original.id}`}>
@@ -236,8 +211,84 @@ function DataTableFilterToggles({ table }:{ table: Tan.Table<DesignTask> }) {
   );
 }
 
+function DataTableHeader({ table }:{ table: Tan.Table<DesignTask> }) {
 
-export function DataTableDemo({ projectid, columns, data }:{
+  const sizeToBasis = (size: number) =>
+    size == 1 ?  "flex-basis-1/12":
+    size == 2 ?  "flex-basis-2/12":
+    size == 3 ?  "flex-basis-3/12":
+    "";
+
+  return (
+    <TableHeader>
+      <TableRow>
+        {table.getFlatHeaders().map((header) => {
+          return (
+            <TableHead key={header.id} className=
+                {cn("px-2 first:pl-8 last:pr-8", sizeToBasis(header.getSize()))}
+                style={{ width: `${header.getSize()}px` }}
+            >
+              {header.isPlaceholder
+                ? null
+                : Tan.flexRender(
+                  header.column.columnDef.header,
+                  header.getContext()
+                )}
+            </TableHead>
+          )
+        })}
+      </TableRow>
+    </TableHeader>
+  );
+}
+
+function DataTableBody({ projectid, table, columns }:{
+  projectid: number,
+  table: Tan.Table<DesignTask>, 
+  columns: Tan.ColumnDef<DesignTask>[],
+ }) {
+
+  const rows = table.getRowModel().rows;
+
+  if (rows.length == 0) {
+    return (
+      <TableRow>
+        <TableCell colSpan={columns.length} className="h-24 text-center">
+          No results.
+        </TableCell>
+      </TableRow>
+    );
+  }
+
+  function EmptyRows({ n }:{ n: number }) {
+    return Array.from(Array(n).keys()).map((i) =>
+      <TableRow key={i} className="h-[73px]">
+        <TableCell></TableCell>
+      </TableRow>);
+  }
+
+  return (
+    <TableBody>
+
+      {rows.map((row) =>
+        <TableRow key={row.id}>
+          {row.getVisibleCells().map((cell) => (
+            <TableCell key={cell.id} className="px-1 first:pl-8 last:pr-8">
+              {Tan.flexRender(
+                cell.column.columnDef.cell,
+                { ...cell.getContext(), projectid, }
+              )}
+            </TableCell>
+          ))}
+        </TableRow>
+      )}
+      <EmptyRows n={10-rows.length} />
+
+    </TableBody>
+  );
+}
+
+function DataTable({ projectid, columns, data }:{
   projectid: number,
   columns: Tan.ColumnDef<DesignTask>[],
   data: DesignTask[]
@@ -271,44 +322,8 @@ export function DataTableDemo({ projectid, columns, data }:{
       {/* The table */}
       <div className="rounded-md border">
         <Table>
-          <TableHeader>
-            <TableRow>
-              {table.getFlatHeaders().map((header) => {
-                return (
-                  <TableHead key={header.id} className="px-2 first:pl-8 last:pr-8">
-                    {header.isPlaceholder
-                      ? null
-                      : Tan.flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                  </TableHead>
-                )
-              })}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="px-2 first:pl-8 last:pr-8">
-                      {Tan.flexRender(
-                        cell.column.columnDef.cell,
-                        { ...cell.getContext(), projectid, }
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
+          <DataTableHeader table={table} />
+          <DataTableBody projectid={projectid} table={table} columns={columns} />
         </Table>
       </div>
 
@@ -359,7 +374,7 @@ export default function ProjectTaskDetails({ project }: { project: any }) {
   return (
     <Card>
       <CardContent className="pt-8">
-        <DataTableDemo projectid={project.id} columns={taskColumns} data={allTasks} />
+        <DataTable projectid={project.id} columns={taskColumns} data={allTasks} />
       </CardContent>
     </Card>
   );
