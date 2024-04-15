@@ -1,17 +1,31 @@
 "use server";
 
-import * as db from "@/lib/db";
-import * as Schemas from "drizzle/schema";
-import { auth } from "./auth";
-import * as blob from "@vercel/blob";
-import { NewProjectFormSchema } from "./types";
-import { redirect } from "next/navigation";
-import { defaulTaskSpecs } from "./tasks";
+import * as db from '@/lib/db';
+import * as Schemas from 'drizzle/schema';
+import { signIn } from '@/lib/auth';
+import { auth } from './auth';
+import * as blob  from '@vercel/blob';
+import { NewProjectFormSchema } from './types';
+import { redirect } from 'next/navigation';
+import { defaulTaskSpecs } from './tasks';
 import assert from "assert";
 
 const VERCEL_BLOB_FAKE_FILES = true;
 
+export async function createUserFromRegister(data: any) {
+  return db.createUser(data.name, data.phone, data.email, data.password);
+}
+
+export async function getUserFromRegister(data: any) {
+  return db.getUser(data.email);
+}
+
+export async function signInFromLogin(data: any) {
+  return signIn("credentials", data);
+}
+
 export async function submitProjectForm2(formData: FormData) {
+
   const session = await auth();
   if (!session?.user?.id) {
     console.log("Invalid session on project form submit");
