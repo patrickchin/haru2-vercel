@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createUser, getUser } from '@/lib/db';
-import { SimpleLayout } from '@/components/layout';
+import { SimpleLayout } from '@/components/page-layouts';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';

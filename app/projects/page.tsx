@@ -4,7 +4,7 @@ import Image from "next/image"
 import Link from 'next/link';
 
 import { getUserProjects } from '@/lib/db';
-import { CenteredLayout } from '@/components/layout';
+import { CenteredLayout } from '@/components/page-layouts';
 
 import houseIcon from "@/app/assets/house.png"
 import { auth } from '@/lib/auth';

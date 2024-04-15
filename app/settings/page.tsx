@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 
-import { CenteredLayout } from '@/components/layout';
+import { CenteredLayout } from '@/components/page-layouts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { createDefaultTaskSpecs } from '@/lib/actions';

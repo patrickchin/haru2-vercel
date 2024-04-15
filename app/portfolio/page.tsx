@@ -1,7 +1,7 @@
 
 import { Suspense } from 'react';
 
-import { CenteredLayout } from '@/components/layout';
+import { CenteredLayout } from '@/components/page-layouts';
 
 export default async function Page() {
   return (

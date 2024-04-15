@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { auth } from '@/lib/auth';
 import { DesignFile, DesignProject, DesignTask } from '@/lib/types';
 
-import { CenteredLayout } from '@/components/layout';
+import { CenteredLayout } from '@/components/page-layouts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import ProjectDescription from './components/project-description';

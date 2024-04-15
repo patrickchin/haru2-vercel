@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { FieldValues, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ChevronDown, Loader2 } from 'lucide-react';
-import { CenteredLayout } from '@/components/layout';
+import { CenteredLayout } from '@/components/page-layouts';
 import { Button } from "@/components/ui/button"
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { SimpleLayout } from '@/components/layout';
+import { SimpleLayout } from '@/components/page-layouts';
 import { Button } from '@/components/ui/button';
 import { ArrowRightIcon } from 'lucide-react';
 

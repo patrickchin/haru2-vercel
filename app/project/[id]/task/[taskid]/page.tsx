@@ -4,7 +4,7 @@ import { auth } from '@/lib/auth';
 
 import { getProject, getProjectTask, getTaskSpec } from '@/lib/actions';
 
-import { CenteredLayout } from '@/components/layout';
+import { CenteredLayout } from '@/components/page-layouts';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage  } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';

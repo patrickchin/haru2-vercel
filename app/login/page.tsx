@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { signIn } from '@/lib/auth';
 
-import { SimpleLayout } from '@/components/layout';
+import { SimpleLayout } from '@/components/page-layouts';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
