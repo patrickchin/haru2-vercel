@@ -47,11 +47,13 @@ function TeamProgress({ project, team, tasks }: {
         </div> */}
         <Collapsible className="space-y-4">
           <CollapsibleTrigger className="flex justify-between gap-8 w-full p-4 justify-start text-start font-semibold text-sm rounded-md hover:bg-accent">
-            <span className="flex gap-4 items-center">
-              <LucideListCollapse />
+            <span className="flex gap-2 items-center">
+              <LucideListCollapse className="fg-mited h-5"/>
               <span>Completed {completed} of {total} total tasks ({pct.toFixed(0)} %)</span>
             </span>
-            <span className="flex flex-row gap-2 items-center">Expand for details <LucideChevronDown/></span>
+            <span className="flex flex-row gap-2 items-center">
+              {/* Expand for details */}
+              <LucideChevronDown className="h-5"/></span>
           </CollapsibleTrigger>
           <CollapsibleContent>
             <TaskTable projectid={project.id} data={tasks} />

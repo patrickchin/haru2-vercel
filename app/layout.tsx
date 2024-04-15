@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 
 import './globals.css';
 
+import { Toaster } from "@/components/ui/toaster"
 import { GeistSans } from 'geist/font/sans';
 import { auth } from '@/lib/auth';
 
@@ -38,6 +39,7 @@ export default async function RootLayout({
         <SessionProvider session={session} >
           {children}
         </SessionProvider>
+        <Toaster />
       </body>
     </html>
   );
