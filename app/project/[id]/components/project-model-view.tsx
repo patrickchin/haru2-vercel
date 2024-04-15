@@ -6,6 +6,7 @@ import { OrbitControls, Stats } from '@react-three/drei';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
 import { useLoader } from '@react-three/fiber'
 import { Suspense } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 
 function ProjectModelViewSkeleton() {
   return (
@@ -19,7 +20,7 @@ function ProjectModelViewInternal() {
   const obj = useLoader(OBJLoader, '/Bambo_House.obj');
 
   return (
-    <Canvas className="" shadows camera={{ position: [10, 10, 10], }} >
+    <Canvas shadows camera={{ position: [10, 10, 10], }} >
 
       <ambientLight color={"white"} intensity={0.3} />
       <directionalLight color="white" position={[0, 2, 5]} />
@@ -39,10 +40,12 @@ function ProjectModelViewInternal() {
 
 export default function ProjectModelView() {
   return (
-    <div className="border rounded-lg h-[500px]">
-      <Suspense fallback={(<ProjectModelViewSkeleton />)}>
-        <ProjectModelViewInternal />
-      </Suspense>
-    </div>
+    <Card className="grow grid">
+      <CardContent>
+        <Suspense fallback={(<ProjectModelViewSkeleton />)}>
+          <ProjectModelViewInternal />
+        </Suspense>
+      </CardContent>
+    </Card>
   );
 }

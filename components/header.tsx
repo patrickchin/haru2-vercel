@@ -70,7 +70,7 @@ export function LoginOrUserSettings() {
 export default function Header() {
   return (
     <div className="border-b bg-background">
-      <div className="flex h-16 items-center px-4 mx-auto max-w-5xl">
+      <div className="flex h-16 items-center px-8 mx-auto max-w-6xl">
 
         <Link href="/" className="mr-6 flex items-center space-x-2">
           <LucideConstruction className="h-6 w-6" />

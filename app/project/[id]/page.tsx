@@ -35,39 +35,41 @@ async function ProjectPage({ projectId, tab }:{
   return (
     <section className="grow flex flex-col gap-12">
       <h3>Project {project.id} - {project.title || session.user.email}</h3>
-      <Tabs defaultValue={tab || 'description'} className="w-full space-y-5">
-        <TabsList>
-          <TabsTrigger asChild value="description">
-            <Link href={{ query: { tab: 'description' } }} scroll={false} replace={false}>
-              Description
-            </Link>
-          </TabsTrigger>
-          <TabsTrigger asChild value="teams-progress">
-            <Link href={{ query: { tab: 'teams-progress' } }} scroll={false} replace={false}>
-              Teams Progress
-            </Link>
-          </TabsTrigger>
-          <TabsTrigger asChild value="task-details">
-            <Link href={{ query: { tab: 'task-details' } }} scroll={false} replace={false}>
-              Task Details
-            </Link>
-          </TabsTrigger>
-          <TabsTrigger asChild value="files">
-            <Link href={{ query: { tab: 'files' } }} scroll={false} replace={false}>
-              All Files
-            </Link>
-          </TabsTrigger>
-          <TabsTrigger asChild value="model">
-            <Link href={{ query: { tab: 'model' } }} scroll={false} replace={false}>
-              Model View
-            </Link>
-          </TabsTrigger>
-          <TabsTrigger asChild value="settings">
-            <Link href={{ query: { tab: 'settings' } }} scroll={false} replace={false}>
-              Settings
-            </Link>
-          </TabsTrigger>
-        </TabsList>
+      <Tabs defaultValue={tab || 'description'} className="w-full flex flex-col grow space-y-5">
+        <div>
+          <TabsList>
+            <TabsTrigger asChild value="description">
+              <Link href={{ query: { tab: 'description' } }} scroll={false} replace={false}>
+                Description
+              </Link>
+            </TabsTrigger>
+            <TabsTrigger asChild value="teams-progress">
+              <Link href={{ query: { tab: 'teams-progress' } }} scroll={false} replace={false}>
+                Teams Progress
+              </Link>
+            </TabsTrigger>
+            <TabsTrigger asChild value="task-details">
+              <Link href={{ query: { tab: 'task-details' } }} scroll={false} replace={false}>
+                Task Details
+              </Link>
+            </TabsTrigger>
+            <TabsTrigger asChild value="files">
+              <Link href={{ query: { tab: 'files' } }} scroll={false} replace={false}>
+                All Files
+              </Link>
+            </TabsTrigger>
+            <TabsTrigger asChild value="model">
+              <Link href={{ query: { tab: 'model' } }} scroll={false} replace={false}>
+                Model View
+              </Link>
+            </TabsTrigger>
+            <TabsTrigger asChild value="settings">
+              <Link href={{ query: { tab: 'settings' } }} scroll={false} replace={false}>
+                Settings
+              </Link>
+            </TabsTrigger>
+          </TabsList>
+        </div>
         <TabsContent value="description" className="space-y-8">
           <ProjectDescription project={project} />
         </TabsContent>
@@ -86,7 +88,7 @@ async function ProjectPage({ projectId, tab }:{
             <ProjectFiles files={files} />
           </Suspense>
         </TabsContent>
-        <TabsContent value="model">
+        <TabsContent value="model" className="flex flex-col grow">
           <ProjectModelView />
         </TabsContent>
         <TabsContent value="settings">

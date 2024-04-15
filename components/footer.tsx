@@ -2,12 +2,9 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="text-gray-600 body-font">
-      <div className="bg-gray-100">
-        <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
-          <p className="text-gray-500 text-sm text-center sm:text-left">© 2024 Haru Construction
-          </p>
-        </div>
+    <footer className="flex items-center justify-center bg-background border-t border-border">
+      <div className="flex-1 max-w-6xl py-4 px-8">
+        <p className="text-muted-foreground text-sm">© 2024 Haru Construction</p>
       </div>
     </footer>
   );
