@@ -53,7 +53,7 @@ export const files1 = pgTable("files1", {
 });
 
 // is this really necessary?
-export const taskspec1 = pgTable("taskspec1", {
+export const taskspecs1 = pgTable("taskspecs1", {
 	id: serial("id").primaryKey().notNull(),
 	type:  varchar("type", { length: 255 }),
 	title: varchar("title", { length: 255 }),
@@ -63,7 +63,7 @@ export const taskspec1 = pgTable("taskspec1", {
 
 export const tasks1 = pgTable("tasks1", {
 	id: serial("id").primaryKey().notNull(),
-	specid: integer("specid").references(() => taskspec1.id),
+	specid: integer("specid").references(() => taskspecs1.id),
 	projectid: integer("projectid").references(() => projects1.id),
 	lead: varchar("lead", { length: 255 }),
 	// owner: integer("ownerid").references(() => users1.id),

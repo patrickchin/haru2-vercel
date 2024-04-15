@@ -1,18 +1,20 @@
+"use client";
 
 import { Suspense } from 'react';
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
 
 import { CenteredLayout } from '@/components/layout';
-
-import { auth } from '@/lib/auth';
-import { redirect } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { createDefaultTaskSpecs } from '@/lib/actions';
 
-async function ProjectList() {
+async function SettingsPage() {
 
-  const session = await auth();
-  const userId = Number(session?.user?.id);
+  const session = await useSession();
+  const userId = Number(session.data?.user?.id);
 
-  if (!session?.user)
+  if (!session.data?.user)
     redirect('/login');
 
   if (Number.isNaN(userId)) {
@@ -22,6 +24,19 @@ async function ProjectList() {
 
   return (
     <>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            Dev Area
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex space-x-4">
+            <Button variant="secondary" onClick={() => createDefaultTaskSpecs()}>Upload default task spec</Button>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
@@ -61,7 +76,7 @@ export default async function Page() {
       <section className="grow flex flex-col gap-12">
         <h3>Settings</h3>
         <Suspense fallback={<p>Loading ...</p>}>
-          <ProjectList />
+          <SettingsPage />
         </Suspense>
       </section>
     </CenteredLayout>

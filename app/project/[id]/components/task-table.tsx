@@ -53,8 +53,11 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
     cell: ({ row }) => (
       <div className="flex flex-row overflow-hidden w-12 items-center justify-center">
         <Avatar>
-          {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
-          <AvatarFallback>{(row.getValue("lead") as string).slice(0, 2).toUpperCase()}</AvatarFallback>
+          <AvatarImage src={`/tmp/avatar0.png`} />
+          {/* TODO */}
+          {/* {(row.getValue("lead") as string) ?
+            <AvatarFallback>{(row.getValue("lead") as string).slice(0, 2).toUpperCase()}</AvatarFallback>
+          } */}
         </Avatar>
       </div>
     )

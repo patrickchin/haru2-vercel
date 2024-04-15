@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { notFound, redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
 
-import { TMPgetProjectTaskOrDefault, TMPgetTaskSpecOrDefault, getProject, getProjectTask, getTaskSpec } from '@/lib/actions';
+import { getProject, getProjectTask, getTaskSpec } from '@/lib/actions';
 
 import { CenteredLayout } from '@/components/layout';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -58,9 +58,10 @@ async function ProjectPage({ projectId, specId }:{
 
   const project: DesignProject | undefined = await getProject(projectId);
   if (!project) { console.log("task: can't find project"); notFound(); }
-  const task: DesignTask | undefined = await TMPgetProjectTaskOrDefault(projectId, specId);
+  const task: DesignTask | undefined = await getProjectTask(projectId, specId);
   if (!task) { console.log("task: can't find task", projectId, specId); notFound(); }
-  const taskSpec: DesignTaskSpec | undefined = await TMPgetTaskSpecOrDefault(task.specid);
+  const taskSpec: DesignTaskSpec | undefined = await getTaskSpec(task.specid);
+  if (!task) { console.log("task: can't find spec", projectId, specId); notFound(); }
 
   return (
     <section className="grow flex flex-col gap-4">

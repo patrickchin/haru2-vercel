@@ -1,7 +1,7 @@
 "use client"
 
 import { redirect } from "next/navigation";
-import { deleteFullProject } from "@/lib/actions";
+import { createProjectTasks, deleteFullProject } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -153,7 +153,21 @@ export default function ProjectSettings({ project, }: { project: any }) {
         </CollapsibleContent>
       </Collapsible>
 
-      <Card className="bg-red-100">
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            Dev Area
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex space-x-4">
+            <Button variant="secondary" onClick={() => createProjectTasks(project.id)}>Create Default Project Tasks</Button>
+          </div>
+        </CardContent>
+      </Card>
+
+
+      <Card className="border-red-500 border-2">
         <CardHeader>
           <CardTitle>
             Destructive Area

@@ -13,7 +13,7 @@ import ProjectModelView from './components/project-model-view';
 import ProjectTaskDetails, { ProjectTaskDetailsSkeleton } from './components/project-task-details';
 import ProjectTeamsProgress, { ProjectTeamsProgressSkeleton } from './components/project-teams-progress';
 import ProjectFiles, { ProjectFilesSkeleton } from './components/project-task-files';
-import { TMPgetProjectTasksOrDefault, getProject, getProjectFiles, getProjectTasks } from '@/lib/actions';
+import { getProject, getProjectFiles, getProjectTasks } from '@/lib/actions';
 
 async function ProjectPage({ projectId, tab }:{
   projectId: number,
@@ -27,7 +27,7 @@ async function ProjectPage({ projectId, tab }:{
   if (project === undefined) notFound();
   const files: DesignFile[] | undefined = await getProjectFiles(projectId);
   if (files === undefined) notFound();
-  const tasks: DesignTask[] | undefined = await TMPgetProjectTasksOrDefault(projectId);
+  const tasks: DesignTask[] | undefined = await getProjectTasks(projectId);
   if (tasks === undefined) notFound();
 
   // TODO validate tab it could be a stirng that is not a tab

@@ -68,14 +68,26 @@ export async function deleteProject(projectId: number) {
 
 // tasks ==========================================================================================
 
+export async function createTaskSpecs(values: (typeof Schemas.taskspecs1.$inferInsert)[]) { 
+  return await db.insert(Schemas.taskspecs1).values(values).returning();
+}
+
+export async function TMPdeleteTaskSpecs() { 
+  return await db.delete(Schemas.taskspecs1);
+}
+
+export async function getTaskSpecs() { 
+  return await db.select().from(Schemas.taskspecs1);
+}
+
 export async function getTaskSpec(specid: number) { 
-  return await db.select().from(Schemas.taskspec1).where(
-    eq(Schemas.taskspec1.id, specid)
+  return await db.select().from(Schemas.taskspecs1).where(
+    eq(Schemas.taskspecs1.id, specid)
   ).limit(1);
 }
 
-export async function createProjectTask(
-  values: typeof Schemas.tasks1.$inferInsert
+export async function createProjectTasks(
+  values: (typeof Schemas.tasks1.$inferInsert)[]
 ) {
   return await db.insert(Schemas.tasks1).values(values).returning();
 }

@@ -1,11 +1,12 @@
 'use server';
 
 import * as db from '@/lib/db';
+import * as Schemas from 'drizzle/schema';
 import { auth } from './auth';
 import * as blob  from '@vercel/blob';
 import { NewProjectFormSchema } from './types';
 import { redirect } from 'next/navigation';
-import { defaulTaskSpecs, defaultDesignTasks } from './tasks';
+import { defaulTaskSpecs } from './tasks';
 
 const ENABLE_VERCEL_BLOB = false;
 
@@ -50,6 +51,12 @@ export async function submitProjectForm2(formData: FormData) {
   }
 
   const newProjectId = newProjectArr[0].id;
+
+  const newTasks = await createProjectTasks(newProjectId);
+  if (!newTasks || newTasks.length == 0) {
+    console.error("Failed to create project tasks");
+    // return null;
+  }
 
   // TODO client upload directly to server! 4.5 MB limit currently
   if (files) {
@@ -132,34 +139,21 @@ export async function getProjectFiles(projectId: number) {
   return fileUrls;
 }
 
-export async function getProjectTasks(projectId: number) {
+
+// tasks ===================================================================
+
+export async function createDefaultTaskSpecs() {
   const session = await auth();
-  if (!session?.user?.id) return undefined;
-  // const userId = Number(session.user.id);
-  // TODO check user permissions
-  const tasks = await db.getProjectTasks(projectId);
-  return tasks;
-}
-
-export async function TMPgetProjectTasksOrDefault(projectId: number) {
-  const tasks = await getProjectTasks(projectId);
-  if (!tasks) return;
-  if (tasks.length === 0) return defaultDesignTasks;
-  return tasks;
-}
-
-export async function getProjectTask(projectId: number, specId: number) {
-  const session = await auth();
-  if (!session?.user?.id) return;
-  const tasks = await db.getProjectTask(projectId, specId);
-  if (tasks.length <= 0) return;
-  return tasks[0];
-}
-
-export async function TMPgetProjectTaskOrDefault(projectId: number, specId: number) {
-  const task = await getProjectTask(projectId, specId);
-  if (!task) return defaultDesignTasks.find((t) => t.specid == specId)
-    return task;
+  if (session?.user?.email != "admin@haru.com" || session?.user?.id != "28") {
+    console.log("user is not permitted to create default tasks.", session);
+    return undefined;
+  }
+  const spec100 = await getTaskSpec(100);
+  console.log("creating default task specs spec100", spec100);
+  // TODO remove!!!!!!!!!!!!!
+  // if (spec100) { db.TMPdeleteTaskSpecs(); }
+  if (spec100) return;
+  return db.createTaskSpecs(defaulTaskSpecs);
 }
 
 export async function getTaskSpec(specId: number | null) {
@@ -169,9 +163,39 @@ export async function getTaskSpec(specId: number | null) {
   return specs[0];
 }
 
-export async function TMPgetTaskSpecOrDefault(specId: number | null) {
-  if (specId === null) return;
-  const spec = await getTaskSpec(specId);
-  if (!spec) return defaulTaskSpecs.find((s) => s.id == specId);
-  return spec;
+export async function createProjectTasks(projectId: number) {
+  const session = await auth();
+  if (!session?.user?.id) return undefined;
+  // const userId = Number(session.user.id);
+  // TODO check user permissions
+  const specs = await db.getTaskSpecs();
+  const tasks = specs.map((spec): (typeof Schemas.tasks1.$inferInsert) => { return {
+    specid: spec.id,
+    projectid: projectId,
+    // lead: null,
+    type: spec.type,
+    // status: null,
+    // duration: null,
+    // estimation: null,
+    title: spec.title,
+    description: spec.description,
+  }});
+  return await db.createProjectTasks(tasks);
+}
+
+export async function getProjectTasks(projectId: number) {
+  const session = await auth();
+  if (!session?.user?.id) return undefined;
+  // const userId = Number(session.user.id);
+  // TODO check user permissions
+  const tasks = await db.getProjectTasks(projectId);
+  return tasks;
+}
+
+export async function getProjectTask(projectId: number, specId: number) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  const tasks = await db.getProjectTask(projectId, specId);
+  if (tasks.length <= 0) return;
+  return tasks[0];
 }
