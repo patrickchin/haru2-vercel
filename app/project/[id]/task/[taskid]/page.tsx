@@ -13,7 +13,8 @@ import { Progress } from '@/components/ui/progress';
 import { ProjectInfoBar } from '../../components/project-description';
 import TaskFiles from './components/task-files';
 import TaskComments from './components/task-comments';
-import { DesignProject, DesignTask, DesignTaskSpec } from '@/lib/types';
+import { DesignProject, DesignTask, DesignTaskComment, DesignTaskSpec } from '@/lib/types';
+import { getTaskComments } from '@/lib/db';
 
 function MembersList() {
 
@@ -57,11 +58,13 @@ async function ProjectPage({ projectId, specId }:{
   if (!session?.user) redirect('/login');
 
   const project: DesignProject | undefined = await getProject(projectId);
-  if (!project) { console.log("task: can't find project"); notFound(); }
+  if (!project) { console.log("task: can't find project", projectId); notFound(); }
+  const taskSpec: DesignTaskSpec | undefined = await getTaskSpec(specId);
+  if (!taskSpec) { console.log("task: can't find spec", projectId, specId); notFound(); }
   const task: DesignTask | undefined = await getProjectTask(projectId, specId);
   if (!task) { console.log("task: can't find task", projectId, specId); notFound(); }
-  const taskSpec: DesignTaskSpec | undefined = await getTaskSpec(task.specid);
-  if (!task) { console.log("task: can't find spec", projectId, specId); notFound(); }
+  const comments: DesignTaskComment[] | undefined = await getTaskComments(task.id);
+  if (!comments) { console.log("task: can't find comments", projectId, specId, task.id); notFound(); }
 
   return (
     <section className="grow flex flex-col gap-4">
@@ -114,7 +117,7 @@ async function ProjectPage({ projectId, specId }:{
       </div>
 
       <TaskFiles />
-      <TaskComments />
+      <TaskComments taskId={task.id} comments={comments} />
 
     </section>
   );

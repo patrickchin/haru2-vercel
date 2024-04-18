@@ -199,3 +199,22 @@ export async function getProjectTask(projectId: number, specId: number) {
   if (tasks.length <= 0) return;
   return tasks[0];
 }
+
+export async function getTaskComments(taskId: number) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  const comments = await db.getTaskComments(taskId);
+  return comments;
+}
+
+export async function addTaskComment(taskId: number, comment: string) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  const userId = Number(session.user.id);
+  const comments = await db.addTaskComment({
+      taskid: taskId,
+      userid: userId,
+      comment: comment,
+  });
+  return comments;
+}
