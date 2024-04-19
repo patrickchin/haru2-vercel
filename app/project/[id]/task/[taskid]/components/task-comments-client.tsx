@@ -116,7 +116,7 @@ export default function TaskCommentsClient({
                 <Avatar>
                   <AvatarFallback />
                   <AvatarImage
-                    src={`/tmp/avatar${(c.users1?.id || 0) % 8}.png`}
+                    src={`/tmp/avatar${(c.users1?.id || 0) % 12}.png`}
                   />
                 </Avatar>
               </div>

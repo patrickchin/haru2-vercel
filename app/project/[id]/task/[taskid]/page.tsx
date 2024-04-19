@@ -37,7 +37,7 @@ function MembersList() {
               <li key={i} className='flex gap-4 items-center'>
                 <Avatar>
                   <AvatarFallback />
-                  <AvatarImage src={`/tmp/avatar${(i+4)%8}.png`}/>
+                  <AvatarImage src={`/tmp/avatar${(i+4)%12}.png`}/>
                 </Avatar>
                 {mem.name}
               </li>
