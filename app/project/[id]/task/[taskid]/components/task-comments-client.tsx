@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { LucideLoader2 } from "lucide-react";
 import Link from "next/link";
+import { useFormStatus } from "react-dom";
 
 function LoadNewComments({
   taskId,
@@ -43,6 +44,34 @@ function LoadNewComments({
         className={cn("animate-spin h-4", loadingNewComments ? "" : "hidden")}
       />
     </Button>
+  );
+}
+
+function AddCommentForm() {
+  const formStatus = useFormStatus();
+  return (
+    <>
+      <Textarea
+        className="text-base h-24"
+        placeholder="Add a comment ..."
+        name="comment"
+        disabled={formStatus.pending}
+      />
+      <div className="flex justify-end gap-4">
+        <Button type="reset" variant="secondary" disabled={formStatus.pending}>
+          Cancel
+        </Button>
+        <Button variant="default" disabled={formStatus.pending}>
+          Save
+          <LucideLoader2
+            className={cn(
+              "animate-spin h-4",
+              formStatus.pending ? "" : "hidden"
+            )}
+          />
+        </Button>
+      </div>
+    </>
   );
 }
 
@@ -84,17 +113,7 @@ export default function TaskCommentsClient({
           }}
           className="flex flex-col gap-4"
         >
-          <Textarea
-            className="text-base h-24"
-            placeholder="Add a comment ..."
-            name="comment"
-          />
-          <div className="flex justify-end gap-4">
-            <Button type="reset" variant="secondary">
-              Cancel
-            </Button>
-            <Button variant="default">Save</Button>
-          </div>
+          <AddCommentForm />
         </form>
 
         <LoadNewComments
