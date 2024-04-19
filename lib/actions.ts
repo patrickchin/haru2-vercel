@@ -1,17 +1,16 @@
-'use server';
+"use server";
 
-import * as db from '@/lib/db';
-import * as Schemas from 'drizzle/schema';
-import { auth } from './auth';
-import * as blob  from '@vercel/blob';
-import { NewProjectFormSchema } from './types';
-import { redirect } from 'next/navigation';
-import { defaulTaskSpecs } from './tasks';
+import * as db from "@/lib/db";
+import * as Schemas from "drizzle/schema";
+import { auth } from "./auth";
+import * as blob from "@vercel/blob";
+import { NewProjectFormSchema } from "./types";
+import { redirect } from "next/navigation";
+import { defaulTaskSpecs } from "./tasks";
 
 const ENABLE_VERCEL_BLOB = false;
 
 export async function submitProjectForm2(formData: FormData) {
-
   const session = await auth();
   if (!session?.user?.id) {
     console.log("Invalid session on project form submit");
@@ -21,7 +20,7 @@ export async function submitProjectForm2(formData: FormData) {
 
   const formObj = {
     ...Object.fromEntries(formData),
-    files: formData.getAll('files')
+    files: formData.getAll("files"),
   };
   const parsed = NewProjectFormSchema.safeParse(formObj);
   if (!parsed.success) {
@@ -32,8 +31,19 @@ export async function submitProjectForm2(formData: FormData) {
   // not the prettiest ...
   const {
     files,
-    title, description, buildingType, buildingSubtype, country,
-    lifestyle, future, energy, outdoors, security, maintenance, special,
+    title,
+    description,
+    buildingType,
+    buildingSubtype,
+    country,
+
+    lifestyle,
+    future,
+    energy,
+    outdoors,
+    security,
+    maintenance,
+    special,
   } = parsed.data;
 
   const newProjectArr = await db.createProject({
@@ -43,7 +53,15 @@ export async function submitProjectForm2(formData: FormData) {
     type: buildingType,
     subtype: buildingSubtype,
     countrycode: country,
-    extrainfo: { lifestyle, future, energy, outdoors, security, maintenance, special }
+    extrainfo: {
+      lifestyle,
+      future,
+      energy,
+      outdoors,
+      security,
+      maintenance,
+      special,
+    },
   });
   if (newProjectArr.length != 1) {
     console.error("Failed to submit a new project post");
@@ -61,7 +79,6 @@ export async function submitProjectForm2(formData: FormData) {
   // TODO client upload directly to server! 4.5 MB limit currently
   if (files) {
     for (const file of files) {
-
       // TODO hack
       // FormData constructor from event.target adds a file with no filename
       // ignore that file here
@@ -73,11 +90,15 @@ export async function submitProjectForm2(formData: FormData) {
 
       const data = await file.arrayBuffer();
       // TODO use all the data
-      const { url } = ENABLE_VERCEL_BLOB ?
-        // private access isn't supported by vercel atm
-        await blob.put(`project/${newProjectId}/${file.name}`, data, { access: 'public', }) :
-        { url: "/tmp/demofloorplan.png" };
-      console.log(`file "${file.name}" uploaded to: ${url} (ENABLE_VERCEL_BLOB ${ENABLE_VERCEL_BLOB})`);
+      const { url } = ENABLE_VERCEL_BLOB
+        ? // private access isn't supported by vercel atm
+          await blob.put(`project/${newProjectId}/${file.name}`, data, {
+            access: "public",
+          })
+        : { url: "/tmp/demofloorplan.png" };
+      console.log(
+        `file "${file.name}" uploaded to: ${url} (ENABLE_VERCEL_BLOB ${ENABLE_VERCEL_BLOB})`,
+      );
 
       // TODO optimise - await outside the loop?
       const newFileRow = await db.addFileUrlToProject({
@@ -85,15 +106,13 @@ export async function submitProjectForm2(formData: FormData) {
         projectid: newProjectId,
         filename: file.name,
         url: url,
-        type: file.type
+        type: file.type,
       });
       console.log(newFileRow.at(0)?.type);
     }
   }
 
   // TASKS
-  ;
-
   redirect(`/project/${newProjectId}`);
 }
 
@@ -107,11 +126,10 @@ export async function getProject(projectId: number) {
 }
 
 export async function deleteFullProject(projectId: number) {
-
   // TODO needs more security
   const session = await auth();
   if (!session?.user?.id) return;
-  
+
   // A lot more thought has to go into deleting projects.
   // - what happens if something fails in the middle?
   // - what happens if ... what else?
@@ -121,14 +139,13 @@ export async function deleteFullProject(projectId: number) {
   const deletedFiles = await db.deleteAllFilesFromProject(projectId);
   deletedFiles.map((f) => {
     console.log("deleting file from store", ENABLE_VERCEL_BLOB, f);
-    if (ENABLE_VERCEL_BLOB)
-      blob.del(f.url)
+    if (ENABLE_VERCEL_BLOB) blob.del(f.url);
   });
 
   const deletedProject = await db.deleteProject(projectId);
   console.log("DELETED PROJECT", deletedProject);
 
-  redirect('/projects');
+  redirect("/projects");
 }
 
 export async function getProjectFiles(projectId: number) {
@@ -138,7 +155,6 @@ export async function getProjectFiles(projectId: number) {
   const fileUrls = await db.getFilesUrlsForProject(userId, projectId);
   return fileUrls;
 }
-
 
 // tasks ===================================================================
 
@@ -169,17 +185,19 @@ export async function createProjectTasks(projectId: number) {
   // const userId = Number(session.user.id);
   // TODO check user permissions
   const specs = await db.getTaskSpecs();
-  const tasks = specs.map((spec): (typeof Schemas.tasks1.$inferInsert) => { return {
-    specid: spec.id,
-    projectid: projectId,
-    // lead: null,
-    type: spec.type,
-    // status: null,
-    // duration: null,
-    // estimation: null,
-    title: spec.title,
-    description: spec.description,
-  }});
+  const tasks = specs.map((spec): typeof Schemas.tasks1.$inferInsert => {
+    return {
+      specid: spec.id,
+      projectid: projectId,
+      // lead: null,
+      type: spec.type,
+      // status: null,
+      // duration: null,
+      // estimation: null,
+      title: spec.title,
+      description: spec.description,
+    };
+  });
   return await db.createProjectTasks(tasks);
 }
 
@@ -212,9 +230,12 @@ export async function addTaskComment(taskId: number, comment: string) {
   if (!session?.user?.id) return;
   const userId = Number(session.user.id);
   const comments = await db.addTaskComment({
-      taskid: taskId,
-      userid: userId,
-      comment: comment,
+    taskid: taskId,
+    userid: userId,
+    comment: comment,
   });
-  return comments;
+  if (comments.length == 0) return;
+  // tbh this extra db call is not needed but it was the easiest way to
+  // have this return the same thing as getTaskComments
+  return (await db.getTaskComment(comments[0].id))[0];
 }

@@ -130,12 +130,18 @@ export async function deleteAllFilesFromProject(projectId: number) {
 
 // comments ==========================================================================================
 
-export async function addTaskComment(values: typeof Schemas.taskcomments1._.inferInsert) {
-  return await db.insert(Schemas.taskcomments1).values(values).returning();
+export async function getTaskComment(commentid: number) {
+  return await db.select().from(Schemas.taskcomments1)
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.taskcomments1.userid))
+    .where(eq(Schemas.taskcomments1.id, commentid));
 }
 
 export async function getTaskComments(taskid: number) {
   return await db.select().from(Schemas.taskcomments1)
     .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.taskcomments1.userid))
     .where(eq(Schemas.taskcomments1.taskid, taskid));
+}
+
+export async function addTaskComment(values: typeof Schemas.taskcomments1._.inferInsert) {
+  return await db.insert(Schemas.taskcomments1).values(values).returning();
 }

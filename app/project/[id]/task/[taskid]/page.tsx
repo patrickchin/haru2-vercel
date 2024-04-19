@@ -63,8 +63,6 @@ async function ProjectPage({ projectId, specId }:{
   if (!taskSpec) { console.log("task: can't find spec", projectId, specId); notFound(); }
   const task: DesignTask | undefined = await getProjectTask(projectId, specId);
   if (!task) { console.log("task: can't find task", projectId, specId); notFound(); }
-  const comments: DesignTaskComment[] | undefined = await getTaskComments(task.id);
-  if (!comments) { console.log("task: can't find comments", projectId, specId, task.id); notFound(); }
 
   return (
     <section className="grow flex flex-col gap-4">
@@ -117,7 +115,7 @@ async function ProjectPage({ projectId, specId }:{
       </div>
 
       <TaskFiles />
-      <TaskComments taskId={task.id} comments={comments} />
+      <TaskComments taskId={task.id} />
 
     </section>
   );
