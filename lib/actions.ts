@@ -235,7 +235,5 @@ export async function addTaskComment(taskId: number, comment: string) {
     comment: comment,
   });
   if (comments.length == 0) return;
-  // tbh this extra db call is not needed but it was the easiest way to
-  // have this return the same thing as getTaskComments
-  return (await db.getTaskComment(comments[0].id))[0];
+  return (await db.getTaskComments(taskId));
 }

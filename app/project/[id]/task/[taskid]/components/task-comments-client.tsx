@@ -1,7 +1,8 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
-import { addTaskComment } from "@/lib/actions";
+import { Dispatch, FormEvent, SetStateAction, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { addTaskComment, getTaskComments } from "@/lib/actions";
 import { DesignTaskComment } from "@/lib/types";
 import {
   Card,
@@ -12,7 +13,38 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { getTaskComments } from "@/lib/db";
+import { cn } from "@/lib/utils";
+import { LucideLoader2 } from "lucide-react";
+import Link from "next/link";
+
+function LoadNewComments({
+  taskId,
+  setUpdatedComments,
+}: {
+  taskId: number;
+  setUpdatedComments: Dispatch<SetStateAction<DesignTaskComment[]>>;
+}) {
+  const [loadingNewComments, setLoadingNewComments] = useState(false);
+
+  return (
+    <Button
+      variant="secondary"
+      disabled={loadingNewComments}
+      onClick={async () => {
+        setLoadingNewComments(true);
+        const newcomments = await getTaskComments(taskId);
+        if (newcomments) setUpdatedComments(newcomments);
+        setLoadingNewComments(false);
+      }}
+      className="flex flex-row gap-3"
+    >
+      Check for New Comments
+      <LucideLoader2
+        className={cn("animate-spin h-4", loadingNewComments ? "" : "hidden")}
+      />
+    </Button>
+  );
+}
 
 export default function TaskCommentsClient({
   taskId,
@@ -21,18 +53,64 @@ export default function TaskCommentsClient({
   taskId: number;
   comments: DesignTaskComment[];
 }) {
-
+  const pathname = usePathname();
   const [updatedComments, setUpdatedComments] = useState(comments);
+
+  // // is this a hack? is this normal practice??
+  // const fragment =
+  //   typeof window !== "undefined"
+  //     ? window.location.hash
+  //     : "";
 
   return (
     <Card>
       <CardHeader className="font-bold">Comments</CardHeader>
-      <CardContent>
-        <ul className="px-8">
+      <CardContent className="flex flex-col gap-8 px-16 py-6">
+        <form
+          onSubmit={async (e: FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            const data = new FormData(e.currentTarget);
+            const comment = data.get("comment");
+            if (comment) {
+              e.currentTarget.reset();
+              const newcomments = await addTaskComment(
+                taskId,
+                comment as string
+              );
+              if (newcomments) {
+                setUpdatedComments(newcomments);
+              }
+            }
+          }}
+          className="flex flex-col gap-4"
+        >
+          <Textarea
+            className="text-base h-24"
+            placeholder="Add a comment ..."
+            name="comment"
+          />
+          <div className="flex justify-end gap-4">
+            <Button type="reset" variant="secondary">
+              Cancel
+            </Button>
+            <Button variant="default">Save</Button>
+          </div>
+        </form>
+
+        <LoadNewComments
+          taskId={taskId}
+          setUpdatedComments={setUpdatedComments}
+        />
+
+        <ul className="">
           {updatedComments.map((c, i) => (
             <li
+              id={`comment-${c.taskcomments1.id}`}
               key={i}
-              className="flex gap-6 p-4 items-start justify-center border-b hover:bg-accent"
+              className={cn(
+                "flex gap-6 p-4 items-start justify-center border-b hover:bg-accent",
+                // fragment == `#comment-${c.taskcomments1.id}` ? "bg-yellow-50" : ""
+              )}
             >
               <div className="pt-2">
                 <Avatar>
@@ -46,7 +124,17 @@ export default function TaskCommentsClient({
                 <div className="flex flex-row gap-4 items-end">
                   <span className="font-bold">{c.users1?.name}</span>
                   {/* <span className="text-sm">{c.taskcomments1.createdat}</span> */}
-                  <span className="text-sm">{(c.taskcomments1.createdat as unknown as Date).toLocaleString()}</span>
+                  <Link
+                    href={{
+                      pathname: pathname,
+                      hash: `#comment-${c.taskcomments1.id}`
+                    }}
+                    className="text-sm text-muted-foreground"
+                  >
+                    {(
+                      c.taskcomments1.createdat as unknown as Date
+                    ).toLocaleString()}
+                  </Link>
                 </div>
                 <div className="whitespace-pre-line">
                   {c.taskcomments1.comment}
@@ -56,38 +144,8 @@ export default function TaskCommentsClient({
           ))}
         </ul>
 
-        <form
-          onSubmit={async (e: FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
-            const data = new FormData(e.currentTarget);
-            const comment = data.get("comment");
-            if (comment) {
-              e.currentTarget.reset();
-              const newcomment = await addTaskComment(taskId, comment as string);
-              if (newcomment) {
-                setUpdatedComments((c) => [...c, newcomment]);
-                console.log("adding new comment", newcomment);
-              }
-              // router.refresh();
-            }
-          }}
-          className="flex flex-col px-8 pt-16 gap-4"
-        >
-          <Textarea
-            className="text-base h-48"
-            placeholder="Add a comment ..."
-            name="comment"
-          />
-          <div className="flex justify-end gap-4">
-            <Button type="reset" variant="secondary">
-              Cancel
-            </Button>
-            <Button variant="default">Save</Button>
-          </div>
-        </form>
-
+        {/* <Button variant="secondary">Load all older Comments</Button> */}
       </CardContent>
-      <CardFooter></CardFooter>
     </Card>
   );
 }
