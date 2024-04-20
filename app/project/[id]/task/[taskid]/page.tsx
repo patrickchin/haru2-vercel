@@ -69,8 +69,12 @@ async function TaskPage({ projectId, specId }:{
     <section className="grow flex flex-col gap-4">
       <div className="flex flex-col gap-12 pb-8">
         <div className="flex gap-4 items-center">
-          <BackButton variant="secondary"><LucideMoveLeft/></BackButton>
-          <h3>Project {project.id} - {project.title || session.user.email}</h3>
+          <BackButton variant="secondary" className="shadow-md">
+            <LucideMoveLeft />
+          </BackButton>
+          <h3>
+            Project {project.id} - {project.title || session.user.email}
+          </h3>
         </div>
         <h4>
           Task {specId} - {task.title}

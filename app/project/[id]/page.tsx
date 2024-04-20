@@ -18,9 +18,12 @@ import ProjectFiles, { ProjectFilesSkeleton } from './components/project-task-fi
 import { getProject, getProjectFiles, getProjectTasks } from '@/lib/actions';
 import { Button } from '@/components/ui/button';
 
-async function ProjectPage({ projectId, tab }:{
-  projectId: number,
-  tab: string | undefined
+async function ProjectPage({
+  projectId,
+  tab,
+}: {
+  projectId: number;
+  tab: string | undefined;
 }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
@@ -37,7 +40,7 @@ async function ProjectPage({ projectId, tab }:{
   return (
     <section className="grow flex flex-col gap-12">
       <div className="flex gap-4 items-center">
-        <Button asChild variant="secondary">
+        <Button asChild variant="secondary" className="shadow-md">
           <Link href="/projects">
             <LucideMoveLeft />
           </Link>
@@ -52,7 +55,7 @@ async function ProjectPage({ projectId, tab }:{
         className="w-full flex flex-col grow space-y-5"
       >
         <div>
-          <TabsList>
+          <TabsList className="shadow-sm">
             <TabsTrigger asChild value="description">
               <Link
                 href={{ query: { tab: "description" } }}

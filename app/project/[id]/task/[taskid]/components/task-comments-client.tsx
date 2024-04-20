@@ -1,9 +1,11 @@
 "use client";
 
 import { Dispatch, FormEvent, SetStateAction, useState } from "react";
+import { useFormStatus } from "react-dom";
 import { usePathname, useRouter } from "next/navigation";
-import { addTaskComment, getTaskComments } from "@/lib/actions";
-import { DesignTaskComment } from "@/lib/types";
+import Link from "next/link";
+import { LucideLoader2 } from "lucide-react";
+
 import {
   Card,
   CardContent,
@@ -13,10 +15,10 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+
 import { cn } from "@/lib/utils";
-import { LucideLoader2 } from "lucide-react";
-import Link from "next/link";
-import { useFormStatus } from "react-dom";
+import { addTaskComment, getTaskComments } from "@/lib/actions";
+import { DesignTaskComment } from "@/lib/types";
 
 function LoadNewComments({
   taskId,
@@ -127,7 +129,7 @@ export default function TaskCommentsClient({
               id={`comment-${c.taskcomments1.id}`}
               key={i}
               className={cn(
-                "flex gap-6 p-4 items-start justify-center border-b hover:bg-accent",
+                "flex gap-6 p-4 items-start justify-center border-b hover:bg-accent"
                 // fragment == `#comment-${c.taskcomments1.id}` ? "bg-yellow-50" : ""
               )}
             >
@@ -146,7 +148,7 @@ export default function TaskCommentsClient({
                   <Link
                     href={{
                       pathname: pathname,
-                      hash: `#comment-${c.taskcomments1.id}`
+                      hash: `#comment-${c.taskcomments1.id}`,
                     }}
                     className="text-sm text-muted-foreground"
                   >
@@ -155,16 +157,20 @@ export default function TaskCommentsClient({
                     ).toLocaleString()}
                   </Link>
                 </div>
-                <div className="whitespace-pre-line">
+                <div className="whitespace-pre-wrap break-words">
                   {c.taskcomments1.comment}
                 </div>
               </div>
             </li>
           ))}
+          {updatedComments.length == 0 && (
+            <li>There are currently no coments to display</li>
+          )}
         </ul>
 
         {/* <Button variant="secondary">Load all older Comments</Button> */}
       </CardContent>
+      <CardFooter></CardFooter>
     </Card>
   );
 }

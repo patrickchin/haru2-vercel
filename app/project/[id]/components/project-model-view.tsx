@@ -20,7 +20,7 @@ function ProjectModelViewInternal() {
   const obj = useLoader(OBJLoader, '/Bambo_House.obj');
 
   return (
-    <Canvas shadows camera={{ position: [10, 10, 10], }} >
+    <Canvas shadows camera={{ position: [10, 10, 10], }}  className="min-h-[600px]">
 
       <ambientLight color={"white"} intensity={0.3} />
       <directionalLight color="white" position={[0, 2, 5]} />
