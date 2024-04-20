@@ -150,6 +150,7 @@ export default function TaskCommentsClient({
                       pathname: pathname,
                       hash: `#comment-${c.taskcomments1.id}`,
                     }}
+                    replace={true}
                     className="text-sm text-muted-foreground"
                   >
                     {(
