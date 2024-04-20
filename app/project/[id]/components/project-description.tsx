@@ -14,42 +14,40 @@ async function ProjectDesignViews({ project }: { project: any }) {
   const imageUrlArray = await getProjectFiles(project.id);
 
   if (!imageUrlArray || imageUrlArray.length === 0) {
-    return (<>
-      <CardDescription>
-        You have no uploaded floor plans or 3D models yet.
-      </CardDescription>
-      <CardDescription>
-        As progress is made on your designs, they will be displayed here.
-      </CardDescription>
-    </>);
+    return (
+      <>
+        <CardDescription className="whitespace-pre-line">
+          {`You have no uploaded floor plans or 3D models yet.
+
+        As progress is made on your designs, they will be displayed here.`}
+        </CardDescription>
+      </>
+    );
   }
 
   return (
     <Carousel className="mx-12 min-h-32">
-      <CarouselContent>
-
+      <CarouselContent className="p-4">
         {/* TODO click image to view or download */}
         {/* TODO name and description for each file */}
         {/* TODO preview files other than image files */}
-        {imageUrlArray.map((image, index) =>
-          <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-            <Card className='flex flex-col items-center justify-center p-2'>
-              <CardContent className="flex justify-center items-center aspect-square overflow-hidden">
-                {
-                  image.type.startsWith("image/") ? 
-                  // <Image src={image.url!} alt={''} height={180} width={180} className="opacity-90 saturate-[.75]" /> :
-                  <Lucide.FileImage className="h-24 w-24" /> :
-                  <Lucide.File className="h-24 w-24" />
-                }
-              </CardContent>
-              <CardHeader className='p-3 pb-0 overflow-hidden'>
-                <CardDescription>
-                  {image.filename}
-                </CardDescription>
-              </CardHeader>
-            </Card>
+        {imageUrlArray.map((image, index) => (
+          <CarouselItem
+            key={index}
+            className="md:basis-1/2 lg:basis-1/3 border rounded-md p-4 space-y-3 hover:shadow-lg"
+          >
+            <div className="border rounded-md aspect-video grid items-center justify-center bg-muted">
+              {image.type.startsWith("image/") ? (
+                <Lucide.FileImage />
+              ) : (
+                <Lucide.File />
+              )}
+            </div>
+            <div className="overflow-hidden text-center text-sm">
+              {image.filename}
+            </div>
           </CarouselItem>
-        )}
+        ))}
       </CarouselContent>
       <CarouselPrevious />
       <CarouselNext />
