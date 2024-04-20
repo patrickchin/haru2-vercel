@@ -13,8 +13,9 @@ import { Progress } from '@/components/ui/progress';
 import { ProjectInfoBar } from '../../components/project-description';
 import TaskFiles from './components/task-files';
 import TaskComments from './components/task-comments';
-import { DesignProject, DesignTask, DesignTaskComment, DesignTaskSpec } from '@/lib/types';
-import { getTaskComments } from '@/lib/db';
+import { DesignProject, DesignTask, DesignTaskSpec } from '@/lib/types';
+import BackButton from '@/components/back-button';
+import { LucideMoveLeft } from 'lucide-react';
 
 function MembersList() {
 
@@ -49,7 +50,7 @@ function MembersList() {
   );
 }
 
-async function ProjectPage({ projectId, specId }:{
+async function TaskPage({ projectId, specId }:{
   projectId: number
   specId: number
 }) {
@@ -66,28 +67,25 @@ async function ProjectPage({ projectId, specId }:{
 
   return (
     <section className="grow flex flex-col gap-4">
-
       <div className="flex flex-col gap-12 pb-8">
-        <h3>Project {project.id} - {project.title || session.user.email}</h3>
-        <h4>Task {specId} - {task.title}</h4>
+        <div className="flex gap-4 items-center">
+          <BackButton variant="secondary"><LucideMoveLeft/></BackButton>
+          <h3>Project {project.id} - {project.title || session.user.email}</h3>
+        </div>
+        <h4>
+          Task {specId} - {task.title}
+        </h4>
       </div>
 
       <ProjectInfoBar project={project} />
 
       <div className="flex flex-row gap-4">
-
         <div className="w-2/3 flex flex-col gap-4">
           <Card className="h-full">
-            <CardHeader className="font-bold">
-              Description
-            </CardHeader>
-            <CardContent>
-              {taskSpec?.description}
-            </CardContent>
-            <CardFooter>
-            </CardFooter>
+            <CardHeader className="font-bold">Description</CardHeader>
+            <CardContent>{taskSpec?.description}</CardContent>
+            <CardFooter></CardFooter>
           </Card>
-
 
           <Card className="h-full">
             <CardHeader className="flex flex-col gap-4">
@@ -102,13 +100,12 @@ async function ProjectPage({ projectId, specId }:{
                 </span>
                 <span className="px-2">
                   <span className="font-bold pr-2">Current:</span>
-                  <span>4 days</span>
+                  <span>10 days</span>
                 </span>
               </div>
-              <Progress value={40} indicatorColor='bg-green-400' />
+              <Progress value={40} indicatorColor="bg-green-400" />
             </CardHeader>
           </Card>
-
         </div>
 
         <MembersList />
@@ -116,7 +113,6 @@ async function ProjectPage({ projectId, specId }:{
 
       <TaskFiles />
       <TaskComments taskId={task.id} />
-
     </section>
   );
 }
@@ -132,7 +128,7 @@ export default function Page({ params }:{ params: { id: string, taskid: string }
   return (
     <CenteredLayout>
       <Suspense fallback={(<p>Loading ...</p>)} >
-        <ProjectPage projectId={projectId} specId={specId} />
+        <TaskPage projectId={projectId} specId={specId} />
       </Suspense>
     </CenteredLayout>
   )
