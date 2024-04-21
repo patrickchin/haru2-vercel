@@ -23,11 +23,11 @@ export const users1 = pgTable("users1", {
 	// caps?
 	createdAt: timestamp("createdAt", { withTimezone: true, mode: 'string' }).defaultNow(),
 },
-(table) => {
-	return {
-		usersEmailKey: unique("users_email_key").on(table.email),
-	}
-});
+	(table) => {
+		return {
+			usersEmailKey: unique("users_email_key").on(table.email),
+		}
+	});
 
 export const projects1 = pgTable("projects1", {
 	id: serial("id").primaryKey().notNull(),
@@ -42,20 +42,10 @@ export const projects1 = pgTable("projects1", {
 	createdat: timestamp("createdat", { withTimezone: true, mode: 'string' }).defaultNow(),
 });
 
-export const files1 = pgTable("files1", {
-	id: serial("id").primaryKey().notNull(),
-	uploaderid: integer("uploaderid").references(() => users1.id),
-	projectid: integer("projectid").references(() => projects1.id),
-	filename: varchar("filename", { length: 255 }).notNull().default(""),
-	url: varchar("url", { length: 255 }).notNull().default(""),
-	type: varchar("type", { length: 255 }).notNull().default(""),
-	taskid: integer("taskid"),
-});
-
 // is this really necessary?
 export const taskspecs1 = pgTable("taskspecs1", {
 	id: serial("id").primaryKey().notNull(),
-	type:  varchar("type", { length: 255 }),
+	type: varchar("type", { length: 255 }),
 	title: varchar("title", { length: 255 }),
 	description: text("description"),
 	// default duration
@@ -83,4 +73,14 @@ export const taskcomments1 = pgTable("taskcomments1", {
 	userid: integer("userid").references(() => users1.id),
 	createdat: timestamp("createdat", { withTimezone: true, mode: 'string' }).defaultNow(),
 	comment: text("comment"),
+});
+
+export const files1 = pgTable("files1", {
+	id: serial("id").primaryKey().notNull(),
+	uploaderid: integer("uploaderid").references(() => users1.id),
+	projectid: integer("projectid").references(() => projects1.id),
+	taskid: integer("taskid").references(() => tasks1.id),
+	filename: varchar("filename", { length: 255 }).notNull().default(""),
+	url: varchar("url", { length: 255 }),
+	type: varchar("type", { length: 255 }),
 });
