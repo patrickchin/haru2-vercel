@@ -1,11 +1,12 @@
 import 'server-only';
 
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { and, eq, desc, asc } from 'drizzle-orm';
+import { and, eq, or, desc } from 'drizzle-orm';
 import postgres from 'postgres';
 import { genSaltSync, hashSync } from 'bcrypt-ts';
 
 import * as Schemas from 'drizzle/schema';
+import assert from 'assert';
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
@@ -113,13 +114,24 @@ export async function addFileUrlToProject(values: typeof Schemas.files1._.inferI
   return await db.insert(Schemas.files1).values(values).returning();
 }
 
-export async function getFilesUrlsForProject(userId: number, projectId: number) {
-  return await db.select().from(Schemas.files1).where(
-    and(
-      eq(Schemas.files1.projectid, projectId),
-      eq(Schemas.files1.uploaderid, userId),
-    )
-  );
+export async function getFilesUrlsForProject(projectId: number) {
+  // is there a better way to handle the return values of joins?
+  return await db.select({
+      id: Schemas.files1.id,
+      uploaderid: Schemas.files1.uploaderid,
+      projectid: Schemas.files1.projectid,
+      type: Schemas.files1.type,
+      taskid: Schemas.files1.taskid,
+      filename: Schemas.files1.filename,
+      url: Schemas.files1.url,
+    }).from(Schemas.files1)
+    .leftJoin(Schemas.tasks1, eq(Schemas.tasks1.id, Schemas.files1.taskid))
+    .where(
+      or(
+        eq(Schemas.files1.projectid, projectId),
+        eq(Schemas.tasks1.projectid, projectId)
+      )
+    );
 }
 
 export async function deleteAllFilesFromProject(projectId: number) {
@@ -147,4 +159,24 @@ export async function getTaskComments(taskid: number, pagenum: number = 0) {
 
 export async function addTaskComment(values: typeof Schemas.taskcomments1._.inferInsert) {
   return await db.insert(Schemas.taskcomments1).values(values).returning();
+}
+
+export async function addTaskFile(values: typeof Schemas.files1._.inferInsert) {
+  const newFiles = await db.insert(Schemas.files1).values(values).returning();
+  assert(newFiles.length == 1);
+  return newFiles[0];
+}
+
+export async function editTaskFile(fileId: number, values: { url: string }) {
+  const editedFiles = await db.update(Schemas.files1).set(values).where(
+    eq(Schemas.files1.id, fileId)
+  ).returning();
+  assert(editedFiles.length == 1);
+  return editedFiles[0];
+}
+
+export async function getTaskFiles(taskid: number) {
+  return await db.select().from(Schemas.files1)
+    .where(eq(Schemas.files1.taskid, taskid));
+    // .orderBy(desc(Schemas.files1.createdat));
 }

@@ -25,6 +25,16 @@ const taskColumns: Tan.ColumnDef<DesignFile>[] = [
     cell: ({ row }) => <pre>{row.getValue("filename")}</pre>
   },
   {
+    accessorKey: "size",
+    header: () => <div>Size</div>,
+    cell: ({ row }) => <pre>{row.getValue("size")}</pre>
+  },
+  {
+    accessorKey: "taskid",
+    header: () => <div>Task Id</div>,
+    cell: ({ row }) => <pre>{row.getValue("taskid")}</pre>
+  },
+  {
     accessorKey: "view",
     header: () => <div>View</div>,
     cell: ({ row }) =>

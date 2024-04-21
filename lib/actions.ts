@@ -8,7 +8,7 @@ import { NewProjectFormSchema } from "./types";
 import { redirect } from "next/navigation";
 import { defaulTaskSpecs } from "./tasks";
 
-const ENABLE_VERCEL_BLOB = false;
+const VERCEL_BLOB_FAKE_FILES = true;
 
 export async function submitProjectForm2(formData: FormData) {
   const session = await auth();
@@ -88,16 +88,13 @@ export async function submitProjectForm2(formData: FormData) {
         continue;
       }
 
-      const data = await file.arrayBuffer();
+      const data = VERCEL_BLOB_FAKE_FILES ? new ArrayBuffer(8) : await file.arrayBuffer();
       // TODO use all the data
-      const { url } = ENABLE_VERCEL_BLOB
-        ? // private access isn't supported by vercel atm
-          await blob.put(`project/${newProjectId}/${file.name}`, data, {
-            access: "public",
-          })
-        : { url: "/tmp/demofloorplan.png" };
+      const { url } = await blob.put(`project/${newProjectId}/${file.name}`, data, {
+          access: "public", // private access isn't supported by vercel atm
+        });
       console.log(
-        `file "${file.name}" uploaded to: ${url} (ENABLE_VERCEL_BLOB ${ENABLE_VERCEL_BLOB})`,
+        `file "${file.name}" uploaded to: ${url}`,
       );
 
       // TODO optimise - await outside the loop?
@@ -112,7 +109,6 @@ export async function submitProjectForm2(formData: FormData) {
     }
   }
 
-  // TASKS
   redirect(`/project/${newProjectId}`);
 }
 
@@ -138,8 +134,8 @@ export async function deleteFullProject(projectId: number) {
 
   const deletedFiles = await db.deleteAllFilesFromProject(projectId);
   deletedFiles.map((f) => {
-    console.log("deleting file from store", ENABLE_VERCEL_BLOB, f);
-    if (ENABLE_VERCEL_BLOB) blob.del(f.url);
+    console.log("deleting file from store", f);
+    if (f.url) blob.del(f.url);
   });
 
   const deletedProject = await db.deleteProject(projectId);
@@ -152,7 +148,7 @@ export async function getProjectFiles(projectId: number) {
   const session = await auth();
   if (!session?.user?.id) return undefined;
   const userId = Number(session.user.id);
-  const fileUrls = await db.getFilesUrlsForProject(userId, projectId);
+  const fileUrls = await db.getFilesUrlsForProject(projectId);
   return fileUrls;
 }
 
@@ -236,4 +232,40 @@ export async function addTaskComment(taskId: number, comment: string) {
   });
   if (comments.length == 0) return;
   return (await db.getTaskComments(taskId));
+}
+
+export async function addTaskFile(taskId: number, data: FormData) {
+
+  const file = (data.get("file") as File);
+  if (!file) {
+    console.log("file not correcty uploaded");
+  }
+
+  const session = await auth();
+  if (!session?.user?.id) return;
+  const userId = Number(session.user.id); // error?
+
+  const newFile = db.addTaskFile({
+    uploaderid: userId,
+    taskid: taskId,
+    filename: file.name,
+    type: file.type,
+  });
+
+  const fileBytes = VERCEL_BLOB_FAKE_FILES ? new ArrayBuffer(8) : await file.arrayBuffer();
+  // I would prefer the file to be saved here:
+  // const blobResult = await blob.put(`project/${projectId}/task/${taskSpecId}/${file.name}`, fileBytes, {
+  const blobResult = await blob.put(`task/${taskId}/${file.name}`, fileBytes, {
+    access: "public",
+  });
+
+  await db.editTaskFile((await newFile).id, { url: blobResult.url });
+  return await db.getTaskFiles(taskId);
+}
+
+export async function getTaskFiles(taskId: number) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  const comments = await db.getTaskFiles(taskId);
+  return comments;
 }

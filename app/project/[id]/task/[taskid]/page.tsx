@@ -115,7 +115,7 @@ async function TaskPage({ projectId, specId }:{
         <MembersList />
       </div>
 
-      <TaskFiles />
+      <TaskFiles taskId={task.id} />
       <TaskComments taskId={task.id} />
     </section>
   );

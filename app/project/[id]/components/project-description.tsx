@@ -37,7 +37,7 @@ async function ProjectDesignViews({ project }: { project: any }) {
             className="md:basis-1/2 lg:basis-1/3 border rounded-md p-4 space-y-3 hover:shadow-lg"
           >
             <div className="border rounded-md aspect-video grid items-center justify-center bg-muted">
-              {image.type.startsWith("image/") ? (
+              {image.type?.startsWith("image/") ? (
                 <Lucide.FileImage />
               ) : (
                 <Lucide.File />
