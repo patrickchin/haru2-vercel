@@ -15,9 +15,10 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LucideDownload, LucideUpload } from "lucide-react";
+import { LucideDownload, LucideLoader2, LucideUpload, LucideView } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import FileTypeToIcon from "@/components/filetype-icon";
+import { cn } from "@/lib/utils";
 
 export default function TaskFilesClient({
   taskId,
@@ -29,10 +30,13 @@ export default function TaskFilesClient({
   const uploadFileInputRef = useRef(null);
   const [showDetailed, setShowDetailed] = useState(false);
   const [updatedFiles, setUpdatedFiles] = useState(files);
+  const [isUploading, setIsUploading] = useState(false);
 
   async function onChangeUploadFile(e: ChangeEvent<HTMLInputElement>) {
     const targetFiles = e.currentTarget.files;
     if (!targetFiles || targetFiles.length <= 0) return;
+
+    setIsUploading(true);
 
     assert(targetFiles.length == 1);
     const file = targetFiles.item(0);
@@ -43,7 +47,12 @@ export default function TaskFilesClient({
     data.set("file", file);
     const newFiles = await addTaskFile(taskId, data);
     if (newFiles) setUpdatedFiles(newFiles);
+
+    e.target.value = "";
+    setIsUploading(false);
   }
+
+  // TODO group files into groups of versions
 
   return (
     <Card>
@@ -55,11 +64,30 @@ export default function TaskFilesClient({
           className="hidden"
           ref={uploadFileInputRef}
           onChange={onChangeUploadFile}
+          disabled={isUploading}
         />
-        <Button asChild type="button" variant="secondary">
-          <Label htmlFor="uploadfile" className="space-x-4 cursor-pointer">
-            <LucideUpload className="h-4" />
-            Upload New
+        <Button
+          asChild
+          type="button"
+          variant="secondary"
+          disabled={isUploading}
+        >
+          <Label
+            htmlFor="uploadfile"
+            className={cn(
+              "space-x-4",
+              isUploading ? "cursor-progress" : "cursor-pointer"
+            )}
+          >
+            {isUploading ? (
+              <>
+                <LucideLoader2 className="animate-spin h-4" /> Uploading{" "}
+              </>
+            ) : (
+              <>
+                <LucideUpload className="h-4" /> Upload{" "}
+              </>
+            )}
           </Label>
         </Button>
         <Button
@@ -83,10 +111,13 @@ export default function TaskFilesClient({
             </div>
             {showDetailed && (
               <div className="flex flex-col gap-1">
-                {/* <Button variant="ghost" className="flex gap-2 justify-start">
+                <Button
+                  variant="ghost"
+                  className="flex gap-2 justify-start cursor-not-allowed"
+                >
                   <LucideView className="h-4" />
                   View In Browser
-                </Button> */}
+                </Button>
                 <Button
                   asChild
                   variant="ghost"
