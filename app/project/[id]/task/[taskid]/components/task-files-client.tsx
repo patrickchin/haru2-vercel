@@ -15,7 +15,12 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LucideDownload, LucideLoader2, LucideUpload, LucideView } from "lucide-react";
+import {
+  LucideDownload,
+  LucideLoader2,
+  LucideUpload,
+  LucideView,
+} from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import FileTypeToIcon from "@/components/filetype-icon";
 import { cn } from "@/lib/utils";
@@ -101,16 +106,33 @@ export default function TaskFilesClient({
         {updatedFiles.map((f, i) => (
           <div
             key={i}
-            className="flex flex-col gap-2 py-4 px-3 border rounded-lg"
+            className={cn(
+              "flex flex-col gap-2 px-3 border rounded-lg",
+              showDetailed ? "py-4" : "py-2"
+            )}
           >
-            <div className="flex flex-nowrap gap-2 items-center justify-start px-2">
-              <FileTypeToIcon type={f.type || ""} className="h-8 flex-none" />
-              <div className="text-ellipsis font-bold text-base overflow-hidden">
-                {f.filename}
+            <div className="flex justify-between items-center px-2">
+              <div className="flex items-center gap-2">
+                <FileTypeToIcon type={f.type || ""} className="h-8 flex-none" />
+                <div className="text-ellipsis font-bold text-base overflow-hidden">
+                  {f.filename}
+                </div>
+              </div>
+              <div className={cn("flex items-center gap-0", showDetailed ? "hidden" : "")}>
+                <Button variant="ghost" className="p-1 cursor-not-allowed">
+                  <LucideView className="h-4" />
+                </Button>
+                <Button asChild variant="ghost" className="p-1">
+                  <Link href={f.url || "#"} target="_blank">
+                    <LucideDownload className="h-4" />
+                  </Link>
+                </Button>
               </div>
             </div>
+
             {showDetailed && (
               <div className="flex flex-col gap-1">
+                {/* <pre className="overflow-hidden">{f.type}</pre> */}
                 <Button
                   variant="ghost"
                   className="flex gap-2 justify-start cursor-not-allowed"
