@@ -19,7 +19,6 @@ export const metadata = {
     title,
     description,
   },
-  metadataBase: process.env.NEXTAUTH_URL ? new URL(process.env.NEXTAUTH_URL) : undefined,
 };
 
 export default async function RootLayout({
