@@ -32,10 +32,7 @@ async function ProjectDesignViews({ project }: { project: any }) {
         {/* TODO name and description for each file */}
         {/* TODO preview files other than image files */}
         {imageUrlArray.map((image, index) => (
-          <CarouselItem
-            key={index}
-            className="md:basis-1/2 lg:basis-1/3"
-          >
+          <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
             <div className="border rounded-md p-4 space-y-3 hover:shadow-lg">
               <div className="border rounded-md aspect-video grid items-center justify-center bg-muted">
                 {image.type?.startsWith("image/") ? (
@@ -85,12 +82,30 @@ export function ProjectInfoBar({ project }: { project: any }) {
     <Card>
       <CardHeader className="text-sm text-muted-foreground">
         <ul className="inline-block">
-          <li className="inline-block border-r px-2"><span className="font-bold">Id:       </span>{project.id}</li>
-          <li className="inline-block border-r px-2"><span className="font-bold">Owner:    </span>{project.userid || "<unknown>"}</li>
-          <li className="inline-block border-r px-2"><span className="font-bold">Country:  </span>{country || "<unknown>"}</li>
-          <li className="inline-block border-r px-2"><span className="font-bold">Industry: </span>{buildingTypes[project.type].type || "<unknown>"}</li>
-          <li className="inline-block border-r px-2"><span className="font-bold">Type:     </span>{project.subtype || "<unknown>"}</li>
-          <li className="inline-block border-none px-2"><span className="font-bold">Created:  </span>{project.createdat.toDateString() || "<unknown>"}</li>
+          <li className="inline-block border-r px-2">
+            <span className="font-bold">Project Id: </span>
+            {project.id}
+          </li>
+          <li className="inline-block border-r px-2">
+            <span className="font-bold">Owner: </span>
+            {project.userid || "<unknown>"}
+          </li>
+          <li className="inline-block border-r px-2">
+            <span className="font-bold">Country: </span>
+            {country || "<unknown>"}
+          </li>
+          <li className="inline-block border-r px-2">
+            <span className="font-bold">Industry: </span>
+            {buildingTypes[project.type].type || "<unknown>"}
+          </li>
+          <li className="inline-block border-r px-2">
+            <span className="font-bold">Type: </span>
+            {project.subtype || "<unknown>"}
+          </li>
+          <li className="inline-block border-none px-2">
+            <span className="font-bold">Created: </span>
+            {project.createdat.toDateString() || "<unknown>"}
+          </li>
         </ul>
       </CardHeader>
     </Card>
