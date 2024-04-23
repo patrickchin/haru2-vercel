@@ -27,24 +27,26 @@ async function ProjectDesignViews({ project }: { project: any }) {
 
   return (
     <Carousel className="mx-12 min-h-32">
-      <CarouselContent className="p-4">
+      <CarouselContent>
         {/* TODO click image to view or download */}
         {/* TODO name and description for each file */}
         {/* TODO preview files other than image files */}
         {imageUrlArray.map((image, index) => (
           <CarouselItem
             key={index}
-            className="md:basis-1/2 lg:basis-1/3 border rounded-md p-4 space-y-3 hover:shadow-lg"
+            className="md:basis-1/2 lg:basis-1/3"
           >
-            <div className="border rounded-md aspect-video grid items-center justify-center bg-muted">
-              {image.type?.startsWith("image/") ? (
-                <Lucide.FileImage />
-              ) : (
-                <Lucide.File />
-              )}
-            </div>
-            <div className="overflow-hidden text-center text-sm">
-              {image.filename}
+            <div className="border rounded-md p-4 space-y-3 hover:shadow-lg">
+              <div className="border rounded-md aspect-video grid items-center justify-center bg-muted">
+                {image.type?.startsWith("image/") ? (
+                  <Lucide.FileImage />
+                ) : (
+                  <Lucide.File />
+                )}
+              </div>
+              <div className="overflow-hidden text-center text-sm">
+                {image.filename}
+              </div>
             </div>
           </CarouselItem>
         ))}
