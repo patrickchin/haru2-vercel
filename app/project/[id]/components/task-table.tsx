@@ -1,24 +1,35 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
-import * as Tan from '@tanstack/react-table'
+import * as React from "react";
+import Link from "next/link";
+import * as Tan from "@tanstack/react-table";
 
-import { ChevronDown, LucideArrowUpDown, LucideChevronRight } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
+import {
+  ChevronDown,
+  LucideArrowUpDown,
+  LucideChevronRight,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-import TimeAgo from 'javascript-time-ago'
-import en from 'javascript-time-ago/locale/en'
-TimeAgo.addDefaultLocale(en)
-import ReactTimeAgo from "react-time-ago"
-
-import { DesignTask } from "@/lib/types"
+import { DesignTask } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 // a company and a way they work should be able to determine
 // their own tasks saved on the platform
@@ -28,30 +39,33 @@ import { DesignTask } from "@/lib/types"
 const taskColumns: Tan.ColumnDef<DesignTask>[] = [
   {
     accessorKey: "type",
-    header: () => <div>Type</div>,
-    cell: ({ row }) => <Badge variant="secondary" className="capitalize">{row.getValue("type")}</Badge>
+    size: 64,
+    header: () => <div className="text-center">Type</div>,
+    cell: ({ row }) => (
+      <div className="flex justify-center items-center">
+        <Badge variant="secondary" className="capitalize">
+          {row.getValue("type")}
+        </Badge>
+      </div>
+    ),
   },
   {
     accessorKey: "title",
-    header: () => <div>Title</div>,
-    cell: ({ row }) => <Link href="#" className="font-medium">{row.getValue("title")}</Link>
+    size: 6 * 64,
+    header: () => <div className="text-start pl-6">Title</div>,
+    cell: ({ row, projectid }: any) => (
+      <Link href={`/project/${projectid}/task/${row.original.specid}`} className="font-medium pl-6">
+        {row.getValue("title")}
+      </Link>
+    ),
   },
   {
     accessorKey: "lead",
-    header: ({ column }) => {
-      return (
-        <Button
-          className="flex flex-row overflow-hidden w-18 p-2"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Lead
-          <LucideArrowUpDown className="ml-1 h-4 w-4" />
-        </Button>
-      )
-    },
+    size: 64,
+    maxSize: 64,
+    header: () => <div className="text-center">Lead</div>,
     cell: ({ row }) => (
-      <div className="flex flex-row overflow-hidden w-12 items-center justify-center">
+      <div className="w-full flex overflow-hidden w-12 items-center justify-center">
         <Avatar>
           <AvatarImage src={`/tmp/avatar0.png`} />
           {/* TODO */}
@@ -60,148 +74,258 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
           } */}
         </Avatar>
       </div>
-    )
+    ),
   },
   {
-    accessorKey: "duration",
-    header: "Duration",
-    cell: ({ row }) => {
-      const duration = row.getValue("duration") as number;
-      // const estimation = row.getValue("estimation") as number;
-      const estimation = row.original.estimation as number;
-      const percent = (100 * duration / estimation);
-      const color = percent <= 100 ? "bg-green-300" : "bg-red-300";
-      return (<div>
-        <Progress value={percent} indicatorColor={color} />
-        {percent.toFixed(0)} % complete
-      </div>);
-    }
-  },
-  {
-    accessorKey: "lastUpdated",
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" className="px-1"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Last Updated
-          <LucideArrowUpDown className="ml-1 h-4 w-4" />
-        </Button>
-      )
-    },
+    accessorKey: "status",
+    size: 64,
+    header: () => <div className="text-center">Status</div>,
     cell: ({ row }) => (
-      <div className="capitalize">
-        {/* <ReactTimeAgo date={new Date(row.getValue("lastUpdated"))} locale="en-US" /> */}
-        <ReactTimeAgo date={0} locale="en-US" />
-      </div>
+      <div className="text-center">{row.getValue("status")}</div>
     ),
   },
   {
     accessorKey: "details",
-    header: () => <div className="w-8">Details</div>,
-    cell: ({ row, projectid }: any) => <Button asChild variant="outline" className="h-8 w-8 p-0">
-      <Link href={`/project/${projectid}/task/${row.original.specid}`}>
-        <LucideChevronRight className="h-4 w-4" />
-      </Link>
-    </Button>
-    ,
+    size: 64,
+    header: () => <div className="text-center">Details</div>,
+    cell: ({ row, projectid }: any) => (
+      <div className="text-center">
+        <Button asChild variant="outline" className="h-8 w-8 p-0">
+          <Link href={`/project/${projectid}/task/${row.original.specid}`}>
+            <LucideChevronRight className="h-4 w-4" />
+          </Link>
+        </Button>
+      </div>
+    ),
   },
-]
+];
 
-function TaskTableFilterToggles({ table }:{ table: Tan.Table<DesignTask> }) {
-
-  const filterTypeButtonValues = [
-    { value: undefined, label: "All"},
-    { value: "legal", label: "Legal"},
-    { value: "architectural", label: "Architectural"},
-    { value: "structural", label: "Structural"},
-    { value: "mep", label: "MEP"},
-  ]
-
-  const filterStatusButtonValues = [
-    // { value: undefined, label: "All"},
-    { value: "pending", label: "Pending"},
-    { value: "in progress", label: "In Progress"},
-    { value: "complete", label: "Complete"},
-  ]
+function TaskTableHeader({ table }: { table: Tan.Table<DesignTask> }) {
+  const sizeToBasis = (size: number) =>
+    size == 1
+      ? "flex-basis-1"
+      : size == 2
+        ? "flex-basis-2"
+        : size == 3
+          ? "flex-basis-3"
+          : "";
 
   return (
-    <div className="flex flex-col w-full">
-
-      <div className="w-full flex items-center py-4 space-x-4">
-        {/* row filter input box */}
-        <Input
-          placeholder="Filter table..."
-          // value={(table.getColumn("lead")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            // table.getColumn("lead")?.setFilterValue(event.target.value)
-            table.setGlobalFilter(event.target.value)
-          }
-          className="max-w-sm"
-        />
-
-
-        <div className="w-full flex items-center space-x-4">
-          {filterStatusButtonValues.map((filter) =>
-            <Button variant="outline" key={filter.value || ""}
-              className={(table.getColumn("status")?.getFilterValue() as string) == filter.value ? "bg-accent" : ""}
-              onClick={() => table.getColumn("status")?.setFilterValue(filter.value)}
+    <TableHeader>
+      <TableRow>
+        {table.getFlatHeaders().map((header) => {
+          return (
+            <TableHead
+              key={header.id}
+              className={cn(
+                "px-3 border-r last:border-r-0",
+                false && sizeToBasis(header.getSize()),
+              )}
+              style={{ width: `${header.getSize()}px` }}
             >
-              {filter.label}
-            </Button>
-          )}
-        </div>
+              {header.isPlaceholder
+                ? null
+                : Tan.flexRender(
+                    header.column.columnDef.header,
+                    header.getContext(),
+                  )}
+            </TableHead>
+          );
+        })}
+      </TableRow>
+    </TableHeader>
+  );
+}
 
-        <div className="text-sm text-muted-foreground">
-          Selected {table.getRowCount()} row(s)
-        </div>
+function TaskTableBody({
+  projectid,
+  table,
+  columns,
+}: {
+  projectid: number;
+  table: Tan.Table<DesignTask>;
+  columns: Tan.ColumnDef<DesignTask>[];
+}) {
+  const rows = table.getRowModel().rows;
+  const pageSize = table.getState().pagination.pageSize;
 
-        {/* Select columns to show dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
+  if (rows.length == 0) {
+    return (
+      <TableBody>
+        <TableRow>
+          <TableCell colSpan={columns.length} className="h-24 text-center">
+            No results.
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    );
+  }
+
+  function EmptyRows({ n }: { n: number }) {
+    return Array.from(Array(n).keys()).map((i) => (
+      <TableRow key={i} className="h-[73px]">
+        <TableCell></TableCell>
+      </TableRow>
+    ));
+  }
+
+  return (
+    <TableBody>
+      {rows.map((row) => (
+        <TableRow key={row.id}>
+          {row.getVisibleCells().map((cell) => (
+            <TableCell key={cell.id} className="px-3 border-r last:border-r-0">
+              {Tan.flexRender(cell.column.columnDef.cell, {
+                ...cell.getContext(),
+                projectid,
               })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+            </TableCell>
+          ))}
+        </TableRow>
+      ))}
+      <EmptyRows n={pageSize - rows.length} />
+    </TableBody>
+  );
+}
 
+function TaskTableFilterToggles({ table }: { table: Tan.Table<DesignTask> }) {
+  const filterTypeButtonValues = [
+    { value: undefined, label: "All" },
+    { value: "legal", label: "Legal" },
+    { value: "architectural", label: "Architectural" },
+    { value: "structural", label: "Structural" },
+    { value: "mep", label: "MEP" },
+  ];
+
+  const filterStatusButtonValues = [
+    { value: undefined, label: "All" },
+    { value: "pending", label: "Pending" },
+    { value: "in progress", label: "In Progress" },
+    { value: "complete", label: "Complete" },
+  ];
+
+  return (
+    <div className="w-full flex items-center py-4 gap-4">
+      {/* row filter input box */}
+      <Input
+        placeholder="Filter table..."
+        // value={(table.getColumn("lead")?.getFilterValue() as string) ?? ""}
+        onChange={(event) =>
+          // table.getColumn("lead")?.setFilterValue(event.target.value)
+          table.setGlobalFilter(event.target.value)
+        }
+        className="max-w-sm"
+      />
+
+      <div className="flex items-center space-x-4">
+        {filterStatusButtonValues.map((filter) => (
+          <Button
+            variant="outline"
+            key={filter.value || ""}
+            className={
+              (table.getColumn("status")?.getFilterValue() as string) ==
+              filter.value
+                ? "bg-accent"
+                : ""
+            }
+            onClick={() =>
+              table.getColumn("status")?.setFilterValue(filter.value)
+            }
+          >
+            {filter.label}
+          </Button>
+        ))}
       </div>
+
+      <div className="text-sm text-muted-foreground">
+        Selected {table.getRowCount()} row(s)
+      </div>
+
+      {/* Select columns to show dropdown */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" className="ml-auto">
+            Columns <ChevronDown className="ml-2 h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {table
+            .getAllColumns()
+            .filter((column) => column.getCanHide())
+            .map((column) => {
+              return (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                >
+                  {column.id}
+                </DropdownMenuCheckboxItem>
+              );
+            })}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }
 
+function TaskTableFooter({ table }: { table: Tan.Table<DesignTask> }) {
+  return (
+    <>
+      <div className="flex-1 text-sm text-muted-foreground">
+        Showing {table.getPaginationRowModel().rows.length} of{" "}
+        {table.getRowCount()} row(s) displayed.
+      </div>
 
-export default function TaskTable({ projectid, data }:{
-  projectid: number,
-  data: DesignTask[]
+      {/* pagination */}
+      <div className="space-x-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          Previous
+        </Button>
+        {/* <span>TODO number of pages</span> */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          Next
+        </Button>
+      </div>
+    </>
+  );
+}
+
+export default function TaskTable({
+  projectid,
+  data,
+  showTypeColumn = true,
+  pageSize = 5,
+  showFilterToggles = true,
+}: {
+  projectid: number;
+  data: DesignTask[];
+
+  showFilterToggles?: boolean;
+  showTypeColumn?: boolean;
+  pageSize?: number;
 }) {
-  const [sorting, setSorting] = React.useState<Tan.SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<Tan.ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = React.useState<Tan.VisibilityState>({
-    type: false
-  })
+  const [sorting, setSorting] = React.useState<Tan.SortingState>([]);
+  const [columnFilters, setColumnFilters] =
+    React.useState<Tan.ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<Tan.VisibilityState>({
+      type: showTypeColumn,
+    });
   const [pagination, setPagination] = React.useState({
     pageIndex: 0, //initial page index
-    pageSize: 5, //default page size
+    pageSize: pageSize,
   });
 
   const table = Tan.useReactTable({
@@ -221,84 +345,27 @@ export default function TaskTable({ projectid, data }:{
       columnVisibility,
       pagination,
     },
-  })
+  });
 
   return (
     <div className="w-full">
-
-      { false && <TaskTableFilterToggles table={table} /> }
+      {showFilterToggles && <TaskTableFilterToggles table={table} />}
 
       {/* The table */}
       <div className="rounded-md border">
         <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id} className="px-2 first:pl-8 last:pr-8">
-                      {header.isPlaceholder
-                        ? null
-                        : Tan.flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="px-2 first:pl-8 last:pr-8">
-                      {Tan.flexRender(
-                        cell.column.columnDef.cell,
-                        { ...cell.getContext(), projectid, }
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={taskColumns.length} className="h-24 text-center">
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
+          <TaskTableHeader table={table} />
+          <TaskTableBody
+            projectid={projectid}
+            table={table}
+            columns={taskColumns}
+          />
         </Table>
       </div>
 
       <div className="flex items-center justify-end space-x-2 py-4">
-
-        <div className="flex-1 text-sm text-muted-foreground">
-          Showing {table.getPaginationRowModel().rows.length} of{" "}
-          {table.getRowCount()} row(s) displayed.
-        </div>
-
-        {/* pagination */}
-        <div className="space-x-2">
-          <Button variant="outline" size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          {/* <span>TODO number of pages</span> */}
-          <Button variant="outline" size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-
+        <TaskTableFooter table={table} />
       </div>
     </div>
-  )
+  );
 }

@@ -12,13 +12,19 @@ import {
 
 import { DesignTask } from "@/lib/types";
 import { DesignProject } from "@/lib/types";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 
 const teamNames: Record<string, string> = {
   legal: "Legal",
   architectural: "Architectural",
   structural: "Structural",
   mep: "Mechanical, Electrical and Plumbing",
-  other: "Other",
+  // other: "Other",
 };
 
 function TeamProgress({
@@ -30,11 +36,26 @@ function TeamProgress({
   team: string;
   tasks: DesignTask[];
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
+  const isOpen = params.get(team) == "1";
+
+  const updateQueryCurrentTeam = React.useCallback(
+    (open: boolean) => {
+      const newParams = new URLSearchParams(params.toString());
+      newParams.set(team, open ? "1" : "0");
+      return newParams.toString();
+    },
+    [params],
+  );
+
   tasks = tasks.filter((task) => task.type == team);
 
   const completed = tasks.reduce(
+    // how tf is this the best say to count instances?
     (n, t) => (t.status === "completed" ? n + 1 : n),
-    0
+    0,
   );
   const total = tasks.length;
   const pct = total ? (100 * completed) / total : 0;
@@ -44,7 +65,14 @@ function TeamProgress({
 
   return (
     <Card>
-      <Collapsible className="grow">
+      <Collapsible
+        className="grow"
+        defaultOpen={isOpen}
+        onOpenChange={(open: boolean) => {
+          const newParams = updateQueryCurrentTeam(open);
+          router.replace(`${pathname}?${newParams}`, { scroll: false });
+        }}
+      >
         <CollapsibleTrigger className="flex gap-4 w-full p-8 text-sm hover:bg-accent">
           <CardTitle className="text-left">{teamNames[team]}</CardTitle>
           <span>(No assigned lead)</span>
@@ -54,7 +82,11 @@ function TeamProgress({
           <LucideChevronDown className="h-5" />
         </CollapsibleTrigger>
         <CollapsibleContent className="px-12 py-6">
-          <TaskTable projectid={project.id} data={tasks} />
+          <TaskTable
+            projectid={project.id}
+            data={tasks}
+            showTypeColumn={false}
+          />
         </CollapsibleContent>
       </Collapsible>
     </Card>

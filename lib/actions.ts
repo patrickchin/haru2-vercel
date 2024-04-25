@@ -185,11 +185,7 @@ export async function createProjectTasks(projectId: number) {
     return {
       specid: spec.id,
       projectid: projectId,
-      // lead: null,
       type: spec.type,
-      // status: null,
-      // duration: null,
-      // estimation: null,
       title: spec.title,
       description: spec.description,
     };

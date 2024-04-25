@@ -7,7 +7,8 @@ import {
 	unique,
 	text,
 	json,
-	char
+	char,
+	date
 } from "drizzle-orm/pg-core";
 
 // pnpm drizzle-kit push:pg
@@ -60,12 +61,16 @@ export const tasks1 = pgTable("tasks1", {
 	// members: integer("ownerid").references(() => users1.id),
 	type: varchar("type", { length: 255 }),
 	status: varchar("status", { length: 255 }).default("pending"),
-	duration: integer("duration").default(0),
-	estimation: integer("estimation"),
+	startdate: date('startdate', { mode: "date" }),
+	enddate: date('enddate', { mode: "date" }),
+	estimation: integer("estimation"), // in days
 	title: varchar("title", { length: 255 }),
 	description: text("description"),
 	// updated: timestamp("updated", { withTimezone: true, mode: 'string' }).defaultNow(),
 });
+
+// export const taskupdate1 = pgTable("taskupdate1", {
+// })
 
 export const taskcomments1 = pgTable("taskcomments1", {
 	id: serial("id").primaryKey().notNull(),

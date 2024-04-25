@@ -18,7 +18,7 @@ import {
 import { getProjectFiles } from "@/lib/actions"
 import { DesignFile } from "@/lib/types"
 
-const taskColumns: Tan.ColumnDef<DesignFile>[] = [
+const filesColumns: Tan.ColumnDef<DesignFile>[] = [
   {
     accessorKey: "filename",
     header: () => <div>Filename</div>,
@@ -53,7 +53,7 @@ const taskColumns: Tan.ColumnDef<DesignFile>[] = [
   // which team
 ]
 
-function DataTable({ columns, data }:{
+function FilesTable({ columns, data }: {
   columns: Tan.ColumnDef<DesignFile>[],
   data: DesignFile[]
 }) {
@@ -156,7 +156,7 @@ export default function ProjectFiles({ files }: { files: DesignFile[] }) {
   return (
     <Card>
       <CardContent className="pt-8">
-        <DataTable columns={taskColumns} data={files} />
+        <FilesTable columns={filesColumns} data={files} />
       </CardContent>
     </Card>
   );
