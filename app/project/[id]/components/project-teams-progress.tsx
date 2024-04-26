@@ -86,6 +86,7 @@ function TeamProgress({
             projectid={project.id}
             data={tasks}
             showTypeColumn={false}
+            showFilterToggles={false}
           />
         </CollapsibleContent>
       </Collapsible>
