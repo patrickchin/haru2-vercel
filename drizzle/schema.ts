@@ -8,7 +8,8 @@ import {
 	text,
 	json,
 	char,
-	date
+	date,
+	boolean
 } from "drizzle-orm/pg-core";
 
 // pnpm drizzle-kit push:pg
@@ -66,6 +67,7 @@ export const tasks1 = pgTable("tasks1", {
 	estimation: integer("estimation"), // in days
 	title: varchar("title", { length: 255 }),
 	description: text("description"),
+	enabled: boolean("enabled").default(true),
 	// updated: timestamp("updated", { withTimezone: true, mode: 'string' }).defaultNow(),
 });
 
