@@ -1,21 +1,19 @@
 "use client";
 
-import { Suspense } from 'react';
-import { useSession } from 'next-auth/react';
-import { redirect } from 'next/navigation';
+import { Suspense } from "react";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
-import { CenteredLayout } from '@/components/page-layouts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { createDefaultTaskSpecs } from '@/lib/actions';
+import { CenteredLayout } from "@/components/page-layouts";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { createDefaultTaskSpecs } from "@/lib/actions";
 
-async function SettingsPage() {
-
-  const session = await useSession();
+function SettingsPage() {
+  const session = useSession();
   const userId = Number(session.data?.user?.id);
 
-  if (!session.data?.user)
-    redirect('/login');
+  if (!session.data?.user) redirect("/login");
 
   if (Number.isNaN(userId)) {
     console.log("User id is invalid: ", session);
@@ -24,24 +22,24 @@ async function SettingsPage() {
 
   return (
     <>
-
       <Card>
         <CardHeader>
-          <CardTitle>
-            Dev Area
-          </CardTitle>
+          <CardTitle>Dev Area</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex space-x-4">
-            <Button variant="secondary" onClick={() => createDefaultTaskSpecs()}>Upload default task spec</Button>
+            <Button
+              variant="secondary"
+              onClick={() => createDefaultTaskSpecs()}
+            >
+              Upload default task spec
+            </Button>
           </div>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader>
-          Contact information
-        </CardHeader>
+        <CardHeader>Contact information</CardHeader>
         <CardContent>
           <p> Phone numbers </p>
           <p> Emails </p>
@@ -49,36 +47,29 @@ async function SettingsPage() {
       </Card>
 
       <Card>
-        <CardHeader>
-          Information
-        </CardHeader>
+        <CardHeader>Information</CardHeader>
         <CardContent>
           <p>Change Password</p>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader>
-          Destruction
-        </CardHeader>
+        <CardHeader>Destruction</CardHeader>
         <CardContent>
           <p>Delete User</p>
         </CardContent>
       </Card>
-
     </>
   );
 }
 
-export default async function Page() {
+export default function Page() {
   return (
     <CenteredLayout>
       <section className="grow flex flex-col gap-12">
         <h3>Settings</h3>
-        <Suspense fallback={<p>Loading ...</p>}>
-          <SettingsPage />
-        </Suspense>
+        <SettingsPage />
       </section>
     </CenteredLayout>
-  )
+  );
 }

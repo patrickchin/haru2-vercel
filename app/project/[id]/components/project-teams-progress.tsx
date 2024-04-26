@@ -47,7 +47,7 @@ function TeamProgress({
       newParams.set(team, open ? "1" : "0");
       return newParams.toString();
     },
-    [params],
+    [params, team],
   );
 
   tasks = tasks.filter((task) => task.type == team);

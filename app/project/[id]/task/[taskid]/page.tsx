@@ -1,24 +1,28 @@
-import { Suspense } from 'react';
-import { notFound, redirect } from 'next/navigation';
-import { auth } from '@/lib/auth';
+import { Suspense } from "react";
+import { notFound, redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 
-import { getProject, getProjectTask, getTaskSpec } from '@/lib/actions';
+import { getProject, getProjectTask, getTaskSpec } from "@/lib/actions";
 
-import { CenteredLayout } from '@/components/page-layouts';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage  } from '@/components/ui/avatar';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Progress } from '@/components/ui/progress';
+import { CenteredLayout } from "@/components/page-layouts";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Progress } from "@/components/ui/progress";
 
-import { ProjectInfoBar } from '../../components/project-description';
-import TaskFiles from './components/task-files';
-import TaskComments from './components/task-comments';
-import { DesignProject, DesignTask, DesignTaskSpec } from '@/lib/types';
-import BackButton from '@/components/back-button';
-import { LucideMoveLeft } from 'lucide-react';
+import { ProjectInfoBar } from "../../components/project-description";
+import TaskFiles from "./components/task-files";
+import TaskComments from "./components/task-comments";
+import { DesignProject, DesignTask, DesignTaskSpec } from "@/lib/types";
+import BackButton from "@/components/back-button";
+import { LucideMoveLeft } from "lucide-react";
 
 function MembersList() {
-
   const members = [
     { name: "Patrick Chin" },
     { name: "Haruna Bayoh" },
@@ -28,21 +32,19 @@ function MembersList() {
 
   return (
     <Card className="w-1/3">
-      <CardHeader className="font-bold">
-        Members
-      </CardHeader>
+      <CardHeader className="font-bold">Members</CardHeader>
       <CardContent>
-        <ScrollArea >
-          <ul className='flex flex-col gap-4'>
-            {members.map((mem, i) =>
-              <li key={i} className='flex gap-4 items-center'>
+        <ScrollArea>
+          <ul className="flex flex-col gap-4">
+            {members.map((mem, i) => (
+              <li key={i} className="flex gap-4 items-center">
                 <Avatar>
                   <AvatarFallback />
-                  <AvatarImage src={`/tmp/avatar${(i+4)%12}.png`}/>
+                  <AvatarImage src={`/tmp/avatar${(i + 4) % 12}.png`} />
                 </Avatar>
                 {mem.name}
               </li>
-            )}
+            ))}
           </ul>
         </ScrollArea>
       </CardContent>
@@ -50,20 +52,31 @@ function MembersList() {
   );
 }
 
-async function TaskPage({ projectId, specId }:{
-  projectId: number
-  specId: number
+async function TaskPage({
+  projectId,
+  specId,
+}: {
+  projectId: number;
+  specId: number;
 }) {
-
   const session = await auth();
-  if (!session?.user) redirect('/login');
+  if (!session?.user) redirect("/login");
 
   const project: DesignProject | undefined = await getProject(projectId);
-  if (!project) { console.log("task: can't find project", projectId); notFound(); }
+  if (!project) {
+    console.log("task: can't find project", projectId);
+    notFound();
+  }
   const taskSpec: DesignTaskSpec | undefined = await getTaskSpec(specId);
-  if (!taskSpec) { console.log("task: can't find spec", projectId, specId); notFound(); }
+  if (!taskSpec) {
+    console.log("task: can't find spec", projectId, specId);
+    notFound();
+  }
   const task: DesignTask | undefined = await getProjectTask(projectId, specId);
-  if (!task) { console.log("task: can't find task", projectId, specId); notFound(); }
+  if (!task) {
+    console.log("task: can't find task", projectId, specId);
+    notFound();
+  }
 
   return (
     <section className="grow flex flex-col gap-4">
@@ -121,19 +134,22 @@ async function TaskPage({ projectId, specId }:{
   );
 }
 
-export default function Page({ params }:{ params: { id: string, taskid: string } }) {
-
-  const projectId: number = parseInt(params.id)
+export default function Page({
+  params,
+}: {
+  params: { id: string; taskid: string };
+}) {
+  const projectId: number = parseInt(params.id);
   if (Number.isNaN(projectId)) notFound();
 
-  const specId: number = parseInt(params.taskid)
+  const specId: number = parseInt(params.taskid);
   if (Number.isNaN(specId)) notFound();
 
   return (
     <CenteredLayout>
-      <Suspense fallback={(<p>Loading ...</p>)} >
+      <Suspense fallback={<p>Loading ...</p>}>
         <TaskPage projectId={projectId} specId={specId} />
       </Suspense>
     </CenteredLayout>
-  )
+  );
 }
