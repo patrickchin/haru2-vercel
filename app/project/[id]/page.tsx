@@ -1,22 +1,28 @@
-import { Suspense } from 'react';
-import { notFound, redirect } from 'next/navigation';
-import Link from 'next/link';
-import { LucideMoveLeft } from 'lucide-react';
-import { auth } from '@/lib/auth';
-import { DesignFile, DesignProject, DesignTask } from '@/lib/types';
+import { Suspense } from "react";
+import { notFound, redirect } from "next/navigation";
+import Link from "next/link";
+import { LucideFolderKanban, LucideMoveLeft } from "lucide-react";
+import { auth } from "@/lib/auth";
+import { DesignFile, DesignProject, DesignTask } from "@/lib/types";
 
-import { CenteredLayout } from '@/components/page-layouts';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CenteredLayout } from "@/components/page-layouts";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import ProjectDescription from './components/project-description';
-import ProjectSettings from './components/project-settings';
-import ProjectModelView from './components/project-model-view';
-import ProjectTaskDetails, { ProjectTaskDetailsSkeleton } from './components/project-task-details';
-import ProjectTeamsProgress, { ProjectTeamsProgressSkeleton } from './components/project-teams-progress';
-import ProjectFiles, { ProjectFilesSkeleton } from './components/project-task-files';
+import ProjectDescription from "./components/project-description";
+import ProjectSettings from "./components/project-settings";
+import ProjectModelView from "./components/project-model-view";
+import ProjectTaskDetails, {
+  ProjectTaskDetailsSkeleton,
+} from "./components/project-task-details";
+import ProjectTeamsProgress, {
+  ProjectTeamsProgressSkeleton,
+} from "./components/project-teams-progress";
+import ProjectFiles, {
+  ProjectFilesSkeleton,
+} from "./components/project-task-files";
 
-import { getProject, getProjectFiles, getProjectTasks } from '@/lib/actions';
-import { Button } from '@/components/ui/button';
+import { getProject, getProjectFiles, getProjectTasks } from "@/lib/actions";
+import { Button } from "@/components/ui/button";
 
 async function ProjectPage({
   projectId,
@@ -45,9 +51,15 @@ async function ProjectPage({
             <LucideMoveLeft />
           </Link>
         </Button>
-        <h3>
+        <h3 className="grow">
           Project {project.id} - {project.title || session.user.email}
         </h3>
+        <Button asChild variant="default">
+          <Link href={`/project/${projectId}/manage`} className="space-x-2">
+            <LucideFolderKanban />
+            <span>Manage Project</span>
+          </Link>
+        </Button>
       </div>
 
       <Tabs

@@ -54,7 +54,10 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
     size: 6 * 64,
     header: () => <div className="text-start pl-6">Title</div>,
     cell: ({ row, projectid }: any) => (
-      <Link href={`/project/${projectid}/task/${row.original.specid}`} className="font-medium pl-6">
+      <Link
+        href={`/project/${projectid}/task/${row.original.specid}`}
+        className="font-medium pl-6"
+      >
         {row.getValue("title")}
       </Link>
     ),
