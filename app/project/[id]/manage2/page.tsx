@@ -1,5 +1,6 @@
 import { WideLayout } from "@/components/page-layouts";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { getProject } from "@/lib/actions";
@@ -39,29 +40,61 @@ async function ProjectManagement({ projectId }: { projectId: number }) {
         </h3>
       </section>
 
-      <section className="grid grid-cols-4">
-        {Object.keys(groupedSpecs).map((key) => (
-          <div key={key} className="">
-            {groupedSpecs[key].map((taskSpec, i) => (
-              <Label
-                key={i}
-                htmlFor={`taskspec-${key}-${i}`}
-                className="flex justify-between gap-4 items-center py-4 px-6 border rounded-md font-normal"
-              >
-                <div className="space-y-2">
-                  <h5>{taskSpec.title}</h5>
-                  <div className="text-xs">{taskSpec.description}</div>
+      <section>
+        <Card className="p-8">
+          <CardContent className="flex gap-4 justify-center">
+            {Object.keys(groupedSpecs).map((key) => (
+              <div key={key} className="flex flex-col gap-4 w-[24rem]">
+                <div className="p-6">
+                  <h3>{key}</h3>
                 </div>
-                <div>
-                  <Checkbox id={`taskspec-${key}-${i}`} />
-                  {/* <Button variant="outline" className="p-1">
+                {groupedSpecs[key].map((taskSpec, i) => (
+                  <Label
+                    key={i}
+                    htmlFor={`taskspec-${key}-${i}`}
+                    className="flex justify-between gap-4 items-center py-4 px-6 border rounded-md font-normal"
+                  >
+                    <div className="space-y-2">
+                      <h5>{taskSpec.title}</h5>
+                      <div className="text-xs">{taskSpec.description}</div>
+                    </div>
+                    <div>
+                      <Checkbox id={`taskspec-${key}-${i}`} />
+                      {/* <Button variant="outline" className="p-1">
                     <LucidePlus className="h-5" />
                   </Button> */}
-                </div>
-              </Label>
+                    </div>
+                  </Label>
+                ))}
+              </div>
             ))}
-          </div>
-        ))}
+            {Object.keys(groupedSpecs).map((key) => (
+              <div key={key} className="flex flex-col gap-4 w-[380px]">
+                <div>
+                  <h3>{key}</h3>
+                </div>
+                {groupedSpecs[key].map((taskSpec, i) => (
+                  <Label
+                    key={i}
+                    htmlFor={`taskspec-${key}-${i}`}
+                    className="flex justify-between gap-4 items-center py-4 px-6 border rounded-md font-normal"
+                  >
+                    <div className="space-y-2">
+                      <h5>{taskSpec.title}</h5>
+                      <div className="text-xs">{taskSpec.description}</div>
+                    </div>
+                    <div>
+                      <Checkbox id={`taskspec-${key}-${i}`} />
+                      {/* <Button variant="outline" className="p-1">
+                    <LucidePlus className="h-5" />
+                  </Button> */}
+                    </div>
+                  </Label>
+                ))}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
       </section>
     </>
   );

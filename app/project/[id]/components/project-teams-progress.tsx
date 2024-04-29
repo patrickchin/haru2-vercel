@@ -10,7 +10,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
-import { DesignTask } from "@/lib/types";
+import { DesignTask, teamNames } from "@/lib/types";
 import { DesignProject } from "@/lib/types";
 import {
   useParams,
@@ -18,14 +18,6 @@ import {
   useRouter,
   useSearchParams,
 } from "next/navigation";
-
-const teamNames: Record<string, string> = {
-  legal: "Legal",
-  architectural: "Architectural",
-  structural: "Structural",
-  mep: "Mechanical, Electrical and Plumbing",
-  // other: "Other",
-};
 
 function TeamProgress({
   project,
@@ -107,7 +99,7 @@ export default function ProjectTeamsProgress({
 }) {
   const teams = ["legal", "architectural", "structural", "mep", "other"];
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col gap-4">
       {teams.map((team, i) => (
         <TeamProgress key={team} project={project} team={team} tasks={tasks} />
       ))}
