@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
-import Link from "next/link";
 import { LucideFolderKanban, LucideMoveLeft } from "lucide-react";
-import { auth } from "@/lib/auth";
 import { DesignFile, DesignProject, DesignTask } from "@/lib/types";
+import { auth } from "@/lib/auth";
+import Link from "next/link";
 
 import { CenteredLayout } from "@/components/page-layouts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -21,8 +21,15 @@ import ProjectFiles, {
   ProjectFilesSkeleton,
 } from "./components/project-task-files";
 
-import { getProject, getProjectFiles, getProjectTasks } from "@/lib/actions";
+import {
+  getProject,
+  getProjectFiles,
+  getProjectTasks,
+  submitEditProjectForm,
+} from "@/lib/actions";
 import { Button } from "@/components/ui/button";
+import EditableTitle from "@/components/editable-title";
+import { FieldValues } from "react-hook-form";
 
 async function ProjectPage({
   projectId,
@@ -41,19 +48,35 @@ async function ProjectPage({
   const tasks: DesignTask[] | undefined = await getProjectTasks(projectId);
   if (tasks === undefined) notFound();
 
+  async function handleSubmitProjectEditForm(
+    data: FieldValues,
+    event?: React.BaseSyntheticEvent,
+  ) {
+    const fdata = new FormData({ ...event?.target, projectId });
+    const submitSuccess = await submitEditProjectForm(fdata);
+    if (submitSuccess === null) {
+      return Promise.reject(
+        "Error submitting update project, server returned null",
+      );
+    }
+  }
+
   // TODO validate tab it could be a stirng that is not a tab
 
   return (
     <section className="grow flex flex-col gap-12">
-      <div className="flex gap-4 items-center">
-        <Button asChild variant="secondary" className="shadow-md">
-          <Link href="/projects">
-            <LucideMoveLeft />
-          </Link>
-        </Button>
-        <h3 className="grow">
-          Project {project.id} - {project.title || session.user.email}
-        </h3>
+      <div className="flex justify-between items-center w-full">
+        <div className="flex gap-4 items-center">
+          <Button asChild variant="secondary" className="shadow-md">
+            <Link href="/projects">
+              <LucideMoveLeft />
+            </Link>
+          </Button>
+          <EditableTitle
+            project={project}
+            // handleSubmitProjectForm={handleSubmitProjectEditForm}
+          />
+        </div>
         <Button asChild variant="default">
           <Link href={`/project/${projectId}/manage`} className="space-x-2">
             <LucideFolderKanban />
