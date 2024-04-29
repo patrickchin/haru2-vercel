@@ -39,9 +39,14 @@ async function ProjectManagement({ projectId }: { projectId: number }) {
         </h3>
       </section>
 
-      <section className="grid grid-cols-4">
+      <section className="grid grid-cols-2 gap-4 max-w-4xl mx-auto">
         {Object.keys(groupedSpecs).map((key) => (
-          <div key={key} className="">
+          <div key={key} className="flex flex-col gap-4">
+            <div>
+              <h3>
+                {key}
+              </h3>
+            </div>
             {groupedSpecs[key].map((taskSpec, i) => (
               <Label
                 key={i}

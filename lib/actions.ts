@@ -156,10 +156,7 @@ export async function getProjectFiles(projectId: number) {
 
 export async function createDefaultTaskSpecs() {
   const session = await auth();
-  if (session?.user?.email != "admin@haru.com" || session?.user?.id != "28") {
-    console.log("user is not permitted to create default tasks.", session);
-    return undefined;
-  }
+  if (!session?.user) return;
   const spec100 = await getTaskSpec(100);
   console.log("creating default task specs spec100", spec100);
   // TODO remove!!!!!!!!!!!!!

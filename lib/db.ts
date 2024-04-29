@@ -11,7 +11,7 @@ import assert from 'assert';
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
 // https://authjs.dev/reference/adapter/drizzle
-const client = postgres(`${process.env.POSTGRES_URL!}?sslmode=require`);
+const client = postgres(`${process.env.POSTGRES_URL!}`);
 export const db = drizzle(client);
 
 // users ==========================================================================================
