@@ -83,7 +83,20 @@ export async function deleteProject(projectId: number) {
     .where(eq(Schemas.projects1.id, projectId))
     .returning();
 }
+//Update the title
+export async function updateTitle(projectId: number, newTitle: string) {
+  const updatedProject = await db
+    .update(Schemas.projects1)
+    .set({ title: newTitle })
+    .where(eq(Schemas.projects1.id, projectId))
+    .returning();
 
+  assert(
+    updatedProject.length === 1,
+    "Expected exactly one project to be updated",
+  );
+  return updatedProject[0];
+}
 // tasks ==========================================================================================
 
 export async function createTaskSpecs(
