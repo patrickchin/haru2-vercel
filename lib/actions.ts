@@ -156,6 +156,30 @@ export async function getProjectFiles(projectId: number) {
   return fileUrls;
 }
 
+export async function submitEditProjectForm(formData: FormData) {
+  console.log("FormData:", formData);
+  const session = await auth();
+  if (!session?.user?.id) {
+    console.log("Invalid session on project form submit");
+    return null;
+  }
+  const userId = Number(session.user.id); // error?
+
+  const formObj = {
+    ...Object.fromEntries(formData),
+  };
+  const parsed = NewProjectFormSchema.safeParse(formObj);
+  if (!parsed.success) {
+    console.error("submitProjectForm validation error", parsed.error);
+    return null;
+  }
+
+  const { title } = parsed.data;
+
+  // const projectId = formData.projectId;
+  // redirect(`/project/${projectId}`);
+}
+
 // tasks ===================================================================
 
 export async function createDefaultTaskSpecs() {
