@@ -21,15 +21,9 @@ import ProjectFiles, {
   ProjectFilesSkeleton,
 } from "./components/project-task-files";
 
-import {
-  getProject,
-  getProjectFiles,
-  getProjectTasks,
-  submitEditProjectForm,
-} from "@/lib/actions";
+import { getProject, getProjectFiles, getProjectTasks } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import EditableTitle from "@/components/editable-title";
-import { FieldValues } from "react-hook-form";
 
 async function ProjectPage({
   projectId,
@@ -48,19 +42,6 @@ async function ProjectPage({
   const tasks: DesignTask[] | undefined = await getProjectTasks(projectId);
   if (tasks === undefined) notFound();
 
-  async function handleSubmitProjectEditForm(
-    data: FieldValues,
-    event?: React.BaseSyntheticEvent,
-  ) {
-    const fdata = new FormData({ ...event?.target, projectId });
-    const submitSuccess = await submitEditProjectForm(fdata);
-    if (submitSuccess === null) {
-      return Promise.reject(
-        "Error submitting update project, server returned null",
-      );
-    }
-  }
-
   // TODO validate tab it could be a stirng that is not a tab
 
   return (
@@ -72,10 +53,7 @@ async function ProjectPage({
               <LucideMoveLeft />
             </Link>
           </Button>
-          <EditableTitle
-            project={project}
-            // handleSubmitProjectForm={handleSubmitProjectEditForm}
-          />
+          <EditableTitle project={project} />
         </div>
         <Button asChild variant="default">
           <Link href={`/project/${projectId}/manage`} className="space-x-2">
