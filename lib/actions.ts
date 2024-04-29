@@ -155,29 +155,25 @@ export async function getProjectFiles(projectId: number) {
   const fileUrls = await db.getFilesUrlsForProject(projectId);
   return fileUrls;
 }
-
-export async function submitEditProjectForm(formData: FormData) {
-  console.log("FormData:", formData);
+export async function updateProjectTitle(projectId: number, newTitle: string) {
   const session = await auth();
   if (!session?.user?.id) {
-    console.log("Invalid session on project form submit");
-    return null;
-  }
-  const userId = Number(session.user.id); // error?
-
-  const formObj = {
-    ...Object.fromEntries(formData),
-  };
-  const parsed = NewProjectFormSchema.safeParse(formObj);
-  if (!parsed.success) {
-    console.error("submitProjectForm validation error", parsed.error);
+    console.error("Invalid session on project form submit");
     return null;
   }
 
-  const { title } = parsed.data;
+  const userId = Number(session.user.id);
+  if (isNaN(userId)) {
+    console.error("User ID is not a number:", session.user.id);
+    return null;
+  }
 
-  // const projectId = formData.projectId;
-  // redirect(`/project/${projectId}`);
+  const updatedProject = await db.updateTitle(projectId, newTitle);
+  if (!updatedProject) {
+    console.error("Failed to update project title.");
+    return null;
+  }
+  return updatedProject;
 }
 
 // tasks ===================================================================
