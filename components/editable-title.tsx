@@ -5,27 +5,25 @@ import { Button } from "./ui/button";
 import { LucidePencil, CheckSquare, XSquare } from "lucide-react";
 import { useState } from "react";
 import { Input } from "./ui/input";
+import { updateProjectTitle } from "@/lib/actions";
+import { toast } from "@/components/ui/use-toast";
+import { redirect } from "next/navigation";
 
-export default function EditableTitle({
-  project,
-  // handleSubmitProjectForm,
-}: {
-  project: DesignProject;
-  // handleSubmitProjectForm: () => void;
-}) {
+export default function EditableTitle({ project }: { project: DesignProject }) {
   const [title, setTitle] = useState(project.title || "Untitled");
   const [editing, setEditing] = useState(false);
 
-  const handleSubmitProjectForm = () => {
-    console.log("hello");
-    // setTitle(title);
-    setEditing(false);
-  };
-  // const handleSaveClick = () => {
-  //   handleSubmitProjectForm();
-  //   setEditing(false);
-  // };
-  console.log(title);
+  function clickDeleteProject() {
+    updateProjectTitle(project.id, title)
+      .then((v) => {
+        setEditing(false);
+        toast({ description: "Project updated succesfully." });
+      })
+      .catch((v) => {
+        toast({ description: "Project failed to be updated." });
+      });
+    redirect("/projects");
+  }
 
   if (!editing) {
     return (
@@ -62,7 +60,7 @@ export default function EditableTitle({
       <Button
         variant="ghost"
         className="p-2 text-muted-foreground"
-        onClick={handleSubmitProjectForm}
+        onClick={clickDeleteProject}
       >
         <CheckSquare className="fg-muted w-4 p-0" />
       </Button>
