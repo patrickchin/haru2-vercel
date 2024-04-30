@@ -103,8 +103,8 @@ async function ProjectManagement({ projectId }: { projectId: number }) {
           <h3>Team Member Selection</h3>
         </div>
         <div className="grid grid-cols-2">
-          {Object.keys(groupedSpecs).map((key) => (
-            <Card className="p-4">{teamNames[key]}</Card>
+          {Object.keys(groupedSpecs).map((team) => (
+            <Card key={team} className="p-4">{teamNames[team]}</Card>
           ))}
         </div>
       </section>
@@ -113,10 +113,10 @@ async function ProjectManagement({ projectId }: { projectId: number }) {
         <div className="px-6">
           <h3>Team Task Selection</h3>
         </div>
-        {Object.keys(groupedSpecs).map((key) => (
+        {Object.keys(groupedSpecs).map((team) => (
           <ManageTeamTasksDropdown
-            key={key}
-            team={key}
+            key={team}
+            team={team}
             groupedSpecs={groupedSpecs}
           />
         ))}
