@@ -13,7 +13,7 @@ export default function EditableTitle({ project }: { project: DesignProject }) {
   const [title, setTitle] = useState(project.title || "Untitled");
   const [editing, setEditing] = useState(false);
 
-  function clickDeleteProject() {
+  function clickUpdateProject() {
     updateProjectTitle(project.id, title)
       .then((v) => {
         setEditing(false);
@@ -60,7 +60,7 @@ export default function EditableTitle({ project }: { project: DesignProject }) {
       <Button
         variant="ghost"
         className="p-2 text-muted-foreground"
-        onClick={clickDeleteProject}
+        onClick={clickUpdateProject}
       >
         <CheckSquare className="fg-muted w-4 p-0" />
       </Button>
