@@ -1,6 +1,6 @@
 import * as Schemas from "drizzle/schema";
 import { UseFormReturn } from "react-hook-form";
-import { z } from "zod"
+import { z } from "zod";
 import { getTaskComments } from "./db";
 
 function allFilesSmall(list: FileList | undefined) {
@@ -14,7 +14,10 @@ export const NewProjectFormSchema = z.object({
   buildingType: z.string(), // enum?
   buildingSubtype: z.string().optional(), // enum?
   description: z.string().min(2),
-  files: z.any().transform(f => f as FileList).optional()
+  files: z
+    .any()
+    .transform((f) => f as FileList)
+    .optional()
     .refine(allFilesSmall, "Max file size 4.5MB"),
 
   lifestyle: z.string().optional(),
@@ -24,10 +27,9 @@ export const NewProjectFormSchema = z.object({
   security: z.string().optional(),
   maintenance: z.string().optional(),
   special: z.string().optional(),
-})
+});
 export type NewProjectFormSchemaType = z.infer<typeof NewProjectFormSchema>;
 export type NewProjectFormType = UseFormReturn<NewProjectFormSchemaType>;
-
 
 export type DesignUser = typeof Schemas.users1.$inferSelect;
 export type DesignProject = typeof Schemas.projects1.$inferSelect;

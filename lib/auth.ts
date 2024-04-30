@@ -1,11 +1,11 @@
-import NextAuth from 'next-auth';
-import Credentials from 'next-auth/providers/credentials';
-import GoogleProvider from "next-auth/providers/google"
-import { compare } from 'bcrypt-ts';
-import { getUser } from '@/lib/db';
-import { DrizzleAdapter } from "@auth/drizzle-adapter"
-import { authConfig } from '@/lib/auth.config';
-import { db } from "./db"
+import NextAuth from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import { compare } from "bcrypt-ts";
+import { getUser } from "@/lib/db";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { authConfig } from "@/lib/auth.config";
+import { db } from "./db";
 
 export const {
   handlers: { GET, POST },

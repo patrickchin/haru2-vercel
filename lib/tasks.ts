@@ -1,9 +1,7 @@
-
 import { DesignTaskSpec } from "./types";
 
 // be very careful with changing the ids as they are referenced elsewhere
 export const defaulTaskSpecs: DesignTaskSpec[] = [
-
   // ======================== legal ========================
   {
     id: 100,
@@ -18,7 +16,8 @@ export const defaulTaskSpecs: DesignTaskSpec[] = [
     id: 101,
     title: "Land Survey",
     type: "legal",
-    description: "Conduct a land survey to accurately define the property boundaries.",
+    description:
+      "Conduct a land survey to accurately define the property boundaries.",
   },
   {
     id: 102,
@@ -146,7 +145,7 @@ export const defaulTaskSpecs: DesignTaskSpec[] = [
     description: `
       Evaluate the site conditions,
       Consider environmental factors like sun orientation, wind patterns, and topography.
-    `
+    `,
   },
   {
     id: 117,
@@ -155,7 +154,7 @@ export const defaulTaskSpecs: DesignTaskSpec[] = [
     description: `
       Define the purpose and functionality of the building.
       Understand space requirements for different functions.
-    `
+    `,
   },
   {
     id: 118,
@@ -164,7 +163,7 @@ export const defaulTaskSpecs: DesignTaskSpec[] = [
     description: `
       Develop initial design concepts.
       Explore various architectural forms and styles.
-    `
+    `,
   },
   {
     id: 119,
@@ -173,7 +172,7 @@ export const defaulTaskSpecs: DesignTaskSpec[] = [
     description: `
       Refine the chosen concept.
       Develop preliminary floor plans and elevations.
-    `
+    `,
   },
   {
     id: 120,
@@ -183,7 +182,7 @@ export const defaulTaskSpecs: DesignTaskSpec[] = [
       Add more detail to the design.
       Develop sections and details.
       Consider structural and mechanical systems.
-    `
+    `,
   },
   {
     id: 121,
@@ -192,7 +191,7 @@ export const defaulTaskSpecs: DesignTaskSpec[] = [
     description: `
       Collaborate with structural, mechanical, and electrical engineers.
       Ensure all systems are integrated seamlessly.
-    `
+    `,
   },
   {
     id: 122,
@@ -201,7 +200,7 @@ export const defaulTaskSpecs: DesignTaskSpec[] = [
     description: `
       Ensure designs comply with local building codes and regulations.
       Obtain necessary permits.
-    `
+    `,
   },
   {
     id: 123,
@@ -210,7 +209,7 @@ export const defaulTaskSpecs: DesignTaskSpec[] = [
     description: `
       Create detailed drawings for construction.
       Include floor plans, elevations, sections, and details.
-    `
+    `,
   },
   {
     id: 124,
@@ -219,7 +218,7 @@ export const defaulTaskSpecs: DesignTaskSpec[] = [
     description: `
       Specify materials and finishes for construction.
       Consider sustainability and durability.
-    `
+    `,
   },
   {
     id: 125,
@@ -228,7 +227,7 @@ export const defaulTaskSpecs: DesignTaskSpec[] = [
     description: `
       Prepare a detailed cost estimate based on the design.
       Evaluate the project's financial feasibility.
-    `
+    `,
   },
   {
     id: 126,
@@ -237,7 +236,7 @@ export const defaulTaskSpecs: DesignTaskSpec[] = [
     description: `
       Assist in the selection of a general contractor.
       Review bids and proposals.
-    `
+    `,
   },
   {
     id: 127,
@@ -246,7 +245,7 @@ export const defaulTaskSpecs: DesignTaskSpec[] = [
     description: `
       Address questions and clarifications during construction.
       Ensure that the construction aligns with the drawings.
-    `
+    `,
   },
   {
     id: 128,
@@ -255,7 +254,7 @@ export const defaulTaskSpecs: DesignTaskSpec[] = [
     description: `
       Monitor the quality of work during construction.
       Make site visits to ensure compliance with the drawings.
-    `
+    `,
   },
   {
     id: 129,
@@ -264,7 +263,7 @@ export const defaulTaskSpecs: DesignTaskSpec[] = [
     description: `
       Document any changes made during construction.
       Create final as-built drawings.
-    `
+    `,
   },
   {
     id: 130,
@@ -273,7 +272,7 @@ export const defaulTaskSpecs: DesignTaskSpec[] = [
     description: `
       Ensure all regulatory inspections are completed.
       Confirm that the building meets the client's requirements.
-    `
+    `,
   },
   {
     id: 131,
@@ -282,6 +281,6 @@ export const defaulTaskSpecs: DesignTaskSpec[] = [
     description: `
       Organize and archive all project-related documents.
       Create a comprehensive record for future reference.
-    `
+    `,
   },
 ];
