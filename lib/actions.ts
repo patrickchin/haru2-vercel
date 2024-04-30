@@ -88,14 +88,18 @@ export async function submitProjectForm2(formData: FormData) {
         continue;
       }
 
-      const data = VERCEL_BLOB_FAKE_FILES ? new ArrayBuffer(8) : await file.arrayBuffer();
+      const data = VERCEL_BLOB_FAKE_FILES
+        ? new ArrayBuffer(8)
+        : await file.arrayBuffer();
       // TODO use all the data
-      const { url } = await blob.put(`project/${newProjectId}/${file.name}`, data, {
+      const { url } = await blob.put(
+        `project/${newProjectId}/${file.name}`,
+        data,
+        {
           access: "public", // private access isn't supported by vercel atm
-        });
-      console.log(
-        `file "${file.name}" uploaded to: ${url}`,
+        },
       );
+      console.log(`file "${file.name}" uploaded to: ${url}`);
 
       // TODO optimise - await outside the loop?
       const newFileRow = await db.addFileUrlToProject({
@@ -224,12 +228,11 @@ export async function addTaskComment(taskId: number, comment: string) {
     comment: comment,
   });
   if (comments.length == 0) return;
-  return (await db.getTaskComments(taskId));
+  return await db.getTaskComments(taskId);
 }
 
 export async function addTaskFile(taskId: number, data: FormData) {
-
-  const file = (data.get("file") as File);
+  const file = data.get("file") as File;
   if (!file) {
     console.log("file not correcty uploaded");
   }
@@ -245,7 +248,9 @@ export async function addTaskFile(taskId: number, data: FormData) {
     type: file.type,
   });
 
-  const fileBytes = VERCEL_BLOB_FAKE_FILES ? new ArrayBuffer(8) : await file.arrayBuffer();
+  const fileBytes = VERCEL_BLOB_FAKE_FILES
+    ? new ArrayBuffer(8)
+    : await file.arrayBuffer();
   // I would prefer the file to be saved here:
   // const blobResult = await blob.put(`project/${projectId}/task/${taskSpecId}/${file.name}`, fileBytes, {
   const blobResult = await blob.put(`task/${taskId}/${file.name}`, fileBytes, {
