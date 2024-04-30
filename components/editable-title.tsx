@@ -7,9 +7,11 @@ import { useState } from "react";
 import { Input } from "./ui/input";
 import { updateProjectTitle } from "@/lib/actions";
 import { toast } from "@/components/ui/use-toast";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function EditableTitle({ project }: { project: DesignProject }) {
+  const router = useRouter();
+
   const [title, setTitle] = useState(project.title || "Untitled");
   const [originalTitle, setOriginalTitle] = useState(
     project.title || "Untitled",
@@ -22,7 +24,7 @@ export default function EditableTitle({ project }: { project: DesignProject }) {
       setOriginalTitle(title);
       setEditing(false);
       toast({ description: "Project updated succesfully." });
-      redirect("/projects");
+      router.refresh();
     } catch (error) {
       toast({ description: "Project failed to be updated." });
     }
@@ -49,7 +51,7 @@ export default function EditableTitle({ project }: { project: DesignProject }) {
   }
 
   return (
-    <h3 className="flex items-center">
+    <h3 className="flex gap-2 items-center">
       <span className="whitespace-nowrap">Project {project.id} - </span>
       <Input
         defaultValue={title}
@@ -58,15 +60,6 @@ export default function EditableTitle({ project }: { project: DesignProject }) {
         className="text-2xl text-black disabled:text-black mr-2"
         onChange={(e) => setTitle(e.target.value)}
       />
-      {!editing && (
-        <Button
-          variant="ghost"
-          className="p-2 text-muted-foreground"
-          onClick={() => setEditing(!editing)}
-        >
-          <LucidePencil className="fg-muted w-4 p-0 opacity-40 hover:opacity-100" />
-        </Button>
-      )}
       <Button variant="outline" className="p-2" onClick={clickUpdateProject}>
         <CheckSquare className="fg-muted w-4 p-0" />
       </Button>
