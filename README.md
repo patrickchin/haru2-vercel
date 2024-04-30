@@ -1,6 +1,8 @@
-# Next.js + PostgreSQL Auth Starter
+# Streamlined Construction Management
 
-This is a [Next.js](https://nextjs.org/) starter kit that uses [NextAuth.js](https://next-auth.js.org/) for simple email + password login, [Drizzle](https://orm.drizzle.team) as the ORM, and a [Neon Postgres](https://vercel.com/postgres) database to persist the data.
+## Next.js + PostgreSQL Auth Starter
+
+This project was started from [this template](https://github.com/vercel/nextjs-postgres-auth-starter). It is a [Next.js](https://nextjs.org/) starter kit that uses [NextAuth.js](https://next-auth.js.org/) for simple email + password login, [Drizzle](https://orm.drizzle.team) as the ORM, and a [Neon Postgres](https://vercel.com/postgres) database to persist the data.
 
 ## Getting Started
 
