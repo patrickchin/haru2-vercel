@@ -10,6 +10,8 @@ import { CenteredLayout } from "@/components/page-layouts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import {
   Form,
   FormControl,
@@ -35,8 +37,6 @@ import {
 } from "@/lib/types";
 import { questions } from "content/questions";
 import { cn } from "@/lib/utils";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 
 function ProjectTitle({ form }: { form: NewProjectFormType }) {
   return (
@@ -188,6 +188,15 @@ function ProjectDescription({ form }: { form: NewProjectFormType }) {
 }
 
 function ProjectDocuments({ form }: { form: NewProjectFormType }) {
+  const [fileNames, setFileNames] = useState<string[]>([]);
+
+  function handleFileChange(fileList: FileList | null) {
+    if (fileList) {
+      const arrayFileNames = Array.from(fileList).map((file) => file.name);
+      setFileNames(arrayFileNames);
+    }
+  }
+
   return (
     <FormField
       control={form.control}
@@ -195,9 +204,27 @@ function ProjectDocuments({ form }: { form: NewProjectFormType }) {
       render={({ field }) => (
         <FormItem>
           <FormLabel>Additional Documents</FormLabel>
-          <FormControl>
-            <Input type="file" multiple {...form.register(field.name)} />
-          </FormControl>
+          <div className="relative">
+            <FormControl>
+              <Input
+                className="absolute opacity-0 cursor-pointer"
+                type="file"
+                multiple
+                {...form.register(field.name)}
+                onChange={(e) => {
+                  handleFileChange(e.target.files);
+                }}
+              />
+            </FormControl>
+            <div className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+              <p className="font-medium">Click to upload files</p>
+            </div>
+          </div>
+          {fileNames.map((fileName, index) => (
+            <p key={index} className="text-sm px-3">
+              {fileName}
+            </p>
+          ))}
           <FormMessage />
         </FormItem>
       )}
@@ -207,13 +234,13 @@ function ProjectDocuments({ form }: { form: NewProjectFormType }) {
 
 function DetailedQuestion({ form, qa }: { form: NewProjectFormType; qa: any }) {
   const [showTextArea, setShowTextArea] = useState(false);
-
   return (
     <FormField
       control={form.control}
       name={qa.name}
       render={({ field }) => (
         <FormItem>
+
           <FormLabel className="flex justify-between items-center">
             <div className="space-y-2">
               <div className="text-base">{qa.title}</div>
