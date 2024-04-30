@@ -45,6 +45,7 @@ export default function EditableTitle({ project }: { project: DesignProject }) {
       <span className="whitespace-nowrap">Project {project.id} - </span>
       <Input
         defaultValue={title}
+        maxLength={255}
         disabled={!editing}
         className="text-2xl text-black disabled:text-black"
         onChange={(e) => setTitle(e.target.value)}
