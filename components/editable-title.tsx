@@ -11,18 +11,26 @@ import { redirect } from "next/navigation";
 
 export default function EditableTitle({ project }: { project: DesignProject }) {
   const [title, setTitle] = useState(project.title || "Untitled");
+  const [originalTitle, setOriginalTitle] = useState(
+    project.title || "Untitled",
+  );
   const [editing, setEditing] = useState(false);
 
-  function clickUpdateProject() {
-    updateProjectTitle(project.id, title)
-      .then((v) => {
-        setEditing(false);
-        toast({ description: "Project updated succesfully." });
-      })
-      .catch((v) => {
-        toast({ description: "Project failed to be updated." });
-      });
-    redirect("/projects");
+  async function clickUpdateProject() {
+    try {
+      await updateProjectTitle(project.id, title);
+      setOriginalTitle(title);
+      setEditing(false);
+      toast({ description: "Project updated succesfully." });
+      redirect("/projects");
+    } catch (error) {
+      toast({ description: "Project failed to be updated." });
+    }
+  }
+
+  function cancelEditing() {
+    setTitle(originalTitle); // Revert to original title
+    setEditing(false);
   }
 
   if (!editing) {
@@ -47,29 +55,22 @@ export default function EditableTitle({ project }: { project: DesignProject }) {
         defaultValue={title}
         maxLength={255}
         disabled={!editing}
-        className="text-2xl text-black disabled:text-black"
+        className="text-2xl text-black disabled:text-black mr-2"
         onChange={(e) => setTitle(e.target.value)}
       />
-      <Button
-        variant="ghost"
-        className="p-2 text-muted-foreground"
-        onClick={() => setEditing(!editing)}
-        disabled
-      >
-        <LucidePencil className="fg-muted w-4 p-0 opacity-40 hover:opacity-100" />
-      </Button>
-      <Button
-        variant="ghost"
-        className="p-2 text-muted-foreground"
-        onClick={clickUpdateProject}
-      >
+      {!editing && (
+        <Button
+          variant="ghost"
+          className="p-2 text-muted-foreground"
+          onClick={() => setEditing(!editing)}
+        >
+          <LucidePencil className="fg-muted w-4 p-0 opacity-40 hover:opacity-100" />
+        </Button>
+      )}
+      <Button variant="outline" className="p-2" onClick={clickUpdateProject}>
         <CheckSquare className="fg-muted w-4 p-0" />
       </Button>
-      <Button
-        variant="ghost"
-        className="p-2 text-muted-foreground"
-        onClick={() => setEditing(!editing)}
-      >
+      <Button variant="outline" className="p-2" onClick={cancelEditing}>
         <XSquare className="fg-muted w-4 p-0" />
       </Button>
     </h3>
