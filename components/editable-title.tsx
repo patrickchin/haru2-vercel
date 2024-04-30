@@ -44,7 +44,7 @@ export default function EditableTitle({ project }: { project: DesignProject }) {
           className="p-2 text-muted-foreground"
           onClick={() => setEditing(true)}
         >
-          <LucidePencil className="fg-muted w-4 p-0" />
+          <LucidePencil strokeWidth={3} className="w-4 p-0" />
         </Button>
       </h3>
     );
@@ -57,14 +57,14 @@ export default function EditableTitle({ project }: { project: DesignProject }) {
         defaultValue={title}
         maxLength={255}
         disabled={!editing}
-        className="text-2xl text-black disabled:text-black mr-2"
+        className="text-2xl text-black disabled:text-black"
         onChange={(e) => setTitle(e.target.value)}
       />
       <Button variant="outline" className="p-2" onClick={clickUpdateProject}>
-        <CheckSquare className="fg-muted w-4 p-0" />
+        <CheckSquare className="w-4 p-0" />
       </Button>
       <Button variant="outline" className="p-2" onClick={cancelEditing}>
-        <XSquare className="fg-muted w-4 p-0" />
+        <XSquare className="w-4 p-0" />
       </Button>
     </h3>
   );
