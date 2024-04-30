@@ -12,24 +12,33 @@ This is a [Next.js](https://nextjs.org/) starter kit that uses [NextAuth.js](htt
 ### Development
 
 Clone this repository
+
 ```bash
 git clone git@github.com:patrickchin/haru2-vercel.git
 ```
+
 Copy the example env file, and fill out all the values
+
 ```bash
 cp .env.example .env.local
 ```
+
 Install the node dependencies
+
 ```bash
 pnpm install
 ```
+
 Then run the development server using
+
 ```bash
 pnpm dev
 ```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 The production server can be built and run using
+
 ```bash
 pnpm build
 pnpm start
@@ -40,12 +49,15 @@ pnpm start
 Drizzle makes database changes a lot easier!
 
 - After modifying `drizzle/schema.ts` file the changes are pushed to the database with:
-> [!CAUTION]
-> Very easy to delete data with this command, drizzle will warn 
+  > [!CAUTION]
+  > Very easy to delete data with this command, drizzle will warn
+
 ```bash
 pnpm drizzle-kit push:pg
 ```
+
 - After modifying the database via other means, these changes are pulled into the code with:
+
 ```bash
 pnpm drizzle-kit introspect:pg
 ```
@@ -60,7 +72,8 @@ We are running on vercel, and using their provided postgres server and blob stor
 pnpm playwright install
 pnpm playwright test
 ```
-We currently have very minor playwright testing on [Github Actions](https://github.com/patrickchin/haru2-vercel/actions) 
+
+We currently have very minor playwright testing on [Github Actions](https://github.com/patrickchin/haru2-vercel/actions)
 
 ## Learn More
 

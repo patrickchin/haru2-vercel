@@ -1,12 +1,12 @@
 import type { Config } from "drizzle-kit";
 
 // needed for drizzle studio
-require('dotenv').config({ path: ['.env.local'] })
+require("dotenv").config({ path: [".env.local"] });
 
 export default {
   schema: "./drizzle/schema.ts",
   out: "./drizzle",
-  driver: 'pg',
+  driver: "pg",
   dbCredentials: {
     // connectionString: `${process.env.POSTGRES_URL}?sslmode=require`,
     user: process.env.POSTGRES_USER,
@@ -15,5 +15,5 @@ export default {
     port: 5432,
     database: process.env.POSTGRES_DATABASE!,
     ssl: true,
-  }
+  },
 } satisfies Config;
