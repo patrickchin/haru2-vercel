@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { FieldValues, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LucideLoader2, LucidePlus } from "lucide-react";
+import { LucideLoader2, LucidePlus, LucideTrash } from "lucide-react";
 import { CenteredLayout } from "@/components/page-layouts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -187,13 +187,37 @@ function ProjectDescription({ form }: { form: NewProjectFormType }) {
   );
 }
 
-function ProjectDocuments({ form }: { form: NewProjectFormType }) {
-  const [fileNames, setFileNames] = useState<string[]>([]);
+function ProjectDocuments({
+  form,
+  filesSelected,
+  setFilesSelected,
+}: {
+  form: NewProjectFormType;
+  filesSelected: FileList | null;
+  setFilesSelected: (filesSelected: FileList | null) => void;
+}) {
+  const fileNames = useMemo(() => {
+    if (filesSelected) {
+      return Array.from(filesSelected).map((file) => file.name);
+    } else {
+      return [];
+    }
+  }, [filesSelected]);
 
   function handleFileChange(fileList: FileList | null) {
     if (fileList) {
-      const arrayFileNames = Array.from(fileList).map((file) => file.name);
-      setFileNames(arrayFileNames);
+      setFilesSelected(fileList);
+    }
+  }
+
+  function handleFileDelete(fileName: any) {
+    if (filesSelected) {
+      const updatedFilesArray = Array.from(filesSelected).filter(
+        (file) => file.name !== fileName,
+      );
+      const updatedFileList = new DataTransfer();
+      updatedFilesArray.forEach((file) => updatedFileList.items.add(file));
+      setFilesSelected(updatedFileList.files);
     }
   }
 
@@ -220,11 +244,24 @@ function ProjectDocuments({ form }: { form: NewProjectFormType }) {
               <p className="font-medium">Click to upload files</p>
             </div>
           </div>
-          {fileNames.map((fileName, index) => (
-            <p key={index} className="text-sm px-3">
-              {fileName}
-            </p>
-          ))}
+          {fileNames.length > 0
+            ? fileNames.map((fileName, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between w-full"
+                >
+                  <p className="text-sm px-3">{fileName}</p>
+                  <Button
+                    type="button"
+                    onClick={() => handleFileDelete(fileName)}
+                    variant="ghost"
+                    size="sm"
+                  >
+                    <LucideTrash className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))
+            : ""}
           <FormMessage />
         </FormItem>
       )}
@@ -314,11 +351,27 @@ function NewProjectForm() {
     },
   });
 
+  const [filesSelected, setFilesSelected] = useState<FileList | null>(null);
+
   async function handleSubmitProjectForm(
     data: FieldValues,
     event?: React.BaseSyntheticEvent,
   ) {
-    const fdata = new FormData(event?.target);
+    const fdata = new FormData();
+
+    Object.entries(data).forEach(([name, value]) => {
+      if (name !== "files") {
+        fdata.append(name, value);
+      }
+    });
+
+    if (filesSelected) {
+      for (let i = 0; i < filesSelected.length; i++) {
+        const file = filesSelected[i];
+        fdata.append("files", file);
+      }
+    }
+
     const submitSuccess = await submitProjectForm2(fdata);
     if (submitSuccess === null) {
       return Promise.reject("Error submitting project, server returned null");
@@ -340,7 +393,11 @@ function NewProjectForm() {
         <CountrySelector form={form} />
         <BuildingTypeSelector form={form} />
         <ProjectDescription form={form} />
-        <ProjectDocuments form={form} />
+        <ProjectDocuments
+          form={form}
+          filesSelected={filesSelected}
+          setFilesSelected={setFilesSelected}
+        />
         <DetailedQuestions form={form} />
         <div className="mt-6 flex items-center justify-end gap-x-3">
           <Button
