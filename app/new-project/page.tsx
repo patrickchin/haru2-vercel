@@ -41,6 +41,7 @@ import {
 } from "@/lib/types";
 import { questions } from "content/questions";
 import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
 
 function ProjectTitle({ form }: { form: NewProjectFormType }) {
   return (
@@ -216,13 +217,15 @@ function DetailedQuestion({ form, qa }: { form: NewProjectFormType; qa: any }) {
       name={qa.name}
       render={({ field }) => (
         <FormItem>
-          <FormLabel>{qa.title}</FormLabel>
-          {/* <FormDescription> */}
-          <ul className="list-disc list-inside text-sm">
-            {qa.hints.map((hint: string[], i: number) => (
-              <li key={i}>{hint}</li>
-            ))}
-          </ul>
+          <FormLabel className="space-y-2">
+            <div>{qa.title}</div>
+            {/* <FormDescription> */}
+            <ul className="list-disc list-inside text-sm font-normal pl-2">
+              {qa.hints.map((hint: string[], i: number) => (
+                <li key={i}>{hint}</li>
+              ))}
+            </ul>
+          </FormLabel>
           {/* </FormDescription> */}
           <FormControl>
             <Textarea
@@ -242,22 +245,21 @@ function DetailedQuestions({ form }: { form: NewProjectFormType }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2">
-      <CollapsibleTrigger asChild>
-        <div className="flex items-center justify-between">
-          <h4 className="text-sm font-semibold">Detailed Questions</h4>
-          <Button type="button" variant="ghost" size="sm" className="w-9 p-0">
-            <ChevronDown className="h-4 w-4" />
-            <span className="sr-only">Toggle</span>
-          </Button>
-        </div>
-      </CollapsibleTrigger>
-      <CollapsibleContent className="space-y-2">
-        {questions.map((qa, i) => (
-          <DetailedQuestion form={form} qa={qa} key={i} />
-        ))}
-      </CollapsibleContent>
-    </Collapsible>
+    <Card className="overflow-hidden">
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <CollapsibleTrigger className="flex w-full items-center justify-between bg-background hover:bg-accent p-4">
+          <h4 className="text-sm font-semibold">
+            Detailed Questions (Optional)
+          </h4>
+          <ChevronDown className="h-4 w-4" />
+        </CollapsibleTrigger>
+        <CollapsibleContent className="space-y-6 p-12 pt-6">
+          {questions.map((qa, i) => (
+            <DetailedQuestion form={form} qa={qa} key={i} />
+          ))}
+        </CollapsibleContent>
+      </Collapsible>
+    </Card>
   );
 }
 
@@ -330,7 +332,7 @@ export default function Page() {
   return (
     <CenteredLayout>
       <section className="grow flex flex-row items-center justify-center">
-        <div className="flex flex-col gap-12 w-full max-w-2xl">
+        <div className="flex flex-col gap-12 w-full max-w-3xl">
           <h3>Create a New Project</h3>
           <NewProjectForm />
         </div>
