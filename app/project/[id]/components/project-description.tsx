@@ -116,49 +116,58 @@ export default async function ProjectDescription({ project }: { project: any }) 
 
   return (
     <div className="flex flex-col gap-5">
-
       <ProjectInfoBar project={project} />
 
-      <div className="grid grid-cols-1 grid-rows-2 md:grid-cols-2 md:grid-rows-1 gap-5">
+      {project.status === "pending" ? (
         <Card>
           <CardHeader>Status</CardHeader>
-          <CardContent>
-            <CardDescription>
-              Your project is in a list waiting to be picked up.
-            </CardDescription>
-            <CardDescription>
-              Check back later for updates
-            </CardDescription>
+          <CardContent className="flex flex-col gap-4 text-3xl font-bold text-align-center p-24 pt-4 text-center">
+            <div>Your project is waiting to be picked up.</div>
+            <div>Expect a response within 3 working days.</div>
           </CardContent>
         </Card>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 grid-rows-2 md:grid-cols-2 md:grid-rows-1 gap-5">
+            <Card>
+              <CardHeader>Status</CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Your project is in a list waiting to be picked up.
+                </CardDescription>
+                <CardDescription>Check back later for updates</CardDescription>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader>Updates</CardHeader>
-          <CardContent>
-            <CardDescription>
-              Here you will see the latest updates to your project
-            </CardDescription>
-          </CardContent>
-        </Card>
-      </div>
+            <Card>
+              <CardHeader>Updates</CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Here you will see the latest updates to your project
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </div>
 
-      <Card>
-        <CardHeader>Progress and Milestones</CardHeader>
-        <CardContent>
-          <Suspense fallback={<ProjectDesignViewsFallback />}>
-            <ProjectProgressSummary project={project} />
-          </Suspense>
-        </CardContent>
-      </Card>
+          <Card>
+            <CardHeader>Progress and Milestones</CardHeader>
+            <CardContent>
+              <Suspense fallback={<ProjectDesignViewsFallback />}>
+                <ProjectProgressSummary project={project} />
+              </Suspense>
+            </CardContent>
+          </Card>
+        </>
+      )}
 
-      <Card>
+      {/* <Card>
         <CardHeader>Design Views</CardHeader>
         <CardContent>
           <Suspense fallback={<ProjectDesignViewsFallback />}>
             <ProjectDesignViews project={project} />
           </Suspense>
         </CardContent>
-      </Card>
+      </Card> */}
 
       <Card>
         <CardHeader>Description</CardHeader>
@@ -168,7 +177,6 @@ export default async function ProjectDescription({ project }: { project: any }) 
           </CardDescription>
         </CardContent>
       </Card>
-
     </div>
   );
 }
