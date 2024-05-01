@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { FieldValues, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronDown, Loader2 } from "lucide-react";
+import { LucideChevronDown, LucideLoader2, LucidePlus } from "lucide-react";
 import { CenteredLayout } from "@/components/page-layouts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +13,6 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -41,7 +40,8 @@ import {
 } from "@/lib/types";
 import { questions } from "content/questions";
 import { cn } from "@/lib/utils";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 function ProjectTitle({ form }: { form: NewProjectFormType }) {
   return (
@@ -211,28 +211,43 @@ function ProjectDocuments({ form }: { form: NewProjectFormType }) {
 }
 
 function DetailedQuestion({ form, qa }: { form: NewProjectFormType; qa: any }) {
+  const [showTextArea, setShowTextArea] = useState(false);
+
   return (
     <FormField
       control={form.control}
       name={qa.name}
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="space-y-2">
-            <div>{qa.title}</div>
-            {/* <FormDescription> */}
-            <ul className="list-disc list-inside text-sm font-normal pl-2">
-              {qa.hints.map((hint: string[], i: number) => (
-                <li key={i}>{hint}</li>
-              ))}
-            </ul>
+          <FormLabel className="flex justify-between items-center">
+            <div className="space-y-2">
+              <div className="text-base">{qa.title}</div>
+              <ul className="list-disc list-inside text-sm font-normal pl-2">
+                {qa.hints.map((hint: string[], i: number) => (
+                  <li key={i}>{hint}</li>
+                ))}
+              </ul>
+            </div>
+            {!showTextArea && (
+              <Button
+                variant="secondary"
+                type="button"
+                onClick={() => setShowTextArea(true)}
+                className="p-3 space-x-3"
+              >
+                <LucidePlus className="w-4 p-0" />
+                Add
+              </Button>
+            )}
           </FormLabel>
-          {/* </FormDescription> */}
           <FormControl>
-            <Textarea
-              placeholder=""
-              className="resize-y"
-              {...form.register(field.name)}
-            />
+            {showTextArea && (
+              <Textarea
+                placeholder=""
+                className="resize-y"
+                {...form.register(field.name)}
+              />
+            )}
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -246,19 +261,18 @@ function DetailedQuestions({ form }: { form: NewProjectFormType }) {
 
   return (
     <Card className="overflow-hidden">
-      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <CollapsibleTrigger className="flex w-full items-center justify-between bg-background hover:bg-accent p-4">
-          <h4 className="text-sm font-semibold">
-            Detailed Questions (Optional)
-          </h4>
-          <ChevronDown className="h-4 w-4" />
-        </CollapsibleTrigger>
-        <CollapsibleContent className="space-y-6 p-12 pt-6">
-          {questions.map((qa, i) => (
+      <CardHeader>
+        <h4 className="text-sm font-semibold">Detailed Questions (Optional)</h4>
+      </CardHeader>
+      <Separator />
+      <CardContent className="space-y-6 p-12 pt-6">
+        {questions.map((qa, i) => (
+          <>
             <DetailedQuestion form={form} qa={qa} key={i} />
-          ))}
-        </CollapsibleContent>
-      </Collapsible>
+            <Separator />
+          </>
+        ))}
+      </CardContent>
     </Card>
   );
 }
@@ -315,7 +329,7 @@ function NewProjectForm() {
             className="flex flex-row gap-3"
           >
             {session.data?.user ? "Submit" : "Signin to Submit"}
-            <Loader2
+            <LucideLoader2
               className={cn(
                 "animate-spin h-4",
                 isWaitingRedirect ? "" : "hidden",
