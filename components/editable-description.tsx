@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { LucidePencil, CheckSquare, XSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { updateProject } from "@/lib/actions";
@@ -30,8 +29,8 @@ export default function EditableDescription({
   async function clickUpdateProject() {
     try {
       const updates = { description: description };
-      await updateProject(project.id, updates);
-      setOriginalDescription(description);
+      const result = await updateProject(project.id, updates);
+      setOriginalDescription(result?.description || description);
       setEditing(false);
       toast({ description: "Project updated succesfully." });
       router.refresh();
@@ -50,27 +49,14 @@ export default function EditableDescription({
       <CardHeader>
         <div className="flex items-center gap-1">
           Description
-          {!editing ? (
+          {!editing && (
             <Button
               variant="ghost"
               className="p-2 text-muted-foreground"
               onClick={() => setEditing(true)}
             >
-              <LucidePencil strokeWidth={3} className="w-4 p-0" />
+              Edit
             </Button>
-          ) : (
-            <>
-              <Button
-                variant="outline"
-                className="p-2"
-                onClick={clickUpdateProject}
-              >
-                <CheckSquare className="w-4 p-0" />
-              </Button>
-              <Button variant="outline" className="p-2" onClick={cancelEditing}>
-                <XSquare className="w-4 p-0" />
-              </Button>
-            </>
           )}
         </div>
       </CardHeader>
@@ -82,11 +68,25 @@ export default function EditableDescription({
             <Textarea
               defaultValue={description}
               placeholder="Tell us a little bit about your project"
-              className="resize-y h-36"
+              className="resize-y h-svh"
               onChange={(e) => setDescription(e.target.value)}
             />
           )}
         </CardDescription>
+        {editing && (
+          <div className="mt-6 flex items-center justify-end gap-x-3">
+            <Button
+              variant="default"
+              className="p-2"
+              onClick={clickUpdateProject}
+            >
+              Save
+            </Button>
+            <Button variant="secondary" className="p-2" onClick={cancelEditing}>
+              Cancel
+            </Button>
+          </div>
+        )}
       </CardContent>
     </>
   );
