@@ -97,6 +97,31 @@ export async function updateTitle(projectId: number, newTitle: string) {
   );
   return updatedProject[0];
 }
+//update any fields of project
+export async function updateProjectFields(
+  projectId: number,
+  updates: {
+    title?: string;
+    description?: string;
+    type?: string;
+    subtype?: string;
+    countrycode?: string;
+    extrainfo?: any;
+  },
+) {
+  const updatedProject = await db
+    .update(Schemas.projects1)
+    .set(updates)
+    .where(eq(Schemas.projects1.id, projectId))
+    .returning();
+
+  assert(
+    updatedProject.length === 1,
+    "Expected exactly one project to be updated",
+  );
+
+  return updatedProject[0];
+}
 // tasks ==========================================================================================
 
 export async function createTaskSpecs(
