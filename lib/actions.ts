@@ -155,6 +155,7 @@ export async function getProjectFiles(projectId: number) {
   const fileUrls = await db.getFilesUrlsForProject(projectId);
   return fileUrls;
 }
+//Update project title
 export async function updateProjectTitle(projectId: number, newTitle: string) {
   const session = await auth();
   if (!session?.user?.id) {
@@ -169,6 +170,30 @@ export async function updateProjectTitle(projectId: number, newTitle: string) {
   }
 
   const updatedProject = await db.updateTitle(projectId, newTitle);
+  if (!updatedProject) {
+    console.error("Failed to update project title.");
+    return null;
+  }
+  return updatedProject;
+}
+//update any field of the project
+export async function updateProject(
+  projectId: number,
+  updates: Record<string, any>,
+) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    console.error("Invalid session on project form submit");
+    return null;
+  }
+
+  const userId = Number(session.user.id);
+  if (isNaN(userId)) {
+    console.error("User ID is not a number:", session.user.id);
+    return null;
+  }
+
+  const updatedProject = await db.updateProjectFields(projectId, updates);
   if (!updatedProject) {
     console.error("Failed to update project title.");
     return null;

@@ -1,13 +1,26 @@
-import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardDescription,
+} from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel";
 import { getProjectFiles } from "@/lib/actions";
 import { Suspense, useMemo } from "react";
 import * as Lucide from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { buildingTypes } from "content/buildingTypes";
+import EditableDescription from "@/components/editable-description";
+import { DesignProject } from "@/lib/types";
 
 function ProjectDesignViewsFallback() {
-  return (<p>Loading images ...</p>);
+  return <p>Loading images ...</p>;
 }
 
 async function ProjectDesignViews({ project }: { project: any }) {
@@ -55,21 +68,21 @@ async function ProjectDesignViews({ project }: { project: any }) {
 }
 
 async function ProjectProgressSummary({ project }: { project: any }) {
-
   const ncompleted = 13;
   const ntotal = 35;
-  const pctcomplete = 100*13/53;
+  const pctcomplete = (100 * 13) / 53;
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-4 justify-center items-center">
-        <Progress value={33} className="w-5/6" indicatorColor="bg-gray-600"/>
+        <Progress value={33} className="w-5/6" indicatorColor="bg-gray-600" />
       </div>
       <CardDescription>
-        Completed {ncompleted} of {ntotal} total tasks ({pctcomplete.toFixed(1)} %)
+        Completed {ncompleted} of {ntotal} total tasks ({pctcomplete.toFixed(1)}{" "}
+        %)
       </CardDescription>
     </div>
-  )
+  );
 }
 
 export function ProjectInfoBar({ project }: { project: any }) {
@@ -112,8 +125,11 @@ export function ProjectInfoBar({ project }: { project: any }) {
   );
 }
 
-export default async function ProjectDescription({ project }: { project: any }) {
-
+export default async function ProjectDescription({
+  project,
+}: {
+  project: DesignProject;
+}) {
   return (
     <div className="flex flex-col gap-5">
       <ProjectInfoBar project={project} />
@@ -170,14 +186,8 @@ export default async function ProjectDescription({ project }: { project: any }) 
       </Card> */}
 
       <Card>
-        <CardHeader>Description</CardHeader>
-        <CardContent>
-          <CardDescription className="whitespace-pre-line">
-            {project.description}
-          </CardDescription>
-        </CardContent>
+        <EditableDescription project={project} />
       </Card>
     </div>
   );
 }
-
