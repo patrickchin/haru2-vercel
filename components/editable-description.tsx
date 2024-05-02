@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { updateProject } from "@/lib/actions";
@@ -25,12 +25,35 @@ export default function EditableDescription({
     project.description || "Untitled",
   );
   const [editing, setEditing] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea && editing) {
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight}px`;
+      textarea.style.overflowY = "hidden";
+    }
+  }, [editing, description]);
+
+  const handleChangeDescription = (event: any) => {
+    setDescription(event.target.value);
+    const scrollY = window.scrollY;
+    // Automatically resize the textarea
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto"; // Reset the height so the calculation is correct
+      textarea.style.height = `${textarea.scrollHeight}px`; // Set to scroll height
+
+      window.scrollTo(window.scrollX, scrollY);
+    }
+  };
 
   async function clickUpdateProject() {
     try {
       const updates = { description: description };
       const result = await updateProject(project.id, updates);
-      setOriginalDescription(result?.description || description);
+      setOriginalDescription((prev) => result?.description || description);
       setEditing(false);
       toast({ description: "Project updated succesfully." });
       router.refresh();
@@ -47,11 +70,11 @@ export default function EditableDescription({
   return (
     <>
       <CardHeader>
-        <div className="flex items-center gap-1">
+        <div className="flex justify-between items-center gap-1">
           Description
           {!editing && (
             <Button
-              variant="ghost"
+              variant="secondary"
               className="p-2 text-muted-foreground"
               onClick={() => setEditing(true)}
             >
@@ -65,25 +88,27 @@ export default function EditableDescription({
           {!editing ? (
             description
           ) : (
-            <Textarea
-              defaultValue={description}
+            <textarea
+              ref={textareaRef}
+              className="w-full text-slate-600 bg-white border border-slate-300 appearance-none rounded-lg px-3.5 py-2.5 outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
               placeholder="Tell us a little bit about your project"
-              className="resize-y h-svh"
-              onChange={(e) => setDescription(e.target.value)}
-            />
+              required
+              value={description}
+              onChange={handleChangeDescription}
+            ></textarea>
           )}
         </CardDescription>
         {editing && (
           <div className="mt-6 flex items-center justify-end gap-x-3">
+            <Button variant="secondary" className="p-2" onClick={cancelEditing}>
+              Cancel
+            </Button>
             <Button
               variant="default"
               className="p-2"
               onClick={clickUpdateProject}
             >
               Save
-            </Button>
-            <Button variant="secondary" className="p-2" onClick={cancelEditing}>
-              Cancel
             </Button>
           </div>
         )}
