@@ -5,7 +5,6 @@ import { compare } from "bcrypt-ts";
 import { getUser } from "@/lib/db";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { authConfig } from "@/lib/auth.config";
-import { db } from "./db";
 
 export const {
   handlers: { GET, POST },

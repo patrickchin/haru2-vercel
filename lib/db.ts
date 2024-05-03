@@ -12,7 +12,7 @@ import assert from "assert";
 // use the Drizzle adapter for Auth.js / NextAuth
 // https://authjs.dev/reference/adapter/drizzle
 const client = postgres(`${process.env.POSTGRES_URL!}`);
-export const db = drizzle(client);
+const db = drizzle(client);
 
 // users ==========================================================================================
 
