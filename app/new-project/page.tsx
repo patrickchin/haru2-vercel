@@ -226,43 +226,45 @@ function ProjectDocuments({
       control={form.control}
       name="files"
       render={({ field }) => (
-        <FormItem>
-          <FormLabel>Additional Documents</FormLabel>
-          <div className="relative">
-            <FormControl>
-              <Input
-                className="absolute opacity-0 cursor-pointer"
-                type="file"
-                multiple
-                {...form.register(field.name)}
-                onChange={(e) => {
-                  handleFileChange(e.target.files);
-                }}
-              />
-            </FormControl>
-            <div className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-              <p className="font-medium">Click to upload files</p>
+        <FormItem className="space-y-4">
+          <FormLabel className="space-y-4">
+            <div>Additional Documents</div>
+            <div
+              className={cn(
+                "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2",
+                "text-sm ring-offset-background placeholder:text-muted-foreground",
+                "focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+                "disabled:cursor-not-allowed disabled:opacity-50",
+                "cursor-pointer",
+              )}
+            >
+              <p className="font-normal">Select files to upload</p>
+              <FormControl>
+                <Input
+                  className="opacity-0 w-0 h-0 p-0 border-4 focus-visible:ring-0"
+                  type="file"
+                  multiple
+                  {...form.register(field.name)}
+                  onChange={(e) => handleFileChange(e.target.files)}
+                />
+              </FormControl>
             </div>
-          </div>
-          {fileNames.length > 0
-            ? fileNames.map((fileName, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between w-full"
-                >
-                  <p className="text-sm px-3">{fileName}</p>
-                  <Button
-                    type="button"
-                    onClick={() => handleFileDelete(fileName)}
-                    variant="ghost"
-                    size="sm"
-                  >
-                    <LucideTrash className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))
-            : ""}
+          </FormLabel>
           <FormMessage />
+          <div className="space-y-2">
+            {fileNames.map((fileName, index) => (
+              <Fragment key={index}>
+                <div className="flex items-center justify-between w-full">
+                  <p className="text-sm px-3">{fileName}</p>
+                  <LucideTrash
+                    className="h-3 w-6 hover:cursor-pointer"
+                    onClick={() => handleFileDelete(fileName)}
+                  />
+                </div>
+                <Separator />
+              </Fragment>
+            ))}
+          </div>
         </FormItem>
       )}
     />
