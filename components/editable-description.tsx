@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { updateProject } from "@/lib/actions";
@@ -36,7 +36,7 @@ export default function EditableDescription({
     }
   }, [editing, description]);
 
-  const handleChangeDescription = (event: any) => {
+  const handleChangeDescription = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(event.target.value);
     const scrollY = window.scrollY;
     // Automatically resize the textarea
@@ -88,14 +88,13 @@ export default function EditableDescription({
           {!editing ? (
             description
           ) : (
-            <textarea
+            <Textarea
               ref={textareaRef}
-              className="w-full text-slate-600 bg-white border border-slate-300 appearance-none rounded-lg px-3.5 py-2.5 outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
               placeholder="Tell us a little bit about your project"
               required
               value={description}
               onChange={handleChangeDescription}
-            ></textarea>
+            />
           )}
         </CardDescription>
         {editing && (
