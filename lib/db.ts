@@ -1,7 +1,7 @@
 import "server-only";
 
 import { drizzle } from "drizzle-orm/postgres-js";
-import { and, eq, or, desc } from "drizzle-orm";
+import { and, eq, or, desc, asc } from "drizzle-orm";
 import postgres from "postgres";
 import { genSaltSync, hashSync } from "bcrypt-ts";
 
@@ -242,7 +242,7 @@ export async function getTaskComments(taskid: number, pagenum: number = 0) {
       eq(Schemas.users1.id, Schemas.taskcomments1.userid),
     )
     .where(eq(Schemas.taskcomments1.taskid, taskid))
-    .orderBy(desc(Schemas.taskcomments1.createdat));
+    .orderBy(asc(Schemas.taskcomments1.createdat));
   // .limit(pagesize).offset(pagesize * pagenum)
 }
 

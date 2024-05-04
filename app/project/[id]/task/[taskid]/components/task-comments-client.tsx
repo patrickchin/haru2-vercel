@@ -97,31 +97,8 @@ export default function TaskCommentsClient({
     <Card>
       <CardHeader className="font-bold">Comments</CardHeader>
       <CardContent className="flex flex-col gap-8 px-16 py-6">
-        <form
-          onSubmit={async (e: FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
-            const data = new FormData(e.currentTarget);
-            const comment = data.get("comment");
-            if (comment) {
-              e.currentTarget.reset();
-              const newcomments = await addTaskComment(
-                taskId,
-                comment as string
-              );
-              if (newcomments) {
-                setUpdatedComments(newcomments);
-              }
-            }
-          }}
-          className="flex flex-col gap-4"
-        >
-          <AddCommentForm />
-        </form>
 
-        <LoadNewComments
-          taskId={taskId}
-          setUpdatedComments={setUpdatedComments}
-        />
+        {/* <Button variant="secondary">Load all older Comments</Button> */}
 
         <ul className="">
           {updatedComments.map((c, i) => (
@@ -174,7 +151,32 @@ export default function TaskCommentsClient({
           )}
         </ul>
 
-        {/* <Button variant="secondary">Load all older Comments</Button> */}
+        <LoadNewComments
+          taskId={taskId}
+          setUpdatedComments={setUpdatedComments}
+        />
+
+        <form
+          onSubmit={async (e: FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            const data = new FormData(e.currentTarget);
+            const comment = data.get("comment");
+            if (comment) {
+              e.currentTarget.reset();
+              const newcomments = await addTaskComment(
+                taskId,
+                comment as string
+              );
+              if (newcomments) {
+                setUpdatedComments(newcomments);
+              }
+            }
+          }}
+          className="flex flex-col gap-4"
+        >
+          <AddCommentForm />
+        </form>
+
       </CardContent>
       <CardFooter></CardFooter>
     </Card>
