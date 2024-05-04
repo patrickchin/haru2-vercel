@@ -1,17 +1,23 @@
 import { CenteredLayout, WideLayout } from "@/components/page-layouts";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { Label } from "@/components/ui/label";
-import { getProject } from "@/lib/actions";
+import * as Actions from "@/lib/actions";
 import { auth } from "@/lib/auth";
 import { getTaskSpecs } from "@/lib/db";
-import { DesignProject, DesignTaskSpec, teamNames } from "@/lib/types";
-import { LucideChevronDown, LucideMoveLeft } from "lucide-react";
+import { DesignProject, DesignTaskSpec, DesignTeam, DesignTeamMember, teamNames } from "@/lib/types";
+import { LucideChevronDown, LucideMoveLeft, LucidePlus } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
+import { ManageTeamMembers } from "./components/manage-team-members";
+import AddTeamMemberButton from "./components/manage-team-add-team";
 
 function ManageTeamTasks({
   team,
@@ -74,16 +80,20 @@ async function ProjectManagement({ projectId }: { projectId: number }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const project: DesignProject | undefined = await getProject(projectId);
+  const project: DesignProject | undefined = await Actions.getProject(projectId);
   if (project === undefined) notFound();
+  // TODO should be an Action rather than a db call
   const specs: DesignTaskSpec[] = await getTaskSpecs();
 
+  // TODO this can be done server side
   const groupedSpecs: Record<string, DesignTaskSpec[]> = {};
   specs.forEach((spec) => {
     const key: string = spec.type || "other";
     if (!Object.keys(groupedSpecs).includes(key)) groupedSpecs[key] = [];
     groupedSpecs[key].push(spec);
   });
+
+  const teams: DesignTeam[] = await Actions.getProjectTeams(projectId) || [];
 
   return (
     <>
@@ -99,12 +109,13 @@ async function ProjectManagement({ projectId }: { projectId: number }) {
       </section>
 
       <section className="flex flex-col gap-4">
-        <div className="px-6">
+        <div className="flex justify-between px-6">
           <h3>Team Member Selection</h3>
+          <AddTeamMemberButton projectId={projectId}/>
         </div>
-        <div className="grid grid-cols-2">
-          {Object.keys(groupedSpecs).map((team) => (
-            <Card key={team} className="p-4">{teamNames[team]}</Card>
+        <div className="grid grid-cols-2 gap-4">
+          {teams.map((team) => (
+            <ManageTeamMembers key={team} team={team} />
           ))}
         </div>
       </section>
