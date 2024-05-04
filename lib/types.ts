@@ -1,7 +1,7 @@
 import * as Schemas from "drizzle/schema";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
-import { getTaskComments } from "./db";
+import * as db from "./db";
 
 function allFilesSmall(list: FileList | undefined) {
   if (list === undefined) return true;
@@ -56,12 +56,14 @@ export type RegisterSchemaType = z.infer<typeof RegisterSchema>;
 
 export type DesignUser = typeof Schemas.users1.$inferSelect;
 export type DesignProject = typeof Schemas.projects1.$inferSelect;
+export type DesignTeam = typeof Schemas.teams1.$inferSelect;
+export type DesignTeamMember = typeof Schemas.teammembers1.$inferSelect;
 export type DesignTaskSpec = typeof Schemas.taskspecs1.$inferSelect;
 export type DesignTask = typeof Schemas.tasks1.$inferSelect;
 export type DesignFile = typeof Schemas.files1.$inferSelect;
 export type DesignTaskComment = typeof Schemas.taskcomments1.$inferSelect;
 export type DesignTaskUserComment = Awaited<
-  ReturnType<typeof getTaskComments>
+  ReturnType<typeof db.getTaskComments>
 >[0];
 
 export const teamNames: Record<string, string> = {

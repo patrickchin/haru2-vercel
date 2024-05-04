@@ -104,6 +104,7 @@ export async function updateTitle(projectId: number, newTitle: string) {
   );
   return updatedProject[0];
 }
+
 //update any fields of project
 export async function updateProjectFields(
   projectId: number,
@@ -129,6 +130,57 @@ export async function updateProjectFields(
 
   return updatedProject[0];
 }
+
+// project members ==========================================================================================
+
+export async function createTeam(projectid: number, type: string) {
+  const types: Set<string> = new Set(["legal", "architectural", "structural", "mep"]);
+  if (!types.has(type)) {
+    console.error("createTeam invalid team type", type);
+    return null;
+  }
+  return await db.insert(Schemas.teams1).values({
+    projectid,
+    type,
+  }).returning();
+}
+
+export async function getTeamId(projectid: number, type: string) {
+  // may
+  return db.select().from(Schemas.teams1).where(
+    and(
+      eq(Schemas.teams1.projectid, projectid),
+      eq(Schemas.teams1.type, type),
+    ),
+  )
+}
+
+export async function addTeamMember(teamid: number, userid: number) {
+  return await db.insert(Schemas.teammembers1).values({
+    teamid,
+    userid,
+  }).returning();
+}
+
+export async function getProjectTeams(projectId: number) {
+  return await db.select()
+    .from(Schemas.teams1)
+    // .leftJoin(Schemas.teammembers1,
+    //   eq(Schemas.teammembers1.teamid, Schemas.teams1.id),
+    // )
+    .where(
+      eq(Schemas.teams1.projectid, projectId)
+    );
+}
+
+// export async function getTeamMembers(teamid: number) {
+//   return await db.select({ userid: Schemas.teammembers1.userid })
+//     .from(Schemas.teammembers1).where(
+//       eq(Schemas.teammembers1.teamid, teamid)
+//     );
+// }
+
+
 // tasks ==========================================================================================
 
 export async function createTaskSpecs(

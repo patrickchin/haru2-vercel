@@ -185,6 +185,7 @@ export async function getProjectFiles(projectId: number) {
   const fileUrls = await db.getFilesUrlsForProject(projectId);
   return fileUrls;
 }
+
 //Update project title
 export async function updateProjectTitle(projectId: number, newTitle: string) {
   const session = await auth();
@@ -206,6 +207,7 @@ export async function updateProjectTitle(projectId: number, newTitle: string) {
   }
   return updatedProject;
 }
+
 //update any field of the project
 export async function updateProject(
   projectId: number,
@@ -229,6 +231,37 @@ export async function updateProject(
     return null;
   }
   return updatedProject;
+}
+
+// members ===================================================================
+
+export async function createProjectTeam(projectId: number, type: string) {
+  const session = await auth();
+  if (!session?.user) return;
+  const newteam = await db.createTeam(projectId, type);
+  assert(
+    newteam?.length === 1,
+    "Expected exactly one team should be added",
+  );
+  return newteam;
+}
+
+export async function getProjectTeams(projectId: number) {
+  const session = await auth();
+  if (!session?.user) return;
+  return db.getProjectTeams(projectId);
+}
+
+export async function addTeamMember(teamid: number, email: string) {
+  const session = await auth();
+  if (!session?.user) return;
+  const user = await db.getUser(email);
+  if (user.length == 0) return;
+  assert(
+    user.length === 1,
+    "Expected exactly one user with this email",
+  );
+  return db.addTeamMember(teamid, user[0].id);
 }
 
 // tasks ===================================================================
