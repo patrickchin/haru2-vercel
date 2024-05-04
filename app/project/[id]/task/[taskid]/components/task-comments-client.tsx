@@ -84,14 +84,14 @@ export default function TaskCommentsClient({
   taskId: number;
   comments: DesignTaskComment[];
 }) {
+  const router = useRouter();
   const pathname = usePathname();
   const [updatedComments, setUpdatedComments] = useState(comments);
 
-  // // is this a hack? is this normal practice??
-  // const fragment =
-  //   typeof window !== "undefined"
-  //     ? window.location.hash
-  //     : "";
+  // is this a hack? is this normal practice??
+  const [fragment, setFragment] = useState(
+    typeof window !== "undefined" ? window.location.hash : "",
+  );
 
   return (
     <Card>
@@ -129,8 +129,10 @@ export default function TaskCommentsClient({
               id={`comment-${c.taskcomments1.id}`}
               key={i}
               className={cn(
-                "flex gap-6 p-4 items-start justify-center border-b hover:bg-accent"
-                // fragment == `#comment-${c.taskcomments1.id}` ? "bg-yellow-50" : ""
+                "flex gap-6 p-4 items-start justify-center border-b hover:bg-accent",
+                fragment === `#comment-${c.taskcomments1.id}`
+                  ? "bg-yellow-50"
+                  : "",
               )}
             >
               <div className="pt-2">
@@ -152,6 +154,9 @@ export default function TaskCommentsClient({
                     }}
                     replace={true}
                     className="text-sm text-muted-foreground"
+                    onClick={(e) =>
+                      setFragment(`#comment-${c.taskcomments1.id}`)
+                    }
                   >
                     {(
                       c.taskcomments1.createdat as unknown as Date
