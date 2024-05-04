@@ -120,7 +120,7 @@ export async function getProject(projectId: number) {
   const session = await auth();
   if (!session?.user?.id) return undefined;
   const userId = Number(session.user.id);
-  const projects = await db.getUserProject(userId, projectId);
+  const projects = await db.getProject(projectId);
   if (projects.length <= 0) return undefined;
   return projects[0];
 }

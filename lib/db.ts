@@ -65,6 +65,17 @@ export async function getUserProject(userId: number, projectId: number) {
     );
 }
 
+export async function getProject(projectId: number) {
+  return await db
+    .select()
+    .from(Schemas.projects1)
+    .where(
+      and(
+        eq(Schemas.projects1.id, projectId),
+      ),
+    );
+}
+
 export async function createProject(values: {
   userid: number;
   title: string;
