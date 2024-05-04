@@ -35,11 +35,17 @@ async function ProjectPage({
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const project: DesignProject | undefined = await getProject(projectId);
+  const [project, files, tasks] = await Promise.all([
+    getProject(projectId),
+    getProjectFiles(projectId),
+    getProjectTasks(projectId),
+  ]);
+  // const project: DesignProject | undefined = await getProject(projectId);
+  // const files: DesignFile[] | undefined = await getProjectFiles(projectId);
+  // const tasks: DesignTask[] | undefined = await getProjectTasks(projectId);
+
   if (project === undefined) notFound();
-  const files: DesignFile[] | undefined = await getProjectFiles(projectId);
   if (files === undefined) notFound();
-  const tasks: DesignTask[] | undefined = await getProjectTasks(projectId);
   if (tasks === undefined) notFound();
 
   // TODO validate tab it could be a stirng that is not a tab
