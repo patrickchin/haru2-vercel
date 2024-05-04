@@ -8,6 +8,7 @@ import { CenteredLayout } from "@/components/page-layouts";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
@@ -96,37 +97,47 @@ async function TaskPage({
 
       <ProjectInfoBar project={project} />
 
-      <div className="flex flex-row gap-4">
-        <div className="w-2/3 flex flex-col gap-4">
-          <Card className="h-full">
-            <CardHeader className="font-bold">Description</CardHeader>
-            <CardContent>{taskSpec?.description}</CardContent>
-            <CardFooter></CardFooter>
-          </Card>
+      <Card className="h-full w-full">
+        {/* <CardHeader className="font-bold">Description</CardHeader> */}
+        <CardContent className="p-6">
+          <CardDescription>{taskSpec?.description}</CardDescription>
+        </CardContent>
+      </Card>
 
-          <Card className="h-full">
-            <CardHeader className="flex flex-col gap-4">
-              <div className="flex">
-                <span className="border-r px-2">
-                  <span className="font-bold pr-2">Start:</span>
-                  <span>2023-01-01</span>
-                </span>
-                <span className="border-r px-2">
-                  <span className="font-bold pr-2">Estimated:</span>
-                  <span>4 days</span>
-                </span>
-                <span className="px-2">
-                  <span className="font-bold pr-2">Current:</span>
-                  <span>10 days</span>
-                </span>
-              </div>
-              <Progress value={40} indicatorColor="bg-green-400" />
-            </CardHeader>
-          </Card>
+      {false && (
+        <div className="flex flex-row gap-4">
+          <div className="flex flex-col gap-4">
+            <Card className="h-full w-full">
+              <CardHeader className="font-bold">Description</CardHeader>
+              <CardContent>
+                <CardDescription>{taskSpec?.description}</CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="h-full">
+              <CardHeader className="flex flex-col gap-4">
+                <div className="flex">
+                  <span className="border-r px-2">
+                    <span className="font-bold pr-2">Start:</span>
+                    <span>2023-01-01</span>
+                  </span>
+                  <span className="border-r px-2">
+                    <span className="font-bold pr-2">Estimated:</span>
+                    <span>4 days</span>
+                  </span>
+                  <span className="px-2">
+                    <span className="font-bold pr-2">Current:</span>
+                    <span>10 days</span>
+                  </span>
+                </div>
+                <Progress value={40} indicatorColor="bg-green-400" />
+              </CardHeader>
+            </Card>
+          </div>
+
+          <MembersList />
         </div>
-
-        <MembersList />
-      </div>
+      )}
 
       <TaskFiles taskId={task.id} />
       <TaskComments taskId={task.id} />
