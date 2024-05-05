@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { FieldValues, useForm } from "react-hook-form";
@@ -267,10 +267,10 @@ function DetailedQuestions({ form }: { form: NewProjectFormType }) {
       <Separator />
       <CardContent className="space-y-6 p-12 pt-6">
         {questions.map((qa, i) => (
-          <>
+          <Fragment key={i}>
             <DetailedQuestion form={form} qa={qa} key={i} />
             <Separator />
-          </>
+          </Fragment>
         ))}
       </CardContent>
     </Card>
