@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { FieldValues, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LucideChevronDown, LucideLoader2, LucidePlus } from "lucide-react";
+import { LucideLoader2, LucidePlus } from "lucide-react";
 import { CenteredLayout } from "@/components/page-layouts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,11 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { countries } from "content/countries";
 import { buildingTypes } from "content/buildingTypes";
 import { submitProjectForm2 } from "@/lib/actions";
@@ -257,8 +252,6 @@ function DetailedQuestion({ form, qa }: { form: NewProjectFormType; qa: any }) {
 }
 
 function DetailedQuestions({ form }: { form: NewProjectFormType }) {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
     <Card className="overflow-hidden">
       <CardHeader>

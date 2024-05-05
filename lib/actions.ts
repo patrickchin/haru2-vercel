@@ -7,6 +7,7 @@ import * as blob from "@vercel/blob";
 import { NewProjectFormSchema } from "./types";
 import { redirect } from "next/navigation";
 import { defaulTaskSpecs } from "./tasks";
+import assert from "assert";
 
 const VERCEL_BLOB_FAKE_FILES = true;
 
@@ -88,7 +89,7 @@ export async function submitProjectForm2(formData: FormData) {
         continue;
       }
 
-      const data = VERCEL_BLOB_FAKE_FILES
+      const data = VERCEL_BLOB_FAKE_FILES && (file.size > 512)
         ? new ArrayBuffer(8)
         : await file.arrayBuffer();
       // TODO use all the data
@@ -256,14 +257,22 @@ export async function getProjectTask(projectId: number, specId: number) {
   return tasks[0];
 }
 
+export async function getTaskCommentsAndFiles(taskId: number) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  const comments = db.getTaskComments(taskId);
+  const files = db.getTaskCommentAttachments(taskId);
+  return Promise.all([comments, files]);
+}
+
 export async function getTaskComments(taskId: number) {
   const session = await auth();
   if (!session?.user?.id) return;
-  const comments = await db.getTaskComments(taskId);
+  const comments = db.getTaskComments(taskId);
   return comments;
 }
 
-export async function addTaskComment(taskId: number, comment: string) {
+export async function addTaskComment(taskId: number, comment: string, attachmentsIds: number[]) {
   const session = await auth();
   if (!session?.user?.id) return;
   const userId = Number(session.user.id);
@@ -273,7 +282,11 @@ export async function addTaskComment(taskId: number, comment: string) {
     comment: comment,
   });
   if (comments.length == 0) return;
-  return await db.getTaskComments(taskId);
+  const editedFiles = attachmentsIds.map((fileid) => 
+    db.editTaskFile(fileid, { commentid: comments[0].id })
+  );
+  const allEditedFiles = await Promise.all(editedFiles);
+  return getTaskCommentsAndFiles(taskId);
 }
 
 export async function addTaskFile(taskId: number, data: FormData) {
@@ -291,13 +304,13 @@ export async function addTaskFile(taskId: number, data: FormData) {
     // projectid: ?,
     taskid: taskId,
     uploaderid: userId,
-    taskid: taskId,
+    // commentid: ?,
     filename: file.name,
     filesize: file.size,
     // url: ?,
   });
 
-  const fileBytes = VERCEL_BLOB_FAKE_FILES
+  const fileBytes = VERCEL_BLOB_FAKE_FILES && (file.size > 512)
     ? new ArrayBuffer(8)
     : await file.arrayBuffer();
   // I would prefer the file to be saved here:
@@ -306,7 +319,15 @@ export async function addTaskFile(taskId: number, data: FormData) {
     access: "public",
   });
 
-  await db.editTaskFile((await newFile).id, { url: blobResult.url });
+  const newFile = await newFileP;
+  const editedFile = await db.editTaskFile(newFile.id, { url: blobResult.url });
+  assert(newFile.id === editedFile.id, "added and edited files differ");
+  return editedFile;
+}
+
+export async function addTaskFileReturnAll(taskId: number, data: FormData) {
+  // no auth because done in addTaskFile
+  addTaskFile(taskId, data);
   return await db.getTaskFiles(taskId);
 }
 

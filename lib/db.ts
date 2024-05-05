@@ -1,7 +1,7 @@
 import "server-only";
 
 import { drizzle } from "drizzle-orm/postgres-js";
-import { and, eq, or, desc, asc } from "drizzle-orm";
+import { and, eq, or, desc, asc, isNotNull } from "drizzle-orm";
 import postgres from "postgres";
 import { genSaltSync, hashSync } from "bcrypt-ts";
 
@@ -185,22 +185,27 @@ export async function getProjectTask(projectid: number, specid: number) {
 // files ==========================================================================================
 
 export async function addFileUrlToProject(
-  values: typeof Schemas.files1._.inferInsert,
+  values: Omit<typeof Schemas.files1._.inferInsert, "id">,
 ) {
   return await db.insert(Schemas.files1).values(values).returning();
 }
 
 export async function getFilesUrlsForProject(projectId: number) {
-  // is there a better way to handle the return values of joins?
+  // tbh this join isn't needed if we just attach projectId to the file
   return await db
     .select({
+      // do i really gotta specify manually?
       id: Schemas.files1.id,
       uploaderid: Schemas.files1.uploaderid,
       projectid: Schemas.files1.projectid,
-      type: Schemas.files1.type,
       taskid: Schemas.files1.taskid,
+      commentid: Schemas.files1.commentid,
       filename: Schemas.files1.filename,
+      filesize: Schemas.files1.filesize,
       url: Schemas.files1.url,
+      type: Schemas.files1.type,
+      // ...Schemas.files1._.columns, // this no work?
+
     })
     .from(Schemas.files1)
     .leftJoin(Schemas.tasks1, eq(Schemas.tasks1.id, Schemas.files1.taskid))
@@ -258,7 +263,7 @@ export async function addTaskFile(values: typeof Schemas.files1._.inferInsert) {
   return newFiles[0];
 }
 
-export async function editTaskFile(fileId: number, values: { url: string }) {
+export async function editTaskFile(fileId: number, values: Omit<typeof Schemas.files1._.inferInsert, "id">) {
   const editedFiles = await db
     .update(Schemas.files1)
     .set(values)
@@ -274,4 +279,14 @@ export async function getTaskFiles(taskid: number) {
     .from(Schemas.files1)
     .where(eq(Schemas.files1.taskid, taskid));
   // .orderBy(desc(Schemas.files1.createdat));
+}
+
+export async function getTaskCommentAttachments(taskid: number) {
+  return await db
+    .select()
+    .from(Schemas.files1)
+    .where(and(
+      eq(Schemas.files1.taskid, taskid),
+      isNotNull(Schemas.files1.commentid)
+    ));
 }

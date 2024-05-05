@@ -94,6 +94,7 @@ export const files1 = pgTable("files1", {
   uploaderid: integer("uploaderId").references(() => users1.id),
   projectid: integer("projectId").references(() => projects1.id),
   taskid: integer("taskId").references(() => tasks1.id),
+  commentid: integer("commentid").references(() => taskcomments1.id),
   filename: varchar("filename", { length: 255 }).notNull().default(""),
   filesize: integer("filesize"),
   url: varchar("url", { length: 255 }),
