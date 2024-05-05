@@ -86,24 +86,15 @@ function LoadNewComments({
 }
 
 function CommentAttachments({
-  commentId,
   attachments,
 }: {
-  commentId: number;
   attachments: DesignFile[];
 }) {
-  const groupedAttachments: Record<number, DesignFile[]> = {};
-  attachments.forEach((att) => {
-    const key: number | null = att.commentid;
-    if (key === null) return;
-    if (!Object.keys(groupedAttachments).includes(key.toString()))
-      groupedAttachments[key] = [];
-    groupedAttachments[key].push(att);
-  });
+  if (!attachments || attachments.length == 0) return null;
 
   return (
     <ul className="flex gap-4 flex-wrap">
-      {groupedAttachments[commentId]?.map((att) => {
+      {attachments.map((att) => {
         return (
           <li
             key={att.id}
@@ -144,6 +135,15 @@ function CommentsList({
     typeof window !== "undefined" ? window.location.hash : "",
   );
 
+  const groupedAttachments: Record<number, DesignFile[]> = {};
+  attachments.forEach((att) => {
+    const key: number | null = att.commentid;
+    if (key === null) return;
+    if (!Object.keys(groupedAttachments).includes(key.toString()))
+      groupedAttachments[key] = [];
+    groupedAttachments[key].push(att);
+  });
+
   return (
     <ul className="">
       {comments.map((c, i) => (
@@ -161,8 +161,7 @@ function CommentsList({
               <AvatarImage src={`/tmp/avatar${(c.users1?.id || 0) % 12}.png`} />
             </Avatar>
           </div>
-          <div className="flex flex-col gap-2 w-full">
-
+          <div className="flex flex-col gap-1 w-full">
             <div className="flex flex-row gap-4 items-end">
               <span className="font-bold">{c.users1?.name}</span>
               {/* <span className="text-sm">{c.taskcomments1.createdat}</span> */}
@@ -179,7 +178,11 @@ function CommentsList({
               </Link>
             </div>
 
-            <CommentAttachments commentId={c.taskcomments1.id} attachments={attachments} />
+            {attachments.length > 0 && (
+              <CommentAttachments
+                attachments={groupedAttachments[c.taskcomments1.id]}
+              />
+            )}
 
             <div className="whitespace-pre-wrap break-words">
               {c.taskcomments1.comment}
