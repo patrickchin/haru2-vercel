@@ -286,11 +286,15 @@ export async function addTaskFile(taskId: number, data: FormData) {
   if (!session?.user?.id) return;
   const userId = Number(session.user.id); // error?
 
-  const newFile = db.addTaskFile({
+  const newFileP = db.addTaskFile({
+    type: file.type,
+    // projectid: ?,
+    taskid: taskId,
     uploaderid: userId,
     taskid: taskId,
     filename: file.name,
-    type: file.type,
+    filesize: file.size,
+    // url: ?,
   });
 
   const fileBytes = VERCEL_BLOB_FAKE_FILES
