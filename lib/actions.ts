@@ -292,7 +292,8 @@ export async function addTaskComment(taskId: number, comment: string, attachment
 export async function addTaskFile(taskId: number, data: FormData) {
   const file = data.get("file") as File;
   if (!file) {
-    console.log("file not correcty uploaded");
+    console.log("addTaskFile file not correcty uploaded");
+    return;
   }
 
   const session = await auth();
@@ -327,13 +328,19 @@ export async function addTaskFile(taskId: number, data: FormData) {
 
 export async function addTaskFileReturnAll(taskId: number, data: FormData) {
   // no auth because done in addTaskFile
-  addTaskFile(taskId, data);
-  return await db.getTaskFiles(taskId);
+  await addTaskFile(taskId, data);
+  return db.getTaskFiles(taskId);
 }
 
 export async function getTaskFiles(taskId: number) {
   const session = await auth();
   if (!session?.user?.id) return;
-  const comments = await db.getTaskFiles(taskId);
-  return comments;
+  return db.getTaskFiles(taskId);
+}
+
+export async function deleteFile(fileId: number) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  return db.deleteFile(fileId);
+
 }

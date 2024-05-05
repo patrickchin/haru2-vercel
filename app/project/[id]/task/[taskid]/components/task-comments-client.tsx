@@ -1,10 +1,24 @@
 "use client";
 
-import { ChangeEvent, Dispatch, FormEvent, SetStateAction, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  Dispatch,
+  FormEvent,
+  SetStateAction,
+  useRef,
+  useState,
+} from "react";
 import { useFormStatus } from "react-dom";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { LucideDownload, LucideLoader2, LucideUpload, LucideView, LucideX } from "lucide-react";
+import {
+  LucideDownload,
+  LucideLoader2,
+  LucideUpload,
+  LucideView,
+  LucideX,
+} from "lucide-react";
+import assert from "assert";
 
 import {
   Card,
@@ -15,18 +29,18 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 
 import { cn } from "@/lib/utils";
+import { DesignFile, DesignTaskUserComment } from "@/lib/types";
 import {
   addTaskComment,
   addTaskFile,
+  deleteFile,
   getTaskCommentsAndFiles,
 } from "@/lib/actions";
-import { DesignFile, DesignTaskUserComment } from "@/lib/types";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import assert from "assert";
-import { Separator } from "@/components/ui/separator";
 
 async function updateCommentsAndFiles(
   taskId: number,
@@ -256,7 +270,7 @@ function AttachmentList({
 
   function removeAttachment(fileId: number) {
     setCurrentAttachments((list) => list.filter((f) => f.id !== fileId));
-    // deleteFile(fileId); // TODO
+    deleteFile(fileId);
   }
 
   return (

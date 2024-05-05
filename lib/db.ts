@@ -290,3 +290,9 @@ export async function getTaskCommentAttachments(taskid: number) {
       isNotNull(Schemas.files1.commentid)
     ));
 }
+
+export async function deleteFile(fileId: number) {
+  return db.delete(Schemas.files1)
+    .where(eq(Schemas.files1.id, fileId))
+    .returning();
+}

@@ -1,29 +1,29 @@
 import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
+import { LucideMoveLeft } from "lucide-react";
 import { auth } from "@/lib/auth";
-
 import { getProject, getProjectTask, getTaskSpec } from "@/lib/actions";
+import { DesignProject, DesignTask, DesignTaskSpec } from "@/lib/types";
 
 import { CenteredLayout } from "@/components/page-layouts";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
+import BackButton from "@/components/back-button";
 
 import { ProjectInfoBar } from "../../components/project-description";
 import TaskFiles from "./components/task-files";
 import TaskComments from "./components/task-comments";
-import { DesignProject, DesignTask, DesignTaskSpec } from "@/lib/types";
-import BackButton from "@/components/back-button";
-import { LucideMoveLeft } from "lucide-react";
 
-function MembersList() {
+function MembersList({ taskId }: { taskId: number }) {
+  // TODO
+  // const members = getTaskMembers(taskId);
   const members = [
     { name: "Patrick Chin" },
     { name: "Haruna Bayoh" },
@@ -63,19 +63,23 @@ async function TaskPage({
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const project: DesignProject | undefined = await getProject(projectId);
-  if (!project) {
-    console.log("task: can't find project", projectId);
-    notFound();
-  }
-  const taskSpec: DesignTaskSpec | undefined = await getTaskSpec(specId);
-  if (!taskSpec) {
-    console.log("task: can't find spec", projectId, specId);
-    notFound();
-  }
-  const task: DesignTask | undefined = await getProjectTask(projectId, specId);
-  if (!task) {
-    console.log("task: can't find task", projectId, specId);
+  const [project, taskSpec, task]: [
+    DesignProject | undefined,
+    DesignTaskSpec | undefined,
+    DesignTask | undefined,
+  ] = await Promise.all([
+    getProject(projectId),
+    getTaskSpec(specId),
+    getProjectTask(projectId, specId),
+  ]);
+
+  // const project: DesignProject | undefined = await getProject(projectId);
+  // const taskSpec: DesignTaskSpec | undefined = await getTaskSpec(specId);
+  // const task: DesignTask | undefined = await getProjectTask(projectId, specId);
+
+  if (!project || !taskSpec || !task) {
+    console.log("task: can't find project %d %d task spec %d %d task %d",
+    projectId, !!project, specId, !!taskSpec, !!task);
     notFound();
   }
 
@@ -135,7 +139,7 @@ async function TaskPage({
             </Card>
           </div>
 
-          <MembersList />
+          <MembersList taskId={task.id} />
         </div>
       )}
 

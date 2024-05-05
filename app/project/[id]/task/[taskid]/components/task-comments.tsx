@@ -8,7 +8,7 @@ function TaskCommentsSkeleton() {
   return (<div>loading comments ...</div>)
 }
 
-async function TaskCommentsFatch({ taskId, }: { taskId: number; }) {
+async function TaskCommentsFetch({ taskId, }: { taskId: number; }) {
   const [taskComments, taskFiles] = await getTaskCommentsAndFiles(taskId) || [undefined, undefined];
   if (!taskComments) { console.log("task: can't find task comments", taskId); notFound(); }
   if (!taskFiles) { console.log("task: can't find task files", taskId); notFound(); }
@@ -19,7 +19,7 @@ async function TaskCommentsFatch({ taskId, }: { taskId: number; }) {
 export default async function TaskComments({ taskId, }: { taskId: number; }) {
   return (
     <Suspense fallback={(<TaskCommentsSkeleton />)} >
-      <TaskCommentsFatch taskId={taskId} />
+      <TaskCommentsFetch taskId={taskId} />
     </Suspense>
   )
 }
