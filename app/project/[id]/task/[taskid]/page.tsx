@@ -108,7 +108,7 @@ async function TaskPage({
         </CardContent>
       </Card>
 
-      {false && (
+      {task !== undefined && false && (
         <div className="flex flex-row gap-4">
           <div className="flex flex-col gap-4">
             <Card className="h-full w-full">
@@ -138,8 +138,16 @@ async function TaskPage({
               </CardHeader>
             </Card>
           </div>
-
-          <MembersList taskId={task.id} />
+          <MembersList
+            taskId={
+              task?.id || -1
+              /*
+              seems bugged due to the `false && ` statement above,
+              so typescript thinks task can be undefined
+              */
+            }
+          />{" "}
+          */
         </div>
       )}
 
