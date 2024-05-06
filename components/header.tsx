@@ -33,7 +33,7 @@ export function MainNav() {
 function UserNav() {
   return (
     <div className="flex gap-x-8 text-gray-400">
-      <Button variant="secondary" onClick={() => signOut()}>
+      <Button variant="secondary" onClick={() => signOut({ callbackUrl: '/' })}>
         Logout
       </Button>
     </div>
