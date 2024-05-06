@@ -174,7 +174,16 @@ function CommentsList({
                 className="text-sm text-muted-foreground"
                 onClick={(e) => setFragment(`#comment-${c.taskcomments1.id}`)}
               >
-                {(c.taskcomments1.createdat as unknown as Date).toString()}
+                <time
+                  dateTime={(
+                    c.taskcomments1.createdat as unknown as Date
+                  ).toISOString()}
+                  suppressHydrationWarning
+                >
+                  {(
+                    c.taskcomments1.createdat as unknown as Date
+                  ).toLocaleString()}
+                </time>
               </Link>
             </div>
 
