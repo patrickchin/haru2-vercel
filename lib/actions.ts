@@ -127,6 +127,10 @@ export async function getProject(projectId: number) {
 }
 
 export async function deleteFullProject(projectId: number) {
+
+  // disable deletions for now
+  return;
+
   // TODO needs more security
   const session = await auth();
   if (!session?.user?.id) return;
