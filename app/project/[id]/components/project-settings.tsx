@@ -88,7 +88,7 @@ export default function ProjectSettings({ project }: { project: any }) {
             <Button variant="destructive" disabled>
               Request Project Deletion
             </Button>
-            <Button variant="destructive" onClick={clickDeleteProject}>
+            <Button variant="destructive" disabled onClick={clickDeleteProject}>
               Delete Project
             </Button>
           </div>
