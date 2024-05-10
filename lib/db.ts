@@ -37,6 +37,26 @@ export async function createUser(
     .values({ name, phone, email, password: hash });
 }
 
+export async function addProfilePictureUrlToUser(
+  values: typeof Schemas.files1._.inferInsert,
+) {
+  const newFiles = await db.insert(Schemas.files1).values(values).returning();
+  assert(newFiles.length == 1);
+  return newFiles[0];
+}
+
+export async function updateProfilePictureUrlToUser(
+  uploaderid: number,
+  values: { url: string },
+) {
+  const updatedUser = await db
+    .update(Schemas.files1)
+    .set(values)
+    .where(eq(Schemas.files1.uploaderid, uploaderid))
+    .returning();
+
+  return updatedUser[0];
+}
 // projects ==========================================================================================
 
 export async function getUserProjects(userId: number, pagenum: number = 0) {
@@ -69,11 +89,7 @@ export async function getProject(projectId: number) {
   return await db
     .select()
     .from(Schemas.projects1)
-    .where(
-      and(
-        eq(Schemas.projects1.id, projectId),
-      ),
-    );
+    .where(and(eq(Schemas.projects1.id, projectId)));
 }
 
 export async function createProject(values: {
@@ -273,5 +289,16 @@ export async function getTaskFiles(taskid: number) {
     .select()
     .from(Schemas.files1)
     .where(eq(Schemas.files1.taskid, taskid));
+  // .orderBy(desc(Schemas.files1.createdat));
+}
+
+export async function getUserAvater(uploaderid: number) {
+  const userAvater = await db
+    .select()
+    .from(Schemas.files1)
+    .where(eq(Schemas.files1.uploaderid, uploaderid));
+
+  console.log("userAvater[0]:", userAvater[0]);
+  return userAvater[0];
   // .orderBy(desc(Schemas.files1.createdat));
 }

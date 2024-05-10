@@ -5,6 +5,16 @@ import { LucideConstruction } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuPortal,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import { Settings, LogOut } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { getAvatarInitials } from "@/lib/utils";
 
 const navigation = [
   { name: "New Project", href: "/new-project" },
@@ -30,12 +40,58 @@ export function MainNav() {
   );
 }
 
-function UserNav() {
+function UserNav({ user }: { user?: any }) {
+  const signOutAction = async () => {
+    // Redirect after signing out is handled by NextAuth
+    console.log("logout");
+    await signOut({
+      redirect: true, // This enables redirection after signing out
+      callbackUrl: "/", // This sets the URL to redirect to after signing out
+    });
+  };
   return (
-    <div className="flex gap-x-8 text-gray-400">
-      <Button variant="secondary" onClick={() => signOut()}>
-        Logout
-      </Button>
+    <div className="flex items-center gap-x-3 text-gray-400">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Avatar className="cursor-pointer">
+            {user.image_url ? (
+              <AvatarImage
+                className="AvatarImage"
+                src="https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80"
+              />
+            ) : (
+              <AvatarFallback className="AvatarFallback" delayMs={600}>
+                {getAvatarInitials(user.name)}
+              </AvatarFallback>
+            )}
+          </Avatar>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuPortal>
+          <DropdownMenuContent className="DropdownMenuContent" sideOffset={5}>
+            <ul className="flex flex-col gap-1 divide-y">
+              <li className="py-2">
+                <Link href={"/settings"}>
+                  <DropdownMenuItem className="DropdownMenuItem cursor-pointer gap-4">
+                    <Settings className="w-4 p-0" />
+                    Settings
+                  </DropdownMenuItem>
+                </Link>
+              </li>
+              <li className="py-2">
+                <DropdownMenuItem
+                  onClick={signOutAction}
+                  className="DropdownMenuItem cursor-pointer gap-4"
+                >
+                  <LogOut className="w-4 p-0" />
+                  Log Out
+                </DropdownMenuItem>
+              </li>
+            </ul>
+          </DropdownMenuContent>
+        </DropdownMenuPortal>
+      </DropdownMenu>
+      <div className="place-items-center">{user?.name}</div>
     </div>
   );
 }
@@ -56,8 +112,9 @@ function LoginSignup() {
 
 export function LoginOrUserSettings() {
   const { data: session, status } = useSession();
+  console.log("Data:", session);
 
-  if (status === "authenticated") return <UserNav />;
+  if (status === "authenticated") return <UserNav user={session?.user} />;
 
   if (status === "loading") return <UserNav />;
 
