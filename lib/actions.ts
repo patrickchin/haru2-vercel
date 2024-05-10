@@ -12,12 +12,26 @@ import assert from "assert";
 
 const VERCEL_BLOB_FAKE_FILES = true;
 
-export async function createUserFromRegister(data: any) {
-  return db.createUser(data.name, data.phone, data.email, data.password);
-}
+// export async function createUserFromRegister(data: any) {
+//   return db.createUser(data.name, data.phone, data.email, data.password);
+// }
 
-export async function getUserFromRegister(data: any) {
-  return db.getUser(data.email);
+// export async function getUserFromRegister(data: any) {
+//   return db.getUser(data.email);
+// }
+
+export async function registerUser(data: any) {
+  try {
+    let user = await db.getUser(data.email);
+    
+    if (user.length > 0) {
+      throw new Error("User already exists");
+    }
+    
+    await db.createUser(data.name, data.phone, data.email, data.password);
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function signInFromLogin(data: any) {
