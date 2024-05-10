@@ -1,15 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { FieldValues, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LucideChevronDown, LucideLoader2, LucidePlus } from "lucide-react";
+import { LucideLoader2, LucidePlus, LucideTrash } from "lucide-react";
 import { CenteredLayout } from "@/components/page-layouts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import {
   Form,
   FormControl,
@@ -25,11 +27,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { countries } from "content/countries";
 import { buildingTypes } from "content/buildingTypes";
 import { submitProjectForm2 } from "@/lib/actions";
@@ -40,8 +37,6 @@ import {
 } from "@/lib/types";
 import { questions } from "content/questions";
 import { cn } from "@/lib/utils";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 
 function ProjectTitle({ form }: { form: NewProjectFormType }) {
   return (
@@ -192,18 +187,84 @@ function ProjectDescription({ form }: { form: NewProjectFormType }) {
   );
 }
 
-function ProjectDocuments({ form }: { form: NewProjectFormType }) {
+function ProjectDocuments({
+  form,
+  filesSelected,
+  setFilesSelected,
+}: {
+  form: NewProjectFormType;
+  filesSelected: FileList | null;
+  setFilesSelected: (filesSelected: FileList | null) => void;
+}) {
+  const fileNames = useMemo(() => {
+    if (filesSelected) {
+      return Array.from(filesSelected).map((file) => file.name);
+    } else {
+      return [];
+    }
+  }, [filesSelected]);
+
+  function handleFileChange(fileList: FileList | null) {
+    if (fileList) {
+      setFilesSelected(fileList);
+    }
+  }
+
+  function handleFileDelete(fileName: any) {
+    if (filesSelected) {
+      const updatedFilesArray = Array.from(filesSelected).filter(
+        (file) => file.name !== fileName,
+      );
+      const updatedFileList = new DataTransfer();
+      updatedFilesArray.forEach((file) => updatedFileList.items.add(file));
+      setFilesSelected(updatedFileList.files);
+    }
+  }
+
   return (
     <FormField
       control={form.control}
       name="files"
       render={({ field }) => (
-        <FormItem>
-          <FormLabel>Additional Documents</FormLabel>
-          <FormControl>
-            <Input type="file" multiple {...form.register(field.name)} />
-          </FormControl>
+        <FormItem className="space-y-4">
+          <FormLabel className="space-y-4">
+            <div>Additional Documents</div>
+            <div
+              className={cn(
+                "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2",
+                "text-sm ring-offset-background placeholder:text-muted-foreground",
+                "focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+                "disabled:cursor-not-allowed disabled:opacity-50",
+                "cursor-pointer",
+              )}
+            >
+              <p className="font-normal">Select files to upload</p>
+              <FormControl>
+                <Input
+                  className="opacity-0 w-0 h-0 p-0 border-4 focus-visible:ring-0"
+                  type="file"
+                  multiple
+                  {...form.register(field.name)}
+                  onChange={(e) => handleFileChange(e.target.files)}
+                />
+              </FormControl>
+            </div>
+          </FormLabel>
           <FormMessage />
+          <div className="space-y-2">
+            {fileNames.map((fileName, index) => (
+              <Fragment key={index}>
+                <div className="flex items-center justify-between w-full">
+                  <p className="text-sm px-3">{fileName}</p>
+                  <LucideTrash
+                    className="h-3 w-6 hover:cursor-pointer"
+                    onClick={() => handleFileDelete(fileName)}
+                  />
+                </div>
+                <Separator />
+              </Fragment>
+            ))}
+          </div>
         </FormItem>
       )}
     />
@@ -212,13 +273,13 @@ function ProjectDocuments({ form }: { form: NewProjectFormType }) {
 
 function DetailedQuestion({ form, qa }: { form: NewProjectFormType; qa: any }) {
   const [showTextArea, setShowTextArea] = useState(false);
-
   return (
     <FormField
       control={form.control}
       name={qa.name}
       render={({ field }) => (
         <FormItem>
+
           <FormLabel className="flex justify-between items-center">
             <div className="space-y-2">
               <div className="text-base">{qa.title}</div>
@@ -257,8 +318,6 @@ function DetailedQuestion({ form, qa }: { form: NewProjectFormType; qa: any }) {
 }
 
 function DetailedQuestions({ form }: { form: NewProjectFormType }) {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
     <Card className="overflow-hidden">
       <CardHeader>
@@ -267,10 +326,10 @@ function DetailedQuestions({ form }: { form: NewProjectFormType }) {
       <Separator />
       <CardContent className="space-y-6 p-12 pt-6">
         {questions.map((qa, i) => (
-          <>
+          <Fragment key={i}>
             <DetailedQuestion form={form} qa={qa} key={i} />
             <Separator />
-          </>
+          </Fragment>
         ))}
       </CardContent>
     </Card>
@@ -294,11 +353,27 @@ function NewProjectForm() {
     },
   });
 
+  const [filesSelected, setFilesSelected] = useState<FileList | null>(null);
+
   async function handleSubmitProjectForm(
     data: FieldValues,
     event?: React.BaseSyntheticEvent,
   ) {
-    const fdata = new FormData(event?.target);
+    const fdata = new FormData();
+
+    Object.entries(data).forEach(([name, value]) => {
+      if (name !== "files") {
+        fdata.append(name, value);
+      }
+    });
+
+    if (filesSelected) {
+      for (let i = 0; i < filesSelected.length; i++) {
+        const file = filesSelected[i];
+        fdata.append("files", file);
+      }
+    }
+
     const submitSuccess = await submitProjectForm2(fdata);
     if (submitSuccess === null) {
       return Promise.reject("Error submitting project, server returned null");
@@ -320,7 +395,11 @@ function NewProjectForm() {
         <CountrySelector form={form} />
         <BuildingTypeSelector form={form} />
         <ProjectDescription form={form} />
-        <ProjectDocuments form={form} />
+        <ProjectDocuments
+          form={form}
+          filesSelected={filesSelected}
+          setFilesSelected={setFilesSelected}
+        />
         <DetailedQuestions form={form} />
         <div className="mt-6 flex items-center justify-end gap-x-3">
           <Button

@@ -3,7 +3,7 @@
 import { ChangeEvent, useRef, useState } from "react";
 import assert from "assert";
 import Link from "next/link";
-import { addTaskFile } from "@/lib/actions";
+import { addTaskFileReturnAll } from "@/lib/actions";
 import { DesignFile } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
@@ -50,7 +50,7 @@ export default function TaskFilesClient({
     // server action arguments can only be primatives or FormData
     const data = new FormData();
     data.set("file", file);
-    const newFiles = await addTaskFile(taskId, data);
+    const newFiles = await addTaskFileReturnAll(taskId, data);
     if (newFiles) setUpdatedFiles(newFiles);
 
     e.target.value = "";

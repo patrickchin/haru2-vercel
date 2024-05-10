@@ -25,6 +25,10 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -40,7 +44,7 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
   {
     accessorKey: "type",
     size: 64,
-    header: () => <div className="text-center">Type</div>,
+    header: () => <div className="text-center">Team</div>,
     cell: ({ row }) => (
       <div className="flex justify-center items-center">
         <Badge variant="secondary" className="capitalize">
@@ -84,7 +88,7 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
     size: 64,
     header: () => <div className="text-center">Status</div>,
     cell: ({ row }) => (
-      <div className="text-center">{row.getValue("status")}</div>
+      <div className="text-center capitalize">{row.getValue("status")}</div>
     ),
   },
   {
@@ -192,96 +196,135 @@ function TaskTableBody({
 }
 
 function TaskTableFilterToggles({ table }: { table: Tan.Table<DesignTask> }) {
-  const filterTypeButtonValues = [
-    { value: undefined, label: "All" },
-    { value: "legal", label: "Legal" },
-    { value: "architectural", label: "Architectural" },
-    { value: "structural", label: "Structural" },
-    { value: "mep", label: "MEP" },
-  ];
 
-  const filterStatusButtonValues = [
-    { value: undefined, label: "All" },
-    { value: "pending", label: "Pending" },
-    { value: "in progress", label: "In Progress" },
-    { value: "complete", label: "Complete" },
-  ];
+  const statusValues = ["all", "pending", "in progress", "complete"];
+  const teamValues = ["all", "legal", "architectural", "structural", "mep"];
+
+  const [statusFilter, setStatusFilter] = React.useState(statusValues[0]);
+  const [teamFilter, setTeamFilter] = React.useState(teamValues[0]);
 
   return (
-    <div className="w-full flex items-center py-4 gap-4">
-      {/* row filter input box */}
-      <Input
-        placeholder="Filter table..."
-        // value={(table.getColumn("lead")?.getFilterValue() as string) ?? ""}
-        onChange={(event) =>
-          // table.getColumn("lead")?.setFilterValue(event.target.value)
-          table.setGlobalFilter(event.target.value)
-        }
-        className="max-w-sm"
-      />
+    <div className="w-full flex items-center gap-3 justify-between">
+      <div className="flex gap-3 items-center justify-start">
+        {/* row filter input box */}
+        <Input
+          placeholder="Filter table..."
+          // value={(table.getColumn("lead")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            // table.getColumn("lead")?.setFilterValue(event.target.value)
+            table.setGlobalFilter(event.target.value)
+          }
+          className="max-w-sm grow"
+        />
 
-      <div className="flex items-center space-x-4">
-        {filterStatusButtonValues.map((filter) => (
-          <Button
-            variant="outline"
-            key={filter.value || ""}
-            className={
-              (table.getColumn("status")?.getFilterValue() as string) ==
-              filter.value
-                ? "bg-accent"
-                : ""
-            }
-            onClick={() =>
-              table.getColumn("status")?.setFilterValue(filter.value)
-            }
-          >
-            {filter.label}
-          </Button>
-        ))}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto capitalize">
+              Status: {statusFilter} <ChevronDown className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuRadioGroup
+              value={statusFilter}
+              onValueChange={(filter) => {
+                setStatusFilter(filter);
+                table
+                  .getColumn("status")
+                  ?.setFilterValue(filter !== "all" ? filter : undefined);
+              }}
+            >
+              {statusValues.map((status) => {
+                return (
+                  <DropdownMenuRadioItem
+                    key={status}
+                    value={status}
+                    className="py-3 pr-6 capitalize"
+                  >
+                    {status}
+                  </DropdownMenuRadioItem>
+                );
+              })}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto capitalize">
+              Team: {teamFilter} <ChevronDown className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuRadioGroup
+              value={teamFilter}
+              onValueChange={(filter) => {
+                setTeamFilter(filter);
+                table
+                  .getColumn("type")
+                  ?.setFilterValue(filter !== "all" ? filter : undefined);
+              }}
+            >
+              {teamValues.map((team) => {
+                return (
+                  <DropdownMenuRadioItem
+                    key={team}
+                    value={team}
+                    className="py-3 pr-6 capitalize"
+                  >
+                    {team}
+                  </DropdownMenuRadioItem>
+                );
+              })}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
-      <div className="text-sm text-muted-foreground">
-        Selected {table.getRowCount()} row(s)
-      </div>
+      <div className="flex gap-3 items-center">
+        <div className="text-sm text-muted-foreground">
+          Selected {table.getRowCount()} row(s)
+        </div>
 
-      {/* Select columns to show dropdown */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="ml-auto">
-            Columns <ChevronDown className="ml-2 h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          {table
-            .getAllColumns()
-            .filter((column) => column.getCanHide())
-            .map((column) => {
-              return (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                >
-                  {column.id}
-                </DropdownMenuCheckboxItem>
-              );
-            })}
-        </DropdownMenuContent>
-      </DropdownMenu>
+        {/* Select columns to show dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto">
+              Columns <ChevronDown className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                );
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </div>
   );
 }
 
 function TaskTableFooter({ table }: { table: Tan.Table<DesignTask> }) {
   return (
-    <>
-      <div className="flex-1 text-sm text-muted-foreground">
+    <div className="flex items-center justify-end space-x-2">
+      <div className="flex-1 text-sm text-muted-foreground pl-1">
         Showing {table.getPaginationRowModel().rows.length} of{" "}
         {table.getRowCount()} row(s) displayed.
       </div>
 
-      {/* pagination */}
       <div className="space-x-2">
         <Button
           variant="outline"
@@ -291,7 +334,6 @@ function TaskTableFooter({ table }: { table: Tan.Table<DesignTask> }) {
         >
           Previous
         </Button>
-        {/* <span>TODO number of pages</span> */}
         <Button
           variant="outline"
           size="sm"
@@ -301,7 +343,7 @@ function TaskTableFooter({ table }: { table: Tan.Table<DesignTask> }) {
           Next
         </Button>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -351,7 +393,7 @@ export default function TaskTable({
   });
 
   return (
-    <div className="w-full">
+    <div className="w-full space-y-4">
       {showFilterToggles && <TaskTableFilterToggles table={table} />}
 
       {/* The table */}
@@ -366,9 +408,7 @@ export default function TaskTable({
         </Table>
       </div>
 
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <TaskTableFooter table={table} />
-      </div>
+      <TaskTableFooter table={table} />
     </div>
   );
 }

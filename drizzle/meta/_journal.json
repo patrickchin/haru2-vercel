@@ -15,6 +15,13 @@
       "when": 1714751351382,
       "tag": "0001_red_lenny_balinger",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1714937879349,
+      "tag": "0002_groovy_mandroid",
+      "breakpoints": true
     }
   ]
 }

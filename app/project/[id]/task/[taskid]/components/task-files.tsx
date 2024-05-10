@@ -18,7 +18,7 @@ async function TaskFilesFetch({ taskId, }: { taskId: number; }) {
   return <TaskFilesClient taskId={taskId} files={files} />
 }
 
-export default async function TaskComments({ taskId, }: { taskId: number; }) {
+export default async function TaskFiles({ taskId, }: { taskId: number; }) {
   return (
     <Suspense fallback={(<TaskFilesSkeleton />)} >
       <TaskFilesFetch taskId={taskId} />

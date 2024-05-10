@@ -73,7 +73,7 @@ function TeamProgress({
           </span>
           <LucideChevronDown className="h-5" />
         </CollapsibleTrigger>
-        <CollapsibleContent className="px-12 py-6">
+        <CollapsibleContent className="p-6">
           <TaskTable
             projectid={project.id}
             data={tasks}

@@ -7,6 +7,7 @@ import * as blob from "@vercel/blob";
 import { NewProjectFormSchema } from "./types";
 import { redirect } from "next/navigation";
 import { defaulTaskSpecs } from "./tasks";
+import assert from "assert";
 
 const VERCEL_BLOB_FAKE_FILES = true;
 
@@ -88,9 +89,10 @@ export async function submitProjectForm2(formData: FormData) {
         continue;
       }
 
-      const data = VERCEL_BLOB_FAKE_FILES
-        ? new ArrayBuffer(8)
-        : await file.arrayBuffer();
+      const data =
+        VERCEL_BLOB_FAKE_FILES && file.size > 512
+          ? new ArrayBuffer(8)
+          : await file.arrayBuffer();
       // TODO use all the data
       const { url } = await blob.put(
         `project/${newProjectId}/${file.name}`,
@@ -126,6 +128,9 @@ export async function getProject(projectId: number) {
 }
 
 export async function deleteFullProject(projectId: number) {
+  // disable deletions for now
+  return;
+
   // TODO needs more security
   const session = await auth();
   if (!session?.user?.id) return;
@@ -256,14 +261,26 @@ export async function getProjectTask(projectId: number, specId: number) {
   return tasks[0];
 }
 
+export async function getTaskCommentsAndFiles(taskId: number) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  const comments = db.getTaskComments(taskId);
+  const files = db.getTaskCommentAttachments(taskId);
+  return Promise.all([comments, files]);
+}
+
 export async function getTaskComments(taskId: number) {
   const session = await auth();
   if (!session?.user?.id) return;
-  const comments = await db.getTaskComments(taskId);
+  const comments = db.getTaskComments(taskId);
   return comments;
 }
 
-export async function addTaskComment(taskId: number, comment: string) {
+export async function addTaskComment(
+  taskId: number,
+  comment: string,
+  attachmentsIds: number[],
+) {
   const session = await auth();
   if (!session?.user?.id) return;
   const userId = Number(session.user.id);
@@ -273,36 +290,55 @@ export async function addTaskComment(taskId: number, comment: string) {
     comment: comment,
   });
   if (comments.length == 0) return;
-  return await db.getTaskComments(taskId);
+  const editedFiles = attachmentsIds.map((fileid) =>
+    db.editTaskFile(fileid, { commentid: comments[0].id }),
+  );
+  const allEditedFiles = await Promise.all(editedFiles);
+  return getTaskCommentsAndFiles(taskId);
 }
 
 export async function addTaskFile(taskId: number, data: FormData) {
   const file = data.get("file") as File;
   if (!file) {
-    console.log("file not correcty uploaded");
+    console.log("addTaskFile file not correcty uploaded");
+    return;
   }
 
   const session = await auth();
   if (!session?.user?.id) return;
   const userId = Number(session.user.id); // error?
 
-  const newFile = db.addTaskFile({
-    uploaderid: userId,
-    taskid: taskId,
-    filename: file.name,
+  const newFileP = db.addTaskFile({
     type: file.type,
+    // projectid: ?,
+    taskid: taskId,
+    uploaderid: userId,
+    // commentid: ?,
+    filename: file.name,
+    filesize: file.size,
+    // url: ?,
   });
 
-  const fileBytes = VERCEL_BLOB_FAKE_FILES
-    ? new ArrayBuffer(8)
-    : await file.arrayBuffer();
+  const fileBytes =
+    VERCEL_BLOB_FAKE_FILES && file.size > 512
+      ? new ArrayBuffer(8)
+      : await file.arrayBuffer();
   // I would prefer the file to be saved here:
   // const blobResult = await blob.put(`project/${projectId}/task/${taskSpecId}/${file.name}`, fileBytes, {
   const blobResult = await blob.put(`task/${taskId}/${file.name}`, fileBytes, {
     access: "public",
   });
-  await db.editTaskFile((await newFile).id, { url: blobResult.url });
-  return await db.getTaskFiles(taskId);
+
+  const newFile = await newFileP;
+  const editedFile = await db.editTaskFile(newFile.id, { url: blobResult.url });
+  assert(newFile.id === editedFile.id, "added and edited files differ");
+  return editedFile;
+}
+
+export async function addTaskFileReturnAll(taskId: number, data: FormData) {
+  // no auth because done in addTaskFile
+  await addTaskFile(taskId, data);
+  return db.getTaskFiles(taskId);
 }
 
 //updateAvaterForUser
@@ -349,6 +385,11 @@ export async function updateAvaterForUser(data: FormData) {
 export async function getTaskFiles(taskId: number) {
   const session = await auth();
   if (!session?.user?.id) return;
-  const comments = await db.getTaskFiles(taskId);
-  return comments;
+  return db.getTaskFiles(taskId);
+}
+
+export async function deleteFile(fileId: number) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  return db.deleteFile(fileId);
 }
