@@ -16,7 +16,7 @@ export default function Login() {
 
   const schema = z.object({
     email: z.string().trim().min(1, {message: "Email is required"}).email(),
-    password: z.string().min(8, {message: "Password must contain at least 8 characters"}),
+    password: z.string().min(1, {message: "Password is required"}),
   })
 
   type FormFields = z.infer<typeof schema>;
@@ -31,17 +31,13 @@ export default function Login() {
   });
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
-
-    try {
-      await signInFromLogin({
+      const ret = await signInFromLogin({
         redirectTo: '/',
         email: data.email,
         password: data.password,
       });
-    } catch (error) {
-      console.error("Error:", error);
+      console.log(ret);
     }
-  }
 
   return (
     <SimpleLayout>
