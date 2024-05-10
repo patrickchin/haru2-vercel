@@ -89,9 +89,10 @@ export async function submitProjectForm2(formData: FormData) {
         continue;
       }
 
-      const data = VERCEL_BLOB_FAKE_FILES && (file.size > 512)
-        ? new ArrayBuffer(8)
-        : await file.arrayBuffer();
+      const data =
+        VERCEL_BLOB_FAKE_FILES && file.size > 512
+          ? new ArrayBuffer(8)
+          : await file.arrayBuffer();
       // TODO use all the data
       const { url } = await blob.put(
         `project/${newProjectId}/${file.name}`,
@@ -127,7 +128,6 @@ export async function getProject(projectId: number) {
 }
 
 export async function deleteFullProject(projectId: number) {
-
   // disable deletions for now
   return;
 
@@ -276,7 +276,11 @@ export async function getTaskComments(taskId: number) {
   return comments;
 }
 
-export async function addTaskComment(taskId: number, comment: string, attachmentsIds: number[]) {
+export async function addTaskComment(
+  taskId: number,
+  comment: string,
+  attachmentsIds: number[],
+) {
   const session = await auth();
   if (!session?.user?.id) return;
   const userId = Number(session.user.id);
@@ -286,8 +290,8 @@ export async function addTaskComment(taskId: number, comment: string, attachment
     comment: comment,
   });
   if (comments.length == 0) return;
-  const editedFiles = attachmentsIds.map((fileid) => 
-    db.editTaskFile(fileid, { commentid: comments[0].id })
+  const editedFiles = attachmentsIds.map((fileid) =>
+    db.editTaskFile(fileid, { commentid: comments[0].id }),
   );
   const allEditedFiles = await Promise.all(editedFiles);
   return getTaskCommentsAndFiles(taskId);
@@ -315,9 +319,10 @@ export async function addTaskFile(taskId: number, data: FormData) {
     // url: ?,
   });
 
-  const fileBytes = VERCEL_BLOB_FAKE_FILES && (file.size > 512)
-    ? new ArrayBuffer(8)
-    : await file.arrayBuffer();
+  const fileBytes =
+    VERCEL_BLOB_FAKE_FILES && file.size > 512
+      ? new ArrayBuffer(8)
+      : await file.arrayBuffer();
   // I would prefer the file to be saved here:
   // const blobResult = await blob.put(`project/${projectId}/task/${taskSpecId}/${file.name}`, fileBytes, {
   const blobResult = await blob.put(`task/${taskId}/${file.name}`, fileBytes, {
@@ -346,5 +351,4 @@ export async function deleteFile(fileId: number) {
   const session = await auth();
   if (!session?.user?.id) return;
   return db.deleteFile(fileId);
-
 }

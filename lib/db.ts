@@ -69,11 +69,7 @@ export async function getProject(projectId: number) {
   return await db
     .select()
     .from(Schemas.projects1)
-    .where(
-      and(
-        eq(Schemas.projects1.id, projectId),
-      ),
-    );
+    .where(and(eq(Schemas.projects1.id, projectId)));
 }
 
 export async function createProject(values: {
@@ -205,7 +201,6 @@ export async function getFilesUrlsForProject(projectId: number) {
       url: Schemas.files1.url,
       type: Schemas.files1.type,
       // ...Schemas.files1._.columns, // this no work?
-
     })
     .from(Schemas.files1)
     .leftJoin(Schemas.tasks1, eq(Schemas.tasks1.id, Schemas.files1.taskid))
@@ -263,7 +258,10 @@ export async function addTaskFile(values: typeof Schemas.files1._.inferInsert) {
   return newFiles[0];
 }
 
-export async function editTaskFile(fileId: number, values: Omit<typeof Schemas.files1._.inferInsert, "id">) {
+export async function editTaskFile(
+  fileId: number,
+  values: Omit<typeof Schemas.files1._.inferInsert, "id">,
+) {
   const editedFiles = await db
     .update(Schemas.files1)
     .set(values)
@@ -285,14 +283,17 @@ export async function getTaskCommentAttachments(taskid: number) {
   return await db
     .select()
     .from(Schemas.files1)
-    .where(and(
-      eq(Schemas.files1.taskid, taskid),
-      isNotNull(Schemas.files1.commentid)
-    ));
+    .where(
+      and(
+        eq(Schemas.files1.taskid, taskid),
+        isNotNull(Schemas.files1.commentid),
+      ),
+    );
 }
 
 export async function deleteFile(fileId: number) {
-  return db.delete(Schemas.files1)
+  return db
+    .delete(Schemas.files1)
     .where(eq(Schemas.files1.id, fileId))
     .returning();
 }
