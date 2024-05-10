@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { createUserFromRegister, getUserFromRegister } from '@/lib/actions';
+import { registerUser } from '@/lib/actions';
 import { SimpleLayout } from '@/components/page-layouts';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -18,7 +18,7 @@ export default function Page() {
     phone: z.string().min(5, {message: "Phone must contain at least 5 characters"})
     .max(32, {message: "Phone cannot contain more than 32 characters"})
     .regex(/^\+?[0-9\s-]+$/, {message: "Phone contains invalid characters"}).optional().or(z.literal("")),
-    email: z.string().trim().min(1, {message: "Email is required"}).email(),
+    email: z.string().min(1, {message: "Email is required"}).email(),
     password: z.string().min(8, {message: "Password must contain at least 8 characters"}),
     confirmPassword: z.string(),
   }).refine(schema => schema.confirmPassword === schema.password, {
@@ -37,23 +37,33 @@ export default function Page() {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<FormFields> = async (data) => {
-    
-    try {
-      let user = await getUserFromRegister(data.email);
 
-      if (user.length > 0) {
-        setError("email", {
-          message: "User already exists",
-        });
-        return;
-      }
-      await createUserFromRegister(data);
+  const onSubmit: SubmitHandler<FormFields> = async (data) => {
+    try {
+      await registerUser(data);
       redirect('/login');
     } catch (error) {
       console.error("Error:", error);
     }
-  }
+  };
+
+  // const onSubmit: SubmitHandler<FormFields> = async (data) => {
+    
+  //   try {
+  //     let user = await getUserFromRegister(data.email);
+
+  //     if (user.length > 0) {
+  //       setError("email", {
+  //         message: "User already exists",
+  //       });
+  //       return;
+  //     }
+  //     await createUserFromRegister(data);
+  //     redirect('/login');
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+  // }
 
   return (
     <SimpleLayout>
