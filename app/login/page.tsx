@@ -15,7 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 export default function Login() {
 
   const schema = z.object({
-    email: z.string().trim().min(1, {message: "Email is required"}).email(),
+    email: z.string().min(1, {message: "Email is required"}).email(),
     password: z.string().min(1, {message: "Password is required"}),
   })
 

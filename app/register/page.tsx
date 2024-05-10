@@ -37,7 +37,6 @@ export default function Page() {
     resolver: zodResolver(schema),
   });
 
-
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
     try {
       await registerUser(data);
@@ -46,24 +45,6 @@ export default function Page() {
       console.error("Error:", error);
     }
   };
-
-  // const onSubmit: SubmitHandler<FormFields> = async (data) => {
-    
-  //   try {
-  //     let user = await getUserFromRegister(data.email);
-
-  //     if (user.length > 0) {
-  //       setError("email", {
-  //         message: "User already exists",
-  //       });
-  //       return;
-  //     }
-  //     await createUserFromRegister(data);
-  //     redirect('/login');
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   }
-  // }
 
   return (
     <SimpleLayout>

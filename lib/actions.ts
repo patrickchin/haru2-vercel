@@ -12,14 +12,6 @@ import assert from "assert";
 
 const VERCEL_BLOB_FAKE_FILES = true;
 
-// export async function createUserFromRegister(data: any) {
-//   return db.createUser(data.name, data.phone, data.email, data.password);
-// }
-
-// export async function getUserFromRegister(data: any) {
-//   return db.getUser(data.email);
-// }
-
 export async function registerUser(data: any) {
   try {
     let user = await db.getUser(data.email);
