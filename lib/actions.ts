@@ -5,7 +5,7 @@ import * as Schemas from "drizzle/schema";
 import { signIn } from "@/lib/auth";
 import { auth } from "./auth";
 import * as blob from "@vercel/blob";
-import { NewProjectFormSchema, RegisterSchemaType } from "./types";
+import { DesignTaskSpec, NewProjectFormSchema, RegisterSchemaType } from "./types";
 import { redirect } from "next/navigation";
 import { defaulTaskSpecs } from "./tasks";
 import assert from "assert";
@@ -293,6 +293,17 @@ export async function getTaskSpec(specId: number | null) {
   const specs = await db.getTaskSpec(specId);
   if (specs.length <= 0) return;
   return specs[0];
+}
+
+export async function getProjectTaskSpecsGroupedByTeam() {
+  const specs: DesignTaskSpec[] = await db.getTaskSpecs();
+  const groupedSpecs: Record<string, DesignTaskSpec[]> = {};
+  specs.forEach((spec) => {
+    const key: string = spec.type || "other";
+    if (!Object.keys(groupedSpecs).includes(key)) groupedSpecs[key] = [];
+    groupedSpecs[key].push(spec);
+  });
+  return groupedSpecs;
 }
 
 export async function createProjectTasks(projectId: number) {
