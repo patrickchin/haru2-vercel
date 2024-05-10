@@ -43,7 +43,6 @@ export function MainNav() {
 function UserNav({ user }: { user?: any }) {
   const signOutAction = async () => {
     // Redirect after signing out is handled by NextAuth
-    console.log("logout");
     await signOut({
       redirect: true, // This enables redirection after signing out
       callbackUrl: "/", // This sets the URL to redirect to after signing out
@@ -112,7 +111,6 @@ function LoginSignup() {
 
 export function LoginOrUserSettings() {
   const { data: session, status } = useSession();
-  console.log("Data:", session);
 
   if (status === "authenticated") return <UserNav user={session?.user} />;
 

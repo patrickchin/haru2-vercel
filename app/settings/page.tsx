@@ -1,14 +1,12 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 
 import { CenteredLayout } from "@/components/page-layouts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { createDefaultTaskSpecs, updateAvaterForUser } from "@/lib/actions";
-import { cn } from "@/lib/utils";
+import { updateAvaterForUser } from "@/lib/actions";
 
 function SettingsPage() {
   const session = useSession();
@@ -23,11 +21,11 @@ function SettingsPage() {
       console.log(file);
       setPhotoName(file.name);
       //preview the image
-      // const reader = new FileReader();
-      // reader.onload = (e: any) => {
-      //   setPhotoPreview(e.target.result);
-      // };
-      // reader.readAsDataURL(file);
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        setPhotoPreview(e.target.result);
+      };
+      reader.readAsDataURL(file);
       // server action arguments can only be primatives or FormData
       const data = new FormData();
       data.set("file", file);

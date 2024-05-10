@@ -11,9 +11,6 @@ export const authConfig = {
   ],
   callbacks: {
     async session({ session, user, token }) {
-      console.log("session:", session);
-      console.log("user:", user);
-      console.log("token:", token);
       if (session.user !== undefined) session.user.id = token.sub || "";
 
       return session;
