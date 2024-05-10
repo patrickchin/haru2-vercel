@@ -10,34 +10,20 @@ import { Button } from '@/components/ui/button';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { RegisterSchema, RegisterSchemaType } from '@/lib/types';
 
 export default function Page() {
-
-  const schema = z.object({
-    name: z.string().trim().min(1, {message: "Name is required"}),
-    phone: z.string().min(5, {message: "Phone must contain at least 5 characters"})
-    .max(32, {message: "Phone cannot contain more than 32 characters"})
-    .regex(/^\+?[0-9\s-]+$/, {message: "Phone contains invalid characters"}).optional().or(z.literal("")),
-    email: z.string().min(1, {message: "Email is required"}).email(),
-    password: z.string().min(8, {message: "Password must contain at least 8 characters"}),
-    confirmPassword: z.string(),
-  }).refine(schema => schema.confirmPassword === schema.password, {
-      message: "Oops! Passwords don't match. Try again.",
-      path: ["confirmPassword"],
-    });
-
-  type FormFields = z.infer<typeof schema>;
 
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors },
-  } = useForm<FormFields>({
-    resolver: zodResolver(schema),
+  } = useForm<RegisterSchemaType>({
+    resolver: zodResolver(RegisterSchema),
   });
 
-  const onSubmit: SubmitHandler<FormFields> = async (data) => {
+  const onSubmit: SubmitHandler<RegisterSchemaType> = async (data) => {
     try {
       await registerUser(data);
       redirect('/login');
