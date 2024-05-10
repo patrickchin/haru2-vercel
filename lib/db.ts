@@ -145,6 +145,12 @@ export async function createTeam(projectid: number, type: string) {
   }).returning();
 }
 
+export async function deleteTeam(teamId: number) {
+  return db.delete(Schemas.teams1)
+    .where(eq(Schemas.teams1.id, teamId))
+    .returning();
+}
+
 export async function getTeamId(projectid: number, type: string) {
   // may
   return db.select().from(Schemas.teams1).where(

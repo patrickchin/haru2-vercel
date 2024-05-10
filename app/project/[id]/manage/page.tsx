@@ -115,7 +115,7 @@ async function ProjectManagement({ projectId }: { projectId: number }) {
         </div>
         <div className="grid grid-cols-2 gap-4">
           {teams.map((team) => (
-            <ManageTeamMembers key={team} team={team} />
+            <ManageTeamMembers key={team.id} team={team} />
           ))}
         </div>
       </section>

@@ -246,6 +246,17 @@ export async function createProjectTeam(projectId: number, type: string) {
   return newteam;
 }
 
+export async function deleteProjectTeam(teamId: number) {
+  const session = await auth();
+  if (!session?.user) return;
+  const deletedTeam = await db.deleteTeam(teamId);
+  assert(
+    deletedTeam?.length === 1,
+    "Expected exactly one team should be deleted",
+  );
+  return deletedTeam;
+}
+
 export async function getProjectTeams(projectId: number) {
   const session = await auth();
   if (!session?.user) return;
