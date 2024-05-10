@@ -5,14 +5,14 @@ import * as Schemas from 'drizzle/schema';
 import { signIn } from '@/lib/auth';
 import { auth } from './auth';
 import * as blob  from '@vercel/blob';
-import { NewProjectFormSchema } from './types';
+import { NewProjectFormSchema, RegisterSchemaType } from './types';
 import { redirect } from 'next/navigation';
 import { defaulTaskSpecs } from './tasks';
 import assert from "assert";
 
 const VERCEL_BLOB_FAKE_FILES = true;
 
-export async function registerUser(data: any) {
+export async function registerUser(data: RegisterSchemaType) {
   try {
     let user = await db.getUser(data.email);
     
@@ -20,7 +20,7 @@ export async function registerUser(data: any) {
       throw new Error("User already exists");
     }
     
-    await db.createUser(data.name, data.phone, data.email, data.password);
+    await db.createUser(data.name, data.phone ?? "", data.email, data.password);
   } catch (error) {
     throw error;
   }

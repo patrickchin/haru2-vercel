@@ -31,6 +31,21 @@ export const NewProjectFormSchema = z.object({
 export type NewProjectFormSchemaType = z.infer<typeof NewProjectFormSchema>;
 export type NewProjectFormType = UseFormReturn<NewProjectFormSchemaType>;
 
+export const RegisterSchema = z.object({
+  name: z.string().trim().min(1, {message: "Name is required"}),
+  phone: z.string().min(5, {message: "Phone must contain at least 5 characters"})
+  .max(32, {message: "Phone cannot contain more than 32 characters"})
+  .regex(/^\+?[0-9\s-]+$/, {message: "Phone contains invalid characters"}).optional().or(z.literal("")),
+  email: z.string().min(1, {message: "Email is required"}).email(),
+  password: z.string().min(8, {message: "Password must contain at least 8 characters"}),
+  confirmPassword: z.string(),
+}).refine(schema => schema.confirmPassword === schema.password, {
+    message: "Oops! Passwords don't match. Try again.",
+    path: ["confirmPassword"],
+  });
+
+export type RegisterSchemaType = z.infer<typeof RegisterSchema>;
+
 export type DesignUser = typeof Schemas.users1.$inferSelect;
 export type DesignProject = typeof Schemas.projects1.$inferSelect;
 export type DesignTaskSpec = typeof Schemas.taskspecs1.$inferSelect;
