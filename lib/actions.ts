@@ -21,7 +21,12 @@ export async function getUserFromRegister(data: any) {
 }
 
 export async function signInFromLogin(data: any) {
-  return signIn("credentials", data);
+  try {
+    return await signIn("credentials", data);
+  } catch (error) {
+    console.error("Failed to login");
+  }
+  return "Invalid login credentials";
 }
 
 export async function submitProjectForm2(formData: FormData) {
