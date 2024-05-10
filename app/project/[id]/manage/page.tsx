@@ -80,20 +80,13 @@ async function ProjectManagement({ projectId }: { projectId: number }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const project: DesignProject | undefined = await Actions.getProject(projectId);
+  const [project, specs, teams] = await Promise.all([
+    Actions.getProject(projectId),
+    Actions.getProjectTaskSpecsGroupedByTeam(),
+    Actions.getProjectTeams(projectId)]);
+
   if (project === undefined) notFound();
-  // TODO should be an Action rather than a db call
-  const specs: DesignTaskSpec[] = await getTaskSpecs();
-
-  // TODO this can be done server side
-  const groupedSpecs: Record<string, DesignTaskSpec[]> = {};
-  specs.forEach((spec) => {
-    const key: string = spec.type || "other";
-    if (!Object.keys(groupedSpecs).includes(key)) groupedSpecs[key] = [];
-    groupedSpecs[key].push(spec);
-  });
-
-  const teams: DesignTeam[] = await Actions.getProjectTeams(projectId) || [];
+  if (teams === undefined) notFound();
 
   return (
     <>
@@ -124,11 +117,11 @@ async function ProjectManagement({ projectId }: { projectId: number }) {
         <div className="px-6">
           <h3>Team Task Selection</h3>
         </div>
-        {Object.keys(groupedSpecs).map((team) => (
+        {Object.keys(specs).map((team) => (
           <ManageTeamTasksDropdown
             key={team}
             team={team}
-            groupedSpecs={groupedSpecs}
+            groupedSpecs={specs}
           />
         ))}
       </section>
