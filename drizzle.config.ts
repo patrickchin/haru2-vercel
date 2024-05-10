@@ -7,9 +7,9 @@ console.log("Using SSL", process.env.POSTGRES_SSL, process.env.POSTGRES_SSL != "
 export default {
   schema: "./drizzle/schema.ts",
   out: "./drizzle",
-  driver: "pg",
+  dialect: "postgresql",
+  // dbCredentials : { url: `${process.env.POSTGRES_URL}?sslmode=require` },
   dbCredentials: {
-    // connectionString: `${process.env.POSTGRES_URL}?sslmode=require`,
     user: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     host: process.env.POSTGRES_HOST!,
