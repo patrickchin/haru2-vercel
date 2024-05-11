@@ -64,7 +64,8 @@ export async function submitProjectForm2(formData: FormData) {
       special,
     },
   });
-  if (newProjectArr.length != 1) {
+
+  if (newProjectArr.length === 0) {
     console.error("Failed to submit a new project post");
     return null;
   }
@@ -232,6 +233,11 @@ export async function createProjectTasks(projectId: number) {
   // const userId = Number(session.user.id);
   // TODO check user permissions
   const specs = await db.getTaskSpecs();
+  if (specs.length === 0) {
+    console.warn("no task specifications");
+    return;
+  }
+
   const tasks = specs.map((spec): typeof Schemas.tasks1.$inferInsert => {
     return {
       specid: spec.id,
