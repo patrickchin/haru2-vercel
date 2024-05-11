@@ -75,7 +75,7 @@ async function ProjectPage({
       >
         <div>
           <TabsList className="shadow-sm">
-            <TabsTrigger asChild value="description">
+            <TabsTrigger value="description">
               <Link
                 href={{ query: { tab: "description" } }}
                 scroll={false}
@@ -84,7 +84,11 @@ async function ProjectPage({
                 Description
               </Link>
             </TabsTrigger>
-            <TabsTrigger asChild value="teams-progress">
+            <TabsTrigger
+              value="teams-progress"
+              disabled={project.status === "pending"}
+              className="disabled:cursor-not-allowed"
+            >
               <Link
                 href={{ query: { tab: "teams-progress" } }}
                 scroll={false}
@@ -93,7 +97,11 @@ async function ProjectPage({
                 Teams Progress
               </Link>
             </TabsTrigger>
-            <TabsTrigger asChild value="task-details">
+            <TabsTrigger
+              value="task-details"
+              disabled={project.status === "pending"}
+              className="disabled:cursor-not-allowed"
+            >
               <Link
                 href={{ query: { tab: "task-details" } }}
                 scroll={false}
@@ -102,7 +110,7 @@ async function ProjectPage({
                 Task Details
               </Link>
             </TabsTrigger>
-            <TabsTrigger asChild value="files">
+            <TabsTrigger value="files">
               <Link
                 href={{ query: { tab: "files" } }}
                 scroll={false}
@@ -111,7 +119,7 @@ async function ProjectPage({
                 All Files
               </Link>
             </TabsTrigger>
-            <TabsTrigger asChild value="model">
+            <TabsTrigger value="model">
               <Link
                 href={{ query: { tab: "model" } }}
                 scroll={false}
@@ -120,7 +128,7 @@ async function ProjectPage({
                 Model View
               </Link>
             </TabsTrigger>
-            <TabsTrigger asChild value="settings">
+            <TabsTrigger value="settings">
               <Link
                 href={{ query: { tab: "settings" } }}
                 scroll={false}

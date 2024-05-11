@@ -9,6 +9,7 @@ import {
   char,
   date,
   boolean,
+  unique,
 } from "drizzle-orm/pg-core";
 
 // pnpm drizzle-kit push:pg
@@ -29,8 +30,7 @@ export const users1 = pgTable("users1", {
   }).defaultNow(),
   avatarUrl: varchar("avatarUrl", { length: 255 }),
   avatarColor: varchar("avatarColor", { length: 12 }), // color hex code
-}
-);
+});
 
 export const projects1 = pgTable("projects1", {
   id: serial("id").primaryKey().notNull(),
@@ -57,10 +57,16 @@ export const teams1 = pgTable("teams1", {
   lead: integer("leadId").references(() => users1.id),
 });
 
-export const teammembers1 = pgTable("teammembers1", {
-  teamid: integer("teamId").references(() => teams1.id),
-  userid: integer("userId").references(() => users1.id),
-});
+export const teammembers1 = pgTable(
+  "teammembers1",
+  {
+    teamid: integer("teamId").references(() => teams1.id),
+    userid: integer("userId").references(() => users1.id),
+  },
+  (t) => ({
+    unq: unique().on(t.teamid, t.userid),
+  }),
+);
 
 export const taskspecs1 = pgTable("taskspecs1", {
   id: serial("id").primaryKey().notNull(),

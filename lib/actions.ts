@@ -5,7 +5,12 @@ import * as Schemas from "drizzle/schema";
 import { signIn } from "@/lib/auth";
 import { auth } from "./auth";
 import * as blob from "@vercel/blob";
-import { DesignTaskSpec, NewProjectFormSchema, RegisterSchemaType } from "./types";
+import {
+  DesignTaskSpec,
+  DesignTeam,
+  NewProjectFormSchema,
+  RegisterSchemaType,
+} from "./types";
 import { redirect } from "next/navigation";
 import { defaulTaskSpecs } from "./tasks";
 import assert from "assert";
@@ -96,12 +101,6 @@ export async function submitProjectForm2(formData: FormData) {
 
   const newProjectId = newProjectArr[0].id;
 
-  const newTasks = await createProjectTasks(newProjectId);
-  if (!newTasks || newTasks.length == 0) {
-    console.error("Failed to create project tasks");
-    // return null;
-  }
-
   // TODO client upload directly to server! 4.5 MB limit currently
   if (files) {
     for (const file of files) {
@@ -178,6 +177,15 @@ export async function deleteFullProject(projectId: number) {
   redirect("/projects");
 }
 
+export async function startProject(projectId: number) {
+  const newTasks = await createProjectTasks(projectId);
+  if (!newTasks || newTasks.length == 0) {
+    console.error("Failed to create project tasks");
+    // return null;
+  }
+  await updateProject(projectId, { status: "in progress" });
+}
+
 export async function getProjectFiles(projectId: number) {
   const session = await auth();
   if (!session?.user?.id) return undefined;
@@ -239,19 +247,16 @@ export async function createProjectTeam(projectId: number, type: string) {
   const session = await auth();
   if (!session?.user) return;
   const newteam = await db.createTeam(projectId, type);
-  assert(
-    newteam?.length === 1,
-    "Expected exactly one team should be added",
-  );
+  assert(newteam?.length === 1, "Expected exactly one team should be added");
   return newteam;
 }
 
 export async function deleteProjectTeam(teamId: number) {
   const session = await auth();
   if (!session?.user) return;
-  const deletedTeam = await db.deleteTeam(teamId);
+  const deletedTeam: DesignTeam[] = await db.deleteTeam(teamId);
   assert(
-    deletedTeam?.length === 1,
+    deletedTeam.length === 1,
     "Expected exactly one team should be deleted",
   );
   return deletedTeam;
@@ -263,21 +268,29 @@ export async function getProjectTeams(projectId: number) {
   return db.getProjectTeams(projectId);
 }
 
-export async function addTeamMember(teamid: number, email: string) {
+export async function addTeamMember(teamId: number, email: string) {
   const session = await auth();
   if (!session?.user) return;
+  // TODO this can be done in one db call
   const user = await db.getUser(email);
+  // TODO actually if the member doesn't exist we would like to add him anyways
+  // and create an account for them
   if (user.length == 0) return;
-  assert(
-    user.length === 1,
-    "Expected exactly one user with this email",
-  );
-  return db.addTeamMember(teamid, user[0].id);
+  assert(user.length === 1, "Expected exactly one user with this email");
+  const newTeamMember = await db.addTeamMember(teamId, user[0].id);
+  assert(newTeamMember.length <= 1, "Expected exactly one or no users added to team");
+  return getTeamMembers(teamId);
+}
+
+export async function getTeamMembers(teamId: number) {
+  const session = await auth();
+  if (!session?.user) return;
+  return db.getTeamMembers(teamId);
 }
 
 // tasks ===================================================================
 
-export async function createDefaultTaskSpecs() {
+async function createDefaultTaskSpecs() {
   const session = await auth();
   if (!session?.user) return;
   const spec100 = await getTaskSpec(100);
@@ -309,6 +322,10 @@ export async function getProjectTaskSpecsGroupedByTeam() {
 export async function createProjectTasks(projectId: number) {
   const session = await auth();
   if (!session?.user?.id) return undefined;
+
+  // create defaults if not yet created
+  await createDefaultTaskSpecs();
+
   // const userId = Number(session.user.id);
   // TODO check user permissions
   const specs = await db.getTaskSpecs();

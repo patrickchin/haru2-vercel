@@ -1,6 +1,6 @@
 import { CenteredLayout, WideLayout } from "@/components/page-layouts";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Collapsible,
@@ -10,14 +10,17 @@ import {
 import { Label } from "@/components/ui/label";
 import * as Actions from "@/lib/actions";
 import { auth } from "@/lib/auth";
-import { getTaskSpecs } from "@/lib/db";
-import { DesignProject, DesignTaskSpec, DesignTeam, DesignTeamMember, teamNames } from "@/lib/types";
+import {
+  DesignTaskSpec,
+  teamNames,
+} from "@/lib/types";
 import { LucideChevronDown, LucideMoveLeft, LucidePlus } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { ManageTeamMembers } from "./components/manage-team-members";
 import AddTeamMemberButton from "./components/manage-team-add-team";
+import StartProjectButton from "./components/start-project-button";
 
 function ManageTeamTasks({
   team,
@@ -83,7 +86,8 @@ async function ProjectManagement({ projectId }: { projectId: number }) {
   const [project, specs, teams] = await Promise.all([
     Actions.getProject(projectId),
     Actions.getProjectTaskSpecsGroupedByTeam(),
-    Actions.getProjectTeams(projectId)]);
+    Actions.getProjectTeams(projectId),
+  ]);
 
   if (project === undefined) notFound();
   if (teams === undefined) notFound();
@@ -104,7 +108,7 @@ async function ProjectManagement({ projectId }: { projectId: number }) {
       <section className="flex flex-col gap-4">
         <div className="flex justify-between px-6">
           <h3>Team Member Selection</h3>
-          <AddTeamMemberButton projectId={projectId}/>
+          <AddTeamMemberButton projectId={projectId} />
         </div>
         <div className="grid grid-cols-2 gap-4">
           {teams.map((team) => (
@@ -124,6 +128,10 @@ async function ProjectManagement({ projectId }: { projectId: number }) {
             groupedSpecs={specs}
           />
         ))}
+      </section>
+
+      <section className="flex justify-end">
+        <StartProjectButton projectId={projectId} />
       </section>
     </>
   );
