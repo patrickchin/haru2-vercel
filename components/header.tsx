@@ -41,29 +41,29 @@ export function MainNav() {
 }
 
 function UserNav({ user }: { user?: any }) {
+  console.log("user:", user);
   const signOutAction = async () => {
-    // Redirect after signing out is handled by NextAuth
     await signOut({
-      redirect: true, // This enables redirection after signing out
-      callbackUrl: "/", // This sets the URL to redirect to after signing out
+      redirect: true,
+      callbackUrl: "/",
     });
   };
   return (
     <div className="flex items-center gap-x-3 text-gray-400">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Avatar className="cursor-pointer">
-            {user.image_url ? (
-              <AvatarImage
-                className="AvatarImage"
-                src="https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80"
-              />
-            ) : (
-              <AvatarFallback className="AvatarFallback" delayMs={600}>
-                {getAvatarInitials(user.name)}
-              </AvatarFallback>
-            )}
-          </Avatar>
+          <div className="flex items-center gap-x-2 cursor-pointer">
+            <Avatar className="cursor-pointer">
+              {user.avatarUrl ? (
+                <AvatarImage className="AvatarImage" src={user.avatarUrl} />
+              ) : (
+                <AvatarFallback className="AvatarFallback" delayMs={600}>
+                  {getAvatarInitials(user.name)}
+                </AvatarFallback>
+              )}
+            </Avatar>
+            <div className="text-sm">{user?.name}</div>
+          </div>
         </DropdownMenuTrigger>
 
         <DropdownMenuPortal>
@@ -83,14 +83,13 @@ function UserNav({ user }: { user?: any }) {
                   className="DropdownMenuItem cursor-pointer gap-4"
                 >
                   <LogOut className="w-4 p-0" />
-                  Log Out
+                  Logout
                 </DropdownMenuItem>
               </li>
             </ul>
           </DropdownMenuContent>
         </DropdownMenuPortal>
       </DropdownMenu>
-      <div className="place-items-center">{user?.name}</div>
     </div>
   );
 }
