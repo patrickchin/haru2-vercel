@@ -1,13 +1,10 @@
 "use client";
 
-import { Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 
 import { CenteredLayout } from "@/components/page-layouts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { createDefaultTaskSpecs } from "@/lib/actions";
 
 function SettingsPage() {
   const session = useSession();
@@ -22,22 +19,6 @@ function SettingsPage() {
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <CardTitle>Dev Area</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex space-x-4">
-            <Button
-              variant="secondary"
-              onClick={() => createDefaultTaskSpecs()}
-            >
-              Upload default task spec
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
       <Card>
         <CardHeader>Contact information</CardHeader>
         <CardContent>
