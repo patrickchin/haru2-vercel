@@ -14,6 +14,7 @@ import {
 import { redirect } from "next/navigation";
 import { defaulTaskSpecs } from "./tasks";
 import assert from "assert";
+import { randomColor } from "./utils";
 
 const VERCEL_BLOB_FAKE_FILES = true;
 
@@ -25,7 +26,13 @@ export async function registerUser(data: RegisterSchemaType) {
       throw new Error("User already exists");
     }
 
-    await db.createUser(data.name, data.phone ?? "", data.email, data.password);
+    await db.createUser(
+      data.name,
+      data.phone ?? "",
+      data.email,
+      data.password,
+      randomColor,
+    );
   } catch (error) {
     throw error;
   }
@@ -278,7 +285,10 @@ export async function addTeamMember(teamId: number, email: string) {
   if (user.length == 0) return;
   assert(user.length === 1, "Expected exactly one user with this email");
   const newTeamMember = await db.addTeamMember(teamId, user[0].id);
-  assert(newTeamMember.length <= 1, "Expected exactly one or no users added to team");
+  assert(
+    newTeamMember.length <= 1,
+    "Expected exactly one or no users added to team",
+  );
   return getTeamMembers(teamId);
 }
 
