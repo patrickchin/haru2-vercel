@@ -1,10 +1,8 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "prevId": "",
-  "version": "5",
-  "dialect": "pg",
+  "version": "6",
+  "dialect": "postgresql",
   "tables": {
-    "users1": {
+    "public.users1": {
       "name": "users1",
       "schema": "",
       "columns": {
@@ -69,15 +67,15 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "users1_email_unique": {
+          "name": "users1_email_unique",
           "columns": [
             "email"
           ],
-          "nullsNotDistinct": false,
-          "name": "users1_email_unique"
+          "nullsNotDistinct": false
         }
       }
     },
-    "projects1": {
+    "public.projects1": {
       "name": "projects1",
       "schema": "",
       "columns": {
@@ -149,22 +147,22 @@
         "projects1_userId_users1_id_fk": {
           "name": "projects1_userId_users1_id_fk",
           "tableFrom": "projects1",
-          "tableTo": "users1",
-          "schemaTo": "public",
           "columnsFrom": [
             "userId"
           ],
+          "tableTo": "users1",
+          "schemaTo": "public",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "files1": {
+    "public.files1": {
       "name": "files1",
       "schema": "",
       "columns": {
@@ -217,50 +215,50 @@
         "files1_uploaderId_users1_id_fk": {
           "name": "files1_uploaderId_users1_id_fk",
           "tableFrom": "files1",
-          "tableTo": "users1",
-          "schemaTo": "public",
           "columnsFrom": [
             "uploaderId"
           ],
+          "tableTo": "users1",
+          "schemaTo": "public",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "files1_projectId_projects1_id_fk": {
           "name": "files1_projectId_projects1_id_fk",
           "tableFrom": "files1",
-          "tableTo": "projects1",
-          "schemaTo": "public",
           "columnsFrom": [
             "projectId"
           ],
+          "tableTo": "projects1",
+          "schemaTo": "public",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "files1_taskId_tasks1_id_fk": {
           "name": "files1_taskId_tasks1_id_fk",
           "tableFrom": "files1",
-          "tableTo": "tasks1",
-          "schemaTo": "public",
           "columnsFrom": [
             "taskId"
           ],
+          "tableTo": "tasks1",
+          "schemaTo": "public",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "taskspecs1": {
+    "public.taskspecs1": {
       "name": "taskspecs1",
       "schema": "",
       "columns": {
@@ -294,7 +292,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "tasks1": {
+    "public.tasks1": {
       "name": "tasks1",
       "schema": "",
       "columns": {
@@ -378,36 +376,36 @@
         "tasks1_projectId_projects1_id_fk": {
           "name": "tasks1_projectId_projects1_id_fk",
           "tableFrom": "tasks1",
-          "tableTo": "projects1",
-          "schemaTo": "public",
           "columnsFrom": [
             "projectId"
           ],
+          "tableTo": "projects1",
+          "schemaTo": "public",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "tasks1_specid_taskspecs1_id_fk": {
           "name": "tasks1_specid_taskspecs1_id_fk",
           "tableFrom": "tasks1",
-          "tableTo": "taskspecs1",
-          "schemaTo": "public",
           "columnsFrom": [
             "specid"
           ],
+          "tableTo": "taskspecs1",
+          "schemaTo": "public",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "taskcomments1": {
+    "public.taskcomments1": {
       "name": "taskcomments1",
       "schema": "",
       "columns": {
@@ -448,30 +446,30 @@
         "taskcomments1_taskId_tasks1_id_fk": {
           "name": "taskcomments1_taskId_tasks1_id_fk",
           "tableFrom": "taskcomments1",
-          "tableTo": "tasks1",
-          "schemaTo": "public",
           "columnsFrom": [
             "taskId"
           ],
+          "tableTo": "tasks1",
+          "schemaTo": "public",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "taskcomments1_userId_users1_id_fk": {
           "name": "taskcomments1_userId_users1_id_fk",
           "tableFrom": "taskcomments1",
-          "tableTo": "users1",
-          "schemaTo": "public",
           "columnsFrom": [
             "userId"
           ],
+          "tableTo": "users1",
+          "schemaTo": "public",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -484,5 +482,7 @@
     "schemas": {},
     "tables": {},
     "columns": {}
-  }
+  },
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": ""
 }
