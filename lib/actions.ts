@@ -344,42 +344,39 @@ export async function addTaskFileReturnAll(taskId: number, data: FormData) {
 //updateAvaterForUser
 export async function updateAvaterForUser(data: FormData) {
   const file = data.get("file") as File;
-  //console.log("File:", file);
+
   if (!file) {
-    console.log("file not correcty uploaded");
+    console.error("file not correcty uploaded");
+    return;
+  }
+  if (file && file.size > 250000) {
+    console.error("file size is too long");
+    return;
   }
 
   const session = await auth();
   if (!session?.user?.id) return;
   const userId = Number(session.user.id); // error?
-  console.log("userId:", userId);
 
   const currentUser = await db.getUserAvater(userId);
-  console.log("currentUser:", currentUser);
-  const oldAvatarUrl = currentUser.url;
-
-  const newFile = db.addProfilePictureUrlToUser({
-    uploaderid: userId,
-    filename: file.name,
-    type: file.type,
-  });
+  const oldAvatarUrl = currentUser.avatarUrl;
 
   const fileBytes = VERCEL_BLOB_FAKE_FILES
     ? new ArrayBuffer(8)
     : await file.arrayBuffer();
-  // I would prefer the file to be saved here:
 
   const blobResult = await blob.put(`user/${userId}/${file.name}`, fileBytes, {
     access: "public",
   });
 
   await db.updateProfilePictureUrlToUser(userId, {
-    url: blobResult.url,
+    avatarUrl: blobResult.url,
   });
 
-  if (oldAvatarUrl && oldAvatarUrl !== "path/to/default/avatar.jpg") {
-    await blob.del(oldAvatarUrl); // Assuming `delete` is a method provided by your blob service
+  if (oldAvatarUrl) {
+    await blob.del(oldAvatarUrl);
   }
+
   return blobResult.url;
 }
 export async function getTaskFiles(taskId: number) {
