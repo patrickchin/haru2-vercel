@@ -1,7 +1,7 @@
 "use client";
 
 import { redirect } from "next/navigation";
-import { createProjectTasks, deleteFullProject } from "@/lib/actions";
+import { deleteFullProject } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -27,17 +27,6 @@ export default function ProjectSettings({ project }: { project: any }) {
     redirect("/projects");
   }
 
-  function submitToast() {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">this is a toast</code>
-        </pre>
-      ),
-    });
-  }
-
   return (
     <div className="flex flex-col gap-4">
       <Card>
@@ -45,18 +34,6 @@ export default function ProjectSettings({ project }: { project: any }) {
           <CardTitle>Dev Area</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex gap-4">
-            <Button
-              variant="secondary"
-              onClick={() => createProjectTasks(project.id)}
-            >
-              Create Default Project Tasks
-            </Button>
-            <Button variant="secondary" onClick={submitToast}>
-              Show Toast
-            </Button>
-          </div>
-
           <div className="border rounded-md">
             <div className="rounded-none px-4 py-2 bg-accent text-sm">
               Raw Database Data

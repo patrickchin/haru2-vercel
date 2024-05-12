@@ -7,6 +7,7 @@ import { genSaltSync, hashSync } from "bcrypt-ts";
 
 import * as Schemas from "drizzle/schema";
 import assert from "assert";
+import { DesignTeam, defaultTeams } from "./types";
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
@@ -126,6 +127,7 @@ export async function updateTitle(projectId: number, newTitle: string) {
   );
   return updatedProject[0];
 }
+
 //update any fields of project
 export async function updateProjectFields(
   projectId: number,
@@ -135,6 +137,7 @@ export async function updateProjectFields(
     type?: string;
     subtype?: string;
     countrycode?: string;
+    status?: string;
     extrainfo?: any;
   },
 ) {
@@ -151,6 +154,120 @@ export async function updateProjectFields(
 
   return updatedProject[0];
 }
+
+// project members ==========================================================================================
+
+export async function createTeam(projectid: number, type: string) {
+  const types: Set<string> = new Set([
+    "legal",
+    "architectural",
+    "structural",
+    "mep",
+  ]);
+  if (!types.has(type)) {
+    console.error("createTeam invalid team type", type);
+    return null;
+  }
+  return await db
+    .insert(Schemas.teams1)
+    .values({
+      projectid,
+      type,
+    })
+    .returning();
+}
+
+export async function deleteTeam(teamId: number) {
+  const deletedTeam = await db.transaction(async (tx) => {
+    await tx
+      .delete(Schemas.teammembers1)
+      .where(eq(Schemas.teammembers1.teamid, teamId))
+      .returning();
+    return await tx
+      .delete(Schemas.teams1)
+      .where(eq(Schemas.teams1.id, teamId))
+      .returning();
+  });
+  return deletedTeam;
+}
+
+export async function getProjectTeams(projectId: number) {
+  return await db
+    .select()
+    .from(Schemas.teams1)
+    // .leftJoin(Schemas.teammembers1,
+    //   eq(Schemas.teammembers1.teamid, Schemas.teams1.id),
+    // )
+    .where(eq(Schemas.teams1.projectid, projectId));
+}
+
+export async function getProjectTeamsEnsureDefault(projectId: number) {
+  return db.transaction(async (tx) => {
+    const teams = await tx
+      .select()
+      .from(Schemas.teams1)
+      .where(eq(Schemas.teams1.projectid, projectId));
+    if (teams.length > 0) return teams;
+
+    const values = defaultTeams.map((teamType) => {
+      return { projectid: projectId, type: teamType };
+    });
+    return tx.insert(Schemas.teams1).values(values).returning();
+  });
+}
+
+export async function getTeamId(projectid: number, type: string) {
+  // may
+  return db
+    .select()
+    .from(Schemas.teams1)
+    .where(
+      and(
+        eq(Schemas.teams1.projectid, projectid),
+        eq(Schemas.teams1.type, type),
+      ),
+    );
+}
+
+export async function addTeamMember(teamid: number, userid: number) {
+  return await db
+    .insert(Schemas.teammembers1)
+    .values({
+      teamid,
+      userid,
+    })
+    .onConflictDoNothing()
+    .returning();
+}
+
+export async function deleteTeamMember(teamid: number, userid: number) {
+  return await db
+    .delete(Schemas.teammembers1)
+    .where(
+      and(
+        eq(Schemas.teammembers1.teamid, teamid),
+        eq(Schemas.teammembers1.userid, userid),
+      ),
+    )
+    .returning();
+}
+
+export async function getTeamMembers(teamId: number) {
+  return await db
+    .select({
+      name: Schemas.users1.name,
+      email: Schemas.users1.email,
+      avatarUrl: Schemas.users1.avatarUrl,
+      avatarColor: Schemas.users1.avatarColor,
+    })
+    .from(Schemas.users1)
+    .leftJoin(
+      Schemas.teammembers1,
+      eq(Schemas.teammembers1.userid, Schemas.users1.id),
+    )
+    .where(eq(Schemas.teammembers1.teamid, teamId));
+}
+
 // tasks ==========================================================================================
 
 export async function createTaskSpecs(

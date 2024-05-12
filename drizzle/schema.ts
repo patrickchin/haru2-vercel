@@ -9,6 +9,7 @@ import {
   char,
   date,
   boolean,
+  unique,
 } from "drizzle-orm/pg-core";
 
 // pnpm drizzle-kit push:pg
@@ -20,7 +21,7 @@ export const users1 = pgTable("users1", {
   id: serial("id").primaryKey().notNull(),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull().unique(),
-  password: varchar("password", { length: 255 }).notNull(),
+  password: varchar("password", { length: 255 }),
   old1phone: varchar("phone", { length: 16 }), // deprecated
   phone: varchar("phone1", { length: 32 }),
   createdAt: timestamp("createdAt", {
@@ -29,8 +30,7 @@ export const users1 = pgTable("users1", {
   }).defaultNow(),
   avatarUrl: varchar("avatarUrl", { length: 255 }),
   avatarColor: varchar("avatarColor", { length: 12 }), // color hex code
-}
-);
+});
 
 export const projects1 = pgTable("projects1", {
   id: serial("id").primaryKey().notNull(),
@@ -48,7 +48,26 @@ export const projects1 = pgTable("projects1", {
   }).defaultNow(),
 });
 
-// is this really necessary?
+// can this be indexed and referenced by (projectid, type) rather than having .id?
+export const teams1 = pgTable("teams1", {
+  id: serial("id").primaryKey().notNull(),
+  // name: varchar("name", { length: 64 }),
+  projectid: integer("projectId").references(() => projects1.id),
+  type: varchar("type", { length: 64 }), // legal, architectural, structural, mep
+  lead: integer("leadId").references(() => users1.id),
+});
+
+export const teammembers1 = pgTable(
+  "teammembers1",
+  {
+    teamid: integer("teamId").references(() => teams1.id),
+    userid: integer("userId").references(() => users1.id),
+  },
+  (t) => ({
+    unq: unique().on(t.teamid, t.userid),
+  }),
+);
+
 export const taskspecs1 = pgTable("taskspecs1", {
   id: serial("id").primaryKey().notNull(),
   type: varchar("type", { length: 255 }),

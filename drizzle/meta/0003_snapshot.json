@@ -1,4 +1,6 @@
 {
+  "id": "2c624625-7a94-48a3-9b9e-686978145db5",
+  "prevId": "03745d1f-5fe2-443e-84d1-375bde64ad84",
   "version": "6",
   "dialect": "postgresql",
   "tables": {
@@ -67,54 +69,54 @@
         "files1_uploaderId_users1_id_fk": {
           "name": "files1_uploaderId_users1_id_fk",
           "tableFrom": "files1",
+          "tableTo": "users1",
           "columnsFrom": [
             "uploaderId"
           ],
-          "tableTo": "users1",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "files1_projectId_projects1_id_fk": {
           "name": "files1_projectId_projects1_id_fk",
           "tableFrom": "files1",
+          "tableTo": "projects1",
           "columnsFrom": [
             "projectId"
           ],
-          "tableTo": "projects1",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "files1_taskId_tasks1_id_fk": {
           "name": "files1_taskId_tasks1_id_fk",
           "tableFrom": "files1",
+          "tableTo": "tasks1",
           "columnsFrom": [
             "taskId"
           ],
-          "tableTo": "tasks1",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "files1_commentid_taskcomments1_id_fk": {
           "name": "files1_commentid_taskcomments1_id_fk",
           "tableFrom": "files1",
+          "tableTo": "taskcomments1",
           "columnsFrom": [
             "commentid"
           ],
-          "tableTo": "taskcomments1",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -192,15 +194,15 @@
         "projects1_userId_users1_id_fk": {
           "name": "projects1_userId_users1_id_fk",
           "tableFrom": "projects1",
+          "tableTo": "users1",
           "columnsFrom": [
             "userId"
           ],
-          "tableTo": "users1",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -247,28 +249,28 @@
         "taskcomments1_taskId_tasks1_id_fk": {
           "name": "taskcomments1_taskId_tasks1_id_fk",
           "tableFrom": "taskcomments1",
+          "tableTo": "tasks1",
           "columnsFrom": [
             "taskId"
           ],
-          "tableTo": "tasks1",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "taskcomments1_userId_users1_id_fk": {
           "name": "taskcomments1_userId_users1_id_fk",
           "tableFrom": "taskcomments1",
+          "tableTo": "users1",
           "columnsFrom": [
             "userId"
           ],
-          "tableTo": "users1",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -358,28 +360,28 @@
         "tasks1_specId_taskspecs1_id_fk": {
           "name": "tasks1_specId_taskspecs1_id_fk",
           "tableFrom": "tasks1",
+          "tableTo": "taskspecs1",
           "columnsFrom": [
             "specId"
           ],
-          "tableTo": "taskspecs1",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "tasks1_projectId_projects1_id_fk": {
           "name": "tasks1_projectId_projects1_id_fk",
           "tableFrom": "tasks1",
+          "tableTo": "projects1",
           "columnsFrom": [
             "projectId"
           ],
-          "tableTo": "projects1",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -419,6 +421,125 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "public.teammembers1": {
+      "name": "teammembers1",
+      "schema": "",
+      "columns": {
+        "teamId": {
+          "name": "teamId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "teammembers1_teamId_teams1_id_fk": {
+          "name": "teammembers1_teamId_teams1_id_fk",
+          "tableFrom": "teammembers1",
+          "tableTo": "teams1",
+          "columnsFrom": [
+            "teamId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "teammembers1_userId_users1_id_fk": {
+          "name": "teammembers1_userId_users1_id_fk",
+          "tableFrom": "teammembers1",
+          "tableTo": "users1",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "teammembers1_teamId_userId_unique": {
+          "name": "teammembers1_teamId_userId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "teamId",
+            "userId"
+          ]
+        }
+      }
+    },
+    "public.teams1": {
+      "name": "teams1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "projectId": {
+          "name": "projectId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "leadId": {
+          "name": "leadId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "teams1_projectId_projects1_id_fk": {
+          "name": "teams1_projectId_projects1_id_fk",
+          "tableFrom": "teams1",
+          "tableTo": "projects1",
+          "columnsFrom": [
+            "projectId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "teams1_leadId_users1_id_fk": {
+          "name": "teams1_leadId_users1_id_fk",
+          "tableFrom": "teams1",
+          "tableTo": "users1",
+          "columnsFrom": [
+            "leadId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "public.users1": {
       "name": "users1",
       "schema": "",
@@ -445,7 +566,7 @@
           "name": "password",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "phone": {
           "name": "phone",
@@ -485,10 +606,10 @@
       "uniqueConstraints": {
         "users1_email_unique": {
           "name": "users1_email_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "email"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       }
     }
@@ -496,10 +617,8 @@
   "enums": {},
   "schemas": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
-  },
-  "id": "03745d1f-5fe2-443e-84d1-375bde64ad84",
-  "prevId": "79254b79-1212-43b4-a119-f506752ef18c"
+    "tables": {}
+  }
 }

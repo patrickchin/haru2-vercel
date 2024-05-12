@@ -2,14 +2,43 @@
 
 import * as db from "@/lib/db";
 import * as Schemas from "drizzle/schema";
+import { signIn } from "@/lib/auth";
 import { auth } from "./auth";
 import * as blob from "@vercel/blob";
-import { NewProjectFormSchema } from "./types";
+import {
+  DesignTaskSpec,
+  DesignTeam,
+  NewProjectFormSchema,
+  RegisterSchemaType,
+} from "./types";
 import { redirect } from "next/navigation";
 import { defaulTaskSpecs } from "./tasks";
 import assert from "assert";
 
 const VERCEL_BLOB_FAKE_FILES = true;
+
+export async function registerUser(data: RegisterSchemaType) {
+  try {
+    let user = await db.getUser(data.email);
+
+    if (user.length > 0) {
+      throw new Error("User already exists");
+    }
+
+    await db.createUser(data.name, data.phone ?? "", data.email, data.password);
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function signInFromLogin(data: any) {
+  try {
+    return await signIn("credentials", data);
+  } catch (error) {
+    console.error("Failed to login");
+  }
+  return "Invalid login credentials";
+}
 
 export async function submitProjectForm2(formData: FormData) {
   const session = await auth();
@@ -64,18 +93,13 @@ export async function submitProjectForm2(formData: FormData) {
       special,
     },
   });
-  if (newProjectArr.length != 1) {
+
+  if (newProjectArr.length === 0) {
     console.error("Failed to submit a new project post");
     return null;
   }
 
   const newProjectId = newProjectArr[0].id;
-
-  const newTasks = await createProjectTasks(newProjectId);
-  if (!newTasks || newTasks.length == 0) {
-    console.error("Failed to create project tasks");
-    // return null;
-  }
 
   // TODO client upload directly to server! 4.5 MB limit currently
   if (files) {
@@ -153,6 +177,15 @@ export async function deleteFullProject(projectId: number) {
   redirect("/projects");
 }
 
+export async function startProject(projectId: number) {
+  const newTasks = await createProjectTasks(projectId);
+  if (!newTasks || newTasks.length == 0) {
+    console.error("Failed to create project tasks");
+    // return null;
+  }
+  await updateProject(projectId, { status: "in progress" });
+}
+
 export async function getProjectFiles(projectId: number) {
   const session = await auth();
   if (!session?.user?.id) return undefined;
@@ -160,6 +193,7 @@ export async function getProjectFiles(projectId: number) {
   const fileUrls = await db.getFilesUrlsForProject(projectId);
   return fileUrls;
 }
+
 //Update project title
 export async function updateProjectTitle(projectId: number, newTitle: string) {
   const session = await auth();
@@ -181,6 +215,7 @@ export async function updateProjectTitle(projectId: number, newTitle: string) {
   }
   return updatedProject;
 }
+
 //update any field of the project
 export async function updateProject(
   projectId: number,
@@ -206,9 +241,56 @@ export async function updateProject(
   return updatedProject;
 }
 
+// members ===================================================================
+
+export async function createProjectTeam(projectId: number, type: string) {
+  const session = await auth();
+  if (!session?.user) return;
+  const newteam = await db.createTeam(projectId, type);
+  assert(newteam?.length === 1, "Expected exactly one team should be added");
+  return newteam;
+}
+
+export async function deleteProjectTeam(teamId: number) {
+  const session = await auth();
+  if (!session?.user) return;
+  const deletedTeam: DesignTeam[] = await db.deleteTeam(teamId);
+  assert(
+    deletedTeam.length === 1,
+    "Expected exactly one team should be deleted",
+  );
+  return deletedTeam;
+}
+
+export async function getProjectTeams(projectId: number) {
+  const session = await auth();
+  if (!session?.user) return;
+  return db.getProjectTeams(projectId);
+}
+
+export async function addTeamMember(teamId: number, email: string) {
+  const session = await auth();
+  if (!session?.user) return;
+  // TODO this can be done in one db call
+  const user = await db.getUser(email);
+  // TODO actually if the member doesn't exist we would like to add him anyways
+  // and create an account for them
+  if (user.length == 0) return;
+  assert(user.length === 1, "Expected exactly one user with this email");
+  const newTeamMember = await db.addTeamMember(teamId, user[0].id);
+  assert(newTeamMember.length <= 1, "Expected exactly one or no users added to team");
+  return getTeamMembers(teamId);
+}
+
+export async function getTeamMembers(teamId: number) {
+  const session = await auth();
+  if (!session?.user) return;
+  return db.getTeamMembers(teamId);
+}
+
 // tasks ===================================================================
 
-export async function createDefaultTaskSpecs() {
+async function createDefaultTaskSpecs() {
   const session = await auth();
   if (!session?.user) return;
   const spec100 = await getTaskSpec(100);
@@ -226,12 +308,32 @@ export async function getTaskSpec(specId: number | null) {
   return specs[0];
 }
 
+export async function getProjectTaskSpecsGroupedByTeam() {
+  const specs: DesignTaskSpec[] = await db.getTaskSpecs();
+  const groupedSpecs: Record<string, DesignTaskSpec[]> = {};
+  specs.forEach((spec) => {
+    const key: string = spec.type || "other";
+    if (!Object.keys(groupedSpecs).includes(key)) groupedSpecs[key] = [];
+    groupedSpecs[key].push(spec);
+  });
+  return groupedSpecs;
+}
+
 export async function createProjectTasks(projectId: number) {
   const session = await auth();
   if (!session?.user?.id) return undefined;
+
+  // create defaults if not yet created
+  await createDefaultTaskSpecs();
+
   // const userId = Number(session.user.id);
   // TODO check user permissions
   const specs = await db.getTaskSpecs();
+  if (specs.length === 0) {
+    console.warn("no task specifications");
+    return;
+  }
+
   const tasks = specs.map((spec): typeof Schemas.tasks1.$inferInsert => {
     return {
       specid: spec.id,
