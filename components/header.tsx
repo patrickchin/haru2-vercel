@@ -41,7 +41,6 @@ export function MainNav() {
 }
 
 function UserNav({ user }: { user?: any }) {
-  console.log("user:", user);
   const signOutAction = async () => {
     await signOut({
       redirect: true,
