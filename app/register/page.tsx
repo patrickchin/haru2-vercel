@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { registerUser } from "@/lib/actions";
 import { SimpleLayout } from "@/components/page-layouts";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterSchema, RegisterSchemaType } from "@/lib/types";
 
 export default function Page() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -25,9 +26,9 @@ export default function Page() {
   const onSubmit: SubmitHandler<RegisterSchemaType> = async (data) => {
     try {
       await registerUser(data);
-      redirect("/login");
+      router.push("/login");
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error trying to register user: ", error);
     }
   };
 
