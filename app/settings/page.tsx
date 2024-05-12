@@ -7,33 +7,26 @@ import { redirect } from "next/navigation";
 import { CenteredLayout } from "@/components/page-layouts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { updateAvaterForUser } from "@/lib/actions";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getAvatarInitials } from "@/lib/utils";
 
 function SettingsPage() {
   const session = useSession();
   const userId = Number(session.data?.user?.id);
-  const [photoName, setPhotoName] = useState("");
-  const [photoPreview, setPhotoPreview] = useState(null);
-  const [isUploading, setIsUploading] = useState(false);
+  const [newUpdatedAvater, setNewUpdatedAvater] = useState<
+    string | null | undefined
+  >(null);
 
   const handleFileChange = async (event: any) => {
     const file = event.target.files[0];
-    if (file) {
-      console.log(file);
-      setPhotoName(file.name);
-      //preview the image
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        setPhotoPreview(e.target.result);
-      };
-      reader.readAsDataURL(file);
+    if (file && file.size <= 250000) {
       // server action arguments can only be primatives or FormData
       const data = new FormData();
       data.set("file", file);
       const newFile = await updateAvaterForUser(data);
-      console.log("newFiles:", newFile);
-      event.target.value = "";
-      setIsUploading(false);
-      // if (newFiles) setUpdatedFiles(newFiles);
+      setNewUpdatedAvater(newFile);
     }
   };
 
@@ -52,55 +45,37 @@ function SettingsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="col-span-6 ml-2 sm:col-span-4 md:mr-3">
-            <input
+            <Input
               type="file"
               className="hidden"
               id="photo"
               onChange={handleFileChange}
               accept="image/*"
             />
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2 text-center"
-              htmlFor="photo"
-            >
+            <Label className="block text-gray-700 text-sm font-bold mb-2 text-center">
               Profile Photo
-            </label>
+            </Label>
+
             <div className="text-center">
               <div className="mt-2">
-                {photoPreview ? (
-                  <div
-                    style={{
-                      width: "160px",
-                      height: "160px",
-                      borderRadius: "9999px",
-                      backgroundImage: `url(${photoPreview})`,
-                      backgroundSize: "cover",
-                      backgroundRepeat: "no-repeat",
-                      backgroundPosition: "center center",
-                      margin: "auto",
-                    }}
-                  ></div>
-                ) : (
-                  <div
-                    style={{
-                      width: "160px",
-                      height: "160px",
-                      borderRadius: "9999px",
-                      backgroundImage: `url(https://images.unsplash.com/photo-1531316282956-d38457be0993?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80)`,
-                      backgroundSize: "cover",
-                      backgroundRepeat: "no-repeat",
-                      backgroundPosition: "center center",
-                      margin: "auto",
-                    }}
-                  ></div>
-                )}
+                <div className="w-40 h-40 rounded-full bg-cover bg-no-repeat bg-center mx-auto">
+                  <Avatar>
+                    {newUpdatedAvater ? (
+                      <AvatarImage src={newUpdatedAvater} />
+                    ) : (
+                      <AvatarFallback className="AvatarFallback" delayMs={600}>
+                        {getAvatarInitials(session.data?.user?.name)}
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
+                </div>
               </div>
-              <label
+              <Label
                 htmlFor="photo"
                 className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-400 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150 mt-2 ml-3 cursor-pointer"
               >
                 Select New Photo
-              </label>
+              </Label>
             </div>
           </div>
         </CardContent>
