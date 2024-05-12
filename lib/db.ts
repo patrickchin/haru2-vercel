@@ -28,35 +28,37 @@ export async function createUser(
   phone: string,
   email: string,
   password: string,
+  avatarColor: string = "#FF5733",
 ) {
   let salt = genSaltSync(10);
   let hash = hashSync(password, salt);
 
   return await db
     .insert(Schemas.users1)
-    .values({ name, phone, email, password: hash });
+    .values({ name, phone, email, password: hash, avatarColor });
 }
 
-export async function addProfilePictureUrlToUser(
-  values: typeof Schemas.files1._.inferInsert,
-) {
-  const newFiles = await db.insert(Schemas.files1).values(values).returning();
-  assert(newFiles.length == 1);
-  return newFiles[0];
-}
-
-export async function updateProfilePictureUrlToUser(
+export async function updateUserAvatarUrlToUser(
   uploaderid: number,
-  values: { url: string },
+  values: { avatarUrl: string },
 ) {
   const updatedUser = await db
-    .update(Schemas.files1)
+    .update(Schemas.users1)
     .set(values)
-    .where(eq(Schemas.files1.uploaderid, uploaderid))
+    .where(eq(Schemas.users1.id, uploaderid))
     .returning();
-
   return updatedUser[0];
 }
+
+export async function getUserAvater(uploaderid: number) {
+  const userAvater = await db
+    .select()
+    .from(Schemas.users1)
+    .where(eq(Schemas.users1.id, uploaderid));
+
+  return userAvater[0];
+}
+
 // projects ==========================================================================================
 
 export async function getUserProjects(userId: number, pagenum: number = 0) {
@@ -299,16 +301,6 @@ export async function getTaskFiles(taskid: number) {
   // .orderBy(desc(Schemas.files1.createdat));
 }
 
-export async function getUserAvater(uploaderid: number) {
-  const userAvater = await db
-    .select()
-    .from(Schemas.files1)
-    .where(eq(Schemas.files1.uploaderid, uploaderid));
-
-  console.log("userAvater[0]:", userAvater[0]);
-  return userAvater[0];
-  // .orderBy(desc(Schemas.files1.createdat));
-}
 export async function getTaskCommentAttachments(taskid: number) {
   return await db
     .select()
