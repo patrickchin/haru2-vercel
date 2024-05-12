@@ -278,7 +278,10 @@ export async function addTeamMember(teamId: number, email: string) {
   if (user.length == 0) return;
   assert(user.length === 1, "Expected exactly one user with this email");
   const newTeamMember = await db.addTeamMember(teamId, user[0].id);
-  assert(newTeamMember.length <= 1, "Expected exactly one or no users added to team");
+  assert(
+    newTeamMember.length <= 1,
+    "Expected exactly one or no users added to team",
+  );
   return getTeamMembers(teamId);
 }
 
