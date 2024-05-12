@@ -78,8 +78,14 @@ async function TaskPage({
   // const task: DesignTask | undefined = await getProjectTask(projectId, specId);
 
   if (!project || !taskSpec || !task) {
-    console.log("task: can't find project %d %d task spec %d %d task %d",
-    projectId, !!project, specId, !!taskSpec, !!task);
+    console.log(
+      "task: can't find project %d %d task spec %d %d task %d",
+      projectId,
+      !!project,
+      specId,
+      !!taskSpec,
+      !!task,
+    );
     notFound();
   }
 

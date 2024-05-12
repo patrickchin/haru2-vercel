@@ -4,7 +4,13 @@ import { Button } from "@/components/ui/button";
 import { LucidePlus } from "lucide-react";
 import * as Actions from "@/lib/actions";
 import { useRouter } from "next/navigation";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { teamNames } from "@/lib/types";
 import { useState } from "react";
 
@@ -23,7 +29,9 @@ export default function AddTeamMemberButton({
         </SelectTrigger>
         <SelectContent>
           {Object.entries(teamNames).map(([k, v]) => (
-            <SelectItem key={k} value={k}>{v}</SelectItem>
+            <SelectItem key={k} value={k}>
+              {v}
+            </SelectItem>
           ))}
         </SelectContent>
       </Select>

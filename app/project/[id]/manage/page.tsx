@@ -10,10 +10,7 @@ import {
 import { Label } from "@/components/ui/label";
 import * as Actions from "@/lib/actions";
 import { auth } from "@/lib/auth";
-import {
-  DesignTaskSpec,
-  teamNames,
-} from "@/lib/types";
+import { DesignTaskSpec, teamNames } from "@/lib/types";
 import { LucideChevronDown, LucideMoveLeft, LucidePlus } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";

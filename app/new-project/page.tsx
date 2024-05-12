@@ -279,7 +279,6 @@ function DetailedQuestion({ form, qa }: { form: NewProjectFormType; qa: any }) {
       name={qa.name}
       render={({ field }) => (
         <FormItem>
-
           <FormLabel className="flex justify-between items-center">
             <div className="space-y-2">
               <div className="text-base">{qa.title}</div>
