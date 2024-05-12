@@ -369,7 +369,7 @@ export async function updateAvaterForUser(data: FormData) {
     access: "public",
   });
 
-  await db.updateProfilePictureUrlToUser(userId, {
+  await db.updateUserAvatarUrlToUser(userId, {
     avatarUrl: blobResult.url,
   });
 
