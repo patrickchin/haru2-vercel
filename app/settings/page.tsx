@@ -13,8 +13,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getAvatarInitials } from "@/lib/utils";
 
 function SettingsPage() {
-  const session = useSession();
-  const userId = Number(session.data?.user?.id);
+  const { data: session, update: updateSession } = useSession();
+
+  const userId = Number(session?.user?.id);
   const [newUpdatedAvater, setNewUpdatedAvater] = useState<
     string | null | undefined
   >(null);
@@ -22,18 +23,26 @@ function SettingsPage() {
   const handleFileChange = async (event: any) => {
     const file = event.target.files[0];
     if (file && file.size <= 250000) {
-      // server action arguments can only be primatives or FormData
-      const data = new FormData();
-      data.set("file", file);
-      const newFile = await updateAvaterForUser(data);
-      setNewUpdatedAvater(newFile);
+      const response = new FormData();
+      response.set("file", file);
+      const updatedAvatarFile = await updateAvaterForUser(response);
+      if (session?.user && updatedAvatarFile) {
+        const newSession = {
+          ...session,
+          user: {
+            ...session?.user,
+            avatarUrl: updatedAvatarFile,
+          },
+        };
+        await updateSession(newSession);
+      }
     }
   };
 
-  if (!session.data?.user) redirect("/login");
+  if (!session?.user) redirect("/login");
 
   if (Number.isNaN(userId)) {
-    console.log("User id is invalid: ", session);
+    console.log("User id is invalid: ");
     return <p>Invalid user</p>;
   }
 
@@ -64,7 +73,7 @@ function SettingsPage() {
                       <AvatarImage src={newUpdatedAvater} />
                     ) : (
                       <AvatarFallback className="AvatarFallback" delayMs={600}>
-                        {getAvatarInitials(session.data?.user?.name)}
+                        {getAvatarInitials(session?.user?.name)}
                       </AvatarFallback>
                     )}
                   </Avatar>
