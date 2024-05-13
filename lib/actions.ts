@@ -39,12 +39,8 @@ export async function registerUser(data: RegisterSchemaType) {
 }
 
 export async function signInFromLogin(data: any) {
-  try {
-    return await signIn("credentials", data);
-  } catch (error) {
-    console.error("Failed to login");
-  }
-  return "Invalid login credentials";
+  // TODO validate 
+  return await signIn("credentials", data);
 }
 
 export async function submitProjectForm2(formData: FormData) {
