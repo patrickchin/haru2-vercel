@@ -53,9 +53,9 @@ function UserNav({ user }: { user?: any }) {
         <DropdownMenuTrigger asChild>
           <div className="flex items-center gap-x-2 cursor-pointer">
             <Avatar className="cursor-pointer">
-              <AvatarImage src={user.avatarUrl} />
+              <AvatarImage src={user?.avatarUrl} />
               <AvatarFallback>
-                {getAvatarInitials(user.name)}
+                {getAvatarInitials(user?.name)}
               </AvatarFallback>
             </Avatar>
             <div className="text-sm">{user?.name}</div>
