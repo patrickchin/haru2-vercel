@@ -7,7 +7,7 @@ import { genSaltSync, hashSync } from "bcrypt-ts";
 
 import * as Schemas from "drizzle/schema";
 import assert from "assert";
-import { DesignTeam, defaultTeams } from "./types";
+import { DesignTeam, DesignUserBasic, DesignUserFull, defaultTeams } from "./types";
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
@@ -17,9 +17,22 @@ const db = drizzle(client);
 
 // users ==========================================================================================
 
-export async function getUser(email: string) {
-  return await db
+export async function getUserFull(email: string): Promise<DesignUserFull[]> {
+  return db
     .select()
+    .from(Schemas.users1)
+    .where(eq(Schemas.users1.email, email));
+}
+
+export async function getUser(email: string): Promise<DesignUserBasic[]> {
+  return await db
+    .select({
+      id: Schemas.users1.id,
+      name: Schemas.users1.name,
+      email: Schemas.users1.email,
+      avatarUrl: Schemas.users1.avatarUrl,
+      avatarColor: Schemas.users1.avatarColor,
+    })
     .from(Schemas.users1)
     .where(eq(Schemas.users1.email, email));
 }

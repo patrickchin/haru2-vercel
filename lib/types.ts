@@ -54,10 +54,10 @@ export const RegisterSchema = z
 
 export type RegisterSchemaType = z.infer<typeof RegisterSchema>;
 
-export type DesignUser = typeof Schemas.users1.$inferSelect;
+export type DesignUserFull = typeof Schemas.users1.$inferSelect;
 export type DesignUserBasic = Pick<
-  DesignUser,
-  "name" | "email" | "avatarUrl" | "avatarColor"
+  DesignUserFull,
+  "id" | "name" | "email" | "avatarUrl" | "avatarColor"
 >;
 export type DesignProject = typeof Schemas.projects1.$inferSelect;
 export type DesignTeam = typeof Schemas.teams1.$inferSelect;
