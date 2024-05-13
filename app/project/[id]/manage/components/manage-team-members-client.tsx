@@ -18,10 +18,7 @@ export function ManageTeamMembersClient({
   members: DesignUserBasic[];
 }) {
   const formRef = useRef<HTMLFormElement>(null);
-  const [teamDeleted, setTeamDeleted] = useState(false);
   const [updatedMembers, setUpdatedMembers] = useState(new Set(members));
-
-  if (teamDeleted) return null;
 
   async function addMemberAction(data: FormData) {
     const newUserEmail = data.get("email") as string;
@@ -32,19 +29,10 @@ export function ManageTeamMembersClient({
 
   return (
     <Card className="flex flex-col px-8 py-6">
-      <CardHeader className="flex flex-row justify-between p-0 py-2 space-y-0">
+      <CardHeader className="flex flex-row p-0 py-2 space-y-0">
         <div className="text-xl font-semibold h-10">
           {teamNames[team.type || "other"]}
         </div>
-        <Button
-          variant="secondary"
-          onClick={async () => {
-            setTeamDeleted(true); // maybe only once returned true
-            Actions.deleteProjectTeam(team.id);
-          }}
-        >
-          Remove Team
-        </Button>
       </CardHeader>
       <CardContent className="p-0 space-y-4">
         <form action={addMemberAction} className="flex gap-3" ref={formRef}>

@@ -10,9 +10,10 @@ import {
   DesignTeam,
   NewProjectFormSchema,
   RegisterSchemaType,
+  defaultTeams,
 } from "./types";
 import { redirect } from "next/navigation";
-import { defaulTaskSpecs } from "./tasks";
+import { defaulTaskSpecs } from "content/tasks";
 import assert from "assert";
 
 const VERCEL_BLOB_FAKE_FILES = true;
@@ -177,12 +178,13 @@ export async function deleteFullProject(projectId: number) {
   redirect("/projects");
 }
 
-export async function startProject(projectId: number) {
-  const newTasks = await createProjectTasks(projectId);
-  if (!newTasks || newTasks.length == 0) {
+export async function startProject(
+  projectId: number,
+  taskSpecSelection: Record<number, boolean>,
+) {
+  const newTasks = await createProjectTasks(projectId, taskSpecSelection);
+  if (!newTasks || newTasks.length == 0)
     console.error("Failed to create project tasks");
-    // return null;
-  }
   await updateProject(projectId, { status: "in progress" });
 }
 
@@ -243,14 +245,6 @@ export async function updateProject(
 
 // members ===================================================================
 
-export async function createProjectTeam(projectId: number, type: string) {
-  const session = await auth();
-  if (!session?.user) return;
-  const newteam = await db.createTeam(projectId, type);
-  assert(newteam?.length === 1, "Expected exactly one team should be added");
-  return newteam;
-}
-
 export async function deleteProjectTeam(teamId: number) {
   const session = await auth();
   if (!session?.user) return;
@@ -265,7 +259,9 @@ export async function deleteProjectTeam(teamId: number) {
 export async function getProjectTeams(projectId: number) {
   const session = await auth();
   if (!session?.user) return;
-  return db.getProjectTeams(projectId);
+  const teams = await db.getProjectTeams(projectId);
+  if (teams.length > 0) return teams;
+  return db.createTeams(projectId, defaultTeams);
 }
 
 export async function addTeamMember(teamId: number, email: string) {
@@ -293,26 +289,29 @@ export async function getTeamMembers(teamId: number) {
 
 // tasks ===================================================================
 
-async function createDefaultTaskSpecs() {
-  const session = await auth();
-  if (!session?.user) return;
-  const spec100 = await getTaskSpec(100);
-  console.log("creating default task specs spec100", spec100);
-  // TODO remove!!!!!!!!!!!!!
-  // if (spec100) { db.TMPdeleteTaskSpecs(); }
-  if (spec100) return;
+async function getTaskSpecsInternal() {
+  const specs: DesignTaskSpec[] = await db.getTaskSpecs();
+  if (specs.length > 0) return specs;
+  console.log("Creating default task specifications");
   return db.createTaskSpecs(defaulTaskSpecs);
 }
 
-export async function getTaskSpec(specId: number | null) {
-  if (specId === null) return;
+export async function getTaskSpecs() {
+  const session = await auth();
+  if (!session?.user) return;
+  return getTaskSpecsInternal();
+}
+
+export async function getTaskSpec(specId: number) {
+  const session = await auth();
+  if (!session?.user) return;
   const specs = await db.getTaskSpec(specId);
   if (specs.length <= 0) return;
   return specs[0];
 }
 
 export async function getProjectTaskSpecsGroupedByTeam() {
-  const specs: DesignTaskSpec[] = await db.getTaskSpecs();
+  const specs: DesignTaskSpec[] = await getTaskSpecsInternal();
   const groupedSpecs: Record<string, DesignTaskSpec[]> = {};
   specs.forEach((spec) => {
     const key: string = spec.type || "other";
@@ -322,38 +321,35 @@ export async function getProjectTaskSpecsGroupedByTeam() {
   return groupedSpecs;
 }
 
-export async function createProjectTasks(projectId: number) {
+export async function createProjectTasks(projectId: number, enabled: Record<number, boolean>) {
   const session = await auth();
-  if (!session?.user?.id) return undefined;
+  if (!session?.user?.id) return;
 
-  // create defaults if not yet created
-  await createDefaultTaskSpecs();
+  const tasks = await db.getProjectTasks(projectId);
+  if (tasks.length > 0) return tasks;
 
-  // const userId = Number(session.user.id);
-  // TODO check user permissions
-  const specs = await db.getTaskSpecs();
+  const specs = await getTaskSpecsInternal();
   if (specs.length === 0) {
     console.warn("no task specifications");
     return;
   }
 
-  const tasks = specs.map((spec): typeof Schemas.tasks1.$inferInsert => {
+  const newTasks = specs.map((spec): typeof Schemas.tasks1.$inferInsert => {
     return {
       specid: spec.id,
       projectid: projectId,
       type: spec.type,
       title: spec.title,
       description: spec.description,
+      enabled: enabled ? enabled[spec.id] ?? true : true,
     };
   });
-  return await db.createProjectTasks(tasks);
+  return await db.createProjectTasks(newTasks);
 }
 
 export async function getProjectTasks(projectId: number) {
   const session = await auth();
-  if (!session?.user?.id) return undefined;
-  // const userId = Number(session.user.id);
-  // TODO check user permissions
+  if (!session?.user?.id) return;
   const tasks = await db.getProjectTasks(projectId);
   return tasks;
 }
