@@ -1,8 +1,12 @@
-import { DefaultSession } from "next-auth";
+import NextAuth, { DefaultSession, User } from "next-auth";
 
-import { users1 } from "./../drizzle/schema";
-interface Session {
-  users1: {
-    avatarUrl: string;
-  } & DefaultSession["user"];
+declare module "next-auth" {
+  interface User {
+    id?: string;
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+    avatarUrl?: string | null;
+    avatarColor?: string | null;
+  }
 }
