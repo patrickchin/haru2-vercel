@@ -1,46 +1,47 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as Tan from '@tanstack/react-table'
+import * as React from "react";
+import * as Tan from "@tanstack/react-table";
 
-import { LucideChevronRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { LucideChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
-} from "@/components/ui/table"
+  TableRow,
+} from "@/components/ui/table";
 
-import { getProjectFiles } from "@/lib/actions"
-import { DesignFile } from "@/lib/types"
+import { getProjectFiles } from "@/lib/actions";
+import { DesignFile } from "@/lib/types";
 
 const filesColumns: Tan.ColumnDef<DesignFile>[] = [
   {
     accessorKey: "filename",
     header: () => <div>Filename</div>,
-    cell: ({ row }) => <pre>{row.getValue("filename")}</pre>
+    cell: ({ row }) => <pre>{row.getValue("filename")}</pre>,
   },
   {
     accessorKey: "size",
     header: () => <div>Size</div>,
-    cell: ({ row }) => <pre>{row.getValue("size")}</pre>
+    cell: ({ row }) => <pre>{row.getValue("size")}</pre>,
   },
   {
     accessorKey: "taskid",
     header: () => <div>Task Id</div>,
-    cell: ({ row }) => <pre>{row.getValue("taskid")}</pre>
+    cell: ({ row }) => <pre>{row.getValue("taskid")}</pre>,
   },
   {
     accessorKey: "view",
     header: () => <div>View</div>,
-    cell: ({ row }) =>
-      (<Button asChild className="p-2 w-9" variant="secondary">
-          <LucideChevronRight />
-      </Button>),
+    cell: ({ row }) => (
+      <Button asChild className="p-2 w-9" variant="secondary">
+        <LucideChevronRight />
+      </Button>
+    ),
     size: 60,
   },
   // date uploaded
@@ -51,23 +52,24 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
   // version?
   // which task
   // which team
-]
+];
 
-function FilesTable({ columns, data }: {
-  columns: Tan.ColumnDef<DesignFile>[],
-  data: DesignFile[]
+function FilesTable({
+  columns,
+  data,
+}: {
+  columns: Tan.ColumnDef<DesignFile>[];
+  data: DesignFile[];
 }) {
-
   const table = Tan.useReactTable({
     data,
     columns,
     getCoreRowModel: Tan.getCoreRowModel(),
     getPaginationRowModel: Tan.getPaginationRowModel(),
-  })
+  });
 
   return (
     <div className="w-full">
-
       {/* The table */}
       <div className="rounded-md border">
         <Table>
@@ -76,16 +78,19 @@ function FilesTable({ columns, data }: {
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="px-2 first:pl-8 last:pr-8"
-                      style={{ width: header.getSize() }} >
+                    <TableHead
+                      key={header.id}
+                      className="px-2 first:pl-8 last:pr-8"
+                      style={{ width: header.getSize() }}
+                    >
                       {header.isPlaceholder
                         ? null
                         : Tan.flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -95,10 +100,13 @@ function FilesTable({ columns, data }: {
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="px-2 first:pl-8 last:pr-8">
+                    <TableCell
+                      key={cell.id}
+                      className="px-2 first:pl-8 last:pr-8"
+                    >
                       {Tan.flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -106,7 +114,10 @@ function FilesTable({ columns, data }: {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
@@ -116,7 +127,6 @@ function FilesTable({ columns, data }: {
       </div>
 
       <div className="flex items-center justify-end space-x-2 py-4">
-
         <div className="flex-1 text-sm text-muted-foreground">
           Showing {table.getPaginationRowModel().rows.length} of{" "}
           {table.getRowCount()} row(s) displayed.
@@ -124,32 +134,31 @@ function FilesTable({ columns, data }: {
 
         {/* pagination */}
         <div className="space-x-2">
-          <Button variant="outline" size="sm"
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
             Previous
           </Button>
           {/* <span>TODO number of pages</span> */}
-          <Button variant="outline" size="sm"
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
             Next
           </Button>
         </div>
-
       </div>
     </div>
-  )
+  );
 }
 
 export function ProjectFilesSkeleton() {
-  return (
-    <div className="flex flex-col space-y-4">
-      Loading ...
-    </div>
-  );
+  return <div className="flex flex-col space-y-4">Loading ...</div>;
 }
 
 export default function ProjectFiles({ files }: { files: DesignFile[] }) {

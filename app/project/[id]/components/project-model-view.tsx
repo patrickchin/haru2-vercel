@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Canvas } from "@react-three/fiber";
 import { useGLTF, OrbitControls, Stats, Gltf } from "@react-three/drei";
@@ -31,11 +31,15 @@ function ProjectModelViewInternal() {
       camera={{ position: [0.0, 0.4, 0.8] }}
       className="min-h-[600px]"
     >
-
       <ambientLight color={"white"} intensity={0.3} />
       <directionalLight color="white" position={[0, 2, 5]} />
 
-      <Gltf src="/tmp/DiffuseTransmissionPlant.glb" receiveShadow castShadow position={[0, -0.3, 0]} />
+      <Gltf
+        src="/tmp/DiffuseTransmissionPlant.glb"
+        receiveShadow
+        castShadow
+        position={[0, -0.3, 0]}
+      />
 
       {/* <primitive object={model.scene} /> */}
       {/* <primitive receiveShadow={true} castShadow object={obj} position={[-5, -2, 6]} /> */}
@@ -55,7 +59,7 @@ export default function ProjectModelView() {
   return (
     <Card className="grow grid">
       <CardContent>
-        <Suspense fallback={(<ProjectModelViewSkeleton />)}>
+        <Suspense fallback={<ProjectModelViewSkeleton />}>
           <ProjectModelViewInternal />
         </Suspense>
       </CardContent>

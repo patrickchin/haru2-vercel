@@ -85,11 +85,7 @@ function LoadNewComments({
   );
 }
 
-function CommentAttachments({
-  attachments,
-}: {
-  attachments: DesignFile[];
-}) {
+function CommentAttachments({ attachments }: { attachments: DesignFile[] }) {
   if (!attachments || attachments.length == 0) return null;
 
   return (
@@ -103,10 +99,7 @@ function CommentAttachments({
             <span>{att.filename}</span>
             <div>
               {false && (
-                <Button
-                  variant="link"
-                  className="h-3 p-0 cursor-not-allowed"
-                >
+                <Button variant="link" className="h-3 p-0 cursor-not-allowed">
                   <LucideView className="h-3" />
                 </Button>
               )}
@@ -225,7 +218,7 @@ function AddCommentFormInternal() {
           <LucideLoader2
             className={cn(
               "animate-spin h-4",
-              formStatus.pending ? "" : "hidden"
+              formStatus.pending ? "" : "hidden",
             )}
           />
         </Button>
@@ -279,7 +272,6 @@ function AttachmentList({
   currentAttachments: DesignFile[];
   setCurrentAttachments: Dispatch<SetStateAction<DesignFile[]>>;
 }) {
-
   function removeAttachment(fileId: number) {
     setCurrentAttachments((list) => list.filter((f) => f.id !== fileId));
     deleteFile(fileId);
@@ -385,9 +377,11 @@ export default function TaskCommentsClient({
   // Tbh these two should be in the same state as they should be updated together
   const [updatedComments, setUpdatedComments] = useState(comments);
   const [updatedFiles, setUpdatedFiles] = useState(files);
-  
+
   // only the files to be attached
-  const [currentAttachments, setCurrentAttachments] = useState<DesignFile[]>([]);
+  const [currentAttachments, setCurrentAttachments] = useState<DesignFile[]>(
+    [],
+  );
 
   return (
     <Card>

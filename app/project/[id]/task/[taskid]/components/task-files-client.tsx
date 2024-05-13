@@ -81,7 +81,7 @@ export default function TaskFilesClient({
             htmlFor="uploadfile"
             className={cn(
               "space-x-4",
-              isUploading ? "cursor-progress" : "cursor-pointer"
+              isUploading ? "cursor-progress" : "cursor-pointer",
             )}
           >
             {isUploading ? (
@@ -108,7 +108,7 @@ export default function TaskFilesClient({
             key={i}
             className={cn(
               "flex flex-col gap-2 px-3 border rounded-lg",
-              showDetailed ? "py-4" : "py-2"
+              showDetailed ? "py-4" : "py-2",
             )}
           >
             <div className="flex justify-between items-center px-2">
@@ -118,7 +118,12 @@ export default function TaskFilesClient({
                   {f.filename}
                 </div>
               </div>
-              <div className={cn("flex items-center gap-0", showDetailed ? "hidden" : "")}>
+              <div
+                className={cn(
+                  "flex items-center gap-0",
+                  showDetailed ? "hidden" : "",
+                )}
+              >
                 <Button variant="ghost" className="p-1 cursor-not-allowed">
                   <LucideView className="h-4" />
                 </Button>
@@ -166,7 +171,7 @@ export default function TaskFilesClient({
                       <span>Version {8 - i}</span>
                       <span>
                         {new Date(
-                          Date.now() - i * 5 * 24 * 3600 * 1000
+                          Date.now() - i * 5 * 24 * 3600 * 1000,
                         ).toDateString()}
                       </span>
                     </div>

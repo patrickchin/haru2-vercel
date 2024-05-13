@@ -1,4 +1,4 @@
-import { CenteredLayout } from '@/components/page-layouts';
+import { CenteredLayout } from "@/components/page-layouts";
 
 export default async function Page() {
   return (
@@ -7,5 +7,5 @@ export default async function Page() {
         <h2>Project Not Found</h2>
       </section>
     </CenteredLayout>
-  )
+  );
 }

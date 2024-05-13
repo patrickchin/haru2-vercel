@@ -75,7 +75,7 @@ export const defaultTeams = [
   "architectural",
   "structural",
   "mep",
-] as const;
+];
 
 export const teamNames: Record<string, string> = {
   legal: "Legal",

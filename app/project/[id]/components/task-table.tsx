@@ -196,7 +196,6 @@ function TaskTableBody({
 }
 
 function TaskTableFilterToggles({ table }: { table: Tan.Table<DesignTask> }) {
-
   const statusValues = ["all", "pending", "in progress", "complete"];
   const teamValues = ["all", "legal", "architectural", "structural", "mep"];
 

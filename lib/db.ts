@@ -170,24 +170,12 @@ export async function updateProjectFields(
 
 // project members ==========================================================================================
 
-export async function createTeam(projectid: number, type: string) {
-  const types: Set<string> = new Set([
-    "legal",
-    "architectural",
-    "structural",
-    "mep",
-  ]);
-  if (!types.has(type)) {
-    console.error("createTeam invalid team type", type);
-    return null;
-  }
-  return await db
-    .insert(Schemas.teams1)
-    .values({
-      projectid,
-      type,
-    })
-    .returning();
+export async function createTeams(projectid: number, types: string[]) {
+  if (types.length === 0) return [];
+  const values = types.map((type) => {
+    return { projectid, type };
+  });
+  return await db.insert(Schemas.teams1).values(values).returning();
 }
 
 export async function deleteTeam(teamId: number) {
@@ -208,9 +196,6 @@ export async function getProjectTeams(projectId: number) {
   return await db
     .select()
     .from(Schemas.teams1)
-    // .leftJoin(Schemas.teammembers1,
-    //   eq(Schemas.teammembers1.teamid, Schemas.teams1.id),
-    // )
     .where(eq(Schemas.teams1.projectid, projectId));
 }
 
@@ -286,11 +271,11 @@ export async function getTeamMembers(teamId: number) {
 export async function createTaskSpecs(
   values: (typeof Schemas.taskspecs1.$inferInsert)[],
 ) {
-  return await db.insert(Schemas.taskspecs1).values(values).returning();
-}
-
-export async function TMPdeleteTaskSpecs() {
-  return await db.delete(Schemas.taskspecs1);
+  return await db
+    .insert(Schemas.taskspecs1)
+    .values(values)
+    .onConflictDoNothing()
+    .returning();
 }
 
 export async function getTaskSpecs() {

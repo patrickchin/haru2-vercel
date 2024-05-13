@@ -17,7 +17,7 @@ export default function StartProjectButton({
       className="text-lg font-normal"
       onClick={async () => {
         // TODO
-        await Actions.startProject(projectId);
+        await Actions.startProject(projectId, []);
         router.push(`/project/${projectId}`);
       }}
     >
