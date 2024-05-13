@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuPortal,
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
@@ -48,43 +47,33 @@ function UserNav({ user }: { user?: any }) {
     });
   };
   return (
-    <div className="flex items-center gap-x-3 text-gray-400">
+    <div className="flex items-center gap-x-3">
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <div className="flex items-center gap-x-2 cursor-pointer">
-            <Avatar className="cursor-pointer">
-              <AvatarImage src={user?.avatarUrl} />
-              <AvatarFallback>
-                {getAvatarInitials(user?.name)}
-              </AvatarFallback>
-            </Avatar>
-            <div className="text-sm">{user?.name}</div>
-          </div>
+        <DropdownMenuTrigger className="flex items-center gap-x-2 cursor-pointer">
+          <Avatar className="cursor-pointer">
+            <AvatarImage src={user?.avatarUrl} />
+            <AvatarFallback className="align-center">
+              {getAvatarInitials(user?.name)}
+            </AvatarFallback>
+          </Avatar>
+          {/* <div className="text-sm">{user?.name}</div> */}
         </DropdownMenuTrigger>
 
-        <DropdownMenuPortal>
-          <DropdownMenuContent className="DropdownMenuContent" sideOffset={5}>
-            <ul className="flex flex-col gap-1 divide-y">
-              <li className="py-2">
-                <Link href={"/settings"}>
-                  <DropdownMenuItem className="DropdownMenuItem cursor-pointer gap-4">
-                    <Settings className="w-4 p-0" />
-                    Settings
-                  </DropdownMenuItem>
-                </Link>
-              </li>
-              <li className="py-2">
-                <DropdownMenuItem
-                  onClick={signOutAction}
-                  className="DropdownMenuItem cursor-pointer gap-4"
-                >
-                  <LogOut className="w-4 p-0" />
-                  Logout
-                </DropdownMenuItem>
-              </li>
-            </ul>
-          </DropdownMenuContent>
-        </DropdownMenuPortal>
+        <DropdownMenuContent sideOffset={18} alignOffset={-200}>
+          <Link href={"/settings"}>
+            <DropdownMenuItem className="cursor-pointer gap-4">
+              <Settings className="w-4 p-0" />
+              Settings
+            </DropdownMenuItem>
+          </Link>
+          <DropdownMenuItem
+            onClick={signOutAction}
+            className="cursor-pointer gap-4"
+          >
+            <LogOut className="w-4 p-0" />
+            Logout
+          </DropdownMenuItem>
+        </DropdownMenuContent>
       </DropdownMenu>
     </div>
   );

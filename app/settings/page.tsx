@@ -1,14 +1,18 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
-
-import { CenteredLayout } from "@/components/page-layouts";
+import { redirect, useRouter } from "next/navigation";
 import { updateAvaterForUser } from "@/lib/actions";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getAvatarInitials } from "@/lib/utils";
 
+import { CenteredLayout } from "@/components/page-layouts";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
 function SettingsPage() {
+  const router = useRouter();
   const { data: session } = useSession();
   if (!session?.user) redirect("/login");
 
@@ -19,12 +23,10 @@ function SettingsPage() {
     const file = event.target.files[0];
     if (!file) return;
     if (file.size > 250000) return; // TODO show error
-
-    const response = new FormData();
-    response.set("file", file);
-    const updatedAvatarUrl = await updateAvaterForUser(response);
-    // TODO update user avatar image everywhere
-    }
+    const data = new FormData();
+    data.set("file", file);
+    await updateAvaterForUser(data);
+    router.refresh();
   };
 
   return (
@@ -50,11 +52,9 @@ function SettingsPage() {
               <div className="mt-2">
                 <div className="flex justify-center items-center w-full h-full">
                   <Avatar className="w-40 h-40 rounded-full bg-cover bg-no-repeat bg-center">
-                    {/* // TODO setState(getUser().avatarUrl) */}
-                    <AvatarImage src={} />
-                    <AvatarFallback>
-                      {getAvatarInitials("")}
-                    </AvatarFallback>
+                    {/* TODO setState(getCurrentUser().avatarUrl) */}
+                    <AvatarImage src={""} />
+                    <AvatarFallback>{getAvatarInitials("")}</AvatarFallback>
                   </Avatar>
                 </div>
               </div>

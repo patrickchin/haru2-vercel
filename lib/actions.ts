@@ -38,6 +38,12 @@ export async function registerUser(data: RegisterSchemaType) {
   }
 }
 
+export async function getCurrentUser() {
+  const session = await auth();
+  if (!session?.user?.email) return;
+  return db.getUser(session.user.email);
+}
+
 export async function signInFromLogin(data: any) {
   // TODO validate 
   return await signIn("credentials", data);
