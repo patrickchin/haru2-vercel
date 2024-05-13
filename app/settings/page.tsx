@@ -58,8 +58,8 @@ function SettingsPage() {
 
             <div className="text-center">
               <div className="mt-2">
-                <div className="w-40 h-40 rounded-full bg-cover bg-no-repeat bg-center mx-auto">
-                  <Avatar>
+                <div className="flex justify-center items-center w-full h-full">
+                  <Avatar className="w-40 h-40 rounded-full bg-cover bg-no-repeat bg-center">
                     {newUpdatedAvater ? (
                       <AvatarImage src={newUpdatedAvater} />
                     ) : (
