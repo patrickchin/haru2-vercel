@@ -15,6 +15,7 @@ import {
 import { redirect } from "next/navigation";
 import { defaulTaskSpecs } from "content/tasks";
 import assert from "assert";
+import { isRedirectError } from "next/dist/client/components/redirect";
 
 const VERCEL_BLOB_FAKE_FILES = true;
 
@@ -36,9 +37,13 @@ export async function signInFromLogin(data: any) {
   try {
     return await signIn("credentials", data);
   } catch (error) {
-    console.error("Failed to login");
+    if (isRedirectError(error)) {
+      console.error(error);
+      throw error;
+    }
+  } finally {
+    redirect("/");
   }
-  return "Invalid login credentials";
 }
 
 export async function submitProjectForm2(formData: FormData) {
