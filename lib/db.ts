@@ -250,9 +250,10 @@ export async function deleteTeamMember(teamid: number, userid: number) {
     .returning();
 }
 
-export async function getTeamMembers(teamId: number) {
+export async function getTeamMembers(teamId: number): Promise<DesignUserBasic[]> {
   return await db
     .select({
+      id: Schemas.users1.id,
       name: Schemas.users1.name,
       email: Schemas.users1.email,
       avatarUrl: Schemas.users1.avatarUrl,

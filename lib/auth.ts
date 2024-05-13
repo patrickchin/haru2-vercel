@@ -37,8 +37,6 @@ export const {
           email: user.email,
           name: user.name,
           image: null,
-          avatarUrl: user.avatarUrl,
-          avatarColor: user.avatarColor,
         };
         return authuser;
       },
