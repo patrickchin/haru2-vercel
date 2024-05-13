@@ -7,6 +7,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { GeistSans } from "geist/font/sans";
 import { auth } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 
 let title = "Haru Construct";
 let description = "Plan and organise and your construction projects";
@@ -30,7 +31,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={GeistSans.variable}>
+      <body className={cn("overflow-y-scroll", GeistSans.variable)}>
         <SpeedInsights />
         <Analytics />
 
