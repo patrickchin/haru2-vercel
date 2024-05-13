@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function getAvatarInitials(fullname: string | null | undefined): string {
+export function getAvatarInitials(fullname?: string): string {
   if (!fullname) return "?";
   const names = fullname.trim().split(/\s+/);
   const firstname = names.at(0);

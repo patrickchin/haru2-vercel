@@ -1,50 +1,31 @@
 "use client";
 
-import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 
 import { CenteredLayout } from "@/components/page-layouts";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { updateAvaterForUser } from "@/lib/actions";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getAvatarInitials } from "@/lib/utils";
 
 function SettingsPage() {
-  const { data: session, update: updateSession } = useSession();
+  const { data: session } = useSession();
+  if (!session?.user) redirect("/login");
 
   const userId = Number(session?.user?.id);
-  const [newUpdatedAvater, setNewUpdatedAvater] = useState<
-    string | null | undefined
-  >(null);
+  if (Number.isNaN(userId)) return <p>Invalid user</p>;
 
   const handleFileChange = async (event: any) => {
     const file = event.target.files[0];
-    if (file && file.size <= 250000) {
-      const response = new FormData();
-      response.set("file", file);
-      const updatedAvatarFile = await updateAvaterForUser(response);
-      if (session?.user && updatedAvatarFile) {
-        const newSession = {
-          ...session,
-          user: {
-            ...session?.user,
-            avatarUrl: updatedAvatarFile,
-          },
-        };
-        await updateSession(newSession);
-      }
+    if (!file) return;
+    if (file.size > 250000) return; // TODO show error
+
+    const response = new FormData();
+    response.set("file", file);
+    const updatedAvatarUrl = await updateAvaterForUser(response);
+    // TODO update user avatar image everywhere
     }
   };
-
-  if (!session?.user) redirect("/login");
-
-  if (Number.isNaN(userId)) {
-    console.log("User id is invalid: ");
-    return <p>Invalid user</p>;
-  }
 
   return (
     <>
@@ -69,13 +50,11 @@ function SettingsPage() {
               <div className="mt-2">
                 <div className="flex justify-center items-center w-full h-full">
                   <Avatar className="w-40 h-40 rounded-full bg-cover bg-no-repeat bg-center">
-                    {newUpdatedAvater ? (
-                      <AvatarImage src={newUpdatedAvater} />
-                    ) : (
-                      <AvatarFallback className="AvatarFallback" delayMs={600}>
-                        {getAvatarInitials(session?.user?.name)}
-                      </AvatarFallback>
-                    )}
+                    {/* // TODO setState(getUser().avatarUrl) */}
+                    <AvatarImage src={} />
+                    <AvatarFallback>
+                      {getAvatarInitials("")}
+                    </AvatarFallback>
                   </Avatar>
                 </div>
               </div>
