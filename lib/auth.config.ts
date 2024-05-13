@@ -9,20 +9,8 @@ export const authConfig = {
     // while this file is also used in non-Node.js environments
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.avatarUrl = user.avatarUrl;
-        token.avatarColor = user.avatarColor;
-      }
-      return token;
-    },
-
     async session({ token, session }) {
-      if (session.user && token) {
-        session.user.id = token.sub || "";
-        session.user.avatarUrl = token.avatarUrl;
-        session.user.avatarColor = token.avatarColor;
-      }
+      if (session.user && token) session.user.id = token.sub || "";
       return session;
     },
   },
