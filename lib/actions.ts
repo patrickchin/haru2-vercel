@@ -22,6 +22,13 @@ import { CredentialsSigninError, InvalidInputError, UnknownError } from "./error
 
 const VERCEL_BLOB_FAKE_FILES = false;
 
+export async function getAllUsers() {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  // TODO separate users by organisation
+  return db.getAllUsers();
+}
+
 export async function registerUser(data: RegisterSchemaType) {
 
   const parsed = RegisterSchema.safeParse(data);
@@ -237,6 +244,12 @@ export async function updateProject(
 
 // members ===================================================================
 
+export async function createProjectTeam(projectId: number) {
+  const session = await auth();
+  if (!session?.user) return;
+  return db.createTeam(projectId);
+}
+
 export async function deleteProjectTeam(teamId: number) {
   const session = await auth();
   if (!session?.user) return;
@@ -246,13 +259,20 @@ export async function deleteProjectTeam(teamId: number) {
 export async function getProjectTeams(projectId: number) {
   const session = await auth();
   if (!session?.user) return;
-  return db.getProjectTeamsEnsureDefault(projectId);
+  return (await db.getProjectTeams(projectId)).reverse();
 }
 
-export async function addTeamMember(teamId: number, email: string) {
+export async function addTeamMember(teamId: number, userId: number) {
   const session = await auth();
   if (!session?.user) return;
-  const newTeamMember = await db.addTeamMemberByEmail(teamId, email);
+  const newTeamMember = await db.addTeamMember(teamId, userId);
+  return db.getTeamMembersDetailed(teamId);
+}
+
+export async function removeTeamMember(teamId: number, userId: number) {
+  const session = await auth();
+  if (!session?.user) return;
+  const newTeamMember = await db.deleteTeamMember(teamId, userId);
   return db.getTeamMembersDetailed(teamId);
 }
 

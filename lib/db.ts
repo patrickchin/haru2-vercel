@@ -68,6 +68,16 @@ export async function getUserByPhone(phone: string) {
     .where(eq(Schemas.accounts1.phone, phone));
 }
 
+export async function getAllUsers() {
+  return await db
+    .select({
+      ...getTableColumns(Schemas.users1),
+      email: Schemas.accounts1.email,
+    })
+    .from(Schemas.users1)
+    .leftJoin(Schemas.accounts1, eq(Schemas.accounts1.id, Schemas.users1.id));
+}
+
 export async function createUserIfNotExists({
   name,
   phone,
@@ -222,6 +232,10 @@ export async function updateProjectFields(
 
 // project members ==========================================================================================
 
+export async function createTeam(projectId: number) {
+  return db.insert(Schemas.teams1).values({ projectid: projectId }).returning();
+}
+
 export async function deleteTeam(teamId: number) {
   const deletedTeam = await db.transaction(async (tx) => {
     await tx
@@ -272,23 +286,15 @@ export async function getTeamId(projectid: number, type: string) {
     );
 }
 
-export async function addTeamMemberByEmail(teamid: number, email: string) {
-  // how to do "INSERT INTO x SELECT y FROM z"
-  return await db.transaction(async (tx) => {
-    const userid = await tx
-      .select({ id: Schemas.accounts1.id })
-      .from(Schemas.accounts1)
-      .where(eq(Schemas.accounts1.email, email))
-      .then((r) => r[0].id);
-    return tx
-      .insert(Schemas.teammembers1)
-      .values({
-        teamid,
-        userid,
-      })
-      .onConflictDoNothing()
-      .returning();
-  });
+export async function addTeamMember(teamid: number, userid: number) {
+  return db
+    .insert(Schemas.teammembers1)
+    .values({
+      teamid,
+      userid,
+    })
+    .onConflictDoNothing()
+    .returning();
 }
 
 export async function deleteTeamMember(teamid: number, userid: number) {

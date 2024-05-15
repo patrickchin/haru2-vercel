@@ -6,7 +6,7 @@ import { auth } from "@/lib/auth";
 
 import { CenteredLayout } from "@/components/page-layouts";
 import { Button } from "@/components/ui/button";
-import { ManageTeamMembers } from "./components/manage-team-members";
+import { ManageTeams } from "./components/manage-team-members";
 import StartProjectButton from "./components/start-project-button";
 import { LucideMoveLeft } from "lucide-react";
 import ManageTeamTasksDropdown from "./components/manage-team-tasks";
@@ -37,16 +37,7 @@ async function ProjectManagement({ projectId }: { projectId: number }) {
         </h3>
       </section>
 
-      <section className="flex flex-col gap-4">
-        <div className="flex justify-between px-6">
-          <h3>Team Member Selection</h3>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          {teams.map((team) => (
-            <ManageTeamMembers key={team.id} team={team} />
-          ))}
-        </div>
-      </section>
+      <ManageTeams projectId={project.id} />
 
       <section className="flex flex-col gap-4">
         <div className="px-6">
