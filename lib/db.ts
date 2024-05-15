@@ -52,25 +52,52 @@ export async function createUser(
     .values({ name, phone, email, password: hash, avatarColor });
 }
 
-export async function updateUserAvatarUrlToUser(
+export async function updateUserAvatar(
   uploaderid: number,
   values: { avatarUrl: string },
 ) {
-  const updatedUser = await db
-    .update(Schemas.users1)
-    .set(values)
-    .where(eq(Schemas.users1.id, uploaderid))
-    .returning();
-  return updatedUser[0];
-}
+    return await db.transaction(async (tx)=>{
+    //Retriev the current user data
+    const oldUser = await tx
+      .select({
+          id: Schemas.users1.id,
+          name: Schemas.users1.name,
+          email: Schemas.users1.email,
+          avatarUrl: Schemas.users1.avatarUrl,
+          avatarColor: Schemas.users1.avatarColor
+      })
+      .from(Schemas.users1)
+      .where(eq(Schemas.users1.id, uploaderid))
 
-export async function getUserAvater(uploaderid: number) {
-  const userAvater = await db
-    .select()
-    .from(Schemas.users1)
-    .where(eq(Schemas.users1.id, uploaderid));
+    if (!oldUser) {
+      throw new Error('User not found');
+    }
 
-  return userAvater[0];
+    // Perform the update
+    const updatedUser = await tx
+      .update(Schemas.users1)
+      .set(values)
+      .where(eq(Schemas.users1.id, uploaderid))
+      .returning();
+
+    // Assert exactly one user is updated
+
+    assert(
+      oldUser.length === 1,
+      "Expected exactly one old user avatarUrl to be deleted",
+    );
+    
+    assert(
+      updatedUser.length === 1,
+      "Expected exactly one user to be updated",
+    );
+    
+    // Return both the initial and updated user data
+    return {
+      initial: oldUser[0],
+      updated: updatedUser[0]
+    };
+  })
 }
 
 // projects ==========================================================================================
