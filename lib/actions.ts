@@ -459,36 +459,41 @@ export async function updateAvaterForUser(data: FormData) {
     console.error("file not correcty uploaded");
     return;
   }
-  if (file && file.size > 250000) {
+  if (file.size > 250000) {
     console.error("file size is too long");
     return;
   }
 
   const session = await auth();
-  if (!session?.user?.id) return;
+  if (!session?.user) {
+    console.log('No user session found')
+    return;
+  }
+
   const userId = Number(session.user.id); // error?
+  if (isNaN(userId)) {
+    console.error("Invalid user ID");
+    return;
+  }
 
-  const currentUser = await db.getUserAvater(userId);
-  const oldAvatarUrl = currentUser.avatarUrl;
-
-  const fileBytes = VERCEL_BLOB_FAKE_FILES
-    ? new ArrayBuffer(8)
-    : await file.arrayBuffer();
+  const fileBytes = VERCEL_BLOB_FAKE_FILES ? new ArrayBuffer(8) : await file.arrayBuffer();
 
   const blobResult = await blob.put(`user/${userId}/${file.name}`, fileBytes, {
     access: "public",
   });
 
-  await db.updateUserAvatarUrlToUser(userId, {
+ //Start a database transaction
+  const {initial, updated} = await db.updateUserAvatar(userId, {
     avatarUrl: blobResult.url,
   });
 
-  if (oldAvatarUrl) {
-    await blob.del(oldAvatarUrl);
+  if (initial && initial.avatarUrl) {
+    await blob.del(initial.avatarUrl);
   }
-
-  return blobResult.url;
+   return updated;
 }
+
+
 export async function getTaskFiles(taskId: number) {
   const session = await auth();
   if (!session?.user?.id) return;
