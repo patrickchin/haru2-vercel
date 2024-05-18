@@ -105,7 +105,6 @@ function SettingsPage() {
               <div className="mt-2">
                 <div className="flex justify-center items-center w-full h-full">
                   <Avatar className="w-40 h-40 rounded-full bg-cover bg-no-repeat bg-center">
-                    {/* TODO setState(getCurrentUser().avatarUrl) */}
                     {(user && user.avatarUrl) ?
                       <AvatarImage src={user?.avatarUrl} />:
                       <AvatarFallback>{getAvatarInitials(user?.name)}</AvatarFallback>
