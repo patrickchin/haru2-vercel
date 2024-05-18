@@ -36,7 +36,7 @@ export const {
           id: user.id.toString(),
           email: user.email,
           name: user.name,
-          image: null,
+          image: user?.avatarUrl || null,
         };
         return authuser;
       },
