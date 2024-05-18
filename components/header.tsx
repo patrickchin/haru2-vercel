@@ -51,12 +51,11 @@ function UserNav({ user }: { user?: any }) {
       <DropdownMenu>
         <DropdownMenuTrigger className="flex items-center gap-x-2 cursor-pointer">
           <Avatar className="cursor-pointer">
-            <AvatarImage src={user?.avatarUrl} />
-            <AvatarFallback className="align-center">
-              {getAvatarInitials(user?.name)}
-            </AvatarFallback>
+            {(user && user.image) ?
+              <AvatarImage src={user?.image} />:
+              <AvatarFallback>{getAvatarInitials(user?.name)}</AvatarFallback>
+            }
           </Avatar>
-          {/* <div className="text-sm">{user?.name}</div> */}
         </DropdownMenuTrigger>
 
         <DropdownMenuContent sideOffset={18} alignOffset={-200}>
