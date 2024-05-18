@@ -17,7 +17,7 @@ import { defaulTaskSpecs } from "content/tasks";
 import assert from "assert";
 import { randomColor } from "./utils";
 
-const VERCEL_BLOB_FAKE_FILES = true;
+const VERCEL_BLOB_FAKE_FILES = false;
 
 export async function registerUser(data: RegisterSchemaType) {
   try {
