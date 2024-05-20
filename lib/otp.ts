@@ -24,6 +24,7 @@ export async function sendOtpViaWhatsApp(phoneNumber: string): Promise<void> {
   const otp = generateOTP();
   const expiresAt = new Date();
   expiresAt.setMinutes(expiresAt.getMinutes() + 10); // OTP expires in 10 minutes
+
   await saveOtp(phoneNumber, otp, expiresAt.toISOString()); // Convert Date to ISO string
 
   const data = {
@@ -33,8 +34,6 @@ export async function sendOtpViaWhatsApp(phoneNumber: string): Promise<void> {
     from: fromNumber,
     channel: "whatsapp"
   };
-
-if (!apiUrl) throw new Error("Missing Vonage Whatsapp API URL");
 
   try {
     const response = await axios.post(apiUrl, data, {
