@@ -57,7 +57,7 @@ function SettingsPage() {
     setUpLoading(false);
 
     // this doens't do a full refresh
-    router.refresh();
+    // router.refresh();
     location.reload();
   };
 
