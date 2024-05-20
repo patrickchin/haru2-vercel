@@ -49,25 +49,27 @@ function UserNav({ user }: { user?: any }) {
   return (
     <div className="flex items-center gap-x-3">
       <DropdownMenu>
-        <DropdownMenuTrigger className="flex items-center gap-x-2 cursor-pointer">
+        <DropdownMenuTrigger className="items-center cursor-pointer">
           <Avatar className="cursor-pointer">
-            {(user && user.image) ?
-              <AvatarImage src={user?.image} />:
-              <AvatarFallback>{getAvatarInitials(user?.name)}</AvatarFallback>
-            }
+            <AvatarImage src={user?.image} />
+            <AvatarFallback>{getAvatarInitials(user?.name)}</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent sideOffset={18} alignOffset={-200}>
+        <DropdownMenuContent sideOffset={20} align="end" className="w-48">
+          <DropdownMenuItem className="cursor-pointer flex flex-col items-start px-3">
+            <div className="text-lg font-semibold">{user?.name}</div>
+            <div>{user?.email}</div>
+          </DropdownMenuItem>
           <Link href={"/settings"}>
-            <DropdownMenuItem className="cursor-pointer gap-4">
+            <DropdownMenuItem className="cursor-pointer gap-2 px-3">
               <Settings className="w-4 p-0" />
               Settings
             </DropdownMenuItem>
           </Link>
           <DropdownMenuItem
             onClick={signOutAction}
-            className="cursor-pointer gap-4"
+            className="cursor-pointer gap-2 px-3"
           >
             <LogOut className="w-4 p-0" />
             Logout
