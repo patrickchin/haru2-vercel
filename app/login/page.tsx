@@ -1,16 +1,13 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import { signInAction, sendOtp } from "./signInAction";
-import { signInFromLogin } from "@/lib/actions";
-import { SimpleLayout } from "@/components/page-layouts";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { signInAction, sendOtp } from './signInAction';
+
+import { SimpleLayout } from '@/components/page-layouts';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 export default function Login() {
   const [loginMethod, setLoginMethod] = useState<'password' | 'otp'>('password');
@@ -26,51 +23,14 @@ export default function Login() {
     return () => clearTimeout(timer);
   }, [resendOtpTimer]);
 
-  // Define schema
-  const schema = z.object({
-    email: z.string().min(1, { message: "Email is required" }).email(),
-    password: z.string().optional(),
-    otp: z.string().optional(),
-  }).refine((data) => {
-    if (loginMethod === 'password') {
-      return data.password !== undefined && data.password.length > 0;
-    } else if (loginMethod === 'otp') {
-      return data.otp !== undefined && data.otp.length > 0;
-    }
-    return false;
-  }, {
-    message: "Password or OTP is required based on the selected login method",
-    path: ["password", "otp"],
-  });
-
-  type FormFields = z.infer<typeof schema>;
-
-  const {
-    register,
-    handleSubmit,
-    setError: setFormError,
-    formState: { errors },
-  } = useForm<FormFields>({
-    resolver: zodResolver(schema),
-  });
-
-  const onSubmit: SubmitHandler<FormFields> = async (data) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(null);
+    const formData = new FormData(event.currentTarget);
     try {
-      if (loginMethod === 'password') {
-        await signInFromLogin({
-          redirectTo: "/",
-          email: data.email,
-          password: data.password || "",
-        });
-      } else {
-        const formData = new FormData();
-        formData.append("email", data.email);
-        formData.append("otp", data.otp || "");
-        await signInAction(formData, 'otp');
-      }
+      await signInAction(formData, loginMethod);
     } catch (err: any) {
       setError('The credentials you entered are incorrect. Please double-check your credentials and try again.');
-      setFormError(loginMethod === 'password' ? 'password' : 'otp', { type: 'manual', message: err.message });
     }
   };
 
@@ -93,10 +53,7 @@ export default function Login() {
           <p>Use your email and password to login</p>
         </div>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-y-4 bg-gray-50 px-16 py-6"
-        >
+        <form onSubmit={handleSubmit} className="flex flex-col gap-y-4 bg-gray-50 px-16 py-6">
           {error && <p className="text-red-600 text-center">{error}</p>}
 
           <div>
@@ -123,17 +80,7 @@ export default function Login() {
               <Label htmlFor="password" className="text-xs uppercase">
                 Password
               </Label>
-              <Input
-                {...register("password")}
-                type="password"
-                required
-                className="text-sm"
-              />
-              {errors.password && (
-                <p className="text-sm font-medium text-destructive">
-                  {errors.password?.message}
-                </p>
-              )}
+              <Input name="password" type="password" required className="text-sm" />
             </div>
           ) : (
             <div>
@@ -141,12 +88,7 @@ export default function Login() {
                 OTP
               </Label>
               <div className="flex gap-2 items-center">
-                <Input
-                  {...register("otp")}
-                  type="text"
-                  required
-                  className="text-sm flex-1"
-                />
+                <Input name="otp" type="text" required className="text-sm flex-1" />
                 <button
                   type="button"
                   onClick={(e) => {
@@ -188,9 +130,7 @@ export default function Login() {
             </div>
           )}
 
-          <Button className="text-sm" type="submit">
-            Login
-          </Button>
+          <Button className="text-sm">Login</Button>
 
           <button
             type="button"
