@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
-import { getCurrentUser, updateAvaterForUser } from "@/lib/actions";
+import { updateAvatarForUser } from "@/lib/actions";
 import { cn, getAvatarInitials } from "@/lib/utils";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { LucideLoader2 } from "lucide-react";
-import { DesignUserBasic } from "@/lib/types";
 
 function SettingsPage() {
   const router = useRouter();
@@ -45,7 +44,7 @@ function SettingsPage() {
     data.set("file", file);
 
     setUpLoading(true);
-    const updatedUser = await updateAvaterForUser(data);
+    const updatedUser = await updateAvatarForUser(data);
     if (updatedUser) {
       // This update doesn't really work
       // const newSession = await updateSession({ user: { image: "update" } });
