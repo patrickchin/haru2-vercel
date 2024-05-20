@@ -42,7 +42,9 @@ export async function registerUser(data: RegisterSchemaType) {
 export async function getCurrentUser() {
   const session = await auth();
   if (!session?.user?.email) return;
-  return db.getUser(session.user.email);
+  const users = await db.getUser(session.user.email);
+  if (users.length === 0) return;
+  return users[0];
 }
 
 export async function signInFromLogin(data: any) {
