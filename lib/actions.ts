@@ -482,15 +482,15 @@ export async function updateAvaterForUser(data: FormData) {
     access: "public",
   });
 
- //Start a database transaction
-  const {initial, updated} = await db.updateUserAvatar(userId, {
+  //Start a database transaction
+  const { initial, updated } = await db.updateUserAvatar(userId, {
     avatarUrl: blobResult.url,
   });
 
   if (initial && initial.avatarUrl) {
     await blob.del(initial.avatarUrl);
   }
-   return updated;
+  return updated;
 }
 
 

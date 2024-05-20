@@ -1,7 +1,7 @@
 import NextAuth, { User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcrypt-ts";
-import { getUserFull } from "@/lib/db";
+import { getUser, getUserFull } from "@/lib/db";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { authConfig } from "@/lib/auth.config";
 
@@ -13,6 +13,18 @@ export const {
 } = NextAuth({
   ...authConfig,
   // adapter: DrizzleAdapter(db),
+  callbacks: {
+    async session({ token, session, newSession, trigger }) {
+      // trigger update doesn't seem to work
+      // if (trigger === "update") {
+
+      const user = await getUser(session.user.email);
+      session.user.image = user[0].avatarUrl;
+
+      if (token) session.user.id = token.sub || "";
+      return session;
+    },
+  },
   providers: [
     Credentials({
       async authorize(credentials, req) {
