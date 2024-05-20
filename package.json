@@ -43,6 +43,8 @@
     "@vercel/analytics": "^1.2.2",
     "@vercel/blob": "^0.22.2",
     "@vercel/speed-insights": "^1.0.10",
+    "@vonage/jwt": "^1.10.0",
+    "axios": "^1.6.8",
     "bcrypt-ts": "^5.0.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",

@@ -11,7 +11,7 @@ import {
   getTableColumns,
 } from "drizzle-orm";
 import postgres from "postgres";
-import { genSaltSync, hashSync } from "bcrypt-ts";
+import { genSaltSync, hashSync, compareSync } from "bcrypt-ts";
 
 import * as Schemas from "@/drizzle/schema";
 import assert from "assert";
@@ -469,4 +469,54 @@ export async function deleteFile(fileId: number) {
     .delete(Schemas.files1)
     .where(eq(Schemas.files1.id, fileId))
     .returning();
+}
+
+
+// OTP functions ==========================================================================================
+
+export async function saveOtp(phoneNumber: string, otp: string, expiresAt: string) {
+  // Generate a salt and hash the OTP
+  const salt = genSaltSync(10);
+  const hashedOtp = hashSync(otp, salt);
+
+  return await db.insert(Schemas.otps1).values({
+    phoneNumber,
+    otp: hashedOtp,
+    expiresAt,
+  }).returning();
+}
+
+export async function deleteOtp(phoneNumber: string, otp: string) {
+  return await db.delete(Schemas.otps1)
+    .where(
+      and(
+        eq(Schemas.otps1.phoneNumber, phoneNumber),
+        eq(Schemas.otps1.otp, otp)
+      )
+    ).returning();
+}
+
+export async function verifyOtp(phoneNumber: string, otp: string): Promise<boolean> {
+  const record = await db.select()
+    .from(Schemas.otps1)
+    .where(eq(Schemas.otps1.phoneNumber, phoneNumber))
+    .limit(1);
+
+  if (record.length === 0) {
+    return false;
+  }
+
+  const { otp: hashedOtp, expiresAt } = record[0];
+  if (new Date() > new Date(expiresAt)) {
+    return false;
+  }
+
+  // Compare the provided OTP with the hashed OTP
+  const isValidOtp = compareSync(otp, hashedOtp);
+  if (!isValidOtp) {
+    return false;
+  }
+
+  await deleteOtp(phoneNumber, hashedOtp); // Remove OTP after successful verification
+  return true;
 }
