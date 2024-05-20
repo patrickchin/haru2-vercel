@@ -23,30 +23,54 @@ export const {
   },
   providers: [
     Credentials({
-      async authorize(credentials, req) {
-        const email = credentials.email as string;
-        const password = credentials.password as string;
-        if (!password) return null;
+        
+      async authorize(credentials) {
+        
+        const { email, password, otp } = credentials;
+        
+        
+        if (!email) return null;
 
         const users = await getUserAccountByEmail(email as string);
         if (users.length === 0) return null;
 
         const user = users[0];
-        if (!user.password) return null;
+        
+        // Verify OTP if provided
+        if (otp) {
 
-        const passwordsMatch = await compare(
-          password as string,
-          user.password!,
-        );
-        if (!passwordsMatch) return null;
+          const phone = user.phone;
+          
+          if (!phone) return null;
+          const otpIsValid = await verifyOtp(phone, otp);
+      
+          if (otpIsValid) {
+            
+            const authuser: User = {
+              id: user.id.toString(),
+              email: user.email,
+              name: user.name,
+              image: user.avatarUrl || null,
+            };
+            return authuser;
+          }
+        }
 
-        const authuser: User = {
-          id: user.id.toString(),
-          email: user.email,
-          name: user.name,
-          image: user?.avatarUrl || null,
-        };
-        return authuser;
+        // Verify password if OTP is not provided or is invalid
+        if (password) {
+          const passwordsMatch = await compare(password, user.password!);
+          if (passwordsMatch) {
+            const authuser: User = {
+              id: user.id.toString(),
+              email: user.email,
+              name: user.name,
+              image: user.avatarUrl || null,
+            };
+            return authuser;
+          }
+        }
+
+        return null;
       },
     }),
   ],
