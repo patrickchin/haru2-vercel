@@ -17,30 +17,11 @@ import { DesignUserBasic } from "@/lib/types";
 
 function SettingsPage() {
   const router = useRouter();
-  const { data: session } = useSession();
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isUploading, setUpLoading] = useState(false)
-  const [user, setUser] = useState<DesignUserBasic | null>(null)
+  const { data: session, update: updateSession } = useSession();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isUploading, setUpLoading] = useState(false);
 
   if (!session?.user) redirect("/login");
-
-  useEffect(()=>{
-    const fetchData = async () => {
-      try {
-        const users = await getCurrentUser();
-        if(users && users.length > 0){
-          setUser(users[0]); // Set the user in state if needed
-        }else {
-          console.error('No users returned');
-          setUser(null);  // Handle the case where no users are returned
-        }
-      } catch (error) {
-        console.error('Failed to fetch user:', error);
-        setUser(null);  
-      }
-    };
-    fetchData(); // Call the async function
-  },[])
 
   const userId = Number(session?.user?.id);
   if (Number.isNaN(userId)) return <p>Invalid user</p>;
@@ -48,34 +29,36 @@ function SettingsPage() {
   const handleFileChange = async (event: any) => {
     const file = event.target.files[0];
     if (!file) {
-      setErrorMessage('Please select a file.');
+      setErrorMessage("Please select a file.");
       return;
     }
 
     if (file.size > 250000) {
-      setErrorMessage('File size is too large. Please upload a file smaller than 250 KB.');
+      setErrorMessage(
+        "File size is too large. Please upload a file smaller than 250 KB.",
+      );
       return;
-    } 
+    }
 
-    setErrorMessage('')
+    setErrorMessage("");
     const data = new FormData();
     data.set("file", file);
 
-    try {
-      setUpLoading(true)
-      const updatedUser = await updateAvaterForUser(data);
-      if(updatedUser){
-        setUser(updatedUser)
-        setUpLoading(false)
-      }else{
-        setUser(null); // Optionally handle as an error or set to null
-        setUpLoading(false)
-      }
-      router.refresh();
-    } catch (error) {
-      setErrorMessage('Failed to update the avatar. Please try again.');
-      setUpLoading(false)
+    setUpLoading(true);
+    const updatedUser = await updateAvaterForUser(data);
+    if (updatedUser) {
+      // This update doesn't really work
+      // const newSession = await updateSession({ user: { image: "update" } });
+      // const newSession = await updateSession({ user: { image: updatedUser.avatarUrl } });
+      // await updateSession();
+    } else {
+      setErrorMessage("Failed to update the avatar. Please try again.");
     }
+    setUpLoading(false);
+
+    // this doens't do a full refresh
+    router.refresh();
+    location.reload();
   };
 
   return (
@@ -98,17 +81,19 @@ function SettingsPage() {
               Profile Photo
             </Label>
             {errorMessage && (
-              <p className="text-red-500 text-xs italic text-center">{errorMessage}</p>
+              <p className="text-red-500 text-xs italic text-center">
+                {errorMessage}
+              </p>
             )}
 
             <div className="text-center">
               <div className="mt-2">
                 <div className="flex justify-center items-center w-full h-full">
                   <Avatar className="w-40 h-40 rounded-full bg-cover bg-no-repeat bg-center">
-                    {(user && user.avatarUrl) ?
-                      <AvatarImage src={user?.avatarUrl} />:
-                      <AvatarFallback>{getAvatarInitials(user?.name)}</AvatarFallback>
-                    }
+                    <AvatarImage src={session.user?.image || undefined} />:
+                    <AvatarFallback>
+                      {getAvatarInitials(session.user?.name || undefined)}
+                    </AvatarFallback>
                   </Avatar>
                 </div>
               </div>
@@ -117,11 +102,9 @@ function SettingsPage() {
                 className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-400 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150 mt-2 ml-3 cursor-pointer"
               >
                 Select New Photo
-                {isUploading &&
-                  <LucideLoader2
-                    className={cn("animate-spin h-4")}
-                  />
-                }
+                {isUploading && (
+                  <LucideLoader2 className={cn("animate-spin h-4")} />
+                )}
               </Label>
             </div>
           </div>
