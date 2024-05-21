@@ -1,8 +1,32 @@
 import { DesignUserBasic } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { cn } from "@/lib/utils";
+import { cn, getAvatarInitials } from "@/lib/utils";
+import { User } from "next-auth";
 
-export default function UserAvatar({
+export function UserAvatar({
+  user,
+  className,
+}: {
+  // user: DesignUserBasic;
+  user?: User;
+  className?: string;
+}) {
+  return (
+    <Avatar className={cn("", className)}>
+      {/* <AvatarImage src={user.avatarUrl ?? undefined} /> */}
+      <AvatarImage src={user?.image ?? undefined} />
+      <AvatarFallback
+        // style={{ backgroundColor: user.avatarColor ?? "lightblue" }}
+        style={{ backgroundColor: "lightblue" }}
+        className="text-xl text-align-center"
+      >
+        {getAvatarInitials(user?.name ?? undefined)}
+      </AvatarFallback>
+    </Avatar>
+  );
+}
+
+export function DesignUserAvatar({
   user,
   className,
 }: {
@@ -16,7 +40,7 @@ export default function UserAvatar({
         style={{ backgroundColor: user.avatarColor ?? "lightblue" }}
         className="text-xl text-align-center"
       >
-        {user.name.slice(0, 2)}
+        {getAvatarInitials(user.name ?? undefined)}
       </AvatarFallback>
     </Avatar>
   );

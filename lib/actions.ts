@@ -15,9 +15,8 @@ import {
 import { redirect } from "next/navigation";
 import { defaulTaskSpecs } from "content/tasks";
 import assert from "assert";
-import { isRedirectError } from "next/dist/client/components/redirect";
 
-const VERCEL_BLOB_FAKE_FILES = true;
+const VERCEL_BLOB_FAKE_FILES = false;
 
 export async function registerUser(data: RegisterSchemaType) {
   try {
@@ -27,23 +26,29 @@ export async function registerUser(data: RegisterSchemaType) {
       throw new Error("User already exists");
     }
 
-    await db.createUser(data.name, data.phone ?? "", data.email, data.password);
+    await db.createUser(
+      data.name,
+      data.phone ?? "",
+      data.email,
+      data.password,
+      null,
+    );
   } catch (error) {
     throw error;
   }
 }
 
+export async function getCurrentUser() {
+  const session = await auth();
+  if (!session?.user?.email) return;
+  const users = await db.getUser(session.user.email);
+  if (users.length === 0) return;
+  return users[0];
+}
+
 export async function signInFromLogin(data: any) {
-  try {
-    return await signIn("credentials", data);
-  } catch (error) {
-    if (isRedirectError(error)) {
-      console.error(error);
-      throw error;
-    }
-  } finally {
-    redirect("/");
-  }
+  // TODO validate
+  return await signIn("credentials", data);
 }
 
 export async function submitProjectForm2(formData: FormData) {
@@ -326,7 +331,10 @@ export async function getProjectTaskSpecsGroupedByTeam() {
   return groupedSpecs;
 }
 
-export async function createProjectTasks(projectId: number, enabled: Record<number, boolean>) {
+export async function createProjectTasks(
+  projectId: number,
+  enabled: Record<number, boolean>,
+) {
   const session = await auth();
   if (!session?.user?.id) return;
 
@@ -445,6 +453,47 @@ export async function addTaskFileReturnAll(taskId: number, data: FormData) {
   // no auth because done in addTaskFile
   await addTaskFile(taskId, data);
   return db.getTaskFiles(taskId);
+}
+
+export async function updateAvatarForUser(data: FormData) {
+  const file = data.get("file") as File;
+
+  if (!file) {
+    console.error("file not correcty uploaded");
+    return;
+  }
+  if (file.size > 250000) {
+    console.error("file size is too big", file);
+    return;
+  }
+
+  const session = await auth();
+  if (!session?.user) {
+    console.log("No user session found");
+    return;
+  }
+
+  const userId = Number(session.user.id); // error?
+  if (isNaN(userId)) {
+    console.error("Invalid user ID");
+    return;
+  }
+
+  const fileBytes = await file.arrayBuffer();
+
+  const blobResult = await blob.put(`user/${userId}/${file.name}`, fileBytes, {
+    access: "public",
+  });
+
+  //Start a database transaction
+  const { initial, updated } = await db.updateUserAvatar(userId, {
+    avatarUrl: blobResult.url,
+  });
+
+  if (initial && initial.avatarUrl) {
+    await blob.del(initial.avatarUrl);
+  }
+  return updated;
 }
 
 export async function getTaskFiles(taskId: number) {

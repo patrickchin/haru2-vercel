@@ -54,10 +54,10 @@ export const RegisterSchema = z
 
 export type RegisterSchemaType = z.infer<typeof RegisterSchema>;
 
-export type DesignUser = typeof Schemas.users1.$inferSelect;
+export type DesignUserFull = typeof Schemas.users1.$inferSelect;
 export type DesignUserBasic = Pick<
-  DesignUser,
-  "name" | "email" | "avatarUrl" | "avatarColor"
+  DesignUserFull,
+  "id" | "name" | "email" | "avatarUrl" | "avatarColor"
 >;
 export type DesignProject = typeof Schemas.projects1.$inferSelect;
 export type DesignTeam = typeof Schemas.teams1.$inferSelect;
@@ -70,12 +70,7 @@ export type DesignTaskUserComment = Awaited<
   ReturnType<typeof db.getTaskComments>
 >[0];
 
-export const defaultTeams = [
-  "legal",
-  "architectural",
-  "structural",
-  "mep",
-];
+export const defaultTeams = ["legal", "architectural", "structural", "mep"];
 
 export const teamNames: Record<string, string> = {
   legal: "Legal",

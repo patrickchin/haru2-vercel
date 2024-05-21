@@ -26,15 +26,15 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { DesignUserAvatar } from "@/components/user-avatar";
 
 import { cn } from "@/lib/utils";
-import { DesignFile, DesignTaskUserComment } from "@/lib/types";
+import { DesignFile, DesignTaskUserComment, DesignUserBasic } from "@/lib/types";
 import {
   addTaskComment,
   addTaskFile,
@@ -149,10 +149,7 @@ function CommentsList({
           )}
         >
           <div className="pt-2">
-            <Avatar>
-              <AvatarFallback />
-              <AvatarImage src={`/tmp/avatar${(c.users1?.id || 0) % 12}.png`} />
-            </Avatar>
+            <DesignUserAvatar user={c.users1 as DesignUserBasic} />
           </div>
           <div className="flex flex-col gap-1 w-full">
             <div className="flex flex-row gap-4 items-end">

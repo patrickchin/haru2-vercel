@@ -12,7 +12,7 @@ import {
   CardDescription,
   CardHeader,
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/user-avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
 import BackButton from "@/components/back-button";
@@ -39,11 +39,7 @@ function MembersList({ taskId }: { taskId: number }) {
           <ul className="flex flex-col gap-4">
             {members.map((mem, i) => (
               <li key={i} className="flex gap-4 items-center">
-                <Avatar>
-                  <AvatarFallback />
-                  <AvatarImage src={`/tmp/avatar${(i + 4) % 12}.png`} />
-                </Avatar>
-                {mem.name}
+                <UserAvatar user={mem} />
               </li>
             ))}
           </ul>
