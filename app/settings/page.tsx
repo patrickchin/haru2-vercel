@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { LucideLoader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 function SettingsPage() {
   const router = useRouter();
@@ -66,47 +67,36 @@ function SettingsPage() {
         <CardHeader>
           <CardTitle>Profile picture</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="col-span-6 ml-2 sm:col-span-4 md:mr-3">
-            <Input
-              type="file"
-              className="hidden"
-              id="photo"
-              onChange={handleFileChange}
-              accept="image/*"
-              disabled={isUploading}
-            />
-            <Label className="block text-gray-700 text-sm font-bold mb-2 text-center">
-              Profile Photo
-            </Label>
-            {errorMessage && (
-              <p className="text-red-500 text-xs italic text-center">
-                {errorMessage}
-              </p>
-            )}
+        <CardContent className="flex flex-col gap-4 items-center justify-center">
+          <Input
+            type="file"
+            className="hidden"
+            id="photo"
+            onChange={handleFileChange}
+            accept="image/*"
+            disabled={isUploading}
+          />
+          <Avatar className="w-40 h-40 rounded-full">
+            <AvatarImage src={session.user?.image || undefined} />
+            <AvatarFallback>
+              {getAvatarInitials(session.user?.name || undefined)}
+            </AvatarFallback>
+          </Avatar>
 
-            <div className="text-center">
-              <div className="mt-2">
-                <div className="flex justify-center items-center w-full h-full">
-                  <Avatar className="w-40 h-40 rounded-full bg-cover bg-no-repeat bg-center">
-                    <AvatarImage src={session.user?.image || undefined} />:
-                    <AvatarFallback>
-                      {getAvatarInitials(session.user?.name || undefined)}
-                    </AvatarFallback>
-                  </Avatar>
-                </div>
-              </div>
-              <Label
-                htmlFor="photo"
-                className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-400 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150 mt-2 ml-3 cursor-pointer"
-              >
-                Select New Photo
-                {isUploading && (
-                  <LucideLoader2 className={cn("animate-spin h-4")} />
-                )}
-              </Label>
-            </div>
-          </div>
+          {errorMessage && (
+            <p className="text-red-500 text-xs italic text-center">
+              {errorMessage}
+            </p>
+          )}
+
+          <Button asChild variant="outline">
+            <Label htmlFor="photo">
+              Select New Photo
+              {isUploading && (
+                <LucideLoader2 className={cn("animate-spin h-4")} />
+              )}
+            </Label>
+          </Button>
         </CardContent>
       </Card>
 

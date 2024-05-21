@@ -40,43 +40,43 @@ export function MainNav() {
 }
 
 function UserNav({ user }: { user?: any }) {
+
   const signOutAction = async () => {
     await signOut({
       redirect: true,
       callbackUrl: "/",
     });
   };
-  return (
-    <div className="flex items-center gap-x-3">
-      <DropdownMenu>
-        <DropdownMenuTrigger className="items-center cursor-pointer">
-          <Avatar className="cursor-pointer">
-            <AvatarImage src={user?.image} />
-            <AvatarFallback>{getAvatarInitials(user?.name)}</AvatarFallback>
-          </Avatar>
-        </DropdownMenuTrigger>
 
-        <DropdownMenuContent sideOffset={20} align="end" className="w-48">
-          <DropdownMenuItem className="cursor-pointer flex flex-col items-start px-3">
-            <div className="text-lg font-semibold">{user?.name}</div>
-            <div>{user?.email}</div>
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="items-center cursor-pointer">
+        <Avatar className="cursor-pointer">
+          <AvatarImage src={user?.image} />
+          <AvatarFallback>{getAvatarInitials(user?.name)}</AvatarFallback>
+        </Avatar>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent sideOffset={20} align="end" className="w-48">
+        <DropdownMenuItem className="cursor-pointer flex flex-col items-start px-3">
+          <div className="text-lg font-semibold">{user?.name}</div>
+          <div>{user?.email}</div>
+        </DropdownMenuItem>
+        <Link href={"/settings"}>
+          <DropdownMenuItem className="cursor-pointer gap-2 px-3">
+            <Settings className="w-4 p-0" />
+            Settings
           </DropdownMenuItem>
-          <Link href={"/settings"}>
-            <DropdownMenuItem className="cursor-pointer gap-2 px-3">
-              <Settings className="w-4 p-0" />
-              Settings
-            </DropdownMenuItem>
-          </Link>
-          <DropdownMenuItem
-            onClick={signOutAction}
-            className="cursor-pointer gap-2 px-3"
-          >
-            <LogOut className="w-4 p-0" />
-            Logout
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+        </Link>
+        <DropdownMenuItem
+          onClick={signOutAction}
+          className="cursor-pointer gap-2 px-3"
+        >
+          <LogOut className="w-4 p-0" />
+          Logout
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
