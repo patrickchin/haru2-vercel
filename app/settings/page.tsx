@@ -75,7 +75,7 @@ function SettingsPage() {
             accept="image/*"
             disabled={isUploading}
           />
-          <UserAvatar user={session.user} className="w-40 h-40 rounded-full" />
+          <UserAvatar user={session.user} className="w-40 h-40 rounded-full outline outline-offset-4" />
 
           {errorMessage && (
             <p className="text-red-500 text-xs italic text-center">
