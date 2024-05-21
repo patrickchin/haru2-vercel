@@ -47,7 +47,7 @@ export async function createUser(
   phone: string,
   email: string,
   password: string,
-  avatarColor: string = "#FF5733",
+  avatarColor: string | null,
 ) {
   let salt = genSaltSync(10);
   let hash = hashSync(password, salt);

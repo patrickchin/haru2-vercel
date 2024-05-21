@@ -18,5 +18,3 @@ export function getAvatarInitials(fullname?: string): string {
 
   return initials.toUpperCase();
 }
-const colors = ["#FF5733", "#34A853", "#4285F4", "#FBBC05", "#EA4335"];
-export const randomColor = colors[Math.floor(Math.random() * colors.length)];
