@@ -81,6 +81,7 @@ export const tasks1 = pgTable("tasks1", {
   specid: integer("specId").references(() => taskspecs1.id),
   projectid: integer("projectId").references(() => projects1.id),
   lead: varchar("lead", { length: 255 }),
+  // lead1: integer("leadId").references(() => users1.id),
   // owner: integer("ownerid").references(() => users1.id),
   // members: integer("ownerid").references(() => users1.id),
   type: varchar("type", { length: 255 }),

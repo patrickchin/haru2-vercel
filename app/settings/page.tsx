@@ -4,9 +4,7 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
 import { updateAvatarForUser } from "@/lib/actions";
-import { cn, getAvatarInitials } from "@/lib/utils";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CenteredLayout } from "@/components/page-layouts";
 import { Input } from "@/components/ui/input";
@@ -14,6 +12,7 @@ import { Label } from "@/components/ui/label";
 
 import { LucideLoader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { UserAvatar } from "@/components/user-avatar";
 
 function SettingsPage() {
   const router = useRouter();
@@ -76,12 +75,7 @@ function SettingsPage() {
             accept="image/*"
             disabled={isUploading}
           />
-          <Avatar className="w-40 h-40 rounded-full">
-            <AvatarImage src={session.user?.image || undefined} />
-            <AvatarFallback>
-              {getAvatarInitials(session.user?.name || undefined)}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar user={session.user} className="w-40 h-40 rounded-full" />
 
           {errorMessage && (
             <p className="text-red-500 text-xs italic text-center">
@@ -93,7 +87,7 @@ function SettingsPage() {
             <Label htmlFor="photo">
               Select New Photo
               {isUploading && (
-                <LucideLoader2 className={cn("animate-spin h-4")} />
+                <LucideLoader2 className="animate-spin h-4" />
               )}
             </Label>
           </Button>

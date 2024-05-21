@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { LucideConstruction } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
+import { User } from "next-auth";
+
+import { LucideConstruction, LucideSettings, LucideLogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,13 +13,11 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { Settings, LogOut } from "lucide-react";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { getAvatarInitials } from "@/lib/utils";
+import { UserAvatar } from "./user-avatar";
 
 const navigation = [
   { name: "New Project", href: "/new-project" },
-  { name: "Projects", href: "/projects" },
+  { name: "My Projects", href: "/projects" },
 ];
 
 export function MainNav() {
@@ -39,7 +39,7 @@ export function MainNav() {
   );
 }
 
-function UserNav({ user }: { user?: any }) {
+function UserNav({ user }: { user?: User }) {
 
   const signOutAction = async () => {
     await signOut({
@@ -51,10 +51,7 @@ function UserNav({ user }: { user?: any }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="items-center cursor-pointer">
-        <Avatar className="cursor-pointer">
-          <AvatarImage src={user?.image} />
-          <AvatarFallback>{getAvatarInitials(user?.name)}</AvatarFallback>
-        </Avatar>
+        <UserAvatar user={user} />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent sideOffset={20} align="end" className="w-48">
@@ -64,7 +61,7 @@ function UserNav({ user }: { user?: any }) {
         </DropdownMenuItem>
         <Link href={"/settings"}>
           <DropdownMenuItem className="cursor-pointer gap-2 px-3">
-            <Settings className="w-4 p-0" />
+            <LucideSettings className="w-4 p-0" />
             Settings
           </DropdownMenuItem>
         </Link>
@@ -72,7 +69,7 @@ function UserNav({ user }: { user?: any }) {
           onClick={signOutAction}
           className="cursor-pointer gap-2 px-3"
         >
-          <LogOut className="w-4 p-0" />
+          <LucideLogOut className="w-4 p-0" />
           Logout
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -96,11 +93,8 @@ function LoginSignup() {
 
 export function LoginOrUserSettings() {
   const { data: session, status } = useSession();
-
   if (status === "authenticated") return <UserNav user={session?.user} />;
-
   if (status === "loading") return <UserNav />;
-
   return <LoginSignup />;
 }
 

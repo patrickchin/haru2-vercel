@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import UserAvatar from "@/components/user-avatar";
+import { DesignUserAvatar } from "@/components/user-avatar";
 
 export function ManageTeamMembersClient({
   team,
@@ -48,7 +48,7 @@ export function ManageTeamMembersClient({
               key={i}
               className="flex gap-4 p-4 items-center hover:bg-accent border-b"
             >
-              <UserAvatar user={user} />
+              <DesignUserAvatar user={user} />
               <div className="grow">
                 <div className="font-medium">
                   {user.name || "Unregistered Account"}
