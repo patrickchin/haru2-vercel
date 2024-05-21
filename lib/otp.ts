@@ -35,6 +35,8 @@ export async function sendOtpViaWhatsApp(phoneNumber: string): Promise<void> {
     channel: "whatsapp"
   };
 
+  if (!apiUrl) throw new Error("Missing Vonage Whatsapp API URL");
+
   try {
     const response = await axios.post(apiUrl, data, {
       headers: {
