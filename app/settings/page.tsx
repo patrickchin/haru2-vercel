@@ -60,6 +60,10 @@ function SettingsPage() {
     location.reload();
   };
 
+  const deleteProfileAvatar = () => {
+    //TODO
+  };
+
   return (
     <>
       <Card>
@@ -75,7 +79,10 @@ function SettingsPage() {
             accept="image/*"
             disabled={isUploading}
           />
-          <UserAvatar user={session.user} className="w-40 h-40 rounded-full outline outline-offset-4" />
+          <UserAvatar
+            user={session.user}
+            className="w-40 h-40 rounded-full outline outline-offset-4"
+          />
 
           {errorMessage && (
             <p className="text-red-500 text-xs italic text-center">
@@ -83,14 +90,20 @@ function SettingsPage() {
             </p>
           )}
 
-          <Button asChild variant="outline">
-            <Label htmlFor="photo">
-              Select New Photo
-              {isUploading && (
-                <LucideLoader2 className="animate-spin h-4" />
-              )}
-            </Label>
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={deleteProfileAvatar} asChild variant="destructive">
+              <Label>
+                Delete
+                {isUploading && <LucideLoader2 className="animate-spin h-4" />}
+              </Label>
+            </Button>
+            <Button asChild variant="outline">
+              <Label htmlFor="photo">
+                Select New Photo
+                {isUploading && <LucideLoader2 className="animate-spin h-4" />}
+              </Label>
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
