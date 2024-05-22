@@ -7,7 +7,12 @@ import { genSaltSync, hashSync } from "bcrypt-ts";
 
 import * as Schemas from "drizzle/schema";
 import assert from "assert";
-import { DesignTeam, DesignUserBasic, DesignUserFull, defaultTeams } from "./types";
+import {
+  DesignTeam,
+  DesignUserBasic,
+  DesignUserFull,
+  defaultTeams,
+} from "./types";
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
@@ -42,7 +47,7 @@ export async function createUser(
   phone: string,
   email: string,
   password: string,
-  avatarColor: string = "#FF5733",
+  avatarColor: string | null,
 ) {
   let salt = genSaltSync(10);
   let hash = hashSync(password, salt);
@@ -56,21 +61,20 @@ export async function updateUserAvatar(
   uploaderid: number,
   values: { avatarUrl: string },
 ) {
-    return await db.transaction(async (tx)=>{
-    //Retriev the current user data
+  return await db.transaction(async (tx) => {
     const oldUser = await tx
       .select({
-          id: Schemas.users1.id,
-          name: Schemas.users1.name,
-          email: Schemas.users1.email,
-          avatarUrl: Schemas.users1.avatarUrl,
-          avatarColor: Schemas.users1.avatarColor
+        id: Schemas.users1.id,
+        name: Schemas.users1.name,
+        email: Schemas.users1.email,
+        avatarUrl: Schemas.users1.avatarUrl,
+        avatarColor: Schemas.users1.avatarColor,
       })
       .from(Schemas.users1)
-      .where(eq(Schemas.users1.id, uploaderid))
+      .where(eq(Schemas.users1.id, uploaderid));
 
     if (!oldUser) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
 
     // Perform the update
@@ -86,18 +90,15 @@ export async function updateUserAvatar(
       oldUser.length === 1,
       "Expected exactly one old user avatarUrl to be deleted",
     );
-    
-    assert(
-      updatedUser.length === 1,
-      "Expected exactly one user to be updated",
-    );
-    
+
+    assert(updatedUser.length === 1, "Expected exactly one user to be updated");
+
     // Return both the initial and updated user data
     return {
       initial: oldUser[0],
-      updated: updatedUser[0]
+      updated: updatedUser[0],
     };
-  })
+  });
 }
 
 // projects ==========================================================================================
@@ -277,7 +278,9 @@ export async function deleteTeamMember(teamid: number, userid: number) {
     .returning();
 }
 
-export async function getTeamMembers(teamId: number): Promise<DesignUserBasic[]> {
+export async function getTeamMembers(
+  teamId: number,
+): Promise<DesignUserBasic[]> {
   return await db
     .select({
       id: Schemas.users1.id,

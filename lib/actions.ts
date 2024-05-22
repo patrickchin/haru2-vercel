@@ -15,7 +15,6 @@ import {
 import { redirect } from "next/navigation";
 import { defaulTaskSpecs } from "content/tasks";
 import assert from "assert";
-import { randomColor } from "./utils";
 
 const VERCEL_BLOB_FAKE_FILES = false;
 
@@ -32,7 +31,7 @@ export async function registerUser(data: RegisterSchemaType) {
       data.phone ?? "",
       data.email,
       data.password,
-      randomColor,
+      null,
     );
   } catch (error) {
     throw error;
@@ -42,11 +41,13 @@ export async function registerUser(data: RegisterSchemaType) {
 export async function getCurrentUser() {
   const session = await auth();
   if (!session?.user?.email) return;
-  return db.getUser(session.user.email);
+  const users = await db.getUser(session.user.email);
+  if (users.length === 0) return;
+  return users[0];
 }
 
 export async function signInFromLogin(data: any) {
-  // TODO validate 
+  // TODO validate
   return await signIn("credentials", data);
 }
 
@@ -330,7 +331,10 @@ export async function getProjectTaskSpecsGroupedByTeam() {
   return groupedSpecs;
 }
 
-export async function createProjectTasks(projectId: number, enabled: Record<number, boolean>) {
+export async function createProjectTasks(
+  projectId: number,
+  enabled: Record<number, boolean>,
+) {
   const session = await auth();
   if (!session?.user?.id) return;
 
@@ -451,8 +455,7 @@ export async function addTaskFileReturnAll(taskId: number, data: FormData) {
   return db.getTaskFiles(taskId);
 }
 
-//updateAvaterForUser
-export async function updateAvaterForUser(data: FormData) {
+export async function updateAvatarForUser(data: FormData) {
   const file = data.get("file") as File;
 
   if (!file) {
@@ -460,13 +463,13 @@ export async function updateAvaterForUser(data: FormData) {
     return;
   }
   if (file.size > 250000) {
-    console.error("file size is too long");
+    console.error("file size is too big", file);
     return;
   }
 
   const session = await auth();
   if (!session?.user) {
-    console.log('No user session found')
+    console.log("No user session found");
     return;
   }
 
@@ -476,23 +479,22 @@ export async function updateAvaterForUser(data: FormData) {
     return;
   }
 
-  const fileBytes = VERCEL_BLOB_FAKE_FILES ? new ArrayBuffer(8) : await file.arrayBuffer();
+  const fileBytes = await file.arrayBuffer();
 
   const blobResult = await blob.put(`user/${userId}/${file.name}`, fileBytes, {
     access: "public",
   });
 
- //Start a database transaction
-  const {initial, updated} = await db.updateUserAvatar(userId, {
+  //Start a database transaction
+  const { initial, updated } = await db.updateUserAvatar(userId, {
     avatarUrl: blobResult.url,
   });
 
   if (initial && initial.avatarUrl) {
     await blob.del(initial.avatarUrl);
   }
-   return updated;
+  return updated;
 }
-
 
 export async function getTaskFiles(taskId: number) {
   const session = await auth();

@@ -70,12 +70,7 @@ export type DesignTaskUserComment = Awaited<
   ReturnType<typeof db.getTaskComments>
 >[0];
 
-export const defaultTeams = [
-  "legal",
-  "architectural",
-  "structural",
-  "mep",
-];
+export const defaultTeams = ["legal", "architectural", "structural", "mep"];
 
 export const teamNames: Record<string, string> = {
   legal: "Legal",

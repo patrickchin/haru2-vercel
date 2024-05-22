@@ -12,7 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Table,
   TableBody,
@@ -34,6 +33,7 @@ import {
 
 import { DesignTask } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { UserAvatar } from "@/components/user-avatar";
 
 // a company and a way they work should be able to determine
 // their own tasks saved on the platform
@@ -73,13 +73,8 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
     header: () => <div className="text-center">Lead</div>,
     cell: ({ row }) => (
       <div className="w-full flex overflow-hidden w-12 items-center justify-center">
-        <Avatar>
-          <AvatarImage src={`/tmp/avatar0.png`} />
-          {/* TODO */}
-          {/* {(row.getValue("lead") as string) ?
-            <AvatarFallback>{(row.getValue("lead") as string).slice(0, 2).toUpperCase()}</AvatarFallback>
-          } */}
-        </Avatar>
+        {/* TODO (row.getValue("lead") as string) */}
+        <UserAvatar user={undefined} />
       </div>
     ),
   },
