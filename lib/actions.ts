@@ -84,7 +84,7 @@ export async function submitProjectForm2(formData: FormData) {
     );
     console.log(
       `file "${file.name}" uploaded to: ${url}\n` +
-      `    and can be downloaded from: ${downloadUrl}`,
+        `    and can be downloaded from: ${downloadUrl}`,
     );
 
     const newFileRow = await db.addFile({
@@ -148,10 +148,8 @@ export async function startProject(
 
 export async function getProjectFiles(projectId: number) {
   const session = await auth();
-  if (!session?.user?.id) return undefined;
-  const userId = Number(session.user.id);
-  const fileUrls = await db.getFilesForProject(projectId);
-  return fileUrls;
+  if (!session?.user?.id) return;
+  return db.getFilesForProject(projectId);
 }
 
 //Update project title
