@@ -148,7 +148,7 @@ async function ProjectPage({
         </TabsContent>
         <TabsContent value="files">
           <Suspense fallback={<ProjectFilesSkeleton />}>
-            <ProjectFiles files={files} />
+            <ProjectFiles project={project} files={files} />
           </Suspense>
         </TabsContent>
         <TabsContent value="model" className="flex flex-col grow">

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import * as Tan from "@tanstack/react-table";
+import Link from "next/link";
 
 import { LucideChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,9 @@ import {
 } from "@/components/ui/table";
 
 import { getProjectFiles } from "@/lib/actions";
-import { DesignFile } from "@/lib/types";
+import { DesignFile, DesignProject } from "@/lib/types";
+import { UserAvatar } from "@/components/user-avatar";
+import { Input } from "@/components/ui/input";
 
 const filesColumns: Tan.ColumnDef<DesignFile>[] = [
   {
@@ -25,14 +28,52 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
     cell: ({ row }) => <pre>{row.getValue("filename")}</pre>,
   },
   {
-    accessorKey: "size",
+    accessorKey: "uploaded",
+    header: () => <div>Uploaded</div>,
+    cell: ({ row }) => (
+      <pre>
+        {/* TODO */}
+        <time dateTime={"05/22/2024T12:20"}>
+          {new Date("2024-05-22T12:20").toLocaleString(undefined, {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}{" "}
+        </time>
+      </pre>
+    ),
+  },
+  {
+    accessorKey: "uploader",
+    header: () => <div>Uploader</div>,
+    //cell: ({ row }) => <pre>{row.getValue("uploaderid")}</pre>,
+    cell: ({ row }) => (
+      <div className="w-full flex overflow-hidden w-12 items-center justify-center">
+        {/* TODO (row.getValue("uploader") as string) */}
+        <UserAvatar user={undefined} />
+      </div>
+    ),
+  },
+  {
+    accessorKey: "filesize",
     header: () => <div>Size</div>,
-    cell: ({ row }) => <pre>{row.getValue("size")}</pre>,
+    cell: ({ row }) => <pre>{row.getValue("filesize")}</pre>,
   },
   {
     accessorKey: "taskid",
     header: () => <div>Task Id</div>,
-    cell: ({ row }) => <pre>{row.getValue("taskid")}</pre>,
+    //cell: ({ row }) => <pre>{row.getValue("taskid")}</pre>,
+    cell: ({ row, projectid }: any) => (
+      <div className="text-center">
+        <Button asChild variant="outline" className="h-8 w-8 p-0">
+          <Link href={`/project/${projectid}/task/${row.getValue("taskid")}`}>
+            <pre>{row.getValue("taskid")}</pre>
+          </Link>
+        </Button>
+      </div>
+    ),
   },
   {
     accessorKey: "view",
@@ -57,9 +98,11 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
 function FilesTable({
   columns,
   data,
+  projectid,
 }: {
   columns: Tan.ColumnDef<DesignFile>[];
   data: DesignFile[];
+  projectid: number;
 }) {
   const table = Tan.useReactTable({
     data,
@@ -67,10 +110,14 @@ function FilesTable({
     getCoreRowModel: Tan.getCoreRowModel(),
     getPaginationRowModel: Tan.getPaginationRowModel(),
   });
+  console.log("Data:", data);
+  console.log("projectid:", projectid);
 
   return (
-    <div className="w-full">
+    <div className="w-full space-y-4">
       {/* The table */}
+      {<FileTableFilterToggles table={table} />}
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -104,10 +151,10 @@ function FilesTable({
                       key={cell.id}
                       className="px-2 first:pl-8 last:pr-8"
                     >
-                      {Tan.flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                      {Tan.flexRender(cell.column.columnDef.cell, {
+                        ...cell.getContext(),
+                        projectid,
+                      })}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -161,12 +208,42 @@ export function ProjectFilesSkeleton() {
   return <div className="flex flex-col space-y-4">Loading ...</div>;
 }
 
-export default function ProjectFiles({ files }: { files: DesignFile[] }) {
+export default function ProjectFiles({
+  files,
+  project,
+}: {
+  files: DesignFile[];
+  project: DesignProject;
+}) {
+  console.log(project);
   return (
     <Card>
       <CardContent className="pt-8">
-        <FilesTable columns={filesColumns} data={files} />
+        <FilesTable
+          columns={filesColumns}
+          data={files}
+          projectid={project?.id}
+        />
       </CardContent>
     </Card>
+  );
+}
+
+function FileTableFilterToggles({ table }: { table: Tan.Table<DesignFile> }) {
+  return (
+    <div className="w-full flex items-center gap-3 justify-between">
+      <div className="flex gap-3 items-center justify-start">
+        {/* row filter input box */}
+        <Input
+          placeholder="Filter table..."
+          // value={(table.getColumn("lead")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            // table.getColumn("lead")?.setFilterValue(event.target.value)
+            table.setGlobalFilter(event.target.value)
+          }
+          className="max-w-sm grow"
+        />
+      </div>
+    </div>
   );
 }
