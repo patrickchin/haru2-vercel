@@ -138,7 +138,7 @@ export async function getUserProjects(userId: number, pagenum: number = 0) {
       ...getTableColumns(Schemas.projects1),
       user: {
         ...getTableColumns(Schemas.users1),
-      }
+      },
     })
     .from(Schemas.projects1)
     .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.projects1.userid))
@@ -365,13 +365,16 @@ export async function addFile(
 }
 
 export async function getFilesForProject(projectId: number) {
-  // tbh this join isn't needed if we just attach projectId to the file
   return await db
     .select({
-      ...getTableColumns(Schemas.files1)
+      ...getTableColumns(Schemas.files1),
+      uploader: {
+        ...getTableColumns(Schemas.users1),
+      },
     })
     .from(Schemas.files1)
     .leftJoin(Schemas.tasks1, eq(Schemas.tasks1.id, Schemas.files1.taskid))
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderid))
     .where(
       or(
         eq(Schemas.files1.projectid, projectId),
