@@ -16,7 +16,7 @@ function ManageTeamMembersSkeleton({ team }: { team: DesignTeam }) {
 }
 
 async function ManageTeamMembersFetch({ team }: { team: DesignTeam }) {
-  const members = await Actions.getTeamMembers(team.id);
+  const members = await Actions.getTeamMembersDetailed(team.id);
   return <ManageTeamMembersClient team={team} members={members || []} />;
 }
 

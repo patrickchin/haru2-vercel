@@ -54,12 +54,11 @@ export const RegisterSchema = z
 
 export type RegisterSchemaType = z.infer<typeof RegisterSchema>;
 
-export type DesignUserFull = typeof Schemas.users1.$inferSelect;
-export type DesignUserBasic = Pick<
-  DesignUserFull,
-  "id" | "name" | "email" | "avatarUrl" | "avatarColor"
->;
-export type DesignProject = typeof Schemas.projects1.$inferSelect;
+export type DesignUserBasic = Awaited<ReturnType<typeof db.getUserByEmail>>;
+// adds email
+export type DesignUserDetailed = Awaited<ReturnType<typeof db.getTeamMembersDetailed>>[0];
+export type DesignProject = Awaited<ReturnType<typeof db.getProject>>[0];
+export type DesignProjectUser = Awaited<ReturnType<typeof db.getUserProjects>>[0];
 export type DesignTeam = typeof Schemas.teams1.$inferSelect;
 export type DesignTeamMember = typeof Schemas.teammembers1.$inferSelect;
 export type DesignTaskSpec = typeof Schemas.taskspecs1.$inferSelect;

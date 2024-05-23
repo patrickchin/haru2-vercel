@@ -8,16 +8,18 @@ import { CenteredLayout } from "@/components/page-layouts";
 import houseIcon from "@/app/assets/house.png";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { DesignProjectUser } from "@/lib/types";
 
-function ProjectItem({ projectUser }: any) {
+function ProjectItem({ project }: { project: DesignProjectUser}) {
   const displayNames = useMemo(() => {
     return new Intl.DisplayNames(["en"], { type: "region" });
   }, []);
 
-  const project = projectUser.projects1;
-  const user = projectUser.users1;
+  const user = project.user;
   const title = project.title || "Untitled";
-  const where = displayNames.of(project.countrycode) || "Unknown Location";
+  const where =
+    (project.countrycode && displayNames.of(project.countrycode)) ||
+    "Unknown Location";
   const type = project.type || "";
 
   return (
@@ -38,7 +40,7 @@ function ProjectItem({ projectUser }: any) {
             {title} - {where} - <span className="capitalize">{type}</span>
           </p>
           <p className="mt-1 truncate text-xs leading-5">
-            Owner ID: {project.userId} {user.email}
+            Owner ID: {user?.id} {user?.name}
           </p>
           {/* <pre>{JSON.stringify(project, null, 2)} {JSON.stringify(user, null, 2)}</pre> */}
         </div>
@@ -50,9 +52,11 @@ function ProjectItem({ projectUser }: any) {
         </p>
         <p className="mt-1 text-xs leading-5 text-gray-500">
           Submitted date{" "}
-          <time dateTime={project.createdat}>
-            {new Date(project.createdat).toLocaleDateString()}{" "}
-          </time>
+          {project.createdat && (
+            <time dateTime={project.createdat}>
+              {new Date(project.createdat).toLocaleDateString()}{" "}
+            </time>
+          )}
         </p>
       </div>
     </Link>
@@ -74,8 +78,8 @@ async function ProjectList() {
   return (
     <ul role="list" className="space-y-3">
       {projects.map((p) => (
-        <li key={p.projects1.id}>
-          <ProjectItem projectUser={p} />
+        <li key={p.id}>
+          <ProjectItem project={p} />
         </li>
       ))}
     </ul>

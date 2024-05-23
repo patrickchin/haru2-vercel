@@ -1,18 +1,21 @@
 import "server-only";
 
 import { drizzle } from "drizzle-orm/postgres-js";
-import { and, eq, or, desc, asc, isNotNull } from "drizzle-orm";
+import {
+  and,
+  eq,
+  or,
+  desc,
+  asc,
+  isNotNull,
+  getTableColumns,
+} from "drizzle-orm";
 import postgres from "postgres";
 import { genSaltSync, hashSync } from "bcrypt-ts";
 
 import * as Schemas from "drizzle/schema";
 import assert from "assert";
-import {
-  DesignTeam,
-  DesignUserBasic,
-  DesignUserFull,
-  defaultTeams,
-} from "./types";
+import { defaultTeams } from "./types";
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
@@ -22,39 +25,85 @@ const db = drizzle(client);
 
 // users ==========================================================================================
 
-export async function getUserFull(email: string): Promise<DesignUserFull[]> {
+export async function getUserAccountByEmail(email: string) {
   return db
-    .select()
-    .from(Schemas.users1)
-    .where(eq(Schemas.users1.email, email));
+    .select({
+      ...getTableColumns(Schemas.users1),
+      ...getTableColumns(Schemas.accounts1),
+    })
+    .from(Schemas.accounts1)
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.accounts1.id))
+    .where(eq(Schemas.accounts1.email, email));
 }
 
-export async function getUser(email: string): Promise<DesignUserBasic[]> {
+export async function getUserAccountByPhone(phone: string) {
+  return db
+    .select({
+      ...getTableColumns(Schemas.users1),
+      ...getTableColumns(Schemas.accounts1),
+    })
+    .from(Schemas.accounts1)
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.accounts1.id))
+    .where(eq(Schemas.accounts1.phone, phone));
+}
+
+export async function getUserByEmail(email: string) {
   return await db
     .select({
-      id: Schemas.users1.id,
-      name: Schemas.users1.name,
-      email: Schemas.users1.email,
-      avatarUrl: Schemas.users1.avatarUrl,
-      avatarColor: Schemas.users1.avatarColor,
+      ...getTableColumns(Schemas.users1),
     })
     .from(Schemas.users1)
-    .where(eq(Schemas.users1.email, email));
+    .leftJoin(Schemas.accounts1, eq(Schemas.accounts1.id, Schemas.users1.id))
+    .where(eq(Schemas.accounts1.email, email))
+    .then((r) => r.at(0));
 }
 
-export async function createUser(
-  name: string,
-  phone: string,
-  email: string,
-  password: string,
-  avatarColor: string | null,
-) {
+export async function getUserByPhone(phone: string) {
+  return await db
+    .select({
+      ...getTableColumns(Schemas.users1),
+    })
+    .from(Schemas.users1)
+    .leftJoin(Schemas.accounts1, eq(Schemas.accounts1.id, Schemas.users1.id))
+    .where(eq(Schemas.accounts1.phone, phone));
+}
+
+export async function createUserIfNotExists({
+  name,
+  phone,
+  email,
+  password,
+}: {
+  name: string;
+  phone?: string;
+  email: string;
+  password: string;
+}) {
   let salt = genSaltSync(10);
   let hash = hashSync(password, salt);
 
-  return await db
-    .insert(Schemas.users1)
-    .values({ name, phone, email, password: hash, avatarColor });
+  return db.transaction(async (tx) => {
+    const newAccount = await tx
+      .insert(Schemas.accounts1)
+      .values({
+        phone,
+        email,
+        password: hash,
+      })
+      .returning()
+      .then((r) => r[0]);
+
+    const newUser = await tx
+      .insert(Schemas.users1)
+      .values({
+        id: newAccount.id,
+        name,
+      })
+      .returning()
+      .then((r) => r[0]);
+
+    return newUser;
+  });
 }
 
 export async function updateUserAvatar(
@@ -63,40 +112,19 @@ export async function updateUserAvatar(
 ) {
   return await db.transaction(async (tx) => {
     const oldUser = await tx
-      .select({
-        id: Schemas.users1.id,
-        name: Schemas.users1.name,
-        email: Schemas.users1.email,
-        avatarUrl: Schemas.users1.avatarUrl,
-        avatarColor: Schemas.users1.avatarColor,
-      })
+      .select()
       .from(Schemas.users1)
-      .where(eq(Schemas.users1.id, uploaderid));
-
-    if (!oldUser) {
-      throw new Error("User not found");
-    }
-
-    // Perform the update
+      .where(eq(Schemas.users1.id, uploaderid))
+      .then((r) => r[0]);
     const updatedUser = await tx
       .update(Schemas.users1)
       .set(values)
       .where(eq(Schemas.users1.id, uploaderid))
-      .returning();
-
-    // Assert exactly one user is updated
-
-    assert(
-      oldUser.length === 1,
-      "Expected exactly one old user avatarUrl to be deleted",
-    );
-
-    assert(updatedUser.length === 1, "Expected exactly one user to be updated");
-
-    // Return both the initial and updated user data
+      .returning()
+      .then((r) => r[0]);
     return {
-      initial: oldUser[0],
-      updated: updatedUser[0],
+      initial: oldUser,
+      updated: updatedUser,
     };
   });
 }
@@ -107,26 +135,20 @@ export async function getUserProjects(userId: number, pagenum: number = 0) {
   const pagesize = 30;
   // TODO maybe don't select things like password and createdat ...
   // TODO make a view
+
   return await db
-    .select()
+    .select({
+      ...getTableColumns(Schemas.projects1),
+      user: {
+        ...getTableColumns(Schemas.users1),
+      }
+    })
     .from(Schemas.projects1)
     .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.projects1.userid))
     .where(eq(Schemas.projects1.userid, userId))
     .orderBy(desc(Schemas.projects1.id)) // created at?
     .limit(pagesize)
     .offset(pagesize * pagenum);
-}
-
-export async function getUserProject(userId: number, projectId: number) {
-  return await db
-    .select()
-    .from(Schemas.projects1)
-    .where(
-      and(
-        eq(Schemas.projects1.userid, userId),
-        eq(Schemas.projects1.id, projectId),
-      ),
-    );
 }
 
 export async function getProject(projectId: number) {
@@ -278,18 +300,25 @@ export async function deleteTeamMember(teamid: number, userid: number) {
     .returning();
 }
 
-export async function getTeamMembers(
-  teamId: number,
-): Promise<DesignUserBasic[]> {
+export async function getTeamMembers(teamId: number) {
+  return await db
+    .select({ ...getTableColumns(Schemas.users1) })
+    .from(Schemas.users1)
+    .leftJoin(
+      Schemas.teammembers1,
+      eq(Schemas.teammembers1.userid, Schemas.users1.id),
+    )
+    .where(eq(Schemas.teammembers1.teamid, teamId));
+}
+
+export async function getTeamMembersDetailed(teamId: number) {
   return await db
     .select({
-      id: Schemas.users1.id,
-      name: Schemas.users1.name,
-      email: Schemas.users1.email,
-      avatarUrl: Schemas.users1.avatarUrl,
-      avatarColor: Schemas.users1.avatarColor,
+      ...getTableColumns(Schemas.users1),
+      email: Schemas.accounts1.email,
     })
     .from(Schemas.users1)
+    .leftJoin(Schemas.accounts1, eq(Schemas.accounts1.id, Schemas.users1.id))
     .leftJoin(
       Schemas.teammembers1,
       eq(Schemas.teammembers1.userid, Schemas.users1.id),
@@ -354,21 +383,11 @@ export async function addFileUrlToProject(
   return await db.insert(Schemas.files1).values(values).returning();
 }
 
-export async function getFilesUrlsForProject(projectId: number) {
+export async function getFilesForProject(projectId: number) {
   // tbh this join isn't needed if we just attach projectId to the file
   return await db
     .select({
-      // do i really gotta specify manually?
-      id: Schemas.files1.id,
-      uploaderid: Schemas.files1.uploaderid,
-      projectid: Schemas.files1.projectid,
-      taskid: Schemas.files1.taskid,
-      commentid: Schemas.files1.commentid,
-      filename: Schemas.files1.filename,
-      filesize: Schemas.files1.filesize,
-      url: Schemas.files1.url,
-      type: Schemas.files1.type,
-      // ...Schemas.files1._.columns, // this no work?
+      ...getTableColumns(Schemas.files1)
     })
     .from(Schemas.files1)
     .leftJoin(Schemas.tasks1, eq(Schemas.tasks1.id, Schemas.files1.taskid))

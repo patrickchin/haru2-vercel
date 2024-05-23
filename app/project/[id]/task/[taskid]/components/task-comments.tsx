@@ -108,11 +108,11 @@ function CommentsList({
           )}
         >
           <div className="pt-2">
-            <DesignUserAvatar user={c.users1 as DesignUserBasic} />
+            <DesignUserAvatar user={c.users2 as DesignUserBasic} />
           </div>
           <div className="flex flex-col gap-1 w-full">
             <div className="flex flex-row gap-4 items-end">
-              <span className="font-bold">{c.users1?.name}</span>
+              <span className="font-bold">{c.users2?.name}</span>
               {/* <span className="text-sm">{c.taskcomments1.createdat}</span> */}
               <Link
                 href={{
