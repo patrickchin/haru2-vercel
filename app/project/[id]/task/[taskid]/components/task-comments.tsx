@@ -13,7 +13,9 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import {
   LucideDownload,
+  LucideLink,
   LucideLoader2,
+  LucideSend,
   LucideUpload,
   LucideView,
   LucideX,
@@ -166,7 +168,13 @@ function CommentsList({
   );
 }
 
-function AddCommentFormInternal() {
+function AddCommentFormInternal({
+  taskId,
+  setCurrentAttachments,
+}: {
+  taskId: number;
+  setCurrentAttachments: Dispatch<SetStateAction<DesignFile[]>>;
+}) {
   const formStatus = useFormStatus();
   return (
     <>
@@ -177,17 +185,35 @@ function AddCommentFormInternal() {
         disabled={formStatus.pending}
       />
       <div className="flex justify-end gap-4">
-        <Button type="reset" variant="secondary" disabled={formStatus.pending}>
+        <UploadAttachment
+          taskId={taskId}
+          setCurrentAttachments={setCurrentAttachments}
+        />
+
+        <Button
+          type="reset"
+          variant="secondary"
+          className="hidden"
+          disabled={formStatus.pending}
+        >
           Cancel
         </Button>
-        <Button variant="default" disabled={formStatus.pending}>
-          Save
-          <LucideLoader2
-            className={cn(
-              "animate-spin h-4",
-              formStatus.pending ? "" : "hidden",
-            )}
-          />
+        <Button
+          variant="default"
+          className="gap-x-2"
+          disabled={formStatus.pending}
+        >
+          Send{" "}
+          {formStatus.pending ? (
+            <LucideLoader2
+              className={cn(
+                "animate-spin h-4",
+                formStatus.pending ? "" : "hidden",
+              )}
+            />
+          ) : (
+            <LucideSend className="w-4" />
+          )}
         </Button>
       </div>
     </>
@@ -214,7 +240,11 @@ function AddCommentForm({
     if (!comment) return;
 
     e.currentTarget.reset();
-    const userCommentFiles = addTaskComment(taskId, comment as string, attachmentIds);
+    const userCommentFiles = addTaskComment(
+      taskId,
+      comment as string,
+      attachmentIds,
+    );
     swrMutateComments(userCommentFiles, { revalidate: false });
 
     setAttachments([]);
@@ -222,7 +252,10 @@ function AddCommentForm({
 
   return (
     <form onSubmit={formSubmitNewComment} className="flex flex-col gap-4">
-      <AddCommentFormInternal />
+      <AddCommentFormInternal
+        taskId={taskId}
+        setCurrentAttachments={setAttachments}
+      />
     </form>
   );
 }
@@ -245,16 +278,15 @@ function AttachmentList({
         <li
           key={i}
           className={cn(
-            "flex gap-1 items-center text-sm border px-2 py-0.5 rounded",
+            "flex gap-1 items-center border border-foreground px-1 py-1 rounded",
           )}
         >
-          <span>{att.filename}</span>
-          <Button
-            variant="ghost"
-            className="h-3 px-0 py-3"
-            onClick={() => removeAttachment(att.id)}
-          >
-            <LucideX className="h-3" />
+          <Button variant="ghost" className="h-6 w-6 px-0">
+            <LucideLink className="h-3" />
+          </Button>
+          <span className="align-top">{att.filename}</span>
+          <Button variant="ghost" className="h-6 w-6 px-0">
+            <LucideX className="h-3" onClick={() => removeAttachment(att.id)} />
           </Button>
         </li>
       ))}
@@ -306,19 +338,19 @@ function UploadAttachment({
         <Label
           htmlFor="upload-comment-file"
           className={cn(
-            "space-x-4",
+            "gap-x-2",
             isUploading ? "cursor-progress" : "cursor-pointer",
           )}
         >
           {isUploading ? (
             <>
-              <LucideLoader2 className="animate-spin h-4" />
               Uploading
+              <LucideLoader2 className="animate-spin w-4" />
             </>
           ) : (
             <>
-              <LucideUpload className="h-4" />
-              Upload Attachment
+              Add Attachment
+              <LucideUpload className="w-4" />
             </>
           )}
         </Label>
@@ -354,11 +386,6 @@ export default function TaskCommentsClient({ taskId }: { taskId: number }) {
 
         <AttachmentList
           currentAttachments={currentAttachments}
-          setCurrentAttachments={setCurrentAttachments}
-        />
-
-        <UploadAttachment
-          taskId={taskId}
           setCurrentAttachments={setCurrentAttachments}
         />
 
