@@ -21,6 +21,7 @@ import {
   LucideX,
 } from "lucide-react";
 import assert from "assert";
+import useSWR, { KeyedMutator } from "swr";
 
 import {
   Card,
@@ -42,20 +43,6 @@ import {
   deleteFile,
   getTaskCommentsAndFiles,
 } from "@/lib/actions";
-import useSWR, { KeyedMutator } from "swr";
-
-async function updateCommentsAndFiles(
-  taskId: number,
-  setUpdatedComments: Dispatch<SetStateAction<DesignTaskUserComment[]>>,
-  setUpdatedFiles: Dispatch<SetStateAction<DesignFile[]>>,
-) {
-  const [newComments, newFiles] = (await getTaskCommentsAndFiles(taskId)) || [
-    undefined,
-    undefined,
-  ];
-  if (newComments) setUpdatedComments(newComments);
-  if (newFiles) setUpdatedFiles(newFiles);
-}
 
 function CommentAttachments({ attachments }: { attachments: DesignFile[] }) {
   if (!attachments || attachments.length == 0) return null;
