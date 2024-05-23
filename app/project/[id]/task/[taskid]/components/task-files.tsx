@@ -3,7 +3,7 @@ import { getTaskComments } from "@/lib/actions";
 import { DesignFile, DesignTaskComment } from "@/lib/types";
 import { Suspense } from "react";
 
-import TaskCommentsClient from "./task-comments-client";
+import TaskCommentsClient from "./task-comments";
 import { getTaskFiles } from "@/lib/db";
 import TaskFilesClient from "./task-files-client";
 
