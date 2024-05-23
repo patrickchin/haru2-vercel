@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { LucidePlus } from "lucide-react";
-import { DesignTeam, DesignUserBasic, teamNames } from "@/lib/types";
+import { DesignTeam, DesignUserBasic, DesignUserDetailed, teamNames } from "@/lib/types";
 import * as Actions from "@/lib/actions";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,7 @@ export function ManageTeamMembersClient({
   members,
 }: {
   team: DesignTeam;
-  members: DesignUserBasic[];
+  members: DesignUserDetailed[];
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [updatedMembers, setUpdatedMembers] = useState(new Set(members));

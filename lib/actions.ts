@@ -20,30 +20,10 @@ const VERCEL_BLOB_FAKE_FILES = false;
 
 export async function registerUser(data: RegisterSchemaType) {
   try {
-    let user = await db.getUser(data.email);
-
-    if (user.length > 0) {
-      throw new Error("User already exists");
-    }
-
-    await db.createUser(
-      data.name,
-      data.phone ?? "",
-      data.email,
-      data.password,
-      null,
-    );
+    await db.createUserIfNotExists(data);
   } catch (error) {
     throw error;
   }
-}
-
-export async function getCurrentUser() {
-  const session = await auth();
-  if (!session?.user?.email) return;
-  const users = await db.getUser(session.user.email);
-  if (users.length === 0) return;
-  return users[0];
 }
 
 export async function signInFromLogin(data: any) {
@@ -202,7 +182,7 @@ export async function getProjectFiles(projectId: number) {
   const session = await auth();
   if (!session?.user?.id) return undefined;
   const userId = Number(session.user.id);
-  const fileUrls = await db.getFilesUrlsForProject(projectId);
+  const fileUrls = await db.getFilesForProject(projectId);
   return fileUrls;
 }
 
@@ -278,17 +258,20 @@ export async function addTeamMember(teamId: number, email: string) {
   const session = await auth();
   if (!session?.user) return;
   // TODO this can be done in one db call
-  const user = await db.getUser(email);
-  // TODO actually if the member doesn't exist we would like to add him anyways
-  // and create an account for them
-  if (user.length == 0) return;
-  assert(user.length === 1, "Expected exactly one user with this email");
-  const newTeamMember = await db.addTeamMember(teamId, user[0].id);
+  const user = await db.getUserByEmail(email);
+  if (!user) return;
+  const newTeamMember = await db.addTeamMember(teamId, user.id);
   assert(
     newTeamMember.length <= 1,
     "Expected exactly one or no users added to team",
   );
-  return getTeamMembers(teamId);
+  return db.getTeamMembersDetailed(teamId);
+}
+
+export async function getTeamMembersDetailed(teamId: number) {
+  const session = await auth();
+  if (!session?.user) return;
+  return db.getTeamMembersDetailed(teamId);
 }
 
 export async function getTeamMembers(teamId: number) {

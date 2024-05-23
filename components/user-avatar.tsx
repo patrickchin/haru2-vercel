@@ -7,14 +7,14 @@ export function DesignUserAvatar({
   user,
   className,
 }: {
-  user: DesignUserBasic;
+  user?: DesignUserBasic;
   className?: string;
 }) {
   // const userId: number = Math.floor(Math.random() * 1000);
   const userId: number = user?.id ?? 0;
-  const randomHue: number = ((userId-1) * 80) % 360;
+  const randomHue: number = ((userId - 1) * 80) % 360;
   const bgCol: string = `hsl(${randomHue} 100 75)`;
-  const bgCol2: string = `hsl(${randomHue+60} 100 90)`;
+  const bgCol2: string = `hsl(${randomHue + 60} 100 90)`;
   return (
     <Avatar className={cn("border border-foreground", className)}>
       <AvatarImage src={user?.avatarUrl ?? undefined} />
@@ -25,7 +25,7 @@ export function DesignUserAvatar({
         }}
         className="text-lg text-align-center"
       >
-        {getAvatarInitials(user.name ?? undefined)}
+        {getAvatarInitials(user?.name ?? undefined)}
       </AvatarFallback>
     </Avatar>
   );
