@@ -30,7 +30,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { DesignUserAvatar } from "@/components/user-avatar";
 
 import { cn } from "@/lib/utils";
@@ -41,6 +40,7 @@ import {
   deleteFile,
   getTaskCommentsAndFiles,
 } from "@/lib/actions";
+import useSWR, { KeyedMutator } from "swr";
 
 async function updateCommentsAndFiles(
   taskId: number,
@@ -53,36 +53,6 @@ async function updateCommentsAndFiles(
   ];
   if (newComments) setUpdatedComments(newComments);
   if (newFiles) setUpdatedFiles(newFiles);
-}
-
-function LoadNewComments({
-  taskId,
-  setUpdatedComments,
-  setUpdatedFiles,
-}: {
-  taskId: number;
-  setUpdatedComments: Dispatch<SetStateAction<DesignTaskUserComment[]>>;
-  setUpdatedFiles: Dispatch<SetStateAction<DesignFile[]>>;
-}) {
-  const [loadingNewComments, setLoadingNewComments] = useState(false);
-
-  return (
-    <Button
-      variant="secondary"
-      disabled={loadingNewComments}
-      onClick={async () => {
-        setLoadingNewComments(true);
-        updateCommentsAndFiles(taskId, setUpdatedComments, setUpdatedFiles);
-        setLoadingNewComments(false);
-      }}
-      className="flex flex-row gap-3"
-    >
-      Check for New Comments
-      <LucideLoader2
-        className={cn("animate-spin h-4", loadingNewComments ? "" : "hidden")}
-      />
-    </Button>
-  );
 }
 
 function CommentAttachments({ attachments }: { attachments: DesignFile[] }) {
@@ -228,14 +198,12 @@ function AddCommentForm({
   taskId,
   attachments,
   setAttachments,
-  setUpdatedComments,
-  setUpdatedFiles,
+  swrMutateComments,
 }: {
   taskId: number;
   attachments: DesignFile[];
   setAttachments: Dispatch<SetStateAction<DesignFile[]>>;
-  setUpdatedComments: Dispatch<SetStateAction<DesignTaskUserComment[]>>;
-  setUpdatedFiles: Dispatch<SetStateAction<DesignFile[]>>;
+  swrMutateComments: KeyedMutator<any>; // getting the Data type is hard
 }) {
   const attachmentIds: number[] = attachments.map((f) => f.id);
 
@@ -244,14 +212,11 @@ function AddCommentForm({
     const data = new FormData(e.currentTarget);
     const comment = data.get("comment");
     if (!comment) return;
+
     e.currentTarget.reset();
-    const [newComments, newFiles] = (await addTaskComment(
-      taskId,
-      comment as string,
-      attachmentIds,
-    )) || [undefined, undefined];
-    if (newComments) setUpdatedComments(newComments);
-    if (newFiles) setUpdatedFiles(newFiles);
+    const userCommentFiles = addTaskComment(taskId, comment as string, attachmentIds);
+    swrMutateComments(userCommentFiles, { revalidate: false });
+
     setAttachments([]);
   }
 
@@ -362,18 +327,17 @@ function UploadAttachment({
   );
 }
 
-export default function TaskCommentsClient({
-  taskId,
-  comments,
-  files,
-}: {
-  taskId: number;
-  comments: DesignTaskUserComment[];
-  files: DesignFile[];
-}) {
-  // Tbh these two should be in the same state as they should be updated together
-  const [updatedComments, setUpdatedComments] = useState(comments);
-  const [updatedFiles, setUpdatedFiles] = useState(files);
+export default function TaskCommentsClient({ taskId }: { taskId: number }) {
+
+  const { data, error, mutate } = useSWR(
+    `/api/task/${taskId}`, // api route doesn't really exist
+    () => {
+      console.log("getting the data again", taskId);
+      return getTaskCommentsAndFiles(taskId);
+    },
+  );
+  const userComments: DesignTaskUserComment[] = (data && data[0]) || [];
+  const commentFiles: DesignFile[] = (data && data[1]) || [];
 
   // only the files to be attached
   const [currentAttachments, setCurrentAttachments] = useState<DesignFile[]>(
@@ -386,15 +350,7 @@ export default function TaskCommentsClient({
       <CardContent className="flex flex-col gap-4 px-6 py-6">
         {/* <Button variant="secondary">Load all older Comments</Button> */}
 
-        <CommentsList comments={updatedComments} attachments={updatedFiles} />
-
-        <LoadNewComments
-          taskId={taskId}
-          setUpdatedComments={setUpdatedComments}
-          setUpdatedFiles={setUpdatedFiles}
-        />
-
-        <Separator />
+        <CommentsList comments={userComments} attachments={commentFiles} />
 
         <AttachmentList
           currentAttachments={currentAttachments}
@@ -410,8 +366,7 @@ export default function TaskCommentsClient({
           taskId={taskId}
           attachments={currentAttachments}
           setAttachments={setCurrentAttachments}
-          setUpdatedComments={setUpdatedComments}
-          setUpdatedFiles={setUpdatedFiles}
+          swrMutateComments={mutate}
         />
       </CardContent>
       <CardFooter></CardFooter>
