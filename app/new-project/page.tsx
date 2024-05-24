@@ -251,18 +251,19 @@ function ProjectDocuments({
             </div>
           </FormLabel>
           <FormMessage />
-          <div className="space-y-2">
+          <div>
             {fileNames.map((fileName, index) => (
-              <Fragment key={index}>
-                <div className="flex items-center justify-between w-full">
-                  <p className="text-sm px-3">{fileName}</p>
-                  <LucideTrash
-                    className="h-3 w-6 hover:cursor-pointer"
-                    onClick={() => handleFileDelete(fileName)}
-                  />
-                </div>
-                <Separator />
-              </Fragment>
+              <div className="flex items-center justify-between w-full border-b pr-4 py-2">
+                <p className="text-sm px-3">{fileName}</p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="p-0 h-6 w-8"
+                  onClick={() => handleFileDelete(fileName)}
+                >
+                  <LucideTrash className="h-3 w-3" />
+                </Button>
+              </div>
             ))}
           </div>
         </FormItem>
