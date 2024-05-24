@@ -44,9 +44,7 @@ export function UserAvatar({
       user={{
         id: Number(user?.id),
         name: user?.name ?? "?",
-        email: "",
         avatarUrl: user?.image ?? null,
-        avatarColor: "",
       }}
     />
   );
