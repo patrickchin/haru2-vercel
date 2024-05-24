@@ -56,16 +56,19 @@ export type RegisterSchemaType = z.infer<typeof RegisterSchema>;
 
 export type DesignUserBasic = Awaited<ReturnType<typeof db.getUserByEmail>>;
 // adds email
-export type DesignUserDetailed = Awaited<ReturnType<typeof db.getTeamMembersDetailed>>[0];
+export type DesignUserDetailed = Awaited<
+  ReturnType<typeof db.getTeamMembersDetailed>
+>[0];
 export type DesignProject = Awaited<ReturnType<typeof db.getProject>>[0];
-export type DesignProjectUser = Awaited<ReturnType<typeof db.getUserProjects>>[0];
+export type DesignProjectUser = Awaited<
+  ReturnType<typeof db.getUserProjects>
+>[0];
 export type DesignTeam = typeof Schemas.teams1.$inferSelect;
 export type DesignTeamMember = typeof Schemas.teammembers1.$inferSelect;
 export type DesignTaskSpec = typeof Schemas.taskspecs1.$inferSelect;
 export type DesignTask = typeof Schemas.tasks1.$inferSelect;
 export type DesignFile = typeof Schemas.files1.$inferSelect;
-export type DesignTaskComment = typeof Schemas.taskcomments1.$inferSelect;
-export type DesignTaskUserComment = Awaited<
+export type DesignTaskComment = Awaited<
   ReturnType<typeof db.getTaskComments>
 >[0];
 

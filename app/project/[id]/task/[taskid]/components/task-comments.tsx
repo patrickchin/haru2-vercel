@@ -36,7 +36,7 @@ import { Label } from "@/components/ui/label";
 import { DesignUserAvatar } from "@/components/user-avatar";
 
 import { cn } from "@/lib/utils";
-import { DesignFile, DesignTaskUserComment, DesignUserBasic } from "@/lib/types";
+import { DesignFile, DesignTaskComment } from "@/lib/types";
 import {
   addTaskComment,
   addTaskFile,
@@ -79,7 +79,7 @@ function CommentsList({
   comments,
   attachments,
 }: {
-  comments: DesignTaskUserComment[];
+  comments: DesignTaskComment[];
   attachments: DesignFile[];
 }) {
   const pathname = usePathname();
@@ -100,37 +100,37 @@ function CommentsList({
     <ul className="">
       {comments.map((c, i) => (
         <li
-          id={`comment-${c.taskcomments1.id}`}
+          id={`comment-${c.id}`}
           key={i}
           className={cn(
             "flex gap-3 p-3 items-start justify-center border-b hover:bg-accent",
-            fragment === `#comment-${c.taskcomments1.id}` ? "bg-yellow-50" : "",
+            fragment === `#comment-${c.id}` ? "bg-yellow-50" : "",
           )}
         >
           <div className="pt-2">
-            <DesignUserAvatar user={c.users2 as DesignUserBasic} />
+            <DesignUserAvatar user={c.user ? {...c.user} : undefined} />
           </div>
           <div className="flex flex-col gap-1 w-full">
             <div className="flex flex-row gap-4 items-end">
-              <span className="font-bold">{c.users2?.name}</span>
+              <span className="font-bold">{c.user?.name ?? "<Invalid User>"}</span>
               {/* <span className="text-sm">{c.taskcomments1.createdat}</span> */}
               <Link
                 href={{
                   pathname: pathname,
-                  hash: `#comment-${c.taskcomments1.id}`,
+                  hash: `#comment-${c.id}`,
                 }}
                 replace={true}
                 className="text-sm text-muted-foreground"
-                onClick={(e) => setFragment(`#comment-${c.taskcomments1.id}`)}
+                onClick={(e) => setFragment(`#comment-${c.id}`)}
               >
                 <time
                   dateTime={(
-                    c.taskcomments1.createdat as unknown as Date
+                    c.createdAt as unknown as Date
                   ).toISOString()}
                   suppressHydrationWarning
                 >
                   {(
-                    c.taskcomments1.createdat as unknown as Date
+                    c.createdAt as unknown as Date
                   ).toLocaleString()}
                 </time>
               </Link>
@@ -138,12 +138,12 @@ function CommentsList({
 
             {attachments.length > 0 && (
               <CommentAttachments
-                attachments={groupedAttachments[c.taskcomments1.id]}
+                attachments={groupedAttachments[c.id]}
               />
             )}
 
             <div className="whitespace-pre-wrap break-words">
-              {c.taskcomments1.comment}
+              {c.comment}
             </div>
           </div>
         </li>
@@ -355,7 +355,7 @@ export default function TaskCommentsClient({ taskId }: { taskId: number }) {
       return getTaskCommentsAndFiles(taskId);
     },
   );
-  const userComments: DesignTaskUserComment[] = (data && data[0]) || [];
+  const userComments: DesignTaskComment[] = (data && data[0]) || [];
   const commentFiles: DesignFile[] = (data && data[1]) || [];
 
   // only the files to be attached

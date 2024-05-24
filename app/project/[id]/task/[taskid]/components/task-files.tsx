@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
-import { getTaskComments } from "@/lib/actions";
-import { DesignFile, DesignTaskComment } from "@/lib/types";
+import { DesignFile } from "@/lib/types";
 import { Suspense } from "react";
 
 import TaskCommentsClient from "./task-comments";

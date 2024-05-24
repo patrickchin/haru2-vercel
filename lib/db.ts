@@ -422,14 +422,19 @@ export async function getTaskComment(commentid: number) {
 export async function getTaskComments(taskid: number, pagenum: number = 0) {
   const pagesize = 10;
   return await db
-    .select()
+    .select({
+      ...getTableColumns(Schemas.taskcomments1),
+      user: {
+        ...getTableColumns(Schemas.users1),
+      },
+    })
     .from(Schemas.taskcomments1)
     .leftJoin(
       Schemas.users1,
       eq(Schemas.users1.id, Schemas.taskcomments1.userid),
     )
     .where(eq(Schemas.taskcomments1.taskid, taskid))
-    .orderBy(asc(Schemas.taskcomments1.createdat));
+    .orderBy(asc(Schemas.taskcomments1.createdAt));
   // .limit(pagesize).offset(pagesize * pagenum)
 }
 
