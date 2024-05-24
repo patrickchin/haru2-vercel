@@ -1,4 +1,4 @@
-import * as Schemas from "drizzle/schema";
+import * as Schemas from "@/drizzle/schema";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import * as db from "./db";
