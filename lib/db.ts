@@ -152,19 +152,18 @@ export async function getProject(projectId: number) {
   return await db
     .select()
     .from(Schemas.projects1)
-    .where(and(eq(Schemas.projects1.id, projectId)));
+    .where(and(eq(Schemas.projects1.id, projectId)))
+    .then((r) => r.at(0));
 }
 
-export async function createProject(values: {
-  userid: number;
-  title: string;
-  description: string;
-  type: string;
-  subtype: string | undefined;
-  countrycode: string;
-  extrainfo: any;
-}) {
-  return await db.insert(Schemas.projects1).values(values).returning();
+export async function createProject(
+  values: Omit<typeof Schemas.projects1.$inferInsert, "id">,
+) {
+  return await db
+    .insert(Schemas.projects1)
+    .values(values)
+    .returning()
+    .then((r) => r[0]);
 }
 
 export async function deleteProject(projectId: number) {
@@ -358,7 +357,11 @@ export async function getProjectTask(projectid: number, specid: number) {
 export async function addFile(
   values: Omit<typeof Schemas.files1._.inferInsert, "id">,
 ) {
-  return await db.insert(Schemas.files1).values(values).returning();
+  return await db
+    .insert(Schemas.files1)
+    .values(values)
+    .returning()
+    .then((r) => r[0]);
 }
 
 export async function getFilesForProject(projectId: number) {

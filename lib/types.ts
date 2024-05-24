@@ -55,11 +55,10 @@ export const RegisterSchema = z
 export type RegisterSchemaType = z.infer<typeof RegisterSchema>;
 
 export type DesignUserBasic = Awaited<ReturnType<typeof db.getUserByEmail>>;
-// adds email
-export type DesignUserDetailed = Awaited<
+export type DesignUserDetailed = Awaited< // adds email
   ReturnType<typeof db.getTeamMembersDetailed>
 >[0];
-export type DesignProject = Awaited<ReturnType<typeof db.getProject>>[0];
+export type DesignProject = Awaited<ReturnType<typeof db.getProject>>;
 export type DesignProjectUser = Awaited<
   ReturnType<typeof db.getUserProjects>
 >[0];
