@@ -1,7 +1,7 @@
 "use server";
 
 import * as db from "@/lib/db";
-import * as Schemas from "drizzle/schema";
+import * as Schemas from "@/drizzle/schema";
 import { signIn } from "@/lib/auth";
 import { auth } from "./auth";
 import * as blob from "@vercel/blob";
@@ -119,7 +119,7 @@ export async function submitProjectForm2(formData: FormData) {
       console.log(`file "${file.name}" uploaded to: ${url}`);
 
       // TODO optimise - await outside the loop?
-      const newFileRow = await db.addFileUrlToProject({
+      const newFileRow = await db.addFile({
         uploaderid: userId,
         projectid: newProjectId,
         filename: file.name,
@@ -200,7 +200,9 @@ export async function updateProjectTitle(projectId: number, newTitle: string) {
     return null;
   }
 
-  const updatedProject = await db.updateTitle(projectId, newTitle);
+  const updatedProject = await db.updateProjectFields(projectId, {
+    title: newTitle,
+  });
   if (!updatedProject) {
     console.error("Failed to update project title.");
     return null;
@@ -238,20 +240,13 @@ export async function updateProject(
 export async function deleteProjectTeam(teamId: number) {
   const session = await auth();
   if (!session?.user) return;
-  const deletedTeam: DesignTeam[] = await db.deleteTeam(teamId);
-  assert(
-    deletedTeam.length === 1,
-    "Expected exactly one team should be deleted",
-  );
-  return deletedTeam;
+  return db.deleteTeam(teamId);
 }
 
 export async function getProjectTeams(projectId: number) {
   const session = await auth();
   if (!session?.user) return;
-  const teams = await db.getProjectTeams(projectId);
-  if (teams.length > 0) return teams;
-  return db.createTeams(projectId, defaultTeams);
+  return db.getProjectTeamsEnsureDefault(projectId);
 }
 
 export async function addTeamMember(teamId: number, email: string) {

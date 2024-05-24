@@ -13,7 +13,7 @@ import {
 import postgres from "postgres";
 import { genSaltSync, hashSync } from "bcrypt-ts";
 
-import * as Schemas from "drizzle/schema";
+import * as Schemas from "@/drizzle/schema";
 import assert from "assert";
 import { defaultTeams } from "./types";
 
@@ -133,9 +133,6 @@ export async function updateUserAvatar(
 
 export async function getUserProjects(userId: number, pagenum: number = 0) {
   const pagesize = 30;
-  // TODO maybe don't select things like password and createdat ...
-  // TODO make a view
-
   return await db
     .select({
       ...getTableColumns(Schemas.projects1),
@@ -176,20 +173,6 @@ export async function deleteProject(projectId: number) {
     .where(eq(Schemas.projects1.id, projectId))
     .returning();
 }
-//Update the title
-export async function updateTitle(projectId: number, newTitle: string) {
-  const updatedProject = await db
-    .update(Schemas.projects1)
-    .set({ title: newTitle })
-    .where(eq(Schemas.projects1.id, projectId))
-    .returning();
-
-  assert(
-    updatedProject.length === 1,
-    "Expected exactly one project to be updated",
-  );
-  return updatedProject[0];
-}
 
 //update any fields of project
 export async function updateProjectFields(
@@ -204,29 +187,15 @@ export async function updateProjectFields(
     extrainfo?: any;
   },
 ) {
-  const updatedProject = await db
+  return await db
     .update(Schemas.projects1)
     .set(updates)
     .where(eq(Schemas.projects1.id, projectId))
-    .returning();
-
-  assert(
-    updatedProject.length === 1,
-    "Expected exactly one project to be updated",
-  );
-
-  return updatedProject[0];
+    .returning()
+    .then((r) => r[0]);
 }
 
 // project members ==========================================================================================
-
-export async function createTeams(projectid: number, types: string[]) {
-  if (types.length === 0) return [];
-  const values = types.map((type) => {
-    return { projectid, type };
-  });
-  return await db.insert(Schemas.teams1).values(values).returning();
-}
 
 export async function deleteTeam(teamId: number) {
   const deletedTeam = await db.transaction(async (tx) => {
@@ -237,7 +206,8 @@ export async function deleteTeam(teamId: number) {
     return await tx
       .delete(Schemas.teams1)
       .where(eq(Schemas.teams1.id, teamId))
-      .returning();
+      .returning()
+      .then((r) => r[0]);
   });
   return deletedTeam;
 }
@@ -277,15 +247,23 @@ export async function getTeamId(projectid: number, type: string) {
     );
 }
 
-export async function addTeamMember(teamid: number, userid: number) {
-  return await db
-    .insert(Schemas.teammembers1)
-    .values({
-      teamid,
-      userid,
-    })
-    .onConflictDoNothing()
-    .returning();
+export async function addTeamMemberByEmail(teamid: number, email: string) {
+  // how to do "INSERT INTO x SELECT y FROM z"
+  return await db.transaction(async (tx) => {
+    const userid = await tx
+      .select({ id: Schemas.accounts1.id })
+      .from(Schemas.accounts1)
+      .where(eq(Schemas.accounts1.email, email))
+      .then((r) => r[0].id);
+    return tx
+      .insert(Schemas.teammembers1)
+      .values({
+        teamid,
+        userid,
+      })
+      .onConflictDoNothing()
+      .returning();
+  });
 }
 
 export async function deleteTeamMember(teamid: number, userid: number) {
@@ -377,7 +355,7 @@ export async function getProjectTask(projectid: number, specid: number) {
 
 // files ==========================================================================================
 
-export async function addFileUrlToProject(
+export async function addFile(
   values: Omit<typeof Schemas.files1._.inferInsert, "id">,
 ) {
   return await db.insert(Schemas.files1).values(values).returning();
