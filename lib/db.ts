@@ -354,30 +354,26 @@ export async function addFileUrlToProject(
   return await db.insert(Schemas.files1).values(values).returning();
 }
 
-export async function getFilesUrlsForProject(projectId: number) {
-  // tbh this join isn't needed if we just attach projectId to the file
-  return await db
-    .select({
-      // do i really gotta specify manually?
-      id: Schemas.files1.id,
-      uploaderid: Schemas.files1.uploaderid,
-      projectid: Schemas.files1.projectid,
-      taskid: Schemas.files1.taskid,
-      commentid: Schemas.files1.commentid,
-      filename: Schemas.files1.filename,
-      filesize: Schemas.files1.filesize,
-      url: Schemas.files1.url,
-      type: Schemas.files1.type,
-      // ...Schemas.files1._.columns, // this no work?
-    })
+export async function getFilesForProject(projectId: number) {
+  // Query to fetch all necessary data
+  const result = await db
+    .select()
     .from(Schemas.files1)
     .leftJoin(Schemas.tasks1, eq(Schemas.tasks1.id, Schemas.files1.taskid))
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderid))
     .where(
       or(
         eq(Schemas.files1.projectid, projectId),
         eq(Schemas.tasks1.projectid, projectId),
       ),
     );
+
+  // Transforming the result into the desired shape
+  const files1 = result.map((row) => row.files1);
+  const users1 = result.map((row) => row.users1);
+  const tasks1 = result.map((row) => row.tasks1);
+
+  return { files1, users1, tasks1 };
 }
 
 export async function deleteAllFilesFromProject(projectId: number) {

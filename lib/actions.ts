@@ -201,9 +201,8 @@ export async function startProject(
 export async function getProjectFiles(projectId: number) {
   const session = await auth();
   if (!session?.user?.id) return undefined;
-  const userId = Number(session.user.id);
-  const fileUrls = await db.getFilesUrlsForProject(projectId);
-  return fileUrls;
+  const { files1 } = await db.getFilesForProject(projectId);
+  return files1;
 }
 
 //Update project title
