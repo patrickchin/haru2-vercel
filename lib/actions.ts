@@ -7,10 +7,8 @@ import { auth } from "./auth";
 import * as blob from "@vercel/blob";
 import {
   DesignTaskSpec,
-  DesignTeam,
   NewProjectFormSchema,
   RegisterSchemaType,
-  defaultTeams,
 } from "./types";
 import { redirect } from "next/navigation";
 import { defaulTaskSpecs } from "content/tasks";
@@ -57,89 +55,59 @@ export async function submitProjectForm2(formData: FormData) {
     buildingType,
     buildingSubtype,
     country,
-
-    lifestyle,
-    future,
-    energy,
-    outdoors,
-    security,
-    maintenance,
-    special,
+    ...extrainfo
   } = parsed.data;
 
-  const newProjectArr = await db.createProject({
+  const project = await db.createProject({
     userid: userId,
     title,
     description,
     type: buildingType,
     subtype: buildingSubtype,
     countrycode: country,
-    extrainfo: {
-      lifestyle,
-      future,
-      energy,
-      outdoors,
-      security,
-      maintenance,
-      special,
-    },
+    extrainfo,
   });
 
-  if (newProjectArr.length === 0) {
-    console.error("Failed to submit a new project post");
-    return null;
-  }
-
-  const newProjectId = newProjectArr[0].id;
-
-  // TODO client upload directly to server! 4.5 MB limit currently
-  if (files) {
-    for (const file of files) {
-      // TODO hack
-      // FormData constructor from event.target adds a file with no filename
-      // ignore that file here
-      // the improved file upload should not hit this error
-      if (file.name == "undefined" && file.size == 0) {
-        console.log("ignoring fake file from FormData constructor");
-        continue;
-      }
-
-      const data =
-        VERCEL_BLOB_FAKE_FILES && file.size > 512
-          ? new ArrayBuffer(8)
-          : await file.arrayBuffer();
-      // TODO use all the data
-      const { url } = await blob.put(
-        `project/${newProjectId}/${file.name}`,
-        data,
-        {
-          access: "public", // private access isn't supported by vercel atm
-        },
-      );
-      console.log(`file "${file.name}" uploaded to: ${url}`);
-
-      // TODO optimise - await outside the loop?
-      const newFileRow = await db.addFile({
-        uploaderid: userId,
-        projectid: newProjectId,
-        filename: file.name,
-        url: url,
-        type: file.type,
-      });
-      console.log(newFileRow.at(0)?.type);
+  const results = Array.from(files ?? []).map(async (file) => {
+    // HACK FormData constructor from event.target adds a file with no filename ignore that file here.
+    if (file.name == "undefined" && file.size == 0) {
+      console.log("ignoring fake file from FormData constructor");
+      return Promise.resolve();
     }
-  }
 
-  redirect(`/project/${newProjectId}`);
+    console.log(`uploading file "${file.name}"`);
+    const data = await file.arrayBuffer();
+    const { url, downloadUrl } = await blob.put(
+      `project/${project.id}/${file.name}`,
+      data,
+      { access: "public" },
+    );
+    console.log(
+      `file "${file.name}" uploaded to: ${url}\n` +
+      `    and can be downloaded from: ${downloadUrl}`,
+    );
+
+    const newFileRow = await db.addFile({
+      uploaderid: userId,
+      projectid: project.id,
+      filename: file.name,
+      url: url,
+      type: file.type,
+    });
+  });
+
+  Promise.all(results).catch((e) => {
+    console.error("Failed to upload all files.");
+  });
+
+  redirect(`/project/${project.id}`);
 }
 
 export async function getProject(projectId: number) {
   const session = await auth();
   if (!session?.user?.id) return undefined;
   const userId = Number(session.user.id);
-  const projects = await db.getProject(projectId);
-  if (projects.length <= 0) return undefined;
-  return projects[0];
+  return await db.getProject(projectId);
 }
 
 export async function deleteFullProject(projectId: number) {
@@ -252,14 +220,7 @@ export async function getProjectTeams(projectId: number) {
 export async function addTeamMember(teamId: number, email: string) {
   const session = await auth();
   if (!session?.user) return;
-  // TODO this can be done in one db call
-  const user = await db.getUserByEmail(email);
-  if (!user) return;
-  const newTeamMember = await db.addTeamMember(teamId, user.id);
-  assert(
-    newTeamMember.length <= 1,
-    "Expected exactly one or no users added to team",
-  );
+  const newTeamMember = await db.addTeamMemberByEmail(teamId, email);
   return db.getTeamMembersDetailed(teamId);
 }
 
