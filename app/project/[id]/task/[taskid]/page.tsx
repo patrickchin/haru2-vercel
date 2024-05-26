@@ -106,7 +106,7 @@ async function TaskPage({
       <Card className="h-full w-full">
         {/* <CardHeader className="font-bold">Description</CardHeader> */}
         <CardContent className="p-6">
-          <CardDescription>{taskSpec?.description}</CardDescription>
+          <CardDescription className="text-base">{taskSpec?.description}</CardDescription>
         </CardContent>
       </Card>
 
