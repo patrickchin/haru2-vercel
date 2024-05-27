@@ -2,6 +2,7 @@ import { DesignUserBasic } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { cn, getAvatarInitials } from "@/lib/utils";
 import { User } from "next-auth";
+import { useSession } from "next-auth/react";
 
 export function DesignUserAvatar({
   user,
@@ -38,6 +39,21 @@ export function UserAvatar({
   user?: User;
   className?: string;
 }) {
+  return (
+    <DesignUserAvatar
+      className={className}
+      user={{
+        id: Number(user?.id),
+        name: user?.name ?? "?",
+        avatarUrl: user?.image ?? null,
+      }}
+    />
+  );
+}
+
+export function CurrentUserAvatar({ className }: { className?: string }) {
+  const { data: session } = useSession();
+  const user = session?.user;
   return (
     <DesignUserAvatar
       className={className}

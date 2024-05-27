@@ -15,13 +15,9 @@ export const {
   // adapter: DrizzleAdapter(db),
   callbacks: {
     async session({ token, session, newSession, trigger }) {
-      // trigger update doesn't seem to work
-      // if (trigger === "update") {
-
       const user = await getUserByEmail(session.user.email);
       session.user.image = user?.avatarUrl ?? null;
-
-      if (token) session.user.id = token.sub || "";
+      session.user.id = token?.sub || "";
       return session;
     },
   },

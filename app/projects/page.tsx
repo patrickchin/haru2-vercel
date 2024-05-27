@@ -2,12 +2,9 @@ import { Suspense, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { getUserProjects } from "@/lib/db";
+import { getCurrentUsersProjects } from "@/lib/actions";
 import { CenteredLayout } from "@/components/page-layouts";
 
-import houseIcon from "@/app/assets/house.png";
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { DesignProjectUser } from "@/lib/types";
 
 function ProjectItem({ project }: { project: DesignProjectUser}) {
@@ -28,13 +25,7 @@ function ProjectItem({ project }: { project: DesignProjectUser}) {
       className="flex justify-between gap-6 p-8 border rounded-lg hover:bg-accent"
     >
       <div className="flex min-w-0 gap-x-4">
-        {false && (
-          <Image
-            className="h-12 w-12 flex-none rounded-full"
-            src={houseIcon}
-            alt="building"
-          />
-        )}
+        
         <div className="min-w-0 flex-auto">
           <p className="text-md font-semibold leading-6">
             {title} - {where} - <span className="capitalize">{type}</span>
@@ -64,20 +55,10 @@ function ProjectItem({ project }: { project: DesignProjectUser}) {
 }
 
 async function ProjectList() {
-  const session = await auth();
-  const userId = Number(session?.user?.id);
-
-  if (!session?.user) redirect("/login");
-
-  if (Number.isNaN(userId)) {
-    console.log("User id is invalid: ", session);
-    return <p>Invalid user</p>;
-  }
-
-  const projects = await getUserProjects(userId);
+  const projects = await getCurrentUsersProjects();
   return (
     <ul role="list" className="space-y-3">
-      {projects.map((p) => (
+      {projects?.map((p) => (
         <li key={p.id}>
           <ProjectItem project={p} />
         </li>

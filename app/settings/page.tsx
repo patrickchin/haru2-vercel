@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation";
 import { updateAvatarForUser } from "@/lib/actions";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -12,18 +11,11 @@ import { Label } from "@/components/ui/label";
 
 import { LucideLoader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { UserAvatar } from "@/components/user-avatar";
+import { CurrentUserAvatar, } from "@/components/user-avatar";
 
 function SettingsPage() {
-  const router = useRouter();
-  const { data: session, update: updateSession } = useSession();
   const [errorMessage, setErrorMessage] = useState("");
   const [isUploading, setUpLoading] = useState(false);
-
-  if (!session?.user) redirect("/login");
-
-  const userId = Number(session?.user?.id);
-  if (Number.isNaN(userId)) return <p>Invalid user</p>;
 
   const handleFileChange = async (event: any) => {
     const file = event.target.files[0];
@@ -75,7 +67,7 @@ function SettingsPage() {
             accept="image/*"
             disabled={isUploading}
           />
-          <UserAvatar user={session.user} className="w-40 h-40 rounded-full outline outline-offset-4" />
+          <CurrentUserAvatar className="w-40 h-40 rounded-full outline outline-offset-4" />
 
           {errorMessage && (
             <p className="text-red-500 text-xs italic text-center">

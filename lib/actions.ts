@@ -178,6 +178,12 @@ export async function updateProjectTitle(projectId: number, newTitle: string) {
   return updatedProject;
 }
 
+export async function getCurrentUsersProjects() {
+  const session = await auth();
+  if (session?.user?.id) // linter is stupid
+    return db.getUserProjects(parseInt(session.user.id));
+}
+
 //update any field of the project
 export async function updateProject(
   projectId: number,
