@@ -106,8 +106,6 @@ function FilesTable({
       columnFilters,
     },
   });
-  console.log("Data:", data);
-  console.log("projectid:", projectid);
 
   return (
     <div className="w-full space-y-4">
