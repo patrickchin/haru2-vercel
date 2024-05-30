@@ -43,6 +43,13 @@
       "when": 1716975933046,
       "tag": "0005_redundant_red_skull",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1717057365551,
+      "tag": "0006_strong_scrambler",
+      "breakpoints": true
     }
   ]
 }

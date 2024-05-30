@@ -18,3 +18,10 @@ export function getAvatarInitials(fullname?: string): string {
 
   return initials.toUpperCase();
 }
+
+export function getFileSize(size?: number): string {
+  if (!size) return "";
+  if (size < 1000) return `${size} KB`;
+  if (size >= 1000) return `${Math.floor(size / 1000)} MB`;
+  return "";
+}
