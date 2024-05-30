@@ -4,7 +4,7 @@ import * as React from "react";
 import * as Tan from "@tanstack/react-table";
 import Link from "next/link";
 import prettyBytes from "pretty-bytes";
-import { LucideChevronRight, LucideDownload } from "lucide-react";
+import { LucideArrowUpRight, LucideChevronRight, LucideDownload, LucideMoveRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,79 +19,98 @@ import {
 import { UserAvatar } from "@/components/user-avatar";
 import { Input } from "@/components/ui/input";
 
-import { DesignFile, DesignProject } from "@/lib/types";
+import { DesignFile, DesignProject, DesignTask } from "@/lib/types";
 import DateTime from "@/components/date-time";
+import { cn } from "@/lib/utils";
 
 const filesColumns: Tan.ColumnDef<DesignFile>[] = [
   {
     accessorKey: "filename",
     header: () => <div>Filename</div>,
-    cell: ({ row }) => <pre>{row.getValue("filename")}</pre>,
+    cell: ({ row }) => <div className="font-semibold">{row.getValue("filename")}</div>,
+    size: 6,
+  },
+  {
+    accessorKey: "filesize",
+    header: () => <div>Size</div>,
+    cell: ({ row }) => <div>{prettyBytes(row.getValue("filesize"))}</div>,
+    size: 2,
+  },
+  {
+    accessorKey: "uploader",
+    header: () => <div className="text-center">Uploader</div>,
+    cell: ({ row }) => (
+      <div className="flex items-center justify-center">
+        <UserAvatar user={row.getValue("uploader")} className="w-8 h-8" />
+      </div>
+    ),
+    size: 3,
   },
   {
     accessorKey: "uploadedat",
     header: () => <div>Uploaded</div>,
     cell: ({ row }) => {
       return (
-        <pre>
-          <DateTime dateString={row.getValue("uploadedat")} />
-        </pre>
+        <div>
+          <DateTime date={row.getValue("uploadedat")} />
+        </div>
       );
     },
+    size: 4,
   },
   {
-    accessorKey: "uploader",
-    header: () => <div>Uploader</div>,
-    cell: ({ row }) => (
-      <div className="flex overflow-hidden w-12 items-center justify-center">
-        <UserAvatar user={row.getValue("uploader")} />
-      </div>
-    ),
-  },
-  {
-    accessorKey: "filesize",
-    header: () => <div>Size</div>,
-    cell: ({ row }) => <pre>{prettyBytes(row.getValue("filesize"))}</pre>,
-  },
-  {
-    accessorKey: "specid",
-    header: () => <div>Spec Id</div>,
-    cell: ({ row, projectid, commentid }: any) => (
-      <Button asChild variant="outline" className="h-8 w-8 p-0">
-        {row.getValue("specid") ? (
-          <Link
-            href={`/project/${projectid}/task/${row.getValue("specid")}${commentid ? `#comment-${commentid}` : ""}`}
-          >
-            <pre>{row.getValue("specid")}</pre>
-          </Link>
-        ) : (
-          <pre>{"-"}</pre>
-        )}
-      </Button>
-    ),
+    accessorKey: "task",
+    header: () => <div>Task</div>,
+    cell: ({ row }) => {
+      // TODO how do I filter on task title??
+      const file: DesignFile = row.original;
+      const task: DesignTask | null = file.task;
+      const projectid = file.projectid ?? file.task?.projectid;
+      const commentid = file.commentid;
+      const commentHash = commentid ? `#comment-${commentid}` : "";
+      return (
+        <Button size="sm" variant="link" className="h-8 p-0" disabled={!task}>
+          {task ? (
+            <Link
+              href={`/project/${projectid}/task/${task.specid}${commentHash}`}
+              className="flex gap-1 items-center font-normal"
+            >
+              {task.title}
+              <LucideArrowUpRight className="h-4 w-4" />
+            </Link>
+          ) : (
+            <div>-</div>
+          )}
+        </Button>
+      );
+    },
+    size: 4,
   },
   {
     accessorKey: "url",
     header: () => <div>Download</div>,
-    cell: ({ row }) => (
-      <Button variant="link" className="h-5 p-0">
-        <Link href={row.getValue("url") || "#"} target="_blank">
-          <LucideDownload className="h-3" />
-        </Link>
-      </Button>
-    ),
-    size: 50,
+    cell: ({ row }) => {
+      const url = row.getValue("url") || "#";
+      return (
+        <div className="flex  justify-center">
+        <Button size="icon" variant="outline" className="h-8 w-8">
+          <Link href={url} target="_blank">
+            <LucideDownload className="w-3.5 h-3.5" />
+          </Link>
+        </Button>
+        </div>
+      );
+    },
+    size: 1,
   },
 ];
 
 function FilesTable({
   columns,
   data,
-  projectid,
 }: {
   columns: Tan.ColumnDef<DesignFile>[];
   data: DesignFile[];
-  projectid: number;
 }) {
   const [sorting, setSorting] = React.useState<Tan.SortingState>([]);
   const [columnFilters, setColumnFilters] =
@@ -110,48 +129,77 @@ function FilesTable({
       sorting,
       columnFilters,
     },
+    defaultColumn: {
+      size: 200, //starting column size
+      minSize: 1, //enforced during column resizing
+      maxSize: 500, //enforced during column resizing
+    },
   });
+
+  const sizeToTailwind = (size?: number) => {
+    if (!size) return "";
+    switch (size) {
+      case 0:
+        return "w-0";
+      case 1:
+        return "w-8";
+      case 2:
+        return "w-16";
+      case 3:
+        return "w-32";
+      case 4:
+        return "w-48";
+      case 5:
+        return "w-64";
+      case 6:
+        return "";
+    }
+  };
 
   return (
     <div className="w-full space-y-4">
-      {<FileTableFilterToggles table={table} />}
+      <FileTableFilterToggles table={table} />
       <div className="rounded-md border">
         <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead
-                      key={header.id}
-                      className="px-2 first:pl-8 last:pr-8"
-                      style={{ width: header.getSize() }}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : Tan.flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
+          <TableHeader className="w-full border-b">
+            <TableRow>
+              {table.getFlatHeaders().map((header) => {
+                console.log(header);
+                return (
+                  <TableHead
+                    key={header.id}
+                    className={cn(
+                      "p-2 first:pl-8 last:pr-8",
+                      sizeToTailwind(header.getSize()),
+                    )}
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : Tan.flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                  </TableHead>
+                );
+              })}
+            </TableRow>
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow key={row.id} className="">
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className="px-2 first:pl-8 last:pr-8"
+                      className={cn(
+                        "p-2 first:pl-8 last:pr-8",
+                        sizeToTailwind(cell.column.getSize()),
+                      )}
                     >
-                      {Tan.flexRender(cell.column.columnDef.cell, {
-                        ...cell.getContext(),
-                        projectid,
-                      })}
+                      {Tan.flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -218,7 +266,6 @@ export default function ProjectFiles({
         <FilesTable
           columns={filesColumns}
           data={files}
-          projectid={project?.id}
         />
       </CardContent>
     </Card>
@@ -228,17 +275,15 @@ export default function ProjectFiles({
 function FileTableFilterToggles({ table }: { table: Tan.Table<DesignFile> }) {
   return (
     <div className="w-full flex items-center gap-3 justify-between">
-      <div className="flex gap-3 items-center justify-start">
-        <Input
-          placeholder="Filter with filename..."
-          onChange={(event) => {
-            console.log(table);
-            console.log(event.target.value);
-            table.setGlobalFilter(event.target.value);
-          }}
-          className="max-w-sm grow"
-        />
-      </div>
+      <Input
+        placeholder="Filter by file name ..."
+        onChange={(event) => {
+          console.log(table);
+          console.log(event.target.value);
+          table.setGlobalFilter(event.target.value);
+        }}
+        className="max-w-sm grow"
+      />
     </div>
   );
 }
