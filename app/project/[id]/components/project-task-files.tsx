@@ -3,8 +3,10 @@
 import * as React from "react";
 import * as Tan from "@tanstack/react-table";
 import Link from "next/link";
-
+import { format } from "date-fns";
+import prettyBytes from "pretty-bytes";
 import { LucideChevronRight } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -15,12 +17,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-import { DesignFile, DesignProject } from "@/lib/types";
 import { UserAvatar } from "@/components/user-avatar";
 import { Input } from "@/components/ui/input";
-import { getFileSize } from "@/lib/utils";
-import { format } from "date-fns";
+
+import { DesignFile, DesignProject } from "@/lib/types";
 
 const filesColumns: Tan.ColumnDef<DesignFile>[] = [
   {
@@ -54,7 +54,7 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
   {
     accessorKey: "filesize",
     header: () => <div>Size</div>,
-    cell: ({ row }) => <pre>{getFileSize(row.getValue("filesize"))}</pre>,
+    cell: ({ row }) => <pre>{prettyBytes(row.getValue("filesize"))}</pre>,
   },
   {
     accessorKey: "taskid",
