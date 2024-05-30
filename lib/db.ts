@@ -397,7 +397,9 @@ export async function getFilesForProject(projectId: number) {
       uploader: {
         ...getTableColumns(Schemas.users1),
       },
-      specid: Schemas.tasks1.specid,
+      task: {
+        ...getTableColumns(Schemas.tasks1),
+      }
     })
     .from(Schemas.files1)
     .leftJoin(Schemas.tasks1, eq(Schemas.tasks1.id, Schemas.files1.taskid))
@@ -474,12 +476,21 @@ export async function editTaskFile(
   return editedFiles[0];
 }
 
-export async function getTaskFiles(taskid: number) {
+export async function getFilesForTask(taskId: number) {
   return await db
-    .select()
+    .select({
+      ...getTableColumns(Schemas.files1),
+      uploader: {
+        ...getTableColumns(Schemas.users1),
+      },
+      task: {
+        ...getTableColumns(Schemas.tasks1),
+      }
+    })
     .from(Schemas.files1)
-    .where(eq(Schemas.files1.taskid, taskid));
-  // .orderBy(desc(Schemas.files1.createdat));
+    .leftJoin(Schemas.tasks1, eq(Schemas.tasks1.id, Schemas.files1.taskid))
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderid))
+    .where(eq(Schemas.files1.id, taskId));
 }
 
 export async function getTaskCommentAttachments(taskid: number) {

@@ -1,10 +1,8 @@
-export default function DateTime({ dateString }: { dateString: Date }) {
+export default function DateTime({ date }: { date?: Date }) {
+  if (!date) return null;
   return (
-    <time
-      dateTime={(dateString as unknown as Date).toISOString()}
-      suppressHydrationWarning
-    >
-      {(dateString as unknown as Date).toLocaleString()}
+    <time dateTime={date.toISOString()} suppressHydrationWarning>
+      {date.toLocaleString()}
     </time>
   );
 }
