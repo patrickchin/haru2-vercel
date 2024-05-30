@@ -29,7 +29,9 @@ export const accounts1 = pgTable("accounts1", {
 });
 
 export const users1 = pgTable("users1", {
-  id: serial("id").primaryKey().references(() => accounts1.id),
+  id: serial("id")
+    .primaryKey()
+    .references(() => accounts1.id),
   name: varchar("name", { length: 255 }).notNull(),
   avatarUrl: varchar("avatarUrl", { length: 255 }),
 });
@@ -124,4 +126,5 @@ export const files1 = pgTable("files1", {
   filesize: integer("filesize"),
   url: varchar("url", { length: 255 }),
   type: varchar("type", { length: 255 }),
+  uploadedat: timestamp("uploadedat", { mode: "date" }).notNull().defaultNow(),
 });

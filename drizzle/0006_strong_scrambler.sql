@@ -1,0 +1,1 @@
+ALTER TABLE "files1" ADD COLUMN "uploadedAt" timestamp DEFAULT now() NOT NULL;
