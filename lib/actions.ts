@@ -5,6 +5,7 @@ import * as Schemas from "@/drizzle/schema";
 import { signIn } from "@/lib/auth";
 import { auth } from "./auth";
 import * as blob from "@vercel/blob";
+import {sendOtpViaWhatsApp} from '@/lib/otp'
 import {
   DesignTaskSpec,
   NewProjectFormSchema,
@@ -28,6 +29,8 @@ export async function signInFromLogin(data: any) {
   // TODO validate
   return await signIn("credentials", data);
 }
+
+
 
 export async function submitProjectForm2(formData: FormData) {
   const session = await auth();

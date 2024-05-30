@@ -130,12 +130,6 @@ export const otps1 = pgTable("otps1", {
   id: serial("id").primaryKey().notNull(),
   phoneNumber: varchar("phoneNumber", { length: 32 }).notNull(),
   otp: varchar("otp", { length: 255 }).notNull(),
-  createdAt: timestamp("createdAt", {
-    withTimezone: true,
-    mode: "string",
-  }).defaultNow(),
-  expiresAt: timestamp("expiresAt", {
-    withTimezone: true,
-    mode: "string",
-  }).notNull(),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  expiresAt: timestamp("expiresAt", { mode: "date" }).notNull(),
 });
