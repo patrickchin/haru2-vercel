@@ -70,7 +70,7 @@ export type DesignTeam = typeof Schemas.teams1.$inferSelect;
 export type DesignTeamMember = typeof Schemas.teammembers1.$inferSelect;
 export type DesignTaskSpec = typeof Schemas.taskspecs1.$inferSelect;
 export type DesignTask = typeof Schemas.tasks1.$inferSelect;
-export type DesignFile = typeof Schemas.files1.$inferSelect;
+export type DesignFile = Awaited<ReturnType<typeof db.getFilesForTask>>[0];
 export type DesignTaskComment = Awaited<
   ReturnType<typeof db.getTaskComments>
 >[0];
