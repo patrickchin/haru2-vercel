@@ -515,49 +515,100 @@ export async function deleteFile(fileId: number) {
 
 // OTP functions ==========================================================================================
 
-export async function saveOtp(phoneNumber: string, otp: string, expiresAt: string) {
-  // Generate a salt and hash the OTP
-  const salt = genSaltSync(10);
-  const hashedOtp = hashSync(otp, salt);
+export async function saveOtp(phoneNumber: string, otp: string, expiresAt: Date) {
+  // Define the rate limit time window (e.g., 1 minute)
+  const RATE_LIMIT_WINDOW = 60 * 1000; // 60 seconds in milliseconds
 
-  return await db.insert(Schemas.otps1).values({
-    phoneNumber,
-    otp: hashedOtp,
-    expiresAt,
-  }).returning();
+  // Get the current time
+  const currentTime = new Date().getTime() 
+
+  // Use a transaction to ensure atomicity and consistency
+  return await db.transaction(async (tx) => {
+    // Check if there is an existing OTP for the phone number
+    const existingOtp = await tx
+      .select()
+      .from(Schemas.otps1)
+      .where(eq(Schemas.otps1.phoneNumber, phoneNumber))
+      .limit(1);
+
+    if (existingOtp.length > 0) {
+      const lastOtpTimeValue = existingOtp[0].createdAt;
+
+
+      // Ensure that lastOtpTimeValue is not null
+      if (lastOtpTimeValue !== null) {
+        const lastOtpTime = lastOtpTimeValue.getTime() // Convert to Unix timestamp in milliseconds
+
+        // Calculate the time difference
+        const timeDifference = currentTime - lastOtpTime;
+  
+
+        // If the time difference is less than the rate limit window, throw an error
+        if (timeDifference < RATE_LIMIT_WINDOW) {
+          throw new Error('OTP requests are too frequent. Please try again later.');
+        }
+
+        // If allowed, delete the existing OTP (to be overwritten)
+        await tx
+          .delete(Schemas.otps1)
+          .where(eq(Schemas.otps1.phoneNumber, phoneNumber));
+      }
+    }
+
+    // Generate a salt and hash the OTP
+    const salt = genSaltSync(10);
+    const hashedOtp = hashSync(otp, salt);
+
+    // Save the new OTP
+    return await tx
+      .insert(Schemas.otps1)
+      .values({
+        phoneNumber,
+        otp: hashedOtp,
+        expiresAt,
+        createdAt: new Date() // Save the current timestamp as an ISO string
+      })
+      .returning();
+  });
 }
 
-export async function deleteOtp(phoneNumber: string, otp: string) {
-  return await db.delete(Schemas.otps1)
-    .where(
-      and(
-        eq(Schemas.otps1.phoneNumber, phoneNumber),
-        eq(Schemas.otps1.otp, otp)
-      )
-    ).returning();
-}
+
 
 export async function verifyOtp(phoneNumber: string, otp: string): Promise<boolean> {
-  const record = await db.select()
-    .from(Schemas.otps1)
-    .where(eq(Schemas.otps1.phoneNumber, phoneNumber))
-    .limit(1);
+  return await db.transaction(async (tx) => {
+    // Retrieve the OTP record for the given phone number
+    const record = await tx
+      .select()
+      .from(Schemas.otps1)
+      .where(eq(Schemas.otps1.phoneNumber, phoneNumber))
+      .limit(1);
 
-  if (record.length === 0) {
-    return false;
-  }
+    // If no record is found, return false
+    if (record.length === 0) {
+      return false;
+    }
 
-  const { otp: hashedOtp, expiresAt } = record[0];
-  if (new Date() > new Date(expiresAt)) {
-    return false;
-  }
+    const { otp: hashedOtp, expiresAt } = record[0];
+    
+    // Check if the OTP has expired
+    if (new Date() > new Date(expiresAt)) {
+      // If expired, delete the OTP record and return false
+      await tx
+        .delete(Schemas.otps1)
+        .where(eq(Schemas.otps1.phoneNumber, phoneNumber));
+      return false;
+    }
 
-  // Compare the provided OTP with the hashed OTP
-  const isValidOtp = compareSync(otp, hashedOtp);
-  if (!isValidOtp) {
-    return false;
-  }
+    // Compare the provided OTP with the hashed OTP
+    const isValidOtp = compareSync(otp, hashedOtp);
+    
+    // If the OTP is valid, delete the OTP record
+    if (isValidOtp) {
+      await tx
+        .delete(Schemas.otps1)
+        .where(eq(Schemas.otps1.phoneNumber, phoneNumber));
+    }
 
-  await deleteOtp(phoneNumber, hashedOtp); // Remove OTP after successful verification
-  return true;
+    return isValidOtp;
+  });
 }
