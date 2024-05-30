@@ -16,10 +16,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { getProjectFiles } from "@/lib/actions";
 import { DesignFile, DesignProject } from "@/lib/types";
 import { UserAvatar } from "@/components/user-avatar";
 import { Input } from "@/components/ui/input";
+import { getFileSize } from "@/lib/utils";
+import { format } from "date-fns";
 
 const filesColumns: Tan.ColumnDef<DesignFile>[] = [
   {
@@ -28,51 +29,42 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
     cell: ({ row }) => <pre>{row.getValue("filename")}</pre>,
   },
   {
-    accessorKey: "uploaded",
+    accessorKey: "uploadedat",
     header: () => <div>Uploaded</div>,
-    cell: ({ row }) => (
-      <pre>
-        {/* TODO */}
-        <time dateTime={"05/22/2024T12:20"}>
-          {new Date("2024-05-22T12:20").toLocaleString(undefined, {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-          })}{" "}
-        </time>
-      </pre>
-    ),
+    cell: ({ row }) => {
+      return (
+        <pre>
+          {format(
+            new Date(row.getValue("uploadedat")),
+            "MM/dd/yyyy 'at' h:mm a",
+          )}
+        </pre>
+      );
+    },
   },
   {
     accessorKey: "uploader",
     header: () => <div>Uploader</div>,
-    //cell: ({ row }) => <pre>{row.getValue("uploaderid")}</pre>,
     cell: ({ row }) => (
-      <div className="w-full flex overflow-hidden w-12 items-center justify-center">
-        {/* TODO (row.getValue("uploader") as string) */}
-        <UserAvatar user={undefined} />
+      <div className="flex overflow-hidden w-12 items-center justify-center">
+        <UserAvatar user={row.getValue("uploader")} />
       </div>
     ),
   },
   {
     accessorKey: "filesize",
     header: () => <div>Size</div>,
-    cell: ({ row }) => <pre>{row.getValue("filesize")}</pre>,
+    cell: ({ row }) => <pre>{getFileSize(row.getValue("filesize"))}</pre>,
   },
   {
     accessorKey: "taskid",
     header: () => <div>Task Id</div>,
-    //cell: ({ row }) => <pre>{row.getValue("taskid")}</pre>,
     cell: ({ row, projectid }: any) => (
-      <div className="text-center">
-        <Button asChild variant="outline" className="h-8 w-8 p-0">
-          <Link href={`/project/${projectid}/task/${row.getValue("taskid")}`}>
-            <pre>{row.getValue("taskid")}</pre>
-          </Link>
-        </Button>
-      </div>
+      <Button asChild variant="outline" className="h-8 w-8 p-0">
+        <Link href={`/project/${projectid}/task/${row.getValue("taskid")}`}>
+          <pre>{row.getValue("taskid")}</pre>
+        </Link>
+      </Button>
     ),
   },
   {
@@ -85,14 +77,6 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
     ),
     size: 60,
   },
-  // date uploaded
-  // uploader
-  // filesize
-  // type
-  // view button
-  // version?
-  // which task
-  // which team
 ];
 
 function FilesTable({
@@ -104,20 +88,30 @@ function FilesTable({
   data: DesignFile[];
   projectid: number;
 }) {
+  const [sorting, setSorting] = React.useState<Tan.SortingState>([]);
+  const [columnFilters, setColumnFilters] =
+    React.useState<Tan.ColumnFiltersState>([]);
+
   const table = Tan.useReactTable({
     data,
     columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: Tan.getCoreRowModel(),
     getPaginationRowModel: Tan.getPaginationRowModel(),
+    getSortedRowModel: Tan.getSortedRowModel(),
+    getFilteredRowModel: Tan.getFilteredRowModel(),
+    state: {
+      sorting,
+      columnFilters,
+    },
   });
   console.log("Data:", data);
   console.log("projectid:", projectid);
 
   return (
     <div className="w-full space-y-4">
-      {/* The table */}
       {<FileTableFilterToggles table={table} />}
-
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -233,14 +227,13 @@ function FileTableFilterToggles({ table }: { table: Tan.Table<DesignFile> }) {
   return (
     <div className="w-full flex items-center gap-3 justify-between">
       <div className="flex gap-3 items-center justify-start">
-        {/* row filter input box */}
         <Input
-          placeholder="Filter table..."
-          // value={(table.getColumn("lead")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            // table.getColumn("lead")?.setFilterValue(event.target.value)
-            table.setGlobalFilter(event.target.value)
-          }
+          placeholder="Filter with filename..."
+          onChange={(event) => {
+            console.log(table);
+            console.log(event.target.value);
+            table.setGlobalFilter(event.target.value);
+          }}
           className="max-w-sm grow"
         />
       </div>
