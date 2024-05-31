@@ -4,7 +4,7 @@ import * as React from "react";
 import * as Tan from "@tanstack/react-table";
 import Link from "next/link";
 import prettyBytes from "pretty-bytes";
-import { LucideChevronRight } from "lucide-react";
+import { LucideChevronRight, LucideDownload } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -71,14 +71,16 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
     ),
   },
   {
-    accessorKey: "view",
-    header: () => <div>View</div>,
+    accessorKey: "url",
+    header: () => <div>Download</div>,
     cell: ({ row }) => (
-      <Button asChild className="p-2 w-9" variant="secondary">
-        <LucideChevronRight />
+      <Button variant="link" className="h-5 p-0">
+        <Link href={row.getValue("url") || "#"} target="_blank">
+          <LucideDownload className="h-3" />
+        </Link>
       </Button>
     ),
-    size: 60,
+    size: 50,
   },
 ];
 
@@ -91,6 +93,7 @@ function FilesTable({
   data: DesignFile[];
   projectid: number;
 }) {
+  console.log("Data:", data);
   const [sorting, setSorting] = React.useState<Tan.SortingState>([]);
   const [columnFilters, setColumnFilters] =
     React.useState<Tan.ColumnFiltersState>([]);
