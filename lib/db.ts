@@ -129,6 +129,32 @@ export async function updateUserAvatar(
   });
 }
 
+export async function deleteUserAvatar(uploaderId: number) {
+  return await db.transaction(async (tx) => {
+    const oldUser = await tx
+      .select()
+      .from(Schemas.users1)
+      .where(eq(Schemas.users1.id, uploaderId))
+      .then((r) => r[0]);
+
+    if (!oldUser) {
+      throw new Error(`User with ID ${uploaderId} not found`);
+    }
+
+    const updatedUser = await tx
+      .update(Schemas.users1)
+      .set({ avatarUrl: null })
+      .where(eq(Schemas.users1.id, uploaderId))
+      .returning()
+      .then((r) => r[0]);
+
+    return {
+      initial: oldUser,
+      updated: updatedUser,
+    };
+  });
+}
+
 // projects ==========================================================================================
 
 export async function getUserProjects(userId: number, pagenum: number = 0) {
