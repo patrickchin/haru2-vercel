@@ -50,6 +50,20 @@
       "when": 1717057365551,
       "tag": "0006_strong_scrambler",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1717115241868,
+      "tag": "0007_acoustic_titanium_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1717116563704,
+      "tag": "0008_slippery_korvac",
+      "breakpoints": true
     }
   ]
 }
