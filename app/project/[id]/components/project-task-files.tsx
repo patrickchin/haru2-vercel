@@ -3,7 +3,6 @@
 import * as React from "react";
 import * as Tan from "@tanstack/react-table";
 import Link from "next/link";
-import { format } from "date-fns";
 import prettyBytes from "pretty-bytes";
 import { LucideChevronRight } from "lucide-react";
 
@@ -21,6 +20,7 @@ import { UserAvatar } from "@/components/user-avatar";
 import { Input } from "@/components/ui/input";
 
 import { DesignFile, DesignProject } from "@/lib/types";
+import DateTime from "@/components/date-time";
 
 const filesColumns: Tan.ColumnDef<DesignFile>[] = [
   {
@@ -34,10 +34,7 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
     cell: ({ row }) => {
       return (
         <pre>
-          {format(
-            new Date(row.getValue("uploadedat")),
-            "MM/dd/yyyy 'at' h:mm a",
-          )}
+          <DateTime dateString={row.getValue("uploadedat")} />
         </pre>
       );
     },
@@ -57,13 +54,19 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
     cell: ({ row }) => <pre>{prettyBytes(row.getValue("filesize"))}</pre>,
   },
   {
-    accessorKey: "taskid",
-    header: () => <div>Task Id</div>,
-    cell: ({ row, projectid }: any) => (
+    accessorKey: "specid",
+    header: () => <div>Spec Id</div>,
+    cell: ({ row, projectid, commentid }: any) => (
       <Button asChild variant="outline" className="h-8 w-8 p-0">
-        <Link href={`/project/${projectid}/task/${row.getValue("taskid")}`}>
-          <pre>{row.getValue("taskid")}</pre>
-        </Link>
+        {row.getValue("specid") ? (
+          <Link
+            href={`/project/${projectid}/task/${row.getValue("specid")}${commentid ? `#comment-${commentid}` : ""}`}
+          >
+            <pre>{row.getValue("specid")}</pre>
+          </Link>
+        ) : (
+          <pre>{"-"}</pre>
+        )}
       </Button>
     ),
   },

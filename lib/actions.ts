@@ -348,7 +348,11 @@ export async function addTaskComment(
   return getTaskCommentsAndFiles(taskId);
 }
 
-export async function addTaskFile(taskId: number, data: FormData) {
+export async function addTaskFile(
+  taskId: number,
+  specId: number,
+  data: FormData,
+) {
   const file = data.get("file") as File;
   if (!file) {
     console.log("addTaskFile file not correcty uploaded");
@@ -363,6 +367,7 @@ export async function addTaskFile(taskId: number, data: FormData) {
     type: file.type,
     // projectid: ?,
     taskid: taskId,
+    specid: specId,
     uploaderid: userId,
     // commentid: ?,
     filename: file.name,
@@ -386,9 +391,13 @@ export async function addTaskFile(taskId: number, data: FormData) {
   return editedFile;
 }
 
-export async function addTaskFileReturnAll(taskId: number, data: FormData) {
+export async function addTaskFileReturnAll(
+  taskId: number,
+  specId: number,
+  data: FormData,
+) {
   // no auth because done in addTaskFile
-  await addTaskFile(taskId, data);
+  await addTaskFile(taskId, specId, data);
   return db.getTaskFiles(taskId);
 }
 

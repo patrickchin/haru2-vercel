@@ -28,9 +28,11 @@ import { cn } from "@/lib/utils";
 export default function TaskFilesClient({
   taskId,
   files,
+  specId,
 }: {
   taskId: number;
   files: DesignFile[];
+  specId: number;
 }) {
   const uploadFileInputRef = useRef(null);
   const [showDetailed, setShowDetailed] = useState(false);
@@ -50,7 +52,7 @@ export default function TaskFilesClient({
     // server action arguments can only be primatives or FormData
     const data = new FormData();
     data.set("file", file);
-    const newFiles = await addTaskFileReturnAll(taskId, data);
+    const newFiles = await addTaskFileReturnAll(taskId, specId, data);
     if (newFiles) setUpdatedFiles(newFiles);
 
     e.target.value = "";
