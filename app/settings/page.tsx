@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { updateAvatarForUser } from "@/lib/actions";
+import { deleteAvatarForUser, updateAvatarForUser } from "@/lib/actions";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CenteredLayout } from "@/components/page-layouts";
@@ -12,10 +12,13 @@ import { Label } from "@/components/ui/label";
 import { LucideLoader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CurrentUserAvatar, } from "@/components/user-avatar";
+import DeleteModal from "@/components/delete-confirmation";
 
 function SettingsPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isUploading, setUpLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleFileChange = async (event: any) => {
     const file = event.target.files[0];
@@ -46,16 +49,29 @@ function SettingsPage() {
       setErrorMessage("Failed to update the avatar. Please try again.");
     }
     setUpLoading(false);
-
-    // this doens't do a full refresh
-    // router.refresh();
     location.reload();
   };
 
-  const deleteProfileAvatar = () => {
-    //TODO
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
   };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const deleteProfileAvatar = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteAvatarForUser();
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error deleting avatar:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+    location.reload();
+  };
   return (
     <>
       <Card>
@@ -78,15 +94,24 @@ function SettingsPage() {
               {errorMessage}
             </p>
           )}
-
           <div className="flex gap-2">
-            <Button onClick={deleteProfileAvatar} asChild variant="destructive">
-              <Label>
+            <DeleteModal
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              onConfirm={deleteProfileAvatar}
+            />
+            <Button
+              className="cursor-pointer"
+              onClick={handleOpenModal}
+              variant="destructive"
+              disabled={!session?.user?.image}
+            >
+              <Label className="cursor-pointer">
                 Delete
-                {isUploading && <LucideLoader2 className="animate-spin h-4" />}
+                {isDeleting && <LucideLoader2 className="animate-spin h-4" />}
               </Label>
             </Button>
-            <Button asChild variant="outline">
+            <Button className="cursor-pointer" asChild variant="outline">
               <Label htmlFor="photo">
                 Select New Photo
                 {isUploading && <LucideLoader2 className="animate-spin h-4" />}
