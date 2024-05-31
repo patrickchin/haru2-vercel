@@ -1,16 +1,19 @@
 import React from "react";
 import { Button } from "./ui/button";
+import { LucideLoader2 } from "lucide-react";
 
 interface DeleteModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  isLoading: boolean;
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = ({
   isOpen,
   onClose,
   onConfirm,
+  isLoading,
 }) => {
   if (!isOpen) return null;
 
@@ -67,8 +70,10 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
               className="cursor-pointer"
               onClick={onConfirm}
               variant="destructive"
+              disabled={isLoading}
             >
               {"Yes, I'm sure"}
+              {isLoading && <LucideLoader2 className="animate-spin h-4" />}
             </Button>
           </div>
         </div>

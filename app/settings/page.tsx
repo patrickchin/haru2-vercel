@@ -110,6 +110,7 @@ function SettingsPage() {
               isOpen={isModalOpen}
               onClose={handleCloseModal}
               onConfirm={deleteProfileAvatar}
+              isLoading={isDeleting}
             />
             <Button
               className="cursor-pointer"
