@@ -213,7 +213,6 @@ export default function ProjectFiles({
   files: DesignFile[];
   project: DesignProject;
 }) {
-  console.log(project);
   return (
     <Card>
       <CardContent className="pt-8">
