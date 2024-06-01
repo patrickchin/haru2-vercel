@@ -12,9 +12,10 @@ import { Label } from "@/components/ui/label";
 import { LucideLoader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CurrentUserAvatar, } from "@/components/user-avatar";
-import DeleteModal from "@/components/delete-confirmation";
+import DeleteAlertDialog from "@/components/delete-alart";
 
 function SettingsPage() {
+  const { data: session, update: updateSession } = useSession();
   const [errorMessage, setErrorMessage] = useState("");
   const [isUploading, setUpLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -95,23 +96,13 @@ function SettingsPage() {
             </p>
           )}
           <div className="flex gap-2">
-            <DeleteModal
+            <DeleteAlertDialog
               isOpen={isModalOpen}
               onClose={handleCloseModal}
               onConfirm={deleteProfileAvatar}
               isLoading={isDeleting}
-            />
-            <Button
-              className="cursor-pointer"
-              onClick={handleOpenModal}
-              variant="destructive"
               disabled={!session?.user?.image}
-            >
-              <Label className="cursor-pointer">
-                Delete
-                {isDeleting && <LucideLoader2 className="animate-spin h-4" />}
-              </Label>
-            </Button>
+            />
             <Button className="cursor-pointer" asChild variant="outline">
               <Label htmlFor="photo">
                 Select New Photo
