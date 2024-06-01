@@ -1,0 +1,1 @@
+ALTER TABLE "files1" DROP COLUMN IF EXISTS "specId";

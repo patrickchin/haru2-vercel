@@ -93,7 +93,6 @@ function FilesTable({
   data: DesignFile[];
   projectid: number;
 }) {
-  console.log("Data:", data);
   const [sorting, setSorting] = React.useState<Tan.SortingState>([]);
   const [columnFilters, setColumnFilters] =
     React.useState<Tan.ColumnFiltersState>([]);

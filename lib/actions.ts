@@ -367,7 +367,7 @@ export async function addTaskFile(
     type: file.type,
     // projectid: ?,
     taskid: taskId,
-    specid: specId,
+    // specid: specId,
     uploaderid: userId,
     // commentid: ?,
     filename: file.name,

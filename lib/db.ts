@@ -397,6 +397,7 @@ export async function getFilesForProject(projectId: number) {
       uploader: {
         ...getTableColumns(Schemas.users1),
       },
+      specid: Schemas.tasks1.specid,
     })
     .from(Schemas.files1)
     .leftJoin(Schemas.tasks1, eq(Schemas.tasks1.id, Schemas.files1.taskid))
