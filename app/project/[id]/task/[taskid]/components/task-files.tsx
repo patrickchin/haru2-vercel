@@ -2,9 +2,8 @@ import { notFound } from "next/navigation";
 import { DesignFile } from "@/lib/types";
 import { Suspense } from "react";
 
-import TaskCommentsClient from "./task-comments";
-import { getTaskFiles } from "@/lib/db";
 import TaskFilesClient from "./task-files-client";
+import { getTaskFiles } from "@/lib/actions";
 
 function TaskFilesSkeleton() {
   return <div>loading comments ...</div>;

@@ -52,7 +52,7 @@ export default function TaskFilesClient({
     // server action arguments can only be primatives or FormData
     const data = new FormData();
     data.set("file", file);
-    const newFiles = await addTaskFileReturnAll(taskId, specId, data);
+    const newFiles = await addTaskFileReturnAll(taskId, data);
     if (newFiles) setUpdatedFiles(newFiles);
 
     e.target.value = "";
