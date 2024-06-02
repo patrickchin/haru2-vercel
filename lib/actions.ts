@@ -356,7 +356,6 @@ export async function addTaskComment(
 
 export async function addTaskFile(
   taskId: number,
-  specId: number,
   data: FormData,
 ) {
   const file = data.get("file") as File;
@@ -399,12 +398,11 @@ export async function addTaskFile(
 
 export async function addTaskFileReturnAll(
   taskId: number,
-  specId: number,
   data: FormData,
 ) {
   // no auth because done in addTaskFile
-  await addTaskFile(taskId, specId, data);
-  return db.getTaskFiles(taskId);
+  await addTaskFile(taskId, data);
+  return db.getFilesForTask(taskId);
 }
 
 export async function updateAvatarForUser(data: FormData) {
@@ -472,7 +470,7 @@ export async function deleteAvatarForUser() {
 export async function getTaskFiles(taskId: number) {
   const session = await auth();
   if (!session?.user?.id) return;
-  return db.getTaskFiles(taskId);
+  return db.getFilesForTask(taskId);
 }
 
 export async function deleteFile(fileId: number) {
