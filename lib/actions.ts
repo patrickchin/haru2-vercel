@@ -86,6 +86,7 @@ export async function submitProjectForm2(formData: FormData) {
       `file "${file.name}" uploaded to: ${url}\n` +
       `    and can be downloaded from: ${downloadUrl}`,
     );
+    
 
     const newFileRow = await db.addFile({
       uploaderid: userId,
@@ -96,8 +97,11 @@ export async function submitProjectForm2(formData: FormData) {
     });
   });
 
+  console.log("Results", results, "Files:", files);
+
   Promise.all(results).catch((e) => {
     console.error("Failed to upload all files.");
+    console.log(e);
   });
 
   redirect(`/project/${project.id}`);
@@ -356,47 +360,27 @@ export async function addTaskComment(
   return getTaskCommentsAndFiles(taskId);
 }
 
-export async function addTaskFile(taskId: number, data: FormData) {
-  const file = data.get("file") as File;
-  if (!file) {
-    console.log("addTaskFile file not correcty uploaded");
-    return;
-  }
+export async function addTaskFile(taskId: number, type: string, name: string, size: number, url: string) {
 
   const session = await auth();
   if (!session?.user?.id) return;
   const userId = Number(session.user.id); // error?
 
-  const newFileP = db.addTaskFile({
-    type: file.type,
+  return db.addTaskFile({
+    type: type,
     // projectid: ?,
     taskid: taskId,
     uploaderid: userId,
     // commentid: ?,
-    filename: file.name,
-    filesize: file.size,
-    // url: ?,
+    filename: name,
+    filesize: size,
+    url: url,
   });
-
-  const fileBytes =
-    VERCEL_BLOB_FAKE_FILES && file.size > 512
-      ? new ArrayBuffer(8)
-      : await file.arrayBuffer();
-  // I would prefer the file to be saved here:
-  // const blobResult = await blob.put(`project/${projectId}/task/${taskSpecId}/${file.name}`, fileBytes, {
-  const blobResult = await blob.put(`task/${taskId}/${file.name}`, fileBytes, {
-    access: "public",
-  });
-
-  const newFile = await newFileP;
-  const editedFile = await db.editTaskFile(newFile.id, { url: blobResult.url });
-  assert(newFile.id === editedFile.id, "added and edited files differ");
-  return editedFile;
 }
 
-export async function addTaskFileReturnAll(taskId: number, data: FormData) {
+export async function addTaskFileReturnAll(taskId: number, type: string, name: string, size: number, url: string) {
   // no auth because done in addTaskFile
-  await addTaskFile(taskId, data);
+  await addTaskFile(taskId, type, name, size, url);
   return db.getTaskFiles(taskId);
 }
 

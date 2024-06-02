@@ -3,8 +3,9 @@
 import { ChangeEvent, useRef, useState } from "react";
 import assert from "assert";
 import Link from "next/link";
-import { addTaskFileReturnAll } from "@/lib/actions";
+import { getTaskFiles } from "@/lib/actions";
 import { DesignFile } from "@/lib/types";
+import { upload } from '@vercel/blob/client'; 
 
 import { Button } from "@/components/ui/button";
 import {
@@ -47,11 +48,18 @@ export default function TaskFilesClient({
     const file = targetFiles.item(0);
     assert(file);
 
-    // server action arguments can only be primatives or FormData
-    const data = new FormData();
-    data.set("file", file);
-    const newFiles = await addTaskFileReturnAll(taskId, data);
-    if (newFiles) setUpdatedFiles(newFiles);
+    const newBlob = await upload(file.name, file, {
+      access: 'public',
+      handleUploadUrl: '/api/upload',
+      clientPayload: JSON.stringify({ 
+        uploadType: "task", 
+        filesize: file.size,
+        taskId,
+      })
+    });
+
+    const files = await getTaskFiles(taskId);
+    if (files) setUpdatedFiles(files);
 
     e.target.value = "";
     setIsUploading(false);
