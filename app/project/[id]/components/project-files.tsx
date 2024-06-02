@@ -34,7 +34,11 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
   {
     accessorKey: "filesize",
     header: () => <div>Size</div>,
-    cell: ({ row }) => <div>{prettyBytes(row.getValue("filesize") ?? 0)}</div>,
+    cell: ({ row }) => (
+      <div className="text-nowrap">
+        {prettyBytes(row.getValue("filesize") ?? 0)}
+      </div>
+    ),
     size: 60,
   },
   {
