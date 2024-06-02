@@ -152,7 +152,7 @@ async function TaskPage({
         </div>
       )}
 
-      <TaskFiles taskId={task.id} specId={specId} />
+      <TaskFiles taskId={task.id} />
       <TaskComments taskId={task.id} />
     </section>
   );
