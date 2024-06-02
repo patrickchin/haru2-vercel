@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { LucideLoader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CurrentUserAvatar, } from "@/components/user-avatar";
-import DeleteAlertDialog from "@/components/delete-alart";
+import DeleteAlertDialog from "@/components/delete-alert";
 
 function SettingsPage() {
   const { data: session, update: updateSession } = useSession();
