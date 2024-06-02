@@ -3,8 +3,7 @@
 import { ChangeEvent, useRef, useState } from "react";
 import assert from "assert";
 import Link from "next/link";
-import { addTaskFileReturnAll } from "@/lib/actions";
-import { DesignFile } from "@/lib/types";
+import { addTaskFileReturnAll, getTaskFiles } from "@/lib/actions";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -24,20 +23,21 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import FileTypeToIcon from "@/components/filetype-icon";
 import { cn } from "@/lib/utils";
+import useSWR from "swr";
+import { DesignFile } from "@/lib/types";
 
-export default function TaskFilesClient({
-  taskId,
-  files,
-  specId,
-}: {
-  taskId: number;
-  files: DesignFile[];
-  specId: number;
-}) {
+export default function TaskFiles({ taskId }: { taskId: number }) {
   const uploadFileInputRef = useRef(null);
   const [showDetailed, setShowDetailed] = useState(false);
-  const [updatedFiles, setUpdatedFiles] = useState(files);
   const [isUploading, setIsUploading] = useState(false);
+
+  const { data, error, mutate } = useSWR(
+    `/api/task/${taskId}/files`, // api route doesn't really exist
+    () => {
+      return getTaskFiles(taskId);
+    },
+  );
+  const files: DesignFile[] = data ?? [];
 
   async function onChangeUploadFile(e: ChangeEvent<HTMLInputElement>) {
     const targetFiles = e.currentTarget.files;
@@ -53,7 +53,7 @@ export default function TaskFilesClient({
     const data = new FormData();
     data.set("file", file);
     const newFiles = await addTaskFileReturnAll(taskId, data);
-    if (newFiles) setUpdatedFiles(newFiles);
+    mutate(newFiles, { revalidate: false });
 
     e.target.value = "";
     setIsUploading(false);
@@ -105,7 +105,7 @@ export default function TaskFilesClient({
         </Button>
       </CardHeader>
       <CardContent className="grid grid-cols-3 gap-3 text-sm">
-        {updatedFiles.map((f, i) => (
+        {files.map((f, i) => (
           <div
             key={i}
             className={cn(
