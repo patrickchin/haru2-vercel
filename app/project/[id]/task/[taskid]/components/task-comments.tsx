@@ -350,9 +350,8 @@ function UploadAttachment({
 export default function TaskCommentsClient({ taskId }: { taskId: number }) {
 
   const { data, error, mutate } = useSWR(
-    `/api/task/${taskId}`, // api route doesn't really exist
+    `/api/task/${taskId}/commments`, // api route doesn't really exist
     () => {
-      console.log("getting the data again", taskId);
       return getTaskCommentsAndFiles(taskId);
     },
   );
