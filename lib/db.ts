@@ -490,7 +490,7 @@ export async function getFilesForTask(taskId: number) {
     .from(Schemas.files1)
     .leftJoin(Schemas.tasks1, eq(Schemas.tasks1.id, Schemas.files1.taskid))
     .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderid))
-    .where(eq(Schemas.files1.id, taskId));
+    .where(eq(Schemas.tasks1.id, taskId));
 }
 
 export async function getTaskCommentAttachments(taskid: number) {
