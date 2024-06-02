@@ -27,14 +27,15 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
   {
     accessorKey: "filename",
     header: () => <div>Filename</div>,
-    cell: ({ row }) => <div className="font-semibold">{row.getValue("filename")}</div>,
-    size: 6,
+    cell: ({ row }) => (
+      <div className="font-semibold">{row.getValue("filename")}</div>
+    ),
   },
   {
     accessorKey: "filesize",
     header: () => <div>Size</div>,
-    cell: ({ row }) => <div>{prettyBytes(row.getValue("filesize"))}</div>,
-    size: 2,
+    cell: ({ row }) => <div>{prettyBytes(row.getValue("filesize") ?? 0)}</div>,
+    size: 60,
   },
   {
     accessorKey: "uploader",
@@ -44,11 +45,11 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
         <UserAvatar user={row.getValue("uploader")} className="w-8 h-8" />
       </div>
     ),
-    size: 3,
+    size: 40,
   },
   {
     accessorKey: "uploadedat",
-    header: () => <div>Uploaded</div>,
+    header: () => <div>Upload Date</div>,
     cell: ({ row }) => {
       return (
         <div>
@@ -56,7 +57,7 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
         </div>
       );
     },
-    size: 4,
+    size: 180,
   },
   {
     accessorKey: "task",
@@ -84,24 +85,24 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
         </Button>
       );
     },
-    size: 4,
+    size: 80,
   },
   {
     accessorKey: "url",
-    header: () => <div>Download</div>,
+    header: () => <div className="flex justify-center">Download</div>,
     cell: ({ row }) => {
       const url = row.getValue("url") || "#";
       return (
-        <div className="flex  justify-center">
-        <Button size="icon" variant="outline" className="h-8 w-8">
-          <Link href={url} target="_blank">
-            <LucideDownload className="w-3.5 h-3.5" />
-          </Link>
-        </Button>
+        <div className="flex justify-center">
+          <Button size="icon" variant="outline" className="h-8 w-8">
+            <Link href={url} target="_blank">
+              <LucideDownload className="w-3.5 h-3.5" />
+            </Link>
+          </Button>
         </div>
       );
     },
-    size: 1,
+    size: 30,
   },
 ];
 
@@ -136,26 +137,6 @@ function FilesTable({
     },
   });
 
-  const sizeToTailwind = (size?: number) => {
-    if (!size) return "";
-    switch (size) {
-      case 0:
-        return "w-0";
-      case 1:
-        return "w-8";
-      case 2:
-        return "w-16";
-      case 3:
-        return "w-32";
-      case 4:
-        return "w-48";
-      case 5:
-        return "w-64";
-      case 6:
-        return "";
-    }
-  };
-
   return (
     <div className="w-full space-y-4">
       <FileTableFilterToggles table={table} />
@@ -167,10 +148,8 @@ function FilesTable({
                 return (
                   <TableHead
                     key={header.id}
-                    className={cn(
-                      "p-2 first:pl-8 last:pr-8",
-                      sizeToTailwind(header.getSize()),
-                    )}
+                    className="p-2 first:pl-8 last:pr-8"
+                    style={{ width: `${header.getSize()}rem` }}
                   >
                     {header.isPlaceholder
                       ? null
@@ -190,10 +169,7 @@ function FilesTable({
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className={cn(
-                        "p-2 first:pl-8 last:pr-8",
-                        sizeToTailwind(cell.column.getSize()),
-                      )}
+                      className="px-2 py-4 first:pl-8 last:pr-8"
                     >
                       {Tan.flexRender(
                         cell.column.columnDef.cell,
