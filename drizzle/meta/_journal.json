@@ -40,36 +40,8 @@
     {
       "idx": 5,
       "version": "6",
-      "when": 1716975933046,
-      "tag": "0005_redundant_red_skull",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "6",
-      "when": 1717057365551,
-      "tag": "0006_strong_scrambler",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "6",
-      "when": 1717115241868,
-      "tag": "0007_acoustic_titanium_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "6",
-      "when": 1717116563704,
-      "tag": "0008_slippery_korvac",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "6",
-      "when": 1717233679307,
-      "tag": "0009_tense_rhino",
+      "when": 1717342067786,
+      "tag": "0005_large_nighthawk",
       "breakpoints": true
     }
   ]
