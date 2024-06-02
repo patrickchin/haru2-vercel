@@ -164,7 +164,6 @@ function FilesTable({
           <TableHeader className="w-full border-b">
             <TableRow>
               {table.getFlatHeaders().map((header) => {
-                console.log(header);
                 return (
                   <TableHead
                     key={header.id}
@@ -278,8 +277,6 @@ function FileTableFilterToggles({ table }: { table: Tan.Table<DesignFile> }) {
       <Input
         placeholder="Filter by file name ..."
         onChange={(event) => {
-          console.log(table);
-          console.log(event.target.value);
           table.setGlobalFilter(event.target.value);
         }}
         className="max-w-sm grow"

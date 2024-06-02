@@ -19,7 +19,7 @@ import ProjectTeamsProgress, {
 } from "./components/project-teams-progress";
 import ProjectFiles, {
   ProjectFilesSkeleton,
-} from "./components/project-task-files";
+} from "./components/project-files";
 
 import { getProject, getProjectFiles, getProjectTasks } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
