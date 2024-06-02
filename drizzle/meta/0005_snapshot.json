@@ -1,5 +1,5 @@
 {
-  "id": "5b745a80-ea3d-4e62-b800-e1b0c753c0ef",
+  "id": "b3cbeabd-4e04-4d5b-8992-54dc5f15c92d",
   "prevId": "50a304c4-dc91-4202-9b80-389bf1d1a5ba",
   "version": "6",
   "dialect": "postgresql",
@@ -93,8 +93,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "commentid": {
-          "name": "commentid",
+        "commentId": {
+          "name": "commentId",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -123,6 +123,13 @@
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
+        },
+        "uploadedAt": {
+          "name": "uploadedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -166,12 +173,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "files1_commentid_taskcomments1_id_fk": {
-          "name": "files1_commentid_taskcomments1_id_fk",
+        "files1_commentId_taskcomments1_id_fk": {
+          "name": "files1_commentId_taskcomments1_id_fk",
           "tableFrom": "files1",
           "tableTo": "taskcomments1",
           "columnsFrom": [
-            "commentid"
+            "commentId"
           ],
           "columnsTo": [
             "id"
