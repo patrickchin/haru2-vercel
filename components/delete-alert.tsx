@@ -36,16 +36,17 @@ const DeleteAlertDialog: React.FC<DeleteAlertDialogProps> = ({
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogTitle>
+            Are you sure?
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            profile picture our servers.
+            This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm}>
-            Continue
+            Yes, Delete
             {isLoading && <LucideLoader2 className="animate-spin h-4" />}
           </AlertDialogAction>
         </AlertDialogFooter>
