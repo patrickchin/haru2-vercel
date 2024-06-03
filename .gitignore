@@ -41,3 +41,10 @@ certificates
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+
+# prettier
+.prettierrc
+
+# drizzle config
+drizzle.config.ts
