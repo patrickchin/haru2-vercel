@@ -5,12 +5,8 @@ import * as Schemas from "@/drizzle/schema";
 import { signIn } from "@/lib/auth";
 import { auth } from "./auth";
 import * as blob from "@vercel/blob";
-import {sendOtpViaWhatsApp} from '@/lib/otp'
-import {
-  DesignTaskSpec,
-  NewProjectFormSchema,
-  RegisterSchemaType,
-} from "./types";
+import { DesignTaskSpec } from "./types";
+import { NewProjectFormSchema, RegisterSchemaType, loginZodSchemas } from "./forms";
 import { redirect } from "next/navigation";
 import { defaulTaskSpecs } from "content/tasks";
 import assert from "assert";
@@ -25,18 +21,19 @@ export async function registerUser(data: RegisterSchemaType) {
   }
 }
 
+// TODO proper type
 export async function signInFromLogin(data: any) {
-  // TODO validate
-  return await signIn("credentials", data);
+  return await signIn("credentials", {
+    ...data,
+    redirectTo: "/",
+  });
 }
-
-
 
 export async function submitProjectForm2(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) {
     console.log("Invalid session on project form submit");
-    return null;
+    return;
   }
   const userId = Number(session.user.id); // error?
 
@@ -47,7 +44,7 @@ export async function submitProjectForm2(formData: FormData) {
   const parsed = NewProjectFormSchema.safeParse(formObj);
   if (!parsed.success) {
     console.error("submitProjectForm validation error", parsed.error);
-    return null;
+    return;
   }
 
   // not the prettiest ...
@@ -160,13 +157,13 @@ export async function updateProjectTitle(projectId: number, newTitle: string) {
   const session = await auth();
   if (!session?.user?.id) {
     console.error("Invalid session on project form submit");
-    return null;
+    return;
   }
 
   const userId = Number(session.user.id);
   if (isNaN(userId)) {
     console.error("User ID is not a number:", session.user.id);
-    return null;
+    return;
   }
 
   const updatedProject = await db.updateProjectFields(projectId, {
