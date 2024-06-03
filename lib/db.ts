@@ -516,8 +516,8 @@ export async function deleteFile(fileId: number) {
 // OTP functions ==========================================================================================
 
 export async function saveOtp(phoneNumber: string, otp: string, expiresAt: Date) {
-  // Define the rate limit time window (e.g., 1 minute)
-  const RATE_LIMIT_WINDOW = 60 * 1000; // 60 seconds in milliseconds
+  // Define the rate limit time window (e.g., 5 seconds between requests)
+  const RATE_LIMIT_WINDOW = 5 * 1000;
 
   // Get the current time
   const currentTime = new Date().getTime() 
