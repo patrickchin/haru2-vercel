@@ -2,6 +2,13 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: "/api/github/:path*",
+        destination: "https://github.com/patrickchin/haru2-data/raw/main/:path*",
+      }
+    ]},
   images: {
     remotePatterns: [
       {

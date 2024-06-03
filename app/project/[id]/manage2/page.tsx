@@ -13,9 +13,6 @@ import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 
 async function ProjectManagement({ projectId }: { projectId: number }) {
-  const session = await auth();
-  if (!session?.user) redirect("/login");
-
   const project: DesignProject | undefined = await getProject(projectId);
   if (project === undefined) notFound();
   const specs: DesignTaskSpec[] = await getTaskSpecs();
@@ -36,7 +33,7 @@ async function ProjectManagement({ projectId }: { projectId: number }) {
           </Link>
         </Button>
         <h3 className="grow">
-          Project {project.id} - {project.title || session.user.email}
+          Project {project.id} - {project.title || "Untitled"}
         </h3>
       </section>
 

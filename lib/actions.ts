@@ -176,6 +176,13 @@ export async function updateProjectTitle(projectId: number, newTitle: string) {
   return updatedProject;
 }
 
+export async function getCurrentUsersProjects() {
+  const session = await auth();
+  if (session?.user?.id)
+    // linter is stupid
+    return db.getUserProjects(parseInt(session.user.id));
+}
+
 //update any field of the project
 export async function updateProject(
   projectId: number,
@@ -348,11 +355,7 @@ export async function addTaskComment(
   return getTaskCommentsAndFiles(taskId);
 }
 
-export async function addTaskFile(
-  taskId: number,
-  specId: number,
-  data: FormData,
-) {
+export async function addTaskFile(taskId: number, data: FormData) {
   const file = data.get("file") as File;
   if (!file) {
     console.log("addTaskFile file not correcty uploaded");
@@ -391,14 +394,10 @@ export async function addTaskFile(
   return editedFile;
 }
 
-export async function addTaskFileReturnAll(
-  taskId: number,
-  specId: number,
-  data: FormData,
-) {
+export async function addTaskFileReturnAll(taskId: number, data: FormData) {
   // no auth because done in addTaskFile
-  await addTaskFile(taskId, specId, data);
-  return db.getTaskFiles(taskId);
+  await addTaskFile(taskId, data);
+  return db.getFilesForTask(taskId);
 }
 
 export async function updateAvatarForUser(data: FormData) {
@@ -466,7 +465,7 @@ export async function deleteAvatarForUser() {
 export async function getTaskFiles(taskId: number) {
   const session = await auth();
   if (!session?.user?.id) return;
-  return db.getTaskFiles(taskId);
+  return db.getFilesForTask(taskId);
 }
 
 export async function deleteFile(fileId: number) {

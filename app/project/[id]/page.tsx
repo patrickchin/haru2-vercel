@@ -19,7 +19,7 @@ import ProjectTeamsProgress, {
 } from "./components/project-teams-progress";
 import ProjectFiles, {
   ProjectFilesSkeleton,
-} from "./components/project-task-files";
+} from "./components/project-files";
 
 import { getProject, getProjectFiles, getProjectTasks } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
@@ -32,17 +32,11 @@ async function ProjectPage({
   projectId: number;
   tab: string | undefined;
 }) {
-  const session = await auth();
-  if (!session?.user) redirect("/login");
-
   const [project, files, tasks] = await Promise.all([
     getProject(projectId),
     getProjectFiles(projectId),
     getProjectTasks(projectId),
   ]);
-  // const project: DesignProject | undefined = await getProject(projectId);
-  // const files: DesignFile[] | undefined = await getProjectFiles(projectId);
-  // const tasks: DesignTask[] | undefined = await getProjectTasks(projectId);
 
   if (project === undefined) notFound();
   if (files === undefined) notFound();

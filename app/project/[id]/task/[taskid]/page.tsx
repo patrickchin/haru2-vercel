@@ -56,9 +56,6 @@ async function TaskPage({
   projectId: number;
   specId: number;
 }) {
-  const session = await auth();
-  if (!session?.user) redirect("/login");
-
   const [project, taskSpec, task]: [
     DesignProject | undefined,
     DesignTaskSpec | undefined,
@@ -93,7 +90,7 @@ async function TaskPage({
             <LucideMoveLeft />
           </BackButton>
           <h3>
-            Project {project.id} - {project.title || session.user.email}
+            Project {project.id} - {project.title || "Untitled"}
           </h3>
         </div>
         <h4>
