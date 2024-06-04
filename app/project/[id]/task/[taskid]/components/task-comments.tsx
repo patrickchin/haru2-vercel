@@ -108,11 +108,13 @@ function CommentsList({
           )}
         >
           <div className="pt-2">
-            <DesignUserAvatar user={c.user ? {...c.user} : undefined} />
+            <DesignUserAvatar user={c.user ? { ...c.user } : undefined} />
           </div>
           <div className="flex flex-col gap-1 w-full">
             <div className="flex flex-row gap-4 items-end">
-              <span className="font-bold">{c.user?.name ?? "<Invalid User>"}</span>
+              <span className="font-bold">
+                {c.user?.name ?? "<Invalid User>"}
+              </span>
               {/* <span className="text-sm">{c.taskcomments1.createdat}</span> */}
               <Link
                 href={{
@@ -124,27 +126,19 @@ function CommentsList({
                 onClick={(e) => setFragment(`#comment-${c.id}`)}
               >
                 <time
-                  dateTime={(
-                    c.createdAt as unknown as Date
-                  ).toISOString()}
+                  dateTime={(c.createdAt as unknown as Date).toISOString()}
                   suppressHydrationWarning
                 >
-                  {(
-                    c.createdAt as unknown as Date
-                  ).toLocaleString()}
+                  {(c.createdAt as unknown as Date).toLocaleString()}
                 </time>
               </Link>
             </div>
 
             {attachments.length > 0 && (
-              <CommentAttachments
-                attachments={groupedAttachments[c.id]}
-              />
+              <CommentAttachments attachments={groupedAttachments[c.id]} />
             )}
 
-            <div className="whitespace-pre-wrap break-words">
-              {c.comment}
-            </div>
+            <div className="whitespace-pre-wrap break-words">{c.comment}</div>
           </div>
         </li>
       ))}
@@ -301,27 +295,24 @@ function UploadAttachment({
     const file = targetFiles.item(0);
     assert(file);
 
-    const response = await fetch(
-      '/api/upload',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ filename: file.name, contentType: file.type }),
-      }
-    );
-    
-    const { url, fileUrl, fields }  = await response.json();
+    const response = await fetch("/api/upload", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ filename: file.name, contentType: file.type }),
+    });
+
+    const { url, fileUrl, fields } = await response.json();
 
     const formData = new FormData();
     Object.entries(fields).forEach(([key, value]) => {
-       formData.append(key, value as string)
-    })
-    formData.append('file', file);
+      formData.append(key, value as string);
+    });
+    formData.append("file", file);
 
     const uploadResponse = await fetch(url, {
-      method: 'POST',
+      method: "POST",
       body: formData,
     });
 
@@ -330,10 +321,10 @@ function UploadAttachment({
     }
 
     const newFile = await addTaskFile(
-      taskId, 
-      file.type, 
-      file.name, 
-      file.size, 
+      taskId,
+      file.type,
+      file.name,
+      file.size,
       fileUrl,
     );
 
@@ -379,7 +370,6 @@ function UploadAttachment({
 }
 
 export default function TaskCommentsClient({ taskId }: { taskId: number }) {
-
   const { data, error, mutate } = useSWR(
     `/api/task/${taskId}`, // api route doesn't really exist
     () => {

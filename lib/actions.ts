@@ -84,9 +84,8 @@ export async function submitProjectForm2(formData: FormData) {
     );
     console.log(
       `file "${file.name}" uploaded to: ${url}\n` +
-      `    and can be downloaded from: ${downloadUrl}`,
+        `    and can be downloaded from: ${downloadUrl}`,
     );
-    
 
     const newFileRow = await db.addFile({
       uploaderid: userId,
@@ -184,7 +183,8 @@ export async function updateProjectTitle(projectId: number, newTitle: string) {
 
 export async function getCurrentUsersProjects() {
   const session = await auth();
-  if (session?.user?.id) // linter is stupid
+  if (session?.user?.id)
+    // linter is stupid
     return db.getUserProjects(parseInt(session.user.id));
 }
 
@@ -360,8 +360,13 @@ export async function addTaskComment(
   return getTaskCommentsAndFiles(taskId);
 }
 
-export async function addTaskFile(taskId: number, type: string, name: string, size: number, fileUrl: string) {
-
+export async function addTaskFile(
+  taskId: number,
+  type: string,
+  name: string,
+  size: number,
+  fileUrl: string,
+) {
   const session = await auth();
   if (!session?.user?.id) return;
   const userId = Number(session.user.id); // error?
@@ -378,7 +383,13 @@ export async function addTaskFile(taskId: number, type: string, name: string, si
   });
 }
 
-export async function addTaskFileReturnAll(taskId: number, type: string, name: string, size: number, url: string) {
+export async function addTaskFileReturnAll(
+  taskId: number,
+  type: string,
+  name: string,
+  size: number,
+  url: string,
+) {
   // no auth because done in addTaskFile
   await addTaskFile(taskId, type, name, size, url);
   return db.getTaskFiles(taskId);

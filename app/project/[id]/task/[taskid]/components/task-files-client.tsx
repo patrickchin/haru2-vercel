@@ -4,7 +4,7 @@ import { ChangeEvent, useRef, useState } from "react";
 import assert from "assert";
 import Link from "next/link";
 import { getTaskFiles, addTaskFile } from "@/lib/actions";
-import { DesignFile } from "@/lib/types"; 
+import { DesignFile } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -47,27 +47,24 @@ export default function TaskFilesClient({
     const file = targetFiles.item(0);
     assert(file);
 
-    const response = await fetch(
-      '/api/upload',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ filename: file.name, contentType: file.type }),
-      }
-    );
-    
-    const { url, fileUrl, fields }  = await response.json();
+    const response = await fetch("/api/upload", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ filename: file.name, contentType: file.type }),
+    });
+
+    const { url, fileUrl, fields } = await response.json();
 
     const formData = new FormData();
     Object.entries(fields).forEach(([key, value]) => {
-       formData.append(key, value as string)
-    })
-    formData.append('file', file);
+      formData.append(key, value as string);
+    });
+    formData.append("file", file);
 
     const uploadResponse = await fetch(url, {
-      method: 'POST',
+      method: "POST",
       body: formData,
     });
 
@@ -75,13 +72,7 @@ export default function TaskFilesClient({
       throw new Error("Failed to upload file");
     }
 
-    await addTaskFile(
-      taskId, 
-      file.type, 
-      file.name, 
-      file.size, 
-      fileUrl,
-    )
+    await addTaskFile(taskId, file.type, file.name, file.size, fileUrl);
 
     const files = await getTaskFiles(taskId);
     if (files) setUpdatedFiles(files);
