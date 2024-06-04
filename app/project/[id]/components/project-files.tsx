@@ -35,6 +35,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { DataTablePagination } from "@/components/ui/pagination";
 
 const deleteProfileAvatar = (id: number) => {
   try {
@@ -258,7 +259,7 @@ function FilesTable({
           Showing {table.getPaginationRowModel().rows.length} of{" "}
           {table.getRowCount()} row(s) displayed.
         </div>
-
+        <DataTablePagination table={table} />
         {/* pagination */}
         <div className="space-x-2">
           <Button
