@@ -5,19 +5,33 @@ import { authConfig } from "@/lib/auth.config";
 const auth = NextAuth(authConfig).auth;
 
 export default auth((req) => {
+
   const publicPathnames: string[] = [
     "/",
+    "/favicon.ico",
     "/login",
+    "/login2", // tmp
     "/register",
     "/new-project",
   ];
   const isPublic = publicPathnames.some((p) =>
-    req.nextUrl.pathname.startsWith(p),
+    req.nextUrl.pathname === p,
   );
-  if (!isPublic && !req.auth) {
-    const loginPath = "/login";
-    if (!req.nextUrl.pathname.startsWith(loginPath)) {
-      req.nextUrl.pathname = loginPath;
+
+  if (!req.auth && !isPublic) {
+    // TODO redirect to original url after logging in
+    // req.nextUrl.searchParams.append();
+    req.nextUrl.pathname = "/login";
+    return Response.redirect(req.nextUrl);
+  }
+
+  if (req.auth) {
+    if (
+      req.nextUrl.pathname.startsWith("/login") ||
+      req.nextUrl.pathname.startsWith("/register")
+    ) {
+      // is this expected behaviour?
+      req.nextUrl.pathname = "/";
       return Response.redirect(req.nextUrl);
     }
   }
