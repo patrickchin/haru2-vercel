@@ -360,21 +360,21 @@ export async function addTaskComment(
   return getTaskCommentsAndFiles(taskId);
 }
 
-export async function addTaskFile(taskId: number, type: string, name: string, size: number, url: string) {
+export async function addTaskFile(taskId: number, type: string, name: string, size: number, fileUrl: string) {
 
   const session = await auth();
   if (!session?.user?.id) return;
   const userId = Number(session.user.id); // error?
 
   return db.addTaskFile({
-    type: type,
-    // projectid: ?,
     taskid: taskId,
-    uploaderid: userId,
-    // commentid: ?,
+    type: type,
     filename: name,
     filesize: size,
-    url: url,
+    url: fileUrl,
+    uploaderid: userId,
+    // projectid: ?,
+    // commentid: ?,
   });
 }
 

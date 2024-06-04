@@ -301,11 +301,43 @@ function UploadAttachment({
     const file = targetFiles.item(0);
     assert(file);
 
-    // server action arguments can only be primatives or FormData
-    const data = new FormData();
-    data.set("file", file);
-    const newFile = await addTaskFile(taskId, data);
-    if (newFile) setCurrentAttachments((l) => [...l, newFile]);
+    const response = await fetch(
+      '/api/upload',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ filename: file.name, contentType: file.type }),
+      }
+    );
+    
+    const { url, fileUrl, fields }  = await response.json();
+
+    const formData = new FormData();
+    Object.entries(fields).forEach(([key, value]) => {
+       formData.append(key, value as string)
+    })
+    formData.append('file', file);
+
+    const uploadResponse = await fetch(url, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!uploadResponse.ok) {
+      throw new Error("Failed to upload file");
+    }
+
+    const newFile = await addTaskFile(
+      taskId, 
+      file.type, 
+      file.name, 
+      file.size, 
+      fileUrl,
+    );
+
+    if (newFile) setCurrentAttachments((l) => [...l, newFile as DesignFile]);
 
     e.target.value = "";
     setIsUploading(false);
