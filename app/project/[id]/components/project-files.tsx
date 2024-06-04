@@ -4,7 +4,12 @@ import * as React from "react";
 import * as Tan from "@tanstack/react-table";
 import Link from "next/link";
 import prettyBytes from "pretty-bytes";
-import { LucideArrowUpRight, LucideChevronRight, LucideDownload, LucideMoveRight } from "lucide-react";
+import {
+  LucideArrowUpRight,
+  LucideDownload,
+  ArrowDown,
+  ArrowUp,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,7 +26,17 @@ import { Input } from "@/components/ui/input";
 
 import { DesignFile, DesignProject, DesignTask } from "@/lib/types";
 import DateTime from "@/components/date-time";
-import { cn } from "@/lib/utils";
+import DeleteAlertDialog from "@/components/delete-alert";
+import { deleteFile } from "@/lib/actions";
+
+const deleteProfileAvatar = (id: number) => {
+  try {
+    deleteFile(id);
+    location.reload();
+  } catch (error) {
+    console.log(`Error happened:`, error);
+  }
+};
 
 const filesColumns: Tan.ColumnDef<DesignFile>[] = [
   {
@@ -30,6 +45,7 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
     cell: ({ row }) => (
       <div className="font-semibold">{row.getValue("filename")}</div>
     ),
+    enableSorting: true,
   },
   {
     accessorKey: "filesize",
@@ -40,6 +56,7 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
       </div>
     ),
     size: 60,
+    enableSorting: true,
   },
   {
     accessorKey: "uploader",
@@ -50,6 +67,7 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
       </div>
     ),
     size: 40,
+    enableSorting: true,
   },
   {
     accessorKey: "uploadedat",
@@ -62,6 +80,7 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
       );
     },
     size: 180,
+    enableSorting: true,
   },
   {
     accessorKey: "task",
@@ -89,7 +108,8 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
         </Button>
       );
     },
-    size: 80,
+    size: 70,
+    enableSorting: true,
   },
   {
     accessorKey: "url",
@@ -107,6 +127,23 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
       );
     },
     size: 30,
+    enableSorting: false,
+  },
+  {
+    accessorKey: "id",
+    header: () => <div className="flex justify-center">Delete file</div>,
+    cell: ({ row }) => {
+      return (
+        <div className="flex justify-center">
+          <DeleteAlertDialog
+            onConfirm={() => deleteProfileAvatar(row.getValue("id"))}
+            isIcon={true}
+          />
+        </div>
+      );
+    },
+    size: 40,
+    enableSorting: false,
   },
 ];
 
@@ -154,13 +191,20 @@ function FilesTable({
                     key={header.id}
                     className="p-2 first:pl-8 last:pr-8"
                     style={{ width: `${header.getSize()}rem` }}
+                    onClick={header.column.getToggleSortingHandler()}
                   >
-                    {header.isPlaceholder
-                      ? null
-                      : Tan.flexRender(
+                    {header.isPlaceholder ? null : (
+                      <div className="flex items-center cursor-pointer">
+                        {Tan.flexRender(
                           header.column.columnDef.header,
                           header.getContext(),
                         )}
+                        {{
+                          asc: <ArrowUp className="w-3.5 h-3.5" />,
+                          desc: <ArrowDown className="w-3.5 h-3.5" />,
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </div>
+                    )}
                   </TableHead>
                 );
               })}
@@ -242,10 +286,7 @@ export default function ProjectFiles({
   return (
     <Card>
       <CardContent className="pt-8">
-        <FilesTable
-          columns={filesColumns}
-          data={files}
-        />
+        <FilesTable columns={filesColumns} data={files} />
       </CardContent>
     </Card>
   );
