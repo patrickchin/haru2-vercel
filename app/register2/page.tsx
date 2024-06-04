@@ -1,10 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { signInFromLogin } from "@/lib/actions";
-import { sendOtpViaWhatsApp, sendOtpViaEmail } from "@/lib/otp";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +14,7 @@ import {
 } from "@/components/ui/input-otp";
 import { Button } from "@/components/ui/button";
 import { SimpleLayout } from "@/components/page-layouts";
-import { loginZodSchemas } from "@/lib/forms";
+import { registerZodSchemas } from "@/lib/forms";
 import {
   Form,
   FormControl,
@@ -27,10 +24,29 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import Link from "next/link";
 
-function PhoneLogin() {
+function CreateAccountButton() {
+  return (
+    <div className="pt-3 space-y-4">
+      <Button type="submit" className="w-full">
+        Create an Account
+      </Button>
+
+      <p className="text-center text-sm text-gray-600">
+        {"Already have an account? "}
+        <Link href="/login" className="font-bold hover:underline">
+          {"Login"}
+        </Link>
+        {" instead."}
+      </p>
+    </div>
+  );
+}
+
+function PhoneRegister() {
   const form = useForm({
-    resolver: zodResolver(loginZodSchemas.phone),
+    resolver: zodResolver(registerZodSchemas.phone),
   });
   const onSubmit = (data: any) => {
     console.log(data);
@@ -38,6 +54,26 @@ function PhoneLogin() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input
+                  onChange={field.onChange}
+                  name={field.name}
+                  type="text"
+                  placeholder="Your Name"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="phone"
@@ -93,19 +129,15 @@ function PhoneLogin() {
           )}
         />
 
-        <div className="pt-3">
-          <Button type="submit" className="w-full">
-            Login
-          </Button>
-        </div>
+        <CreateAccountButton />
       </form>
     </Form>
   );
 }
 
-function EmailLogin() {
+function EmailRegister() {
   const form = useForm({
-    resolver: zodResolver(loginZodSchemas.email),
+    resolver: zodResolver(registerZodSchemas.email),
   });
   const onSubmit = (data: any) => {
     console.log(data);
@@ -113,6 +145,26 @@ function EmailLogin() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input
+                  onChange={field.onChange}
+                  name={field.name}
+                  type="text"
+                  placeholder="Your Name"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="email"
@@ -168,19 +220,15 @@ function EmailLogin() {
           )}
         />
 
-        <div className="pt-3">
-          <Button type="submit" className="w-full">
-            Login
-          </Button>
-        </div>
+        <CreateAccountButton />
       </form>
     </Form>
   );
 }
 
-function PasswordLogin() {
+function PasswordRegister() {
   const form = useForm({
-    resolver: zodResolver(loginZodSchemas.password),
+    resolver: zodResolver(registerZodSchemas.password),
   });
   const onSubmit = (data: any) => {
     console.log(data);
@@ -188,6 +236,26 @@ function PasswordLogin() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input
+                  onChange={field.onChange}
+                  name={field.name}
+                  type="text"
+                  placeholder="Your Name"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="email"
@@ -212,7 +280,7 @@ function PasswordLogin() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-xs">Password</FormLabel>
+              <FormLabel>Password</FormLabel>
               <FormControl>
                 <Input type="password" {...field} />
               </FormControl>
@@ -221,23 +289,33 @@ function PasswordLogin() {
           )}
         />
 
-        <div className="pt-3">
-          <Button type="submit" className="w-full">
-            Login
-          </Button>
-        </div>
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <Input type="password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <CreateAccountButton />
       </form>
     </Form>
   );
 }
 
-function LoginCard() {
+function RegisterCard() {
   const [tabValue, setTabValue] = useState("phone");
   return (
-    <Card className="w-full max-w-lg p-0 rounded-4xl shadow-xl overflow-hidden">
+    <Card className="w-full max-w-lg p-0 rounded-3xl shadow-xl overflow-hidden">
       <Tabs value={tabValue} onValueChange={setTabValue}>
         <CardHeader className="space-y-3 text-center pt-8">
-          <CardTitle className="text-3xl">Login</CardTitle>
+          <CardTitle className="text-3xl">Create an Account</CardTitle>
           <CardDescription className="text-base">
             Choose your preferred login method.
           </CardDescription>
@@ -257,27 +335,25 @@ function LoginCard() {
             <TabsTrigger value="password">Password</TabsTrigger>
           </TabsList>
         </CardHeader>
-        <CardContent className="bg-gray-50 p-12 pt-2 border-t">
+        <CardContent className="bg-gray-50 px-16 pt-2 pb-10 border-t">
           <TabsContent value="phone" className="space-y-4">
-            <PhoneLogin />
+            <PhoneRegister />
           </TabsContent>
           <TabsContent value="email" className="space-y-4">
-            <EmailLogin />
+            <EmailRegister />
           </TabsContent>
           <TabsContent value="password" className="space-y-4">
-            <PasswordLogin />
+            <PasswordRegister />
           </TabsContent>
         </CardContent>
       </Tabs>
     </Card>
   );
 }
-export default function Login() {
+export default function Register() {
   return (
     <SimpleLayout>
-      <div className="w-screen max-w-md rounded-2xl shadow-xl overflow-hidden">
-        <LoginCard />
-      </div>
+      <RegisterCard />
     </SimpleLayout>
   );
 }
