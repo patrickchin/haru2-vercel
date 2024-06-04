@@ -9,6 +9,7 @@ import {
   LucideDownload,
   ArrowDown,
   ArrowUp,
+  ChevronDown,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,12 @@ import { DesignFile, DesignProject, DesignTask } from "@/lib/types";
 import DateTime from "@/components/date-time";
 import DeleteAlertDialog from "@/components/delete-alert";
 import { deleteFile } from "@/lib/actions";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const deleteProfileAvatar = (id: number) => {
   try {
@@ -36,6 +43,11 @@ const deleteProfileAvatar = (id: number) => {
   } catch (error) {
     console.log(`Error happened:`, error);
   }
+};
+
+const columnLabels: { [key: string]: string } = {
+  id: "Delete",
+  url: "Download",
 };
 
 const filesColumns: Tan.ColumnDef<DesignFile>[] = [
@@ -71,7 +83,7 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
   },
   {
     accessorKey: "uploadedat",
-    header: () => <div>Upload Date</div>,
+    header: () => <div>Uploaded Date</div>,
     cell: ({ row }) => {
       return (
         <div>
@@ -302,6 +314,30 @@ function FileTableFilterToggles({ table }: { table: Tan.Table<DesignFile> }) {
         }}
         className="max-w-sm grow"
       />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" className="ml-auto">
+            Columns <ChevronDown className="ml-2 h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {table
+            .getAllColumns()
+            .filter((column) => column.getCanHide())
+            .map((column) => {
+              return (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                >
+                  {columnLabels[column.id] || column.id}
+                </DropdownMenuCheckboxItem>
+              );
+            })}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }
