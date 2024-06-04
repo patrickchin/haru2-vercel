@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 
 import { LucideLoader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CurrentUserAvatar, } from "@/components/user-avatar";
+import { CurrentUserAvatar } from "@/components/user-avatar";
 import DeleteAlertDialog from "@/components/delete-alert";
 
 function SettingsPage() {
@@ -102,6 +102,7 @@ function SettingsPage() {
               onConfirm={deleteProfileAvatar}
               isLoading={isDeleting}
               disabled={!session?.user?.image}
+              isButton={true}
             />
             <Button className="cursor-pointer" asChild variant="outline">
               <Label htmlFor="photo">
