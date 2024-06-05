@@ -96,10 +96,9 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
     enableSorting: true,
   },
   {
-    accessorKey: "task",
+    accessorKey: "task.title",
     header: () => <div>Task</div>,
     cell: ({ row }) => {
-      // TODO how do I filter on task title??
       const file: DesignFile = row.original;
       const task: DesignTask | null = file.task;
       const projectid = file.projectid ?? file.task?.projectid;
