@@ -13,7 +13,7 @@ export default function CustomTooltip({
   label: string;
 }) {
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={400}>
       <Tooltip>
         <TooltipTrigger asChild>{children}</TooltipTrigger>
         <TooltipContent>

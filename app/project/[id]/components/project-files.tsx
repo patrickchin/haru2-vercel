@@ -9,7 +9,7 @@ import {
   LucideDownload,
   LucideChevronDown,
 } from "lucide-react";
-import { cn, getTimeAgo } from "@/lib/utils";
+import { getTimeAgo } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -37,13 +37,13 @@ import { DataTablePagination } from "@/components/ui/pagination";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 import CustomTooltip from "@/components/ui/tooltip-custom";
-import ColumnSortButton from "@/components/ui/column-sort";
+import ColumnSortHeader from "@/components/ui/column-sort";
 
 const columnLabels: { [key: string]: string } = {
-  delete: "Delete",
-  url: "Download",
-  uploadedat: "Upload Date",
   filesize: "Size",
+  uploadedat: "Upload Date",
+  task_title: "Task",
+  actions: "Actions",
 };
 
 const filesColumns: (
@@ -52,49 +52,53 @@ const filesColumns: (
   {
     accessorKey: "filename",
     header: ({ column }) => (
-      <ColumnSortButton label="Filename" column={column} />
+      <ColumnSortHeader label="Filename" column={column} />
     ),
     cell: ({ row }) => (
       <div className="font-semibold">{row.getValue("filename")}</div>
     ),
+    size: 300,
     enableSorting: true,
   },
   {
     accessorKey: "filesize",
-    header: ({ column }) => <ColumnSortButton label="Size" column={column} />,
+    header: ({ column }) => <ColumnSortHeader label="Size" column={column} />,
     cell: ({ row }) => (
-      <div className="text-nowrap">
+      <div className="text-nowrap text-right">
         {prettyBytes(row.getValue("filesize") ?? 0)}
       </div>
     ),
-    size: 60,
+    size: 0,
     enableSorting: true,
   },
   {
     accessorKey: "uploader",
     header: ({ column }) => (
-      <ColumnSortButton label="Uploader" column={column} />
+      <ColumnSortHeader label="Uploader" column={column} />
     ),
     cell: ({ row }) => (
       <div className="flex items-center justify-center">
         <UserAvatar user={row.getValue("uploader")} className="w-8 h-8" />
       </div>
     ),
-    size: 40,
+    size: 0,
     enableSorting: true,
   },
   {
     accessorKey: "uploadedat",
     header: ({ column }) => (
-      <ColumnSortButton label="Upload Date" column={column} />
+      <ColumnSortHeader label="Upload Date" column={column} />
     ),
-    cell: ({ row }) => getTimeAgo(row.getValue("uploadedat")),
-    size: 180,
+    cell: ({ row }) => {
+      // TODO hover show full date
+      return <div>{getTimeAgo(row.getValue("uploadedat"))}</div>;
+    },
+    size: 0,
     enableSorting: true,
   },
   {
-    accessorKey: "task",
-    header: ({ column }) => <ColumnSortButton label="Task" column={column} />,
+    accessorKey: "task.title",
+    header: ({ column }) => <ColumnSortHeader label="Task" column={column} />,
     cell: ({ row }) => {
       const file: DesignFile = row.original;
       const task: DesignTask | null = file.task;
@@ -104,29 +108,31 @@ const filesColumns: (
       return (
         <Button size="sm" variant="link" className="h-8 p-0" disabled={!task}>
           {task ? (
-            <Link
-              href={`/project/${projectid}/task/${task.specid}${commentHash}`}
-              className="flex gap-1 items-center font-normal"
-            >
-              {task.title}
-              <LucideArrowUpRight className="h-4 w-4" />
-            </Link>
+            <>
+              <Link
+                href={`/project/${projectid}/task/${task.specid}${commentHash}`}
+                className="flex gap-1 items-center font-normal"
+              >
+                {task.title}
+                <LucideArrowUpRight className="h-4 w-4" />
+              </Link>
+            </>
           ) : (
             <div>-</div>
           )}
         </Button>
       );
     },
-    size: 70,
+    size: 300,
     enableSorting: true,
   },
   {
-    accessorKey: "url",
-    header: () => null,
+    id: "actions",
+    header: () => <div className="text-center">Actions</div>,
     cell: ({ row }) => {
-      const url = row.getValue("url") || "#";
+      const url = row.original.url || "#";
       return (
-        <div className="flex justify-center">
+        <div className="flex justify-center gap-2">
           <CustomTooltip label="Download">
             <Button size="icon" variant="outline" className="h-8 w-8">
               <Link href={url} target="_blank">
@@ -134,18 +140,6 @@ const filesColumns: (
               </Link>
             </Button>
           </CustomTooltip>
-        </div>
-      );
-    },
-    size: 30,
-    enableSorting: false,
-  },
-  {
-    accessorKey: "delete",
-    header: () => null,
-    cell: ({ row }) => {
-      return (
-        <div className="flex justify-center">
           <DeleteAlertDialog
             onConfirm={() => deleteProfileAvatar(row.original.id)}
             isIcon={true}
@@ -153,7 +147,7 @@ const filesColumns: (
         </div>
       );
     },
-    size: 40,
+    size: 0,
     enableSorting: false,
   },
 ];
@@ -189,15 +183,6 @@ function FilesTable({
     },
   });
 
-  const sizeToBasis = (size: number) =>
-    size == 1
-      ? "flex-basis-1"
-      : size == 2
-        ? "flex-basis-2"
-        : size == 3
-          ? "flex-basis-3"
-          : "";
-
   return (
     <div className="w-full space-y-4">
       <FileTableFilterToggles table={table} />
@@ -209,20 +194,16 @@ function FilesTable({
                 return (
                   <TableHead
                     key={header.id}
-                    className={cn(
-                      "px-3 border-r last:border-r-0",
-                      false && sizeToBasis(header.getSize()),
-                    )}
-                    style={{ width: `${header.getSize()}rem` }}
+                    className="px-3 border-r last:border-r-0"
+                    style={{ width: `${header.getSize()}px` }}
+                    onClick={header.column.getToggleSortingHandler()}
                   >
-                    {header.isPlaceholder ? null : (
-                      <div className="flex items-center">
-                        {Tan.flexRender(
+                    {header.isPlaceholder
+                      ? null
+                      : Tan.flexRender(
                           header.column.columnDef.header,
                           header.getContext(),
                         )}
-                      </div>
-                    )}
                   </TableHead>
                 );
               })}

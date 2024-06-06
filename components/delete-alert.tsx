@@ -38,11 +38,11 @@ const DeleteAlertDialog: React.FC<DeleteAlertDialogProps> = ({
             Delete
           </Button>
         ) : isIcon ? (
-          <Button size="icon" variant="outline" className="h-8 w-8">
-            <CustomTooltip label="Delete">
+          <CustomTooltip label="Delete">
+            <Button size="icon" variant="outline" className="h-8 w-8">
               <LucideTrash2 className="w-3.5 h-3.5" />
-            </CustomTooltip>
-          </Button>
+            </Button>
+          </CustomTooltip>
         ) : (
           <span />
         )}

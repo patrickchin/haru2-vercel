@@ -1,20 +1,28 @@
-import { LucideArrowUpDown } from "lucide-react";
+import * as Tan from "@tanstack/react-table";
+import { LucideArrowDown, LucideArrowUp, LucideArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function ColumnSortButton({
+export default function ColumnSortHeader({
   column,
   label,
 }: {
-  column: any;
+  column: Tan.Column<any>;
   label: string;
 }) {
+  const sortedState = column.getCanSort()
+    ? ((column.getIsSorted() || "nosort") as string)
+    : "cannotsort";
   return (
-    <Button
-      variant="ghost"
-      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    >
+    <div className="inline-flex items-center justify-center whitespace-nowrap gap-2 hover:cursor-pointer">
       {label}
-      <LucideArrowUpDown className="ml-2 h-4 w-4" />
-    </Button>
+      {
+        {
+          asc: <LucideArrowUp className="w-3.5 h-3.5" />,
+          desc: <LucideArrowDown className="w-3.5 h-3.5" />,
+          nosort: <LucideArrowUpDown className="w-3.5 h-3.5" />,
+          cannotsort: null,
+        }[sortedState]
+      }
+    </div>
   );
 }
