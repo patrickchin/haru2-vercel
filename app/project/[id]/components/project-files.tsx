@@ -7,10 +7,9 @@ import prettyBytes from "pretty-bytes";
 import {
   LucideArrowUpRight,
   LucideDownload,
-  ArrowDown,
-  ArrowUp,
-  ChevronDown,
+  LucideChevronDown,
 } from "lucide-react";
+import { cn, getTimeAgo } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,7 +25,6 @@ import { UserAvatar } from "@/components/user-avatar";
 import { Input } from "@/components/ui/input";
 
 import { DesignFile, DesignProject, DesignTask } from "@/lib/types";
-import DateTime from "@/components/date-time";
 import DeleteAlertDialog from "@/components/delete-alert";
 import { deleteFile } from "@/lib/actions";
 import {
@@ -36,25 +34,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DataTablePagination } from "@/components/ui/pagination";
-
-const deleteProfileAvatar = (id: number) => {
-  try {
-    deleteFile(id);
-    location.reload();
-  } catch (error) {
-    console.log(`Error happened:`, error);
-  }
-};
+import { useRouter } from "next/navigation";
+import { toast } from "@/components/ui/use-toast";
+import CustomTooltip from "@/components/ui/tooltip-custom";
+import ColumnSortButton from "@/components/ui/column-sort";
 
 const columnLabels: { [key: string]: string } = {
-  id: "Delete",
+  delete: "Delete",
   url: "Download",
+  uploadedat: "Upload Date",
+  filesize: "Size",
 };
 
-const filesColumns: Tan.ColumnDef<DesignFile>[] = [
+const filesColumns: (
+  deleteProfileAvatar: (id: number) => void,
+) => Tan.ColumnDef<DesignFile>[] = (deleteProfileAvatar) => [
   {
     accessorKey: "filename",
-    header: () => <div>Filename</div>,
+    header: ({ column }) => (
+      <ColumnSortButton label="Filename" column={column} />
+    ),
     cell: ({ row }) => (
       <div className="font-semibold">{row.getValue("filename")}</div>
     ),
@@ -62,7 +61,7 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
   },
   {
     accessorKey: "filesize",
-    header: () => <div>Size</div>,
+    header: ({ column }) => <ColumnSortButton label="Size" column={column} />,
     cell: ({ row }) => (
       <div className="text-nowrap">
         {prettyBytes(row.getValue("filesize") ?? 0)}
@@ -73,7 +72,9 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
   },
   {
     accessorKey: "uploader",
-    header: () => <div className="text-center">Uploader</div>,
+    header: ({ column }) => (
+      <ColumnSortButton label="Uploader" column={column} />
+    ),
     cell: ({ row }) => (
       <div className="flex items-center justify-center">
         <UserAvatar user={row.getValue("uploader")} className="w-8 h-8" />
@@ -84,20 +85,16 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
   },
   {
     accessorKey: "uploadedat",
-    header: () => <div>Uploaded Date</div>,
-    cell: ({ row }) => {
-      return (
-        <div>
-          <DateTime date={row.getValue("uploadedat")} />
-        </div>
-      );
-    },
+    header: ({ column }) => (
+      <ColumnSortButton label="Upload Date" column={column} />
+    ),
+    cell: ({ row }) => getTimeAgo(row.getValue("uploadedat")),
     size: 180,
     enableSorting: true,
   },
   {
     accessorKey: "task",
-    header: () => <div>Task</div>,
+    header: ({ column }) => <ColumnSortButton label="Task" column={column} />,
     cell: ({ row }) => {
       // TODO how do I filter on task title??
       const file: DesignFile = row.original;
@@ -126,16 +123,18 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
   },
   {
     accessorKey: "url",
-    header: () => <div className="flex justify-center">Download</div>,
+    header: () => null,
     cell: ({ row }) => {
       const url = row.getValue("url") || "#";
       return (
         <div className="flex justify-center">
-          <Button size="icon" variant="outline" className="h-8 w-8">
-            <Link href={url} target="_blank">
-              <LucideDownload className="w-3.5 h-3.5" />
-            </Link>
-          </Button>
+          <CustomTooltip label="Download">
+            <Button size="icon" variant="outline" className="h-8 w-8">
+              <Link href={url} target="_blank">
+                <LucideDownload className="w-3.5 h-3.5" />
+              </Link>
+            </Button>
+          </CustomTooltip>
         </div>
       );
     },
@@ -143,13 +142,13 @@ const filesColumns: Tan.ColumnDef<DesignFile>[] = [
     enableSorting: false,
   },
   {
-    accessorKey: "id",
-    header: () => <div className="flex justify-center">Delete file</div>,
+    accessorKey: "delete",
+    header: () => null,
     cell: ({ row }) => {
       return (
         <div className="flex justify-center">
           <DeleteAlertDialog
-            onConfirm={() => deleteProfileAvatar(row.getValue("id"))}
+            onConfirm={() => deleteProfileAvatar(row.original.id)}
             isIcon={true}
           />
         </div>
@@ -185,11 +184,20 @@ function FilesTable({
       columnFilters,
     },
     defaultColumn: {
-      size: 200, //starting column size
-      minSize: 1, //enforced during column resizing
-      maxSize: 500, //enforced during column resizing
+      size: 200,
+      minSize: 1,
+      maxSize: 500,
     },
   });
+
+  const sizeToBasis = (size: number) =>
+    size == 1
+      ? "flex-basis-1"
+      : size == 2
+        ? "flex-basis-2"
+        : size == 3
+          ? "flex-basis-3"
+          : "";
 
   return (
     <div className="w-full space-y-4">
@@ -202,20 +210,18 @@ function FilesTable({
                 return (
                   <TableHead
                     key={header.id}
-                    className="p-2 first:pl-8 last:pr-8"
+                    className={cn(
+                      "px-3 border-r last:border-r-0",
+                      false && sizeToBasis(header.getSize()),
+                    )}
                     style={{ width: `${header.getSize()}rem` }}
-                    onClick={header.column.getToggleSortingHandler()}
                   >
                     {header.isPlaceholder ? null : (
-                      <div className="flex items-center cursor-pointer">
+                      <div className="flex items-center">
                         {Tan.flexRender(
                           header.column.columnDef.header,
                           header.getContext(),
                         )}
-                        {{
-                          asc: <ArrowUp className="w-3.5 h-3.5" />,
-                          desc: <ArrowDown className="w-3.5 h-3.5" />,
-                        }[header.column.getIsSorted() as string] ?? null}
                       </div>
                     )}
                   </TableHead>
@@ -230,7 +236,7 @@ function FilesTable({
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className="px-2 py-4 first:pl-8 last:pr-8"
+                      className="px-3 border-r last:border-r-0"
                     >
                       {Tan.flexRender(
                         cell.column.columnDef.cell,
@@ -296,10 +302,19 @@ export default function ProjectFiles({
   files: DesignFile[];
   project: DesignProject;
 }) {
+  const router = useRouter();
+  const deleteProfileAvatar = async (id: number) => {
+    try {
+      await deleteFile(id);
+    } catch (error) {
+      toast({ description: `Error happened:${error}` });
+    }
+    router.refresh();
+  };
   return (
     <Card>
       <CardContent className="pt-8">
-        <FilesTable columns={filesColumns} data={files} />
+        <FilesTable columns={filesColumns(deleteProfileAvatar)} data={files} />
       </CardContent>
     </Card>
   );
@@ -318,7 +333,7 @@ function FileTableFilterToggles({ table }: { table: Tan.Table<DesignFile> }) {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="ml-auto">
-            Columns <ChevronDown className="ml-2 h-4 w-4" />
+            Columns <LucideChevronDown className="ml-2 h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
