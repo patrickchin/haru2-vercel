@@ -96,7 +96,6 @@ const filesColumns: (
     accessorKey: "task",
     header: ({ column }) => <ColumnSortButton label="Task" column={column} />,
     cell: ({ row }) => {
-      // TODO how do I filter on task title??
       const file: DesignFile = row.original;
       const task: DesignTask | null = file.task;
       const projectid = file.projectid ?? file.task?.projectid;
