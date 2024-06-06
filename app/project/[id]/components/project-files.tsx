@@ -97,6 +97,7 @@ const filesColumns: (
     enableSorting: true,
   },
   {
+    // does this work or not!? it works locally
     accessorKey: "task.title",
     header: ({ column }) => <ColumnSortHeader label="Task" column={column} />,
     cell: ({ row }) => {
