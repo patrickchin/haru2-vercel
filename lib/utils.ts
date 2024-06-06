@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { formatDistanceToNow } from "date-fns";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -17,4 +18,9 @@ export function getAvatarInitials(fullname?: string): string {
     initials = firstname[0] + lastname[0];
 
   return initials.toUpperCase();
+}
+
+export function getTimeAgo(dateString: string): string {
+  const date = new Date(dateString);
+  return formatDistanceToNow(date, { addSuffix: true });
 }
