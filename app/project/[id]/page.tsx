@@ -19,7 +19,7 @@ import ProjectTeamsProgress, {
 } from "./components/project-teams-progress";
 import ProjectFiles, {
   ProjectFilesSkeleton,
-} from "./components/project-task-files";
+} from "./components/project-files";
 
 import { getProject, getProjectFiles, getProjectTasks } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
@@ -148,7 +148,7 @@ async function ProjectPage({
         </TabsContent>
         <TabsContent value="files">
           <Suspense fallback={<ProjectFilesSkeleton />}>
-            <ProjectFiles files={files} />
+            <ProjectFiles project={project} files={files} />
           </Suspense>
         </TabsContent>
         <TabsContent value="model" className="flex flex-col grow">

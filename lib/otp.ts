@@ -12,7 +12,7 @@ const applicationId = process.env.VONAGE_APPLICATION_ID as string;
 const fromNumber = process.env.VONAGE_WHATSAPP_FROM_PHONE_NUMBER as string;
 const apiUrl = process.env.VONAGE_WHATSAPP_API_URL as string;
 const privateKey = process.env.VONAGE_PRIVATE_KEY as string;
-
+const templateName = process.env.VONAGE_TEMPLATE_NAME as string;
 
 const JWT = tokenGenerate(applicationId, privateKey);
 
@@ -40,11 +40,42 @@ export async function sendOtpViaWhatsApp(email: string): Promise<void> {
   await saveOtp(phoneNumber, otp, expiresAt); // Convert Date to ISO string
 
   const data = {
-    message_type: "text",
-    text: `Your OTP is: ${otp}`,
     to: phoneNumber,
     from: fromNumber,
-    channel: "whatsapp"
+    channel: "whatsapp",
+    message_type: "custom",
+    custom: {
+      type: "template",
+      template: {
+        name: templateName,
+        language: {
+          policy: "deterministic",
+          code: "en"
+        },
+        components: [
+          {
+            type: "body",
+            parameters: [
+              {
+                type: "text",
+                text: otp
+              }
+            ]
+          },
+          {
+            type: "button",
+            sub_type: "url",
+            index: "0",
+            parameters: [
+              {
+                type: "text",
+                text: otp
+              }
+            ]
+          }
+        ]
+      }
+    }
   };
 
   if (!apiUrl) throw new Error("Missing Vonage Whatsapp API URL");
@@ -58,16 +89,14 @@ export async function sendOtpViaWhatsApp(email: string): Promise<void> {
       },
       body: JSON.stringify(data)
     });
-
-   
-
+    const responseData = await response.json()
+    console.log(responseData)
     if (!response.ok) {
       const errorData = await response.json();
       console.error(errorData);
       throw new Error(errorData.message || 'Failed to send OTP');
     }
 
-    const responseData = await response.json();
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);

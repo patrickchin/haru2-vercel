@@ -129,6 +129,32 @@ export async function updateUserAvatar(
   });
 }
 
+export async function deleteUserAvatar(uploaderId: number) {
+  return await db.transaction(async (tx) => {
+    const oldUser = await tx
+      .select()
+      .from(Schemas.users1)
+      .where(eq(Schemas.users1.id, uploaderId))
+      .then((r) => r[0]);
+
+    if (!oldUser) {
+      throw new Error(`User with ID ${uploaderId} not found`);
+    }
+
+    const updatedUser = await tx
+      .update(Schemas.users1)
+      .set({ avatarUrl: null })
+      .where(eq(Schemas.users1.id, uploaderId))
+      .returning()
+      .then((r) => r[0]);
+
+    return {
+      initial: oldUser,
+      updated: updatedUser,
+    };
+  });
+}
+
 // projects ==========================================================================================
 
 export async function getUserProjects(userId: number, pagenum: number = 0) {
@@ -138,7 +164,7 @@ export async function getUserProjects(userId: number, pagenum: number = 0) {
       ...getTableColumns(Schemas.projects1),
       user: {
         ...getTableColumns(Schemas.users1),
-      }
+      },
     })
     .from(Schemas.projects1)
     .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.projects1.userid))
@@ -365,13 +391,19 @@ export async function addFile(
 }
 
 export async function getFilesForProject(projectId: number) {
-  // tbh this join isn't needed if we just attach projectId to the file
   return await db
     .select({
-      ...getTableColumns(Schemas.files1)
+      ...getTableColumns(Schemas.files1),
+      uploader: {
+        ...getTableColumns(Schemas.users1),
+      },
+      task: {
+        ...getTableColumns(Schemas.tasks1),
+      }
     })
     .from(Schemas.files1)
     .leftJoin(Schemas.tasks1, eq(Schemas.tasks1.id, Schemas.files1.taskid))
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderid))
     .where(
       or(
         eq(Schemas.files1.projectid, projectId),
@@ -444,12 +476,21 @@ export async function editTaskFile(
   return editedFiles[0];
 }
 
-export async function getTaskFiles(taskid: number) {
+export async function getFilesForTask(taskId: number) {
   return await db
-    .select()
+    .select({
+      ...getTableColumns(Schemas.files1),
+      uploader: {
+        ...getTableColumns(Schemas.users1),
+      },
+      task: {
+        ...getTableColumns(Schemas.tasks1),
+      }
+    })
     .from(Schemas.files1)
-    .where(eq(Schemas.files1.taskid, taskid));
-  // .orderBy(desc(Schemas.files1.createdat));
+    .leftJoin(Schemas.tasks1, eq(Schemas.tasks1.id, Schemas.files1.taskid))
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderid))
+    .where(eq(Schemas.tasks1.id, taskId));
 }
 
 export async function getTaskCommentAttachments(taskid: number) {
@@ -475,8 +516,8 @@ export async function deleteFile(fileId: number) {
 // OTP functions ==========================================================================================
 
 export async function saveOtp(phoneNumber: string, otp: string, expiresAt: Date) {
-  // Define the rate limit time window (e.g., 1 minute)
-  const RATE_LIMIT_WINDOW = 60 * 1000; // 60 seconds in milliseconds
+  // Define the rate limit time window (e.g., 5 seconds between requests)
+  const RATE_LIMIT_WINDOW = 5 * 1000;
 
   // Get the current time
   const currentTime = new Date().getTime() 

@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RegisterSchema, RegisterSchemaType } from "@/lib/types";
+import { RegisterSchema, RegisterSchemaType } from "@/lib/forms";
 
 export default function Page() {
   const router = useRouter();

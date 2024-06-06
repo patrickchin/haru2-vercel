@@ -34,7 +34,7 @@ import {
   NewProjectFormSchema,
   NewProjectFormSchemaType,
   NewProjectFormType,
-} from "@/lib/types";
+} from "@/lib/forms";
 import { questions } from "content/questions";
 import { cn } from "@/lib/utils";
 
