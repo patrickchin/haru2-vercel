@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { LucideLoader2, LucideTrash2 } from "lucide-react";
+import CustomTooltip from "./ui/tooltip-custom";
 
 interface DeleteAlertDialogProps {
   isOpen?: boolean;
@@ -38,7 +39,9 @@ const DeleteAlertDialog: React.FC<DeleteAlertDialogProps> = ({
           </Button>
         ) : isIcon ? (
           <Button size="icon" variant="outline" className="h-8 w-8">
-            <LucideTrash2 className="w-3.5 h-3.5" />
+            <CustomTooltip label="Delete">
+              <LucideTrash2 className="w-3.5 h-3.5" />
+            </CustomTooltip>
           </Button>
         ) : (
           <span />
