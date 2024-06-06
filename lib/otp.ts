@@ -22,10 +22,10 @@ function generateOTP(): string {
 }
 
 // Function to send OTP via WhatsApp
-export async function sendOtpViaWhatsApp(email: string): Promise<void> {
-  const user = await db.getUserAccountByEmail(email);
+export async function sendOtpViaWhatsApp(phone: string): Promise<void> {
+  const user = await db.getUserAccountByPhone(phone);
   if (user.length === 0) {
-    throw new Error('No user found with this email.');
+    throw new Error('No user found with this phone.');
   }
 
   const phoneNumber = user[0].phone;

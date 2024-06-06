@@ -28,10 +28,24 @@ const LoginFormSchema = z.object({
 
 type FormFields = z.infer<typeof LoginFormSchema>;
 
+const useCountdown = (initialValue: number) => {
+  const [countdown, setCountdown] = useState(initialValue);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [countdown]);
+
+  return { countdown, setCountdown };
+};
+
 export default function Login() {
   const [loginMethod, setLoginMethod] = useState<'password' | 'otp'>('password');
   const [otpSent, setOtpSent] = useState(false);
-  const [resendOtpTimer, setResendOtpTimer] = useState(0);
+  const { countdown: resendOtpTimer, setCountdown: setResendOtpTimer } = useCountdown(0);
   const [error, setError] = useState<string | null>(null);
 
   const {
@@ -42,14 +56,6 @@ export default function Login() {
   } = useForm<FormFields>({
     resolver: zodResolver(LoginFormSchema),
   });
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (resendOtpTimer > 0) {
-      timer = setTimeout(() => setResendOtpTimer(resendOtpTimer - 1), 1000);
-    }
-    return () => clearTimeout(timer);
-  }, [resendOtpTimer]);
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
     setError(null);

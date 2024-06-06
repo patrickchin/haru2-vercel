@@ -28,13 +28,53 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
+// Custom hook for countdown timer
+const useCountdown = (initialValue: number) => {
+  const [countdown, setCountdown] = useState(initialValue);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [countdown]);
+
+  return { countdown, setCountdown };
+};
+
 function PhoneLogin() {
   const form = useForm({
     resolver: zodResolver(loginZodSchemas.phone),
   });
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const { countdown: resendOtpTimer, setCountdown: setResendOtpTimer } = useCountdown(0);
+  const [otpSent, setOtpSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSendOtpClick = async (phone: string) => {
+    try {
+      await sendOtpViaWhatsApp(phone);
+      setOtpSent(true);
+      setResendOtpTimer(60);
+      setError(null);
+    } catch (err: any) {
+      if (err.message === 'No user found with this phone.') {
+        setError('No user found with this phone number. Please check and try again.');
+      } else {
+        setError(err.message || 'Failed to send OTP via WhatsApp.');
+      }
+    }
   };
+
+  const onSubmit = async (data: any) => {
+    setError(null);
+    try {
+      await signInFromLogin({ phone: data.phone, otp: data.otp });
+    } catch (err: any) {
+      setError('The credentials you entered are incorrect. Please double-check your credentials and try again.');
+    }
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -80,18 +120,35 @@ function PhoneLogin() {
                   type="button"
                   variant="outline"
                   className="w-auto bg-green-50 text-green-600 border-green-600"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const phone = form.getValues('phone');
+                    if (phone) {
+                      handleSendOtpClick(phone);
+                    } else {
+                      setError('Phone number is required to send OTP.');
+                    }
+                  }}
+                  disabled={resendOtpTimer > 0}
                 >
                   Send Code
                 </Button>
               </div>
-              <FormDescription className="hidden bg-background px-4 py-2 rounded-md text-sm border">
-                Please enter the one-time password sent to your phone. One time
-                passcode expires in {}
-              </FormDescription>
+              {resendOtpTimer > 0 && (
+                <p className="text-xs text-gray-600 mt-2">
+                  Resend OTP in {resendOtpTimer} seconds
+                </p>
+              )}
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {error && (
+          <div className="text-red-600 text-sm">
+            {error}
+          </div>
+        )}
 
         <div className="pt-3">
           <Button type="submit" className="w-full">
@@ -103,13 +160,39 @@ function PhoneLogin() {
   );
 }
 
+
 function EmailLogin() {
   const form = useForm({
     resolver: zodResolver(loginZodSchemas.email),
   });
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const { countdown: resendOtpTimer, setCountdown: setResendOtpTimer } = useCountdown(0);
+  const [otpSent, setOtpSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSendOtpClick = async (email: string) => {
+    try {
+      await sendOtpViaEmail(email);
+      setOtpSent(true);
+      setResendOtpTimer(60);
+      setError(null);
+    } catch (err: any) {
+      if (err.message === 'No user found with this email.') {
+        setError('No user found with this email address. Please check and try again.');
+      } else {
+        setError(err.message || 'Failed to send OTP via email.');
+      }
+    }
   };
+
+  const onSubmit = async (data: any) => {
+    setError(null);
+    try {
+      await signInFromLogin({ email: data.email, otp: data.otp });
+    } catch (err: any) {
+      setError('The credentials you entered are incorrect. Please double-check your credentials and try again.');
+    }
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -155,18 +238,35 @@ function EmailLogin() {
                   type="button"
                   variant="outline"
                   className="w-auto bg-blue-50 text-blue-600 border-blue-600"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const email = form.getValues('email');
+                    if (email) {
+                      handleSendOtpClick(email);
+                    } else {
+                      setError('Email is required to send OTP.');
+                    }
+                  }}
+                  disabled={resendOtpTimer > 0}
                 >
                   Send Code
                 </Button>
               </div>
-              <FormDescription className="hidden bg-background px-4 py-2 rounded-md text-sm border">
-                Please enter the one-time password sent to your email. One time
-                passcode expires in {}
-              </FormDescription>
+              {resendOtpTimer > 0 && (
+                <p className="text-xs text-gray-600 mt-2">
+                  Resend OTP in {resendOtpTimer} seconds
+                </p>
+              )}
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {error && (
+          <div className="text-red-600 text-sm">
+            {error}
+          </div>
+        )}
 
         <div className="pt-3">
           <Button type="submit" className="w-full">
@@ -178,13 +278,22 @@ function EmailLogin() {
   );
 }
 
+
 function PasswordLogin() {
   const form = useForm({
     resolver: zodResolver(loginZodSchemas.password),
   });
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const [error, setError] = useState<string | null>(null);
+
+  const onSubmit = async (data: any) => {
+    setError(null);
+    try {
+      await signInFromLogin({ email: data.email, password: data.password });
+    } catch (err: any) {
+      setError('The credentials you entered are incorrect. Please double-check your credentials and try again.');
+    }
   };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -221,6 +330,12 @@ function PasswordLogin() {
           )}
         />
 
+        {error && (
+          <div className="text-red-600 text-sm">
+            {error}
+          </div>
+        )}
+
         <div className="pt-3">
           <Button type="submit" className="w-full">
             Login
@@ -230,6 +345,7 @@ function PasswordLogin() {
     </Form>
   );
 }
+
 
 function LoginCard() {
   const [tabValue, setTabValue] = useState("phone");
@@ -272,6 +388,7 @@ function LoginCard() {
     </Card>
   );
 }
+
 export default function Login() {
   return (
     <SimpleLayout>
