@@ -102,7 +102,7 @@ function SettingsPage() {
               onConfirm={deleteProfileAvatar}
               isLoading={isDeleting}
               disabled={!session?.user?.image}
-              isButton={true}
+              variant="text"
             />
             <Button className="cursor-pointer" asChild variant="outline">
               <Label htmlFor="photo">

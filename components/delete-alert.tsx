@@ -12,6 +12,39 @@ import {
 import { Button } from "@/components/ui/button";
 import { LucideLoader2, LucideTrash2 } from "lucide-react";
 import CustomTooltip from "./ui/tooltip-custom";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+
+function TextTrigger({ disabled }: { disabled?: boolean }) {
+  return (
+    <AlertDialogTrigger>
+      <Button disabled={disabled} variant="destructive">
+        Delete
+      </Button>
+    </AlertDialogTrigger>
+  );
+}
+
+function IconTrigger({ disabled }: { disabled?: boolean }) {
+  return (
+    <TooltipProvider delayDuration={400}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <AlertDialogTrigger asChild>
+            <Button
+              disabled={disabled}
+              size="icon"
+              variant="outline"
+              className="h-8 w-8"
+            >
+              <LucideTrash2 className="w-3.5 h-3.5" />
+            </Button>
+          </AlertDialogTrigger>
+        </TooltipTrigger>
+        <TooltipContent>Delete</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
 
 interface DeleteAlertDialogProps {
   isOpen?: boolean;
@@ -19,6 +52,7 @@ interface DeleteAlertDialogProps {
   onConfirm: () => void;
   isLoading?: boolean;
   disabled?: boolean;
+  variant?: "text" | "icon";
   isIcon?: boolean;
   isButton?: boolean;
 }
@@ -27,26 +61,16 @@ const DeleteAlertDialog: React.FC<DeleteAlertDialogProps> = ({
   onConfirm,
   isLoading,
   disabled,
-  isIcon,
-  isButton,
+  variant,
 }) => {
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        {isButton ? (
-          <Button disabled={disabled} variant="destructive">
-            Delete
-          </Button>
-        ) : isIcon ? (
-          <CustomTooltip label="Delete">
-            <Button size="icon" variant="outline" className="h-8 w-8">
-              <LucideTrash2 className="w-3.5 h-3.5" />
-            </Button>
-          </CustomTooltip>
-        ) : (
-          <span />
-        )}
-      </AlertDialogTrigger>
+      {variant == "icon" ? (
+        <IconTrigger disabled={disabled} />
+      ) : (
+        <TextTrigger disabled={disabled} />
+      )}
+
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>

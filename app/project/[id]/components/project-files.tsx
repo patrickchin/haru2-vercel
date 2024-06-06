@@ -141,8 +141,8 @@ const filesColumns: (
             </Button>
           </CustomTooltip>
           <DeleteAlertDialog
+            variant="icon"
             onConfirm={() => deleteProfileAvatar(row.original.id)}
-            isIcon={true}
           />
         </div>
       );
