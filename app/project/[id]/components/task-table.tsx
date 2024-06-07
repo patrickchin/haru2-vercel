@@ -34,6 +34,7 @@ import {
 import { DesignTask } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { UserAvatar } from "@/components/user-avatar";
+import { DataTablePagination } from "@/components/ui/pagination";
 
 // a company and a way they work should be able to determine
 // their own tasks saved on the platform
@@ -318,6 +319,7 @@ function TaskTableFooter({ table }: { table: Tan.Table<DesignTask> }) {
         Showing {table.getPaginationRowModel().rows.length} of{" "}
         {table.getRowCount()} row(s) displayed.
       </div>
+      <DataTablePagination table={table} />
 
       <div className="space-x-2">
         <Button
