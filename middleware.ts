@@ -11,6 +11,7 @@ export default auth((req) => {
     "/favicon.ico",
     "/login",
     "/register",
+    "/register2",
     "/new-project",
   ];
   const isPublic = publicPathnames.some((p) =>
