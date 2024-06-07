@@ -41,21 +41,7 @@ import {
 } from "@/components/ui/form";
 import { LucideLoader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-// Custom hook for countdown timer
-const useCountdown = (initialValue: number) => {
-  const [countdown, setCountdown] = useState(initialValue);
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (countdown > 0) {
-      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-    }
-    return () => clearTimeout(timer);
-  }, [countdown]);
-
-  return { countdown, setCountdown };
-};
+import { useCountdown } from "@/lib/hooks";
 
 function FormFooter({
   form,
