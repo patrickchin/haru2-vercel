@@ -16,7 +16,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/t
 
 function TextTrigger({ disabled }: { disabled?: boolean }) {
   return (
-    <AlertDialogTrigger>
+    <AlertDialogTrigger asChild disabled={disabled}>
       <Button disabled={disabled} variant="destructive">
         Delete
       </Button>
@@ -28,7 +28,7 @@ function IconTrigger({ disabled }: { disabled?: boolean }) {
   return (
     <TooltipProvider delayDuration={400}>
       <Tooltip>
-        <TooltipTrigger asChild>
+        <TooltipTrigger asChild disabled={disabled}>
           <AlertDialogTrigger asChild>
             <Button
               disabled={disabled}
