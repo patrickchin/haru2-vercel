@@ -76,19 +76,13 @@ function FormFooter({
         <Button
           type="submit"
           className="w-full flex gap-2"
-          disabled={
-            disabled ||
-            form.formState.isSubmitting ||
-            form.formState.isSubmitSuccessful
-          }
+          disabled={disabled || form.formState.isSubmitting}
         >
           Login
           <LucideLoader2
             className={cn(
               "animate-spin w-4 h-4",
-              form.formState.isSubmitting || form.formState.isSubmitSuccessful
-                ? ""
-                : "hidden",
+              form.formState.isSubmitting ? "" : "hidden",
             )}
           />
         </Button>
