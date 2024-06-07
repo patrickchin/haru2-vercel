@@ -42,7 +42,12 @@ import {
 import { LucideLoader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCountdown } from "@/lib/hooks";
-import { CredentialsSigninError, FailedToSendEmailOTP, FailedToSendWhatsappOTP, UnknownError } from "@/lib/errors";
+import {
+  CredentialsSigninError,
+  FailedToSendEmailOTP,
+  FailedToSendWhatsappOTP,
+  UnknownError,
+} from "@/lib/errors";
 
 function FormFooter({
   form,
@@ -262,7 +267,12 @@ function EmailLogin() {
               <FormLabel>One-Time Passcode</FormLabel>
               <div className="flex items-center gap-3">
                 <FormControl>
-                  <InputOTP maxLength={6} pattern="^[0-9]+$" {...field} disabled>
+                  <InputOTP
+                    maxLength={6}
+                    pattern="^[0-9]+$"
+                    {...field}
+                    disabled
+                  >
                     <InputOTPGroup className="bg-background">
                       <InputOTPSlot index={0} />
                       <InputOTPSlot index={1} />

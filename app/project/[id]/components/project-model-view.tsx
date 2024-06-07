@@ -18,9 +18,8 @@ function ProjectModelViewSkeleton() {
 }
 
 function ProjectModelViewInternal() {
-
   const mtl = useLoader(MTLLoader, "/api/github/Condo.mtl");
-  const obj = useLoader(OBJLoader,  "/api/github/Condo.obj", (loader) => {
+  const obj = useLoader(OBJLoader, "/api/github/Condo.obj", (loader) => {
     mtl.preload();
     loader.setMaterials(mtl);
   });
@@ -45,7 +44,7 @@ function ProjectModelViewInternal() {
         receiveShadow={true}
         castShadow
         object={obj}
-        rotation={[Math.PI/2, Math.PI, 0]}
+        rotation={[Math.PI / 2, Math.PI, 0]}
       />
 
       <OrbitControls enableDamping={false} />

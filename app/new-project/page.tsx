@@ -253,7 +253,10 @@ function ProjectDocuments({
           <FormMessage />
           <div>
             {fileNames.map((fileName, index) => (
-              <div key={index} className="flex items-center justify-between w-full border-b pr-4 py-2">
+              <div
+                key={index}
+                className="flex items-center justify-between w-full border-b pr-4 py-2"
+              >
                 <p className="text-sm px-3">{fileName}</p>
                 <Button
                   type="button"

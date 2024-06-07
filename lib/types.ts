@@ -6,7 +6,8 @@ import * as db from "./db";
 export type DesignUserBasic = NonNullable<
   Awaited<ReturnType<typeof db.getUserByEmail>>
 >;
-export type DesignUserDetailed = Awaited< // adds email
+export type DesignUserDetailed = Awaited<
+  // adds email
   ReturnType<typeof db.getTeamMembersDetailed>
 >[0];
 export type DesignProject = NonNullable<

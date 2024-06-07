@@ -17,9 +17,7 @@ import ProjectTaskDetails, {
 import ProjectTeamsProgress, {
   ProjectTeamsProgressSkeleton,
 } from "./components/project-teams-progress";
-import ProjectFiles, {
-  ProjectFilesSkeleton,
-} from "./components/project-files";
+import ProjectFiles, { ProjectFilesSkeleton } from "./components/project-files";
 
 import { getProject, getProjectFiles, getProjectTasks } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
