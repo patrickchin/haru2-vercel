@@ -3,11 +3,6 @@ import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import * as db from "./db";
 
-// TODO make better
-export class HaruError extends Error {
-  type = "HaruError";
-};
-
 export type DesignUserBasic = NonNullable<
   Awaited<ReturnType<typeof db.getUserByEmail>>
 >;

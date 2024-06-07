@@ -5,7 +5,7 @@ import * as Schemas from "@/drizzle/schema";
 import { signIn } from "@/lib/auth";
 import { auth } from "./auth";
 import * as blob from "@vercel/blob";
-import { DesignTaskSpec, HaruError } from "./types";
+import { DesignTaskSpec } from "./types";
 import {
   LoginTypesEmail,
   LoginTypesPassword,
@@ -24,7 +24,7 @@ export async function registerUser(data: RegisterSchemaType) {
   try {
     await db.createUserIfNotExists(data);
   } catch (error) {
-    throw new HaruError("CreateUserError");
+    throw new Error("CreateUserError");
   }
 }
 
@@ -38,7 +38,7 @@ export async function signInFromLogin(
     });
   } catch (error: unknown) {
     if (error instanceof CredentialsSignin) {
-      throw new HaruError("CredentialsSignin");
+      throw new Error("CredentialsSignin");
     } else {
       throw error;
     }

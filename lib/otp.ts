@@ -5,7 +5,6 @@ import * as db from "./db";
 import crypto from "crypto";
 import { saveOtp, verifyOtp } from "./db";
 import { sendEmail } from "./emailService";
-import { HaruError } from "./types";
 
 // Vonage configuration
 const applicationId = process.env.VONAGE_APPLICATION_ID as string;
@@ -25,7 +24,7 @@ function generateOTP(): string {
 export async function sendOtpViaWhatsApp(phone: string): Promise<void> {
   const user = await db.getUserAccountByPhone(phone);
   if (user.length === 0) {
-    throw new HaruError("UserNotFound");
+    throw new Error("UserNotFound");
   }
 
   const otp = generateOTP();
@@ -72,7 +71,7 @@ export async function sendOtpViaWhatsApp(phone: string): Promise<void> {
     },
   };
 
-  if (!apiUrl) throw new HaruError("ServerConfigurationError");
+  if (!apiUrl) throw new Error("ServerConfigurationError");
 
   const response = await fetch(apiUrl, {
     method: "POST",
@@ -85,7 +84,7 @@ export async function sendOtpViaWhatsApp(phone: string): Promise<void> {
   if (!response.ok) {
     const errorData = await response.json();
     console.error(errorData);
-    throw new HaruError("FailedToSendWhatsapp");
+    throw new Error("FailedToSendWhatsapp");
   }
 }
 
@@ -93,7 +92,7 @@ export async function sendOtpViaWhatsApp(phone: string): Promise<void> {
 export async function sendOtpViaEmail(email: string): Promise<void> {
   const user = await db.getUserAccountByEmail(email);
   if (user.length === 0) {
-    throw new HaruError("UserNotFound");
+    throw new Error("UserNotFound");
   }
 
   const otp = generateOTP();
@@ -109,10 +108,10 @@ export async function sendOtpViaEmail(email: string): Promise<void> {
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);
-      throw new HaruError("FailedToSendEmail");
+      throw new Error("FailedToSendEmail");
     } else {
       console.error("An unknown error occurred: ", error);
-      throw new HaruError("Unknown");
+      throw new Error("Unknown");
     }
   }
 }
