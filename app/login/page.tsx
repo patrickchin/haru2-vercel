@@ -141,7 +141,7 @@ function PhoneLogin() {
     try {
       await signInFromLogin(data);
     } catch (error: any) {
-      if (error?.message == "CredentialsSignin") {
+      if (true || error?.message == "CredentialsSignin") {
         form.setError("root", {
           message:
             "Failed to login. Please double-check your credentials and try again.",
@@ -259,7 +259,7 @@ function EmailLogin() {
     try {
       await signInFromLogin(data);
     } catch (error: any) {
-      if (error?.message == "CredentialsSignin") {
+      if (true || error?.message == "CredentialsSignin") {
         form.setError("root", {
           message:
             "Failed to login. Please double-check your credentials and try again.",
@@ -350,7 +350,8 @@ function PasswordLogin() {
     try {
       await signInFromLogin(data);
     } catch (error: any) {
-      if (error?.message == "CredentialsSignin") {
+      // TODO works locally but not in production!?
+      if (true || error?.message == "CredentialsSignin") {
         form.setError("root", {
           message:
             "Failed to login. Please double-check your credentials and try again.",
