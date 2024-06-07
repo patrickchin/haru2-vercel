@@ -6,7 +6,13 @@ import { signIn } from "@/lib/auth";
 import { auth } from "./auth";
 import * as blob from "@vercel/blob";
 import { DesignTaskSpec } from "./types";
-import { NewProjectFormSchema, RegisterSchemaType, loginZodSchemas } from "./forms";
+import {
+  LoginTypesEmail,
+  LoginTypesPassword,
+  LoginTypesPhone,
+  NewProjectFormSchema,
+  RegisterSchemaType,
+} from "./forms";
 import { redirect } from "next/navigation";
 import { defaulTaskSpecs } from "content/tasks";
 import assert from "assert";
@@ -21,15 +27,14 @@ export async function registerUser(data: RegisterSchemaType) {
   }
 }
 
-// TODO proper type
-export async function signInFromLogin(data: any) {
+export async function signInFromLogin(
+  data: LoginTypesPhone | LoginTypesEmail | LoginTypesPassword,
+) {
   return await signIn("credentials", {
     ...data,
     redirectTo: "/",
   });
 }
-
-
 
 export async function submitProjectForm2(formData: FormData) {
   const session = await auth();
@@ -180,7 +185,8 @@ export async function updateProjectTitle(projectId: number, newTitle: string) {
 
 export async function getCurrentUsersProjects() {
   const session = await auth();
-  if (session?.user?.id) // linter is stupid
+  if (session?.user?.id)
+    // linter is stupid
     return db.getUserProjects(parseInt(session.user.id));
 }
 
@@ -356,10 +362,7 @@ export async function addTaskComment(
   return getTaskCommentsAndFiles(taskId);
 }
 
-export async function addTaskFile(
-  taskId: number,
-  data: FormData,
-) {
+export async function addTaskFile(taskId: number, data: FormData) {
   const file = data.get("file") as File;
   if (!file) {
     console.log("addTaskFile file not correcty uploaded");
@@ -398,10 +401,7 @@ export async function addTaskFile(
   return editedFile;
 }
 
-export async function addTaskFileReturnAll(
-  taskId: number,
-  data: FormData,
-) {
+export async function addTaskFileReturnAll(taskId: number, data: FormData) {
   // no auth because done in addTaskFile
   await addTaskFile(taskId, data);
   return db.getFilesForTask(taskId);

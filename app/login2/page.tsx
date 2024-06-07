@@ -3,11 +3,24 @@
 import { useState, useEffect } from "react";
 import { signInFromLogin } from "@/lib/actions";
 import { sendOtpViaWhatsApp, sendOtpViaEmail } from "@/lib/otp";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  LoginSchemaPhone,
+  LoginSchemaEmail,
+  LoginSchemaPassword,
+  LoginTypesEmail,
+  LoginTypesPassword,
+  LoginTypesPhone,
+} from "@/lib/forms";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,11 +30,9 @@ import {
 } from "@/components/ui/input-otp";
 import { Button } from "@/components/ui/button";
 import { SimpleLayout } from "@/components/page-layouts";
-import { loginZodSchemas } from "@/lib/forms";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -44,34 +55,40 @@ const useCountdown = (initialValue: number) => {
 };
 
 function PhoneLogin() {
-  const form = useForm({
-    resolver: zodResolver(loginZodSchemas.phone),
+  const form = useForm<LoginTypesPhone>({
+    resolver: zodResolver(LoginSchemaPhone),
   });
-  const { countdown: resendOtpTimer, setCountdown: setResendOtpTimer } = useCountdown(0);
-  const [otpSent, setOtpSent] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { countdown: resendOtpTimer, setCountdown: setResendOtpTimer } =
+    useCountdown(0);
 
   const handleSendOtpClick = async (phone: string) => {
     try {
       await sendOtpViaWhatsApp(phone);
-      setOtpSent(true);
       setResendOtpTimer(60);
-      setError(null);
+      form.clearErrors();
     } catch (err: any) {
-      if (err.message === 'No user found with this phone.') {
-        setError('No user found with this phone number. Please check and try again.');
+      if (err.message === "No user found with this phone.") {
+        form.setError("phone", {
+          message:
+            "No user found with this phone number. Please check and try again.",
+        });
       } else {
-        setError(err.message || 'Failed to send OTP via WhatsApp.');
+        form.setError("otp", {
+          message: err.message || "Failed to send OTP via WhatsApp.",
+        });
       }
     }
   };
 
-  const onSubmit = async (data: any) => {
-    setError(null);
+  const onSubmit = async (data: LoginTypesPhone) => {
+    form.clearErrors();
     try {
-      await signInFromLogin({ phone: data.phone, otp: data.otp });
+      await signInFromLogin(data);
     } catch (err: any) {
-      setError('The credentials you entered are incorrect. Please double-check your credentials and try again.');
+      form.setError("root", {
+        message:
+          "The credentials you entered are incorrect. Please double-check your credentials and try again.",
+      });
     }
   };
 
@@ -121,12 +138,13 @@ function PhoneLogin() {
                   variant="outline"
                   className="w-auto bg-green-50 text-green-600 border-green-600"
                   onClick={(e) => {
-                    e.preventDefault();
-                    const phone = form.getValues('phone');
+                    const phone = form.getValues("phone");
                     if (phone) {
                       handleSendOtpClick(phone);
                     } else {
-                      setError('Phone number is required to send OTP.');
+                      form.setError("phone", {
+                        message: "Phone number is required to send OTP.",
+                      });
                     }
                   }}
                   disabled={resendOtpTimer > 0}
@@ -144,12 +162,6 @@ function PhoneLogin() {
           )}
         />
 
-        {error && (
-          <div className="text-red-600 text-sm">
-            {error}
-          </div>
-        )}
-
         <div className="pt-3">
           <Button type="submit" className="w-full">
             Login
@@ -160,36 +172,43 @@ function PhoneLogin() {
   );
 }
 
-
 function EmailLogin() {
-  const form = useForm({
-    resolver: zodResolver(loginZodSchemas.email),
+  const form = useForm<LoginTypesEmail>({
+    resolver: zodResolver(LoginSchemaEmail),
   });
-  const { countdown: resendOtpTimer, setCountdown: setResendOtpTimer } = useCountdown(0);
-  const [otpSent, setOtpSent] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { countdown: resendOtpTimer, setCountdown: setResendOtpTimer } =
+    useCountdown(0);
 
   const handleSendOtpClick = async (email: string) => {
     try {
       await sendOtpViaEmail(email);
-      setOtpSent(true);
       setResendOtpTimer(60);
-      setError(null);
+      form.clearErrors();
     } catch (err: any) {
-      if (err.message === 'No user found with this email.') {
-        setError('No user found with this email address. Please check and try again.');
+      if (err.message === "No user found with this email.") {
+        form.setError("email", {
+          message:
+            "No user found with this email address. Please check and try again.",
+        });
       } else {
-        setError(err.message || 'Failed to send OTP via email.');
+        form.setError("root", {
+          message: err.message || "Failed to send OTP via email.",
+        });
       }
     }
   };
 
-  const onSubmit = async (data: any) => {
-    setError(null);
+  const onSubmit: SubmitHandler<LoginTypesEmail> = async (
+    data: LoginTypesEmail,
+  ) => {
+    form.clearErrors();
     try {
       await signInFromLogin({ email: data.email, otp: data.otp });
     } catch (err: any) {
-      setError('The credentials you entered are incorrect. Please double-check your credentials and try again.');
+      form.setError("root", {
+        message:
+          "The credentials you entered are incorrect. Please double-check your credentials and try again.",
+      });
     }
   };
 
@@ -240,11 +259,13 @@ function EmailLogin() {
                   className="w-auto bg-blue-50 text-blue-600 border-blue-600"
                   onClick={(e) => {
                     e.preventDefault();
-                    const email = form.getValues('email');
+                    const email = form.getValues("email");
                     if (email) {
                       handleSendOtpClick(email);
                     } else {
-                      setError('Email is required to send OTP.');
+                      form.setError("email", {
+                        message: "Email is required to send OTP.",
+                      });
                     }
                   }}
                   disabled={resendOtpTimer > 0}
@@ -262,12 +283,6 @@ function EmailLogin() {
           )}
         />
 
-        {error && (
-          <div className="text-red-600 text-sm">
-            {error}
-          </div>
-        )}
-
         <div className="pt-3">
           <Button type="submit" className="w-full">
             Login
@@ -278,19 +293,22 @@ function EmailLogin() {
   );
 }
 
-
 function PasswordLogin() {
-  const form = useForm({
-    resolver: zodResolver(loginZodSchemas.password),
+  const form = useForm<LoginTypesPassword>({
+    resolver: zodResolver(LoginSchemaPassword),
   });
-  const [error, setError] = useState<string | null>(null);
 
-  const onSubmit = async (data: any) => {
-    setError(null);
+  const onSubmit: SubmitHandler<LoginTypesPassword> = async (
+    data: LoginTypesPassword,
+  ) => {
+    form.clearErrors();
     try {
-      await signInFromLogin({ email: data.email, password: data.password });
+      await signInFromLogin(data);
     } catch (err: any) {
-      setError('The credentials you entered are incorrect. Please double-check your credentials and try again.');
+      form.setError("root", {
+        message:
+          "The credentials you entered are incorrect. Please double-check your credentials and try again.",
+      });
     }
   };
 
@@ -330,12 +348,6 @@ function PasswordLogin() {
           )}
         />
 
-        {error && (
-          <div className="text-red-600 text-sm">
-            {error}
-          </div>
-        )}
-
         <div className="pt-3">
           <Button type="submit" className="w-full">
             Login
@@ -345,7 +357,6 @@ function PasswordLogin() {
     </Form>
   );
 }
-
 
 function LoginCard() {
   const [tabValue, setTabValue] = useState("phone");

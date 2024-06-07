@@ -41,7 +41,6 @@ export const otpZod = z
   .max(6, "Passcode must be 6 digits long")
   .regex(/^\d+$/, "Passcode must be digits only");
 
-
 export const RegisterSchema = z
   .object({
     name: z.string().trim().min(0, { message: "Name is required" }),
@@ -60,28 +59,27 @@ export const RegisterSchema = z
 export type RegisterSchemaType = z.infer<typeof RegisterSchema>;
 
 const LoginFormSchema = z
-.object({
-  email: z.string().min(0, { message: "Email is required" }).email(),
-  password: z.string().optional(),
-  otp: z.string().optional(),
-})
-.refine(
-  (data) => {
-    if (!data.password && !data.otp) {
-      return false;
-    }
-    return true;
-  },
-  {
-    message: "Password or OTP is required",
-    path: ["password"],
-  },
-);
+  .object({
+    email: z.string().min(0, { message: "Email is required" }).email(),
+    password: z.string().optional(),
+    otp: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (!data.password && !data.otp) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Password or OTP is required",
+      path: ["password"],
+    },
+  );
 
 type FormFields = z.infer<typeof LoginFormSchema>;
 
-
-const LoginPhoneOtpSchema = z.object({
+export const LoginSchemaPhone = z.object({
   phone: z
     .string()
     .min(4, "Phone must contain at least 5 characters")
@@ -89,19 +87,17 @@ const LoginPhoneOtpSchema = z.object({
     .regex(phoneNumberRegex, "Invalid phone number"),
   otp: z.string().min(6).max(6).regex(/^\d+$/, "OTP must be 6 digits"),
 });
-const LoginEmailOtpSchema = z.object({
+export const LoginSchemaEmail = z.object({
   email: z.string().email("Invalid email address"),
   otp: z.string().min(5).max(6).regex(/^\d+$/, "OTP must be 6 digits"),
 });
-const LoginPasswordSchema = z.object({
+export const LoginSchemaPassword = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(7).max(100),
 });
-export const loginZodSchemas = {
-  "phone": LoginPhoneOtpSchema,
-  "email": LoginEmailOtpSchema,
-  "password": LoginPasswordSchema,
-}
+export type LoginTypesPhone = { phone: string; otp: string };
+export type LoginTypesEmail = { email: string; otp: string };
+export type LoginTypesPassword = { email: string; password: string };
 
 const registerPhoneOtpSchema = z.object({
   name: z.string().trim().min(0, { message: "Name is required" }),
