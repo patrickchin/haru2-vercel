@@ -359,7 +359,7 @@ function PasswordLogin() {
 }
 
 function LoginCard() {
-  const [tabValue, setTabValue] = useState("phone");
+  const [tabValue, setTabValue] = useState("password");
   return (
     <Card className="w-full max-w-lg p-0 rounded-4xl shadow-xl overflow-hidden">
       <Tabs value={tabValue} onValueChange={setTabValue}>
