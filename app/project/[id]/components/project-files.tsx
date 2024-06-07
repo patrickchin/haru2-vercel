@@ -44,6 +44,7 @@ const columnLabels: { [key: string]: string } = {
   url: "Download",
   uploadedat: "Upload Date",
   filesize: "Size",
+  task_title: "Task",
 };
 
 const filesColumns: (
@@ -93,7 +94,7 @@ const filesColumns: (
     enableSorting: true,
   },
   {
-    accessorKey: "task",
+    accessorKey: "task.title",
     header: ({ column }) => <ColumnSortButton label="Task" column={column} />,
     cell: ({ row }) => {
       const file: DesignFile = row.original;
