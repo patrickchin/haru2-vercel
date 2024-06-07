@@ -10,7 +10,6 @@ export default auth((req) => {
     "/",
     "/favicon.ico",
     "/login",
-    "/login2", // tmp
     "/register",
     "/new-project",
   ];
