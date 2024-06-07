@@ -58,27 +58,6 @@ export const RegisterSchema = z
 
 export type RegisterSchemaType = z.infer<typeof RegisterSchema>;
 
-const LoginFormSchema = z
-  .object({
-    email: z.string().min(0, { message: "Email is required" }).email(),
-    password: z.string().optional(),
-    otp: z.string().optional(),
-  })
-  .refine(
-    (data) => {
-      if (!data.password && !data.otp) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: "Password or OTP is required",
-      path: ["password"],
-    },
-  );
-
-type FormFields = z.infer<typeof LoginFormSchema>;
-
 export const LoginSchemaPhone = z.object({
   phone: z
     .string()

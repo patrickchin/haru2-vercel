@@ -1,11 +1,11 @@
 "use server";
 
-import { tokenGenerate } from '@vonage/jwt';
-import fs from 'fs';
-import * as db from './db';
-import crypto from 'crypto';
-import { saveOtp, verifyOtp } from './db'; // Adjust the import path
-import { sendEmail } from './emailService'; // Ensure you have an email service module
+import { tokenGenerate } from "@vonage/jwt";
+import * as db from "./db";
+import crypto from "crypto";
+import { saveOtp, verifyOtp } from "./db";
+import { sendEmail } from "./emailService";
+import { HaruError } from "./types";
 
 // Vonage configuration
 const applicationId = process.env.VONAGE_APPLICATION_ID as string;
@@ -25,22 +25,16 @@ function generateOTP(): string {
 export async function sendOtpViaWhatsApp(phone: string): Promise<void> {
   const user = await db.getUserAccountByPhone(phone);
   if (user.length === 0) {
-    throw new Error('No user found with this phone.');
+    throw new HaruError("UserNotFound");
   }
 
-  const phoneNumber = user[0].phone;
-  if (!phoneNumber) {
-    throw new Error('No phone number associated with this email.');
-  }
-  
   const otp = generateOTP();
-
   const expiresAt = new Date();
   expiresAt.setMinutes(expiresAt.getMinutes() + 10); // OTP expires in 10 minutes
-  await saveOtp(phoneNumber, otp, expiresAt); // Convert Date to ISO string
+  await saveOtp(phone, otp, expiresAt); // Convert Date to ISO string
 
   const data = {
-    to: phoneNumber,
+    to: phone,
     from: fromNumber,
     channel: "whatsapp",
     message_type: "custom",
@@ -50,7 +44,7 @@ export async function sendOtpViaWhatsApp(phone: string): Promise<void> {
         name: templateName,
         language: {
           policy: "deterministic",
-          code: "en"
+          code: "en",
         },
         components: [
           {
@@ -58,9 +52,9 @@ export async function sendOtpViaWhatsApp(phone: string): Promise<void> {
             parameters: [
               {
                 type: "text",
-                text: otp
-              }
-            ]
+                text: otp,
+              },
+            ],
           },
           {
             type: "button",
@@ -69,42 +63,29 @@ export async function sendOtpViaWhatsApp(phone: string): Promise<void> {
             parameters: [
               {
                 type: "text",
-                text: otp
-              }
-            ]
-          }
-        ]
-      }
-    }
+                text: otp,
+              },
+            ],
+          },
+        ],
+      },
+    },
   };
 
-  if (!apiUrl) throw new Error("Missing Vonage Whatsapp API URL");
+  if (!apiUrl) throw new HaruError("ServerConfigurationError");
 
-  try {
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${JWT}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
-    const responseData = await response.json()
-    console.log(responseData)
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error(errorData);
-      throw new Error(errorData.message || 'Failed to send OTP');
-    }
-
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error(error.message);
-      throw new Error('Failed to send OTP');
-    } else {
-      console.error('An unknown error occurred');
-      throw new Error('An unknown error occurred');
-    }
+  const response = await fetch(apiUrl, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${JWT}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    console.error(errorData);
+    throw new HaruError("FailedToSendWhatsapp");
   }
 }
 
@@ -112,19 +93,13 @@ export async function sendOtpViaWhatsApp(phone: string): Promise<void> {
 export async function sendOtpViaEmail(email: string): Promise<void> {
   const user = await db.getUserAccountByEmail(email);
   if (user.length === 0) {
-    throw new Error('No user found with this email.');
+    throw new HaruError("UserNotFound");
   }
 
-  const phoneNumber = user[0].phone;
-  if (!phoneNumber) {
-    throw new Error('No phone number associated with this email.');
-  }
-  
   const otp = generateOTP();
-
   const expiresAt = new Date();
   expiresAt.setMinutes(expiresAt.getMinutes() + 10); // OTP expires in 10 minutes
-  await saveOtp(phoneNumber, otp, expiresAt); 
+  await saveOtp(email, otp, expiresAt);
 
   const subject = "Your OTP Code";
   const text = `Your OTP is: ${otp}`;
@@ -134,10 +109,10 @@ export async function sendOtpViaEmail(email: string): Promise<void> {
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);
-      throw new Error('Failed to send OTP via email');
+      throw new HaruError("FailedToSendEmail");
     } else {
-      console.error('An unknown error occurred');
-      throw new Error('An unknown error occurred');
+      console.error("An unknown error occurred: ", error);
+      throw new HaruError("Unknown");
     }
   }
 }

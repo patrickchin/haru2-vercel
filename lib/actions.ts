@@ -5,7 +5,7 @@ import * as Schemas from "@/drizzle/schema";
 import { signIn } from "@/lib/auth";
 import { auth } from "./auth";
 import * as blob from "@vercel/blob";
-import { DesignTaskSpec } from "./types";
+import { DesignTaskSpec, HaruError } from "./types";
 import {
   LoginTypesEmail,
   LoginTypesPassword,
@@ -15,6 +15,7 @@ import {
 } from "./forms";
 import { redirect } from "next/navigation";
 import { defaulTaskSpecs } from "content/tasks";
+import { CredentialsSignin } from "next-auth";
 import assert from "assert";
 
 const VERCEL_BLOB_FAKE_FILES = false;
@@ -23,17 +24,25 @@ export async function registerUser(data: RegisterSchemaType) {
   try {
     await db.createUserIfNotExists(data);
   } catch (error) {
-    throw error;
+    throw new HaruError("CreateUserError");
   }
 }
 
 export async function signInFromLogin(
   data: LoginTypesPhone | LoginTypesEmail | LoginTypesPassword,
 ) {
-  return await signIn("credentials", {
-    ...data,
-    redirectTo: "/",
-  });
+  try {
+    return await signIn("credentials", {
+      ...data,
+      redirectTo: "/",
+    });
+  } catch (error: unknown) {
+    if (error instanceof CredentialsSignin) {
+      throw new HaruError("CredentialsSignin");
+    } else {
+      throw error;
+    }
+  }
 }
 
 export async function submitProjectForm2(formData: FormData) {

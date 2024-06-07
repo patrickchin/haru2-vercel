@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { signInFromLogin } from "@/lib/actions";
 import { sendOtpViaWhatsApp, sendOtpViaEmail } from "@/lib/otp";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { UseFormReturn, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   LoginSchemaPhone,
@@ -39,6 +39,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { LucideLoader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // Custom hook for countdown timer
 const useCountdown = (initialValue: number) => {
@@ -55,12 +57,40 @@ const useCountdown = (initialValue: number) => {
   return { countdown, setCountdown };
 };
 
-function LoginButton() {
+function FormFooter({
+  form,
+  disabled,
+}: {
+  form: UseFormReturn<any>;
+  disabled?: boolean;
+}) {
   return (
     <>
+      {form.formState.errors.root && (
+        <p className="text-sm font-medium text-destructive">
+          {form.formState.errors.root?.message}
+        </p>
+      )}
+
       <div className="pt-3">
-        <Button type="submit" className="w-full">
+        <Button
+          type="submit"
+          className="w-full flex gap-2"
+          disabled={
+            disabled ||
+            form.formState.isSubmitting ||
+            form.formState.isSubmitSuccessful
+          }
+        >
           Login
+          <LucideLoader2
+            className={cn(
+              "animate-spin w-4 h-4",
+              form.formState.isSubmitting || form.formState.isSubmitSuccessful
+                ? ""
+                : "hidden",
+            )}
+          />
         </Button>
       </div>
 
@@ -73,7 +103,6 @@ function LoginButton() {
       </p>
     </>
   );
-
 }
 
 function PhoneLogin() {
@@ -83,20 +112,31 @@ function PhoneLogin() {
   const { countdown: resendOtpTimer, setCountdown: setResendOtpTimer } =
     useCountdown(0);
 
-  const handleSendOtpClick = async (phone: string) => {
+  const handleSendOtpClick = async (phone?: string) => {
+    form.clearErrors();
+
+    if (!phone) {
+      form.setError("phone", {
+        message: "Phone number is required.",
+      });
+      return;
+    }
+
     try {
       await sendOtpViaWhatsApp(phone);
       setResendOtpTimer(60);
-      form.clearErrors();
-    } catch (err: any) {
-      if (err.message === "No user found with this phone.") {
+    } catch (error: any) {
+      if (error?.message === "UserNotFound") {
         form.setError("phone", {
-          message:
-            "No user found with this phone number. Please check and try again.",
+          message: "No user found with this phone number.",
+        });
+      } else if (error?.message === "FailedToSendWhatsapp") {
+        form.setError("otp", {
+          message: "Failed to send passcode via Whatsapp.",
         });
       } else {
-        form.setError("otp", {
-          message: err.message || "Failed to send OTP via WhatsApp.",
+        form.setError("root", {
+          message: `Unknown error occured: ${error?.message}`,
         });
       }
     }
@@ -106,11 +146,13 @@ function PhoneLogin() {
     form.clearErrors();
     try {
       await signInFromLogin(data);
-    } catch (err: any) {
-      form.setError("root", {
-        message:
-          "The credentials you entered are incorrect. Please double-check your credentials and try again.",
-      });
+    } catch (error: any) {
+      if (error?.message == "CredentialsSignin") {
+        form.setError("root", {
+          message:
+            "Failed to login. Please double-check your credentials and try again.",
+        });
+      }
     }
   };
 
@@ -159,16 +201,7 @@ function PhoneLogin() {
                   type="button"
                   variant="outline"
                   className="w-auto bg-green-50 text-green-600 border-green-600"
-                  onClick={(e) => {
-                    const phone = form.getValues("phone");
-                    if (phone) {
-                      handleSendOtpClick(phone);
-                    } else {
-                      form.setError("phone", {
-                        message: "Phone number is required to send OTP.",
-                      });
-                    }
-                  }}
+                  onClick={() => handleSendOtpClick(form.getValues("phone"))}
                   disabled={resendOtpTimer > 0}
                 >
                   Send Code
@@ -184,7 +217,7 @@ function PhoneLogin() {
           )}
         />
 
-        <LoginButton />
+        <FormFooter form={form} />
       </form>
     </Form>
   );
@@ -197,42 +230,57 @@ function EmailLogin() {
   const { countdown: resendOtpTimer, setCountdown: setResendOtpTimer } =
     useCountdown(0);
 
-  const handleSendOtpClick = async (email: string) => {
+  const handleSendOtpClick = async (email?: string) => {
+    form.clearErrors();
+
+    if (!email) {
+      form.setError("email", {
+        message: "Email is required.",
+      });
+      return;
+    }
+
     try {
       await sendOtpViaEmail(email);
       setResendOtpTimer(60);
-      form.clearErrors();
-    } catch (err: any) {
-      if (err.message === "No user found with this email.") {
+    } catch (error: any) {
+      if (error?.message === "UserNotFound") {
         form.setError("email", {
-          message:
-            "No user found with this email address. Please check and try again.",
+          message: "No user found with this email address.",
+        });
+      } else if (error?.message === "FailedToSendEmail") {
+        form.setError("otp", {
+          message: "Failed to send passcode via email.",
         });
       } else {
         form.setError("root", {
-          message: err.message || "Failed to send OTP via email.",
+          message: `Unknown error occured: ${error?.message}`,
         });
       }
     }
   };
 
-  const onSubmit: SubmitHandler<LoginTypesEmail> = async (
-    data: LoginTypesEmail,
-  ) => {
+  const onSubmit = async (data: LoginTypesEmail) => {
     form.clearErrors();
     try {
-      await signInFromLogin({ email: data.email, otp: data.otp });
-    } catch (err: any) {
-      form.setError("root", {
-        message:
-          "The credentials you entered are incorrect. Please double-check your credentials and try again.",
-      });
+      await signInFromLogin(data);
+    } catch (error: any) {
+      if (error?.message == "CredentialsSignin") {
+        form.setError("root", {
+          message:
+            "Failed to login. Please double-check your credentials and try again.",
+        });
+      }
     }
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <p className="text-sm font-medium text-destructive text-center">
+          Email passcode login is currently disabled.
+        </p>
+
         <FormField
           control={form.control}
           name="email"
@@ -245,6 +293,7 @@ function EmailLogin() {
                   name={field.name}
                   type="email"
                   placeholder="patrick@haru.com"
+                  disabled
                 />
               </FormControl>
               <FormMessage />
@@ -260,7 +309,7 @@ function EmailLogin() {
               <FormLabel>One-Time Passcode</FormLabel>
               <div className="flex items-center gap-3">
                 <FormControl>
-                  <InputOTP maxLength={6} pattern="^[0-9]+$" {...field}>
+                  <InputOTP maxLength={6} pattern="^[0-9]+$" {...field} disabled>
                     <InputOTPGroup className="bg-background">
                       <InputOTPSlot index={0} />
                       <InputOTPSlot index={1} />
@@ -275,18 +324,8 @@ function EmailLogin() {
                   type="button"
                   variant="outline"
                   className="w-auto bg-blue-50 text-blue-600 border-blue-600"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    const email = form.getValues("email");
-                    if (email) {
-                      handleSendOtpClick(email);
-                    } else {
-                      form.setError("email", {
-                        message: "Email is required to send OTP.",
-                      });
-                    }
-                  }}
-                  disabled={resendOtpTimer > 0}
+                  onClick={() => handleSendOtpClick(form.getValues("email"))}
+                  disabled={true || resendOtpTimer > 0}
                 >
                   Send Code
                 </Button>
@@ -301,7 +340,7 @@ function EmailLogin() {
           )}
         />
 
-        <LoginButton />
+        <FormFooter form={form} disabled={true} />
       </form>
     </Form>
   );
@@ -312,17 +351,17 @@ function PasswordLogin() {
     resolver: zodResolver(LoginSchemaPassword),
   });
 
-  const onSubmit: SubmitHandler<LoginTypesPassword> = async (
-    data: LoginTypesPassword,
-  ) => {
+  const onSubmit = async (data: LoginTypesPassword) => {
     form.clearErrors();
     try {
       await signInFromLogin(data);
-    } catch (err: any) {
-      form.setError("root", {
-        message:
-          "The credentials you entered are incorrect. Please double-check your credentials and try again.",
-      });
+    } catch (error: any) {
+      if (error?.message == "CredentialsSignin") {
+        form.setError("root", {
+          message:
+            "Failed to login. Please double-check your credentials and try again.",
+        });
+      }
     }
   };
 
@@ -347,13 +386,12 @@ function PasswordLogin() {
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-xs">Password</FormLabel>
+              <FormLabel>Password</FormLabel>
               <FormControl>
                 <Input type="password" {...field} />
               </FormControl>
@@ -361,8 +399,7 @@ function PasswordLogin() {
             </FormItem>
           )}
         />
-
-        <LoginButton />
+        <FormFooter form={form} />
       </form>
     </Form>
   );
