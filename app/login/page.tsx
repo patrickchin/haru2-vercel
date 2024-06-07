@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { signInFromLogin } from "@/lib/actions";
 import { sendOtpViaWhatsApp, sendOtpViaEmail } from "@/lib/otp";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -53,6 +54,27 @@ const useCountdown = (initialValue: number) => {
 
   return { countdown, setCountdown };
 };
+
+function LoginButton() {
+  return (
+    <>
+      <div className="pt-3">
+        <Button type="submit" className="w-full">
+          Login
+        </Button>
+      </div>
+
+      <p className="text-center text-sm text-gray-600">
+        {" Don't have an account? "}
+        <Link href="/register" className="font-bold hover:underline">
+          {"Sign up"}
+        </Link>
+        {" for free."}
+      </p>
+    </>
+  );
+
+}
 
 function PhoneLogin() {
   const form = useForm<LoginTypesPhone>({
@@ -162,11 +184,7 @@ function PhoneLogin() {
           )}
         />
 
-        <div className="pt-3">
-          <Button type="submit" className="w-full">
-            Login
-          </Button>
-        </div>
+        <LoginButton />
       </form>
     </Form>
   );
@@ -283,11 +301,7 @@ function EmailLogin() {
           )}
         />
 
-        <div className="pt-3">
-          <Button type="submit" className="w-full">
-            Login
-          </Button>
-        </div>
+        <LoginButton />
       </form>
     </Form>
   );
@@ -348,11 +362,7 @@ function PasswordLogin() {
           )}
         />
 
-        <div className="pt-3">
-          <Button type="submit" className="w-full">
-            Login
-          </Button>
-        </div>
+        <LoginButton />
       </form>
     </Form>
   );
