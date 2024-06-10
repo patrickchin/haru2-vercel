@@ -155,10 +155,10 @@ function AddCommentFormInternal({
   taskId,
   setCurrentAttachments,
 }: {
-  projectId: number,
-  specId: number,
-  taskId: number,
-  setCurrentAttachments: Dispatch<SetStateAction<DesignFile[]>>,
+  projectId: number;
+  specId: number;
+  taskId: number;
+  setCurrentAttachments: Dispatch<SetStateAction<DesignFile[]>>;
 }) {
   const formStatus = useFormStatus();
   return (
@@ -215,12 +215,12 @@ function AddCommentForm({
   setAttachments,
   swrMutateComments,
 }: {
-  projectId: number,
-  specId: number,
-  taskId: number,
-  attachments: DesignFile[],
-  setAttachments: Dispatch<SetStateAction<DesignFile[]>>,
-  swrMutateComments: KeyedMutator<any>, // getting the Data type is hard
+  projectId: number;
+  specId: number;
+  taskId: number;
+  attachments: DesignFile[];
+  setAttachments: Dispatch<SetStateAction<DesignFile[]>>;
+  swrMutateComments: KeyedMutator<any>; // getting the Data type is hard
 }) {
   const attachmentIds: number[] = attachments.map((f) => f.id);
 
@@ -293,10 +293,10 @@ function UploadAttachment({
   taskId,
   setCurrentAttachments,
 }: {
-  projectId: number,
-  specId: number,
-  taskId: number,
-  setCurrentAttachments: Dispatch<SetStateAction<DesignFile[]>>,
+  projectId: number;
+  specId: number;
+  taskId: number;
+  setCurrentAttachments: Dispatch<SetStateAction<DesignFile[]>>;
 }) {
   const uploadFileInputRef = useRef(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -315,7 +315,14 @@ function UploadAttachment({
       const file = selectedFiles[i];
 
       const fileUrl = await uploadProjectFile(file, projectId, specId);
-      const newFile = await addTaskFile(taskId, file.type, file.name, file.size, fileUrl, projectId);
+      const newFile = await addTaskFile(
+        taskId,
+        file.type,
+        file.name,
+        file.size,
+        fileUrl,
+        projectId,
+      );
       if (newFile) setCurrentAttachments((l) => [...l, newFile as DesignFile]);
     }
 
@@ -359,7 +366,15 @@ function UploadAttachment({
   );
 }
 
-export default function TaskCommentsClient({ projectId, specId, taskId }: { projectId: number, specId: number, taskId: number }) {
+export default function TaskCommentsClient({
+  projectId,
+  specId,
+  taskId,
+}: {
+  projectId: number;
+  specId: number;
+  taskId: number;
+}) {
   const { data, error, mutate } = useSWR(
     `/api/task/${taskId}`, // api route doesn't really exist
     () => {

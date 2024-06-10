@@ -26,11 +26,11 @@ function SettingsPage() {
 
     assert(targetFiles.length >= 1);
     const file = targetFiles.item(0);
-    
+
     if (!file) {
       return;
     }
-    
+
     const response = await fetch("/api/upload/avatar", {
       method: "POST",
       headers: {
@@ -38,20 +38,20 @@ function SettingsPage() {
       },
       body: JSON.stringify({ filename: file.name, contentType: file.type }),
     });
-  
+
     const { url, fileUrl, fields } = await response.json();
-  
+
     const formData = new FormData();
     Object.entries(fields).forEach(([key, value]) => {
       formData.append(key, value as string);
     });
     formData.append("file", file);
-  
+
     const uploadResponse = await fetch(url, {
       method: "POST",
       body: formData,
     });
-  
+
     if (!uploadResponse.ok) {
       throw new Error("Failed to upload file");
     }

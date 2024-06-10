@@ -29,7 +29,12 @@ export async function uploadProjectFile(
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ filename: file.name, contentType: file.type, projectId, specId }),
+    body: JSON.stringify({
+      filename: file.name,
+      contentType: file.type,
+      projectId,
+      specId,
+    }),
   });
 
   const { url, fileUrl, fields } = await response.json();

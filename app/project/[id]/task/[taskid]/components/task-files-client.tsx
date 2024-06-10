@@ -31,10 +31,10 @@ export default function TaskFilesClient({
   taskId,
   files,
 }: {
-  projectId: number,
-  specId: number,
-  taskId: number,
-  files: DesignFile[],
+  projectId: number;
+  specId: number;
+  taskId: number;
+  files: DesignFile[];
 }) {
   const uploadFileInputRef = useRef(null);
   const [showDetailed, setShowDetailed] = useState(false);
@@ -55,7 +55,14 @@ export default function TaskFilesClient({
       const file = selectedFiles[i];
 
       const fileUrl = await uploadProjectFile(file, projectId, specId);
-      await addTaskFile(taskId, file.type, file.name, file.size, fileUrl, projectId);
+      await addTaskFile(
+        taskId,
+        file.type,
+        file.name,
+        file.size,
+        fileUrl,
+        projectId,
+      );
     }
 
     const files = await getTaskFiles(taskId);

@@ -386,7 +386,6 @@ export async function addTaskFile(
 }
 
 export async function updateAvatarForUser(fileUrl: string) {
-
   const session = await auth();
   if (!session?.user?.id) return;
   const userId = Number(session.user.id);
@@ -395,7 +394,7 @@ export async function updateAvatarForUser(fileUrl: string) {
     const { initial, updated } = await db.updateUserAvatar(userId, {
       avatarUrl: fileUrl,
     });
-  
+
     if (initial && initial.avatarUrl) {
       const key = new URL(initial.avatarUrl).pathname.substring(1);
       await deleteFileFromS3(key);
