@@ -5,6 +5,7 @@ import * as Schemas from "@/drizzle/schema";
 import { signIn } from "@/lib/auth";
 import { auth } from "./auth";
 import * as blob from "@vercel/blob";
+import { deleteFileFromS3 } from "@/lib/s3";
 import {
   DesignTaskSpec,
   NewProjectFormSchema,
@@ -366,6 +367,7 @@ export async function addTaskFile(
   name: string,
   size: number,
   fileUrl: string,
+  projectId: number,
 ) {
   const session = await auth();
   if (!session?.user?.id) return;
@@ -378,62 +380,31 @@ export async function addTaskFile(
     filesize: size,
     url: fileUrl,
     uploaderid: userId,
-    // projectid: ?,
+    projectid: projectId,
     // commentid: ?,
   });
 }
 
-export async function addTaskFileReturnAll(
-  taskId: number,
-  type: string,
-  name: string,
-  size: number,
-  url: string,
-) {
-  // no auth because done in addTaskFile
-  await addTaskFile(taskId, type, name, size, url);
-  return db.getTaskFiles(taskId);
-}
-
-export async function updateAvatarForUser(data: FormData) {
-  const file = data.get("file") as File;
-
-  if (!file) {
-    console.error("file not correcty uploaded");
-    return;
-  }
-  if (file.size > 250000) {
-    console.error("file size is too big", file);
-    return;
-  }
+export async function updateAvatarForUser(fileUrl: string) {
 
   const session = await auth();
-  if (!session?.user) {
-    console.log("No user session found");
-    return;
+  if (!session?.user?.id) return;
+  const userId = Number(session.user.id);
+
+  try {
+    const { initial, updated } = await db.updateUserAvatar(userId, {
+      avatarUrl: fileUrl,
+    });
+  
+    if (initial && initial.avatarUrl) {
+      const key = new URL(initial.avatarUrl).pathname.substring(1);
+      await deleteFileFromS3(key);
+    }
+    return updated;
+  } catch (error) {
+    console.error("Failed to update avatar:", error);
+    throw error;
   }
-
-  const userId = Number(session.user.id); // error?
-  if (isNaN(userId)) {
-    console.error("Invalid user ID");
-    return;
-  }
-
-  const fileBytes = await file.arrayBuffer();
-
-  const blobResult = await blob.put(`user/${userId}/${file.name}`, fileBytes, {
-    access: "public",
-  });
-
-  //Start a database transaction
-  const { initial, updated } = await db.updateUserAvatar(userId, {
-    avatarUrl: blobResult.url,
-  });
-
-  if (initial && initial.avatarUrl) {
-    await blob.del(initial.avatarUrl);
-  }
-  return updated;
 }
 
 export async function getTaskFiles(taskId: number) {

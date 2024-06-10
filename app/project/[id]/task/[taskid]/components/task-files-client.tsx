@@ -23,14 +23,18 @@ import {
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import FileTypeToIcon from "@/components/filetype-icon";
-import { cn } from "@/lib/utils";
+import { cn, uploadProjectFile } from "@/lib/utils";
 
 export default function TaskFilesClient({
+  projectId,
+  specId,
   taskId,
   files,
 }: {
-  taskId: number;
-  files: DesignFile[];
+  projectId: number,
+  specId: number,
+  taskId: number,
+  files: DesignFile[],
 }) {
   const uploadFileInputRef = useRef(null);
   const [showDetailed, setShowDetailed] = useState(false);
@@ -43,36 +47,16 @@ export default function TaskFilesClient({
 
     setIsUploading(true);
 
-    assert(targetFiles.length == 1);
-    const file = targetFiles.item(0);
-    assert(file);
+    assert(targetFiles.length >= 1);
 
-    const response = await fetch("/api/upload", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ filename: file.name, contentType: file.type }),
-    });
+    const selectedFiles = Array.from(targetFiles);
 
-    const { url, fileUrl, fields } = await response.json();
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const file = selectedFiles[i];
 
-    const formData = new FormData();
-    Object.entries(fields).forEach(([key, value]) => {
-      formData.append(key, value as string);
-    });
-    formData.append("file", file);
-
-    const uploadResponse = await fetch(url, {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!uploadResponse.ok) {
-      throw new Error("Failed to upload file");
+      const fileUrl = await uploadProjectFile(file, projectId, specId);
+      await addTaskFile(taskId, file.type, file.name, file.size, fileUrl, projectId);
     }
-
-    await addTaskFile(taskId, file.type, file.name, file.size, fileUrl);
 
     const files = await getTaskFiles(taskId);
     if (files) setUpdatedFiles(files);
@@ -80,8 +64,6 @@ export default function TaskFilesClient({
     e.target.value = "";
     setIsUploading(false);
   }
-
-  // TODO group files into groups of versions
 
   return (
     <Card>
@@ -94,6 +76,7 @@ export default function TaskFilesClient({
           ref={uploadFileInputRef}
           onChange={onChangeUploadFile}
           disabled={isUploading}
+          multiple
         />
         <Button
           asChild

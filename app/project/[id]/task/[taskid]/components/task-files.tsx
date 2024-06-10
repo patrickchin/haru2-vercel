@@ -10,20 +10,20 @@ function TaskFilesSkeleton() {
   return <div>loading comments ...</div>;
 }
 
-async function TaskFilesFetch({ taskId }: { taskId: number }) {
+async function TaskFilesFetch({ projectId, specId, taskId }: { projectId: number, specId: number, taskId: number }) {
   const files: DesignFile[] | undefined = await getTaskFiles(taskId);
   if (!files) {
     console.log("task: can't find files", taskId);
     notFound();
   }
 
-  return <TaskFilesClient taskId={taskId} files={files} />;
+  return <TaskFilesClient projectId={projectId} specId={specId} taskId={taskId} files={files} />;
 }
 
-export default async function TaskFiles({ taskId }: { taskId: number }) {
+export default async function TaskFiles({ projectId, specId, taskId }: { projectId: number, specId: number, taskId: number }) {
   return (
     <Suspense fallback={<TaskFilesSkeleton />}>
-      <TaskFilesFetch taskId={taskId} />
+      <TaskFilesFetch projectId={projectId} specId={specId} taskId={taskId} />
     </Suspense>
   );
 }

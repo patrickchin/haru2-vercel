@@ -35,7 +35,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DesignUserAvatar } from "@/components/user-avatar";
 
-import { cn } from "@/lib/utils";
+import { cn, uploadProjectFile } from "@/lib/utils";
 import { DesignFile, DesignTaskComment } from "@/lib/types";
 import {
   addTaskComment,
@@ -150,11 +150,15 @@ function CommentsList({
 }
 
 function AddCommentFormInternal({
+  projectId,
+  specId,
   taskId,
   setCurrentAttachments,
 }: {
-  taskId: number;
-  setCurrentAttachments: Dispatch<SetStateAction<DesignFile[]>>;
+  projectId: number,
+  specId: number,
+  taskId: number,
+  setCurrentAttachments: Dispatch<SetStateAction<DesignFile[]>>,
 }) {
   const formStatus = useFormStatus();
   return (
@@ -167,6 +171,8 @@ function AddCommentFormInternal({
       />
       <div className="flex justify-end gap-4">
         <UploadAttachment
+          projectId={projectId}
+          specId={specId}
           taskId={taskId}
           setCurrentAttachments={setCurrentAttachments}
         />
@@ -202,15 +208,19 @@ function AddCommentFormInternal({
 }
 
 function AddCommentForm({
+  projectId,
+  specId,
   taskId,
   attachments,
   setAttachments,
   swrMutateComments,
 }: {
-  taskId: number;
-  attachments: DesignFile[];
-  setAttachments: Dispatch<SetStateAction<DesignFile[]>>;
-  swrMutateComments: KeyedMutator<any>; // getting the Data type is hard
+  projectId: number,
+  specId: number,
+  taskId: number,
+  attachments: DesignFile[],
+  setAttachments: Dispatch<SetStateAction<DesignFile[]>>,
+  swrMutateComments: KeyedMutator<any>, // getting the Data type is hard
 }) {
   const attachmentIds: number[] = attachments.map((f) => f.id);
 
@@ -234,6 +244,8 @@ function AddCommentForm({
   return (
     <form onSubmit={formSubmitNewComment} className="flex flex-col gap-4">
       <AddCommentFormInternal
+        projectId={projectId}
+        specId={specId}
         taskId={taskId}
         setCurrentAttachments={setAttachments}
       />
@@ -276,11 +288,15 @@ function AttachmentList({
 }
 
 function UploadAttachment({
+  projectId,
+  specId,
   taskId,
   setCurrentAttachments,
 }: {
-  taskId: number;
-  setCurrentAttachments: Dispatch<SetStateAction<DesignFile[]>>;
+  projectId: number,
+  specId: number,
+  taskId: number,
+  setCurrentAttachments: Dispatch<SetStateAction<DesignFile[]>>,
 }) {
   const uploadFileInputRef = useRef(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -291,44 +307,17 @@ function UploadAttachment({
 
     setIsUploading(true);
 
-    assert(targetFiles.length == 1);
-    const file = targetFiles.item(0);
-    assert(file);
+    assert(targetFiles.length >= 1);
 
-    const response = await fetch("/api/upload", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ filename: file.name, contentType: file.type }),
-    });
+    const selectedFiles = Array.from(targetFiles);
 
-    const { url, fileUrl, fields } = await response.json();
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const file = selectedFiles[i];
 
-    const formData = new FormData();
-    Object.entries(fields).forEach(([key, value]) => {
-      formData.append(key, value as string);
-    });
-    formData.append("file", file);
-
-    const uploadResponse = await fetch(url, {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!uploadResponse.ok) {
-      throw new Error("Failed to upload file");
+      const fileUrl = await uploadProjectFile(file, projectId, specId);
+      const newFile = await addTaskFile(taskId, file.type, file.name, file.size, fileUrl, projectId);
+      if (newFile) setCurrentAttachments((l) => [...l, newFile as DesignFile]);
     }
-
-    const newFile = await addTaskFile(
-      taskId,
-      file.type,
-      file.name,
-      file.size,
-      fileUrl,
-    );
-
-    if (newFile) setCurrentAttachments((l) => [...l, newFile as DesignFile]);
 
     e.target.value = "";
     setIsUploading(false);
@@ -343,6 +332,7 @@ function UploadAttachment({
         ref={uploadFileInputRef}
         onChange={onChangeUploadFile}
         disabled={isUploading}
+        multiple
       />
       <Button asChild type="button" variant="secondary" disabled={isUploading}>
         <Label
@@ -369,7 +359,7 @@ function UploadAttachment({
   );
 }
 
-export default function TaskCommentsClient({ taskId }: { taskId: number }) {
+export default function TaskCommentsClient({ projectId, specId, taskId }: { projectId: number, specId: number, taskId: number }) {
   const { data, error, mutate } = useSWR(
     `/api/task/${taskId}`, // api route doesn't really exist
     () => {
@@ -399,6 +389,8 @@ export default function TaskCommentsClient({ taskId }: { taskId: number }) {
         />
 
         <AddCommentForm
+          projectId={projectId}
+          specId={specId}
           taskId={taskId}
           attachments={currentAttachments}
           setAttachments={setCurrentAttachments}

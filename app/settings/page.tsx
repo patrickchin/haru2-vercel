@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
+import assert from "assert";
 import { useSession } from "next-auth/react";
 import { updateAvatarForUser } from "@/lib/actions";
 
@@ -11,46 +12,61 @@ import { Label } from "@/components/ui/label";
 
 import { LucideLoader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CurrentUserAvatar, } from "@/components/user-avatar";
+import { CurrentUserAvatar } from "@/components/user-avatar";
 
 function SettingsPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isUploading, setUpLoading] = useState(false);
 
-  const handleFileChange = async (event: any) => {
-    const file = event.target.files[0];
-    if (!file) {
-      setErrorMessage("Please select a file.");
-      return;
-    }
-
-    if (file.size > 250000) {
-      setErrorMessage(
-        "File size is too large. Please upload a file smaller than 250 KB.",
-      );
-      return;
-    }
-
-    setErrorMessage("");
-    const data = new FormData();
-    data.set("file", file);
+  async function onChangeAvatar(e: ChangeEvent<HTMLInputElement>) {
+    const targetFiles = e.currentTarget.files;
+    if (!targetFiles || targetFiles.length <= 0) return;
 
     setUpLoading(true);
-    const updatedUser = await updateAvatarForUser(data);
+
+    assert(targetFiles.length >= 1);
+    const file = targetFiles.item(0);
+    
+    if (!file) {
+      return;
+    }
+    
+    const response = await fetch("/api/upload/avatar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ filename: file.name, contentType: file.type }),
+    });
+  
+    const { url, fileUrl, fields } = await response.json();
+  
+    const formData = new FormData();
+    Object.entries(fields).forEach(([key, value]) => {
+      formData.append(key, value as string);
+    });
+    formData.append("file", file);
+  
+    const uploadResponse = await fetch(url, {
+      method: "POST",
+      body: formData,
+    });
+  
+    if (!uploadResponse.ok) {
+      throw new Error("Failed to upload file");
+    }
+
+    const updatedUser = await updateAvatarForUser(fileUrl);
+
     if (updatedUser) {
-      // This update doesn't really work
-      // const newSession = await updateSession({ user: { image: "update" } });
-      // const newSession = await updateSession({ user: { image: updatedUser.avatarUrl } });
-      // await updateSession();
+      window.location.reload();
     } else {
       setErrorMessage("Failed to update the avatar. Please try again.");
     }
-    setUpLoading(false);
 
-    // this doens't do a full refresh
-    // router.refresh();
-    location.reload();
-  };
+    e.target.value = "";
+    setUpLoading(false);
+  }
 
   return (
     <>
@@ -63,7 +79,7 @@ function SettingsPage() {
             type="file"
             className="hidden"
             id="photo"
-            onChange={handleFileChange}
+            onChange={onChangeAvatar}
             accept="image/*"
             disabled={isUploading}
           />
@@ -78,9 +94,7 @@ function SettingsPage() {
           <Button asChild variant="outline">
             <Label htmlFor="photo">
               Select New Photo
-              {isUploading && (
-                <LucideLoader2 className="animate-spin h-4" />
-              )}
+              {isUploading && <LucideLoader2 className="animate-spin h-4" />}
             </Label>
           </Button>
         </CardContent>

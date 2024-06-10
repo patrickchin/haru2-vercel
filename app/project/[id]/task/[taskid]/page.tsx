@@ -53,8 +53,8 @@ async function TaskPage({
   projectId,
   specId,
 }: {
-  projectId: number;
-  specId: number;
+  projectId: number,
+  specId: number,
 }) {
   const [project, taskSpec, task]: [
     DesignProject | undefined,
@@ -65,6 +65,8 @@ async function TaskPage({
     getTaskSpec(specId),
     getProjectTask(projectId, specId),
   ]);
+
+  console.log("projectId:", projectId, "specId:", specId);
 
   // const project: DesignProject | undefined = await getProject(projectId);
   // const taskSpec: DesignTaskSpec | undefined = await getTaskSpec(specId);
@@ -150,8 +152,8 @@ async function TaskPage({
         </div>
       )}
 
-      <TaskFiles taskId={task.id} />
-      <TaskComments taskId={task.id} />
+      <TaskFiles projectId={project.id} specId={specId} taskId={task.id} />
+      <TaskComments projectId={project.id} specId={specId} taskId={task.id} />
     </section>
   );
 }
@@ -159,7 +161,7 @@ async function TaskPage({
 export default function Page({
   params,
 }: {
-  params: { id: string; taskid: string };
+  params: { id: string, taskid: string },
 }) {
   const projectId: number = parseInt(params.id);
   if (Number.isNaN(projectId)) notFound();
