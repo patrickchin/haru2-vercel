@@ -15,16 +15,18 @@ import {
 } from "./forms";
 import { redirect } from "next/navigation";
 import { defaulTaskSpecs } from "content/tasks";
-import { CredentialsSignin } from "next-auth";
+import { AuthError } from "next-auth";
 import assert from "assert";
+import { CredentialsSigninError, UnknownError } from "./errors";
 
 const VERCEL_BLOB_FAKE_FILES = false;
 
 export async function registerUser(data: RegisterSchemaType) {
   try {
     await db.createUserIfNotExists(data);
-  } catch (error) {
-    throw new Error("CreateUserError");
+  } catch (error: unknown) {
+    console.log(`Failed to register user ${error}`);
+    return UnknownError;
   }
 }
 
@@ -37,10 +39,12 @@ export async function signInFromLogin(
       redirectTo: "/",
     });
   } catch (error: unknown) {
-    if (error instanceof CredentialsSignin) {
-      throw new Error("CredentialsSignin");
+    if (error instanceof AuthError) {
+      // is there any need to distinguish further?
+      // e.g. CredentialsSignin error
+      return CredentialsSigninError;
     } else {
-      throw error;
+      return UnknownError;
     }
   }
 }

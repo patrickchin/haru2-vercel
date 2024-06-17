@@ -24,11 +24,12 @@ export default function Page() {
   });
 
   const onSubmit: SubmitHandler<RegisterSchemaType> = async (data) => {
-    try {
-      await registerUser(data);
+    const ret = await registerUser(data);
+    if (!ret) {
       router.push("/login");
-    } catch (error) {
-      console.error("Error trying to register user: ", error);
+    } else if (ret?.error) {
+      // TODO
+      console.error("Error trying to register user");
     }
   };
 

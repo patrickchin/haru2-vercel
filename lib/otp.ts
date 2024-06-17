@@ -5,6 +5,7 @@ import * as db from "./db";
 import crypto from "crypto";
 import { saveOtp, verifyOtp } from "./db";
 import { sendEmail } from "./emailService";
+import { FailedToSendEmailOTP, FailedToSendWhatsappOTP } from "./errors";
 
 // Vonage configuration
 const applicationId = process.env.VONAGE_APPLICATION_ID as string;
@@ -21,10 +22,11 @@ function generateOTP(): string {
 }
 
 // Function to send OTP via WhatsApp
-export async function sendOtpViaWhatsApp(phone: string): Promise<void> {
+export async function sendOtpViaWhatsApp(phone: string) {
   const user = await db.getUserAccountByPhone(phone);
   if (user.length === 0) {
-    throw new Error("UserNotFound");
+    console.log(`Phone number ${phone} not registered`);
+    return FailedToSendWhatsappOTP;
   }
 
   const otp = generateOTP();
@@ -71,7 +73,11 @@ export async function sendOtpViaWhatsApp(phone: string): Promise<void> {
     },
   };
 
-  if (!apiUrl) throw new Error("ServerConfigurationError");
+  if (!apiUrl) {
+    console.error(`vonage api url missing ${apiUrl}`);
+    // or unknown?
+    return FailedToSendWhatsappOTP;
+  }
 
   const response = await fetch(apiUrl, {
     method: "POST",
@@ -84,15 +90,16 @@ export async function sendOtpViaWhatsApp(phone: string): Promise<void> {
   if (!response.ok) {
     const errorData = await response.json();
     console.error(errorData);
-    throw new Error("FailedToSendWhatsapp");
+    return FailedToSendWhatsappOTP;
   }
 }
 
 // Function to send OTP via email
-export async function sendOtpViaEmail(email: string): Promise<void> {
+export async function sendOtpViaEmail(email: string) {
   const user = await db.getUserAccountByEmail(email);
   if (user.length === 0) {
-    throw new Error("UserNotFound");
+    console.log(`Email number ${email} not registered`);
+    return FailedToSendEmailOTP;
   }
 
   const otp = generateOTP();
@@ -106,13 +113,8 @@ export async function sendOtpViaEmail(email: string): Promise<void> {
   try {
     await sendEmail(email, subject, text);
   } catch (error) {
-    if (error instanceof Error) {
-      console.error(error.message);
-      throw new Error("FailedToSendEmail");
-    } else {
-      console.error("An unknown error occurred: ", error);
-      throw new Error("Unknown");
-    }
+    console.error(`Failed to send email: ${error}`);
+    return FailedToSendEmailOTP;
   }
 }
 

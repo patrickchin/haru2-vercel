@@ -42,6 +42,7 @@ import {
 import { LucideLoader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCountdown } from "@/lib/hooks";
+import { CredentialsSigninError, FailedToSendEmailOTP, FailedToSendWhatsappOTP, UnknownError } from "@/lib/errors";
 
 function FormFooter({
   form,
@@ -53,7 +54,7 @@ function FormFooter({
   return (
     <>
       {form.formState.errors.root && (
-        <p className="text-sm font-medium text-destructive">
+        <p className="text-sm font-medium text-destructive whitespace-pre-line">
           {form.formState.errors.root?.message}
         </p>
       )}
@@ -96,43 +97,29 @@ function PhoneLogin() {
     form.clearErrors();
 
     if (!phone) {
-      form.setError("phone", {
-        message: "Phone number is required.",
-      });
+      form.setError("phone", { message: "Phone number is required." });
       return;
     }
 
-    try {
-      await sendOtpViaWhatsApp(phone);
+    const ret = await sendOtpViaWhatsApp(phone);
+    if (!ret) {
       setResendOtpTimer(60);
-    } catch (error: any) {
-      if (error?.message === "UserNotFound") {
-        form.setError("phone", {
-          message: "No user found with this phone number.",
-        });
-      } else if (error?.message === "FailedToSendWhatsapp") {
-        form.setError("otp", {
-          message: "Failed to send passcode via Whatsapp.",
-        });
-      } else {
-        form.setError("root", {
-          message: `Unknown error occured: ${error?.message}`,
-        });
-      }
+    } else if (ret?.error === FailedToSendWhatsappOTP.error) {
+      form.setError("otp", {
+        message: "Failed to send passcode via Whatsapp.",
+      });
     }
   };
 
   const onSubmit = async (data: LoginTypesPhone) => {
     form.clearErrors();
-    try {
-      await signInFromLogin(data);
-    } catch (error: any) {
-      if (true || error?.message == "CredentialsSignin") {
-        form.setError("root", {
-          message:
-            "Failed to login. Please double-check your credentials and try again.",
-        });
-      }
+    const ret = await signInFromLogin(data);
+    if (ret?.error === CredentialsSigninError.error) {
+      form.setError("root", {
+        message: "Failed to login.\nPlease check your passcode and try again.",
+      });
+    } else if (ret?.error === UnknownError.error) {
+      form.setError("root", { message: "Failed to login. Unknown Error" });
     }
   };
 
@@ -214,43 +201,29 @@ function EmailLogin() {
     form.clearErrors();
 
     if (!email) {
-      form.setError("email", {
-        message: "Email is required.",
-      });
+      form.setError("email", { message: "Email is required." });
       return;
     }
 
-    try {
-      await sendOtpViaEmail(email);
+    const ret = await sendOtpViaEmail(email);
+    if (!ret) {
       setResendOtpTimer(60);
-    } catch (error: any) {
-      if (error?.message === "UserNotFound") {
-        form.setError("email", {
-          message: "No user found with this email address.",
-        });
-      } else if (error?.message === "FailedToSendEmail") {
-        form.setError("otp", {
-          message: "Failed to send passcode via email.",
-        });
-      } else {
-        form.setError("root", {
-          message: `Unknown error occured: ${error?.message}`,
-        });
-      }
+    } else if (ret?.error === FailedToSendEmailOTP.error) {
+      form.setError("otp", {
+        message: "Failed to send passcode via Whatsapp.",
+      });
     }
   };
 
   const onSubmit = async (data: LoginTypesEmail) => {
     form.clearErrors();
-    try {
-      await signInFromLogin(data);
-    } catch (error: any) {
-      if (true || error?.message == "CredentialsSignin") {
-        form.setError("root", {
-          message:
-            "Failed to login. Please double-check your credentials and try again.",
-        });
-      }
+    const ret = await signInFromLogin(data);
+    if (ret?.error === CredentialsSigninError.error) {
+      form.setError("root", {
+        message: "Failed to login.\nPlease check your passcode and try again.",
+      });
+    } else if (ret?.error === UnknownError.error) {
+      form.setError("root", { message: "Failed to login. Unknown Error" });
     }
   };
 
@@ -333,16 +306,14 @@ function PasswordLogin() {
 
   const onSubmit = async (data: LoginTypesPassword) => {
     form.clearErrors();
-    try {
-      await signInFromLogin(data);
-    } catch (error: any) {
-      // TODO works locally but not in production!?
-      if (true || error?.message == "CredentialsSignin") {
-        form.setError("root", {
-          message:
-            "Failed to login. Please double-check your credentials and try again.",
-        });
-      }
+    const ret = await signInFromLogin(data);
+    if (ret?.error === CredentialsSigninError.error) {
+      form.setError("root", {
+        message:
+          "Failed to login.\nPlease check your credentials and try again.",
+      });
+    } else if (ret?.error === UnknownError.error) {
+      form.setError("root", { message: "Failed to login. Unknown Error" });
     }
   };
 
