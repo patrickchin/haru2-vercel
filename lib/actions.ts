@@ -44,7 +44,7 @@ export async function signInFromLogin(
       // e.g. CredentialsSignin error
       return CredentialsSigninError;
     } else {
-      return UnknownError;
+      throw error;
     }
   }
 }
