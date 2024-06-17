@@ -5,35 +5,62 @@ import * as Schemas from "@/drizzle/schema";
 import { signIn } from "@/lib/auth";
 import { auth } from "./auth";
 import * as blob from "@vercel/blob";
+import { DesignTaskSpec } from "./types";
 import {
-  DesignTaskSpec,
+  LoginTypesEmail,
+  LoginTypesPassword,
+  LoginTypesPhone,
   NewProjectFormSchema,
+  RegisterSchema,
   RegisterSchemaType,
-} from "./types";
+} from "./forms";
 import { redirect } from "next/navigation";
 import { defaulTaskSpecs } from "content/tasks";
+import { AuthError } from "next-auth";
 import assert from "assert";
+import { CredentialsSigninError, InvalidInputError, UnknownError } from "./errors";
 
 const VERCEL_BLOB_FAKE_FILES = false;
 
 export async function registerUser(data: RegisterSchemaType) {
+
+  const parsed = RegisterSchema.safeParse(data);
+  if (!parsed.success) {
+    return InvalidInputError;
+  }
+
   try {
     await db.createUserIfNotExists(data);
-  } catch (error) {
-    throw error;
+  } catch (error: unknown) {
+    console.log(`Failed to register user ${error}`);
+    return UnknownError;
   }
 }
 
-export async function signInFromLogin(data: any) {
-  // TODO validate
-  return await signIn("credentials", data);
+export async function signInFromLogin(
+  data: LoginTypesPhone | LoginTypesEmail | LoginTypesPassword,
+) {
+  try {
+    return await signIn("credentials", {
+      ...data,
+      redirectTo: "/",
+    });
+  } catch (error: unknown) {
+    if (error instanceof AuthError) {
+      // is there any need to distinguish further?
+      // e.g. CredentialsSignin error
+      return CredentialsSigninError;
+    } else {
+      throw error;
+    }
+  }
 }
 
 export async function submitProjectForm2(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) {
     console.log("Invalid session on project form submit");
-    return null;
+    return;
   }
   const userId = Number(session.user.id); // error?
 
@@ -44,7 +71,7 @@ export async function submitProjectForm2(formData: FormData) {
   const parsed = NewProjectFormSchema.safeParse(formObj);
   if (!parsed.success) {
     console.error("submitProjectForm validation error", parsed.error);
-    return null;
+    return;
   }
 
   // not the prettiest ...
@@ -157,13 +184,13 @@ export async function updateProjectTitle(projectId: number, newTitle: string) {
   const session = await auth();
   if (!session?.user?.id) {
     console.error("Invalid session on project form submit");
-    return null;
+    return;
   }
 
   const userId = Number(session.user.id);
   if (isNaN(userId)) {
     console.error("User ID is not a number:", session.user.id);
-    return null;
+    return;
   }
 
   const updatedProject = await db.updateProjectFields(projectId, {
@@ -178,7 +205,8 @@ export async function updateProjectTitle(projectId: number, newTitle: string) {
 
 export async function getCurrentUsersProjects() {
   const session = await auth();
-  if (session?.user?.id) // linter is stupid
+  if (session?.user?.id)
+    // linter is stupid
     return db.getUserProjects(parseInt(session.user.id));
 }
 
@@ -354,10 +382,7 @@ export async function addTaskComment(
   return getTaskCommentsAndFiles(taskId);
 }
 
-export async function addTaskFile(
-  taskId: number,
-  data: FormData,
-) {
+export async function addTaskFile(taskId: number, data: FormData) {
   const file = data.get("file") as File;
   if (!file) {
     console.log("addTaskFile file not correcty uploaded");
@@ -396,10 +421,7 @@ export async function addTaskFile(
   return editedFile;
 }
 
-export async function addTaskFileReturnAll(
-  taskId: number,
-  data: FormData,
-) {
+export async function addTaskFileReturnAll(taskId: number, data: FormData) {
   // no auth because done in addTaskFile
   await addTaskFile(taskId, data);
   return db.getFilesForTask(taskId);

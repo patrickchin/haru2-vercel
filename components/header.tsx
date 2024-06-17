@@ -44,7 +44,7 @@ function UserNav({ user }: { user?: User }) {
   const signOutAction = async () => {
     await signOut({
       redirect: true,
-      callbackUrl: "/",
+      callbackUrl: "/login",
     });
   };
 

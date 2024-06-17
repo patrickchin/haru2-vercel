@@ -1,19 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { signInFromLogin } from "@/lib/actions";
-import { sendOtpViaWhatsApp, sendOtpViaEmail } from "@/lib/otp";
-import { UseFormReturn, useForm } from "react-hook-form";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  LoginSchemaPhone,
-  LoginSchemaEmail,
-  LoginSchemaPassword,
-  LoginTypesEmail,
-  LoginTypesPassword,
-  LoginTypesPhone,
-} from "@/lib/forms";
 
 import {
   Card,
@@ -31,106 +20,65 @@ import {
 } from "@/components/ui/input-otp";
 import { Button } from "@/components/ui/button";
 import { SimpleLayout } from "@/components/page-layouts";
+import { registerZodSchemas } from "@/lib/forms";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { LucideLoader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useCountdown } from "@/lib/hooks";
-import {
-  CredentialsSigninError,
-  FailedToSendEmailOTP,
-  FailedToSendWhatsappOTP,
-  UnknownError,
-} from "@/lib/errors";
+import Link from "next/link";
 
-function FormFooter({
-  form,
-  disabled,
-}: {
-  form: UseFormReturn<any>;
-  disabled?: boolean;
-}) {
+function CreateAccountButton() {
   return (
-    <>
-      {form.formState.errors.root && (
-        <p className="text-sm font-medium text-destructive whitespace-pre-line">
-          {form.formState.errors.root?.message}
-        </p>
-      )}
-
-      <div className="pt-3">
-        <Button
-          type="submit"
-          className="w-full flex gap-2"
-          disabled={disabled || form.formState.isSubmitting}
-        >
-          Login
-          <LucideLoader2
-            className={cn(
-              "animate-spin w-4 h-4",
-              form.formState.isSubmitting ? "" : "hidden",
-            )}
-          />
-        </Button>
-      </div>
+    <div className="pt-3 space-y-4">
+      <Button type="submit" className="w-full">
+        Create an Account
+      </Button>
 
       <p className="text-center text-sm text-gray-600">
-        {" Don't have an account? "}
-        <Link href="/register" className="font-bold hover:underline">
-          {"Sign up"}
+        {"Already have an account? "}
+        <Link href="/login" className="font-bold hover:underline">
+          {"Login"}
         </Link>
-        {" for free."}
+        {" instead."}
       </p>
-    </>
+    </div>
   );
 }
 
-function PhoneLogin() {
-  const form = useForm<LoginTypesPhone>({
-    resolver: zodResolver(LoginSchemaPhone),
+function PhoneRegister() {
+  const form = useForm({
+    resolver: zodResolver(registerZodSchemas.phone),
   });
-  const { countdown: resendOtpTimer, setCountdown: setResendOtpTimer } =
-    useCountdown(0);
-
-  const handleSendOtpClick = async (phone?: string) => {
-    form.clearErrors();
-
-    if (!phone) {
-      form.setError("phone", { message: "Phone number is required." });
-      return;
-    }
-
-    const ret = await sendOtpViaWhatsApp(phone);
-    if (!ret) {
-      setResendOtpTimer(60);
-    } else if (ret?.error === FailedToSendWhatsappOTP.error) {
-      form.setError("otp", {
-        message: "Failed to send passcode via Whatsapp.",
-      });
-    }
+  const onSubmit = (data: any) => {
+    console.log(data);
   };
-
-  const onSubmit = async (data: LoginTypesPhone) => {
-    form.clearErrors();
-    const ret = await signInFromLogin(data);
-    if (ret?.error === CredentialsSigninError.error) {
-      form.setError("root", {
-        message: "Failed to login.\nPlease check your passcode and try again.",
-      });
-    } else if (ret?.error === UnknownError.error) {
-      form.setError("root", { message: "Failed to login. Unknown Error" });
-    }
-  };
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input
+                  onChange={field.onChange}
+                  name={field.name}
+                  type="text"
+                  placeholder="Your Name"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="phone"
@@ -173,71 +121,53 @@ function PhoneLogin() {
                   type="button"
                   variant="outline"
                   className="w-auto bg-green-50 text-green-600 border-green-600"
-                  onClick={() => handleSendOtpClick(form.getValues("phone"))}
-                  disabled={resendOtpTimer > 0}
                 >
                   Send Code
                 </Button>
               </div>
-              {resendOtpTimer > 0 && (
-                <p className="text-xs text-gray-600 mt-2">
-                  Resend OTP in {resendOtpTimer} seconds
-                </p>
-              )}
+              <FormDescription className="hidden bg-background px-4 py-2 rounded-md text-sm border">
+                Please enter the one-time password sent to your phone. One time
+                passcode expires in {}
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <FormFooter form={form} />
+        <CreateAccountButton />
       </form>
     </Form>
   );
 }
 
-function EmailLogin() {
-  const form = useForm<LoginTypesEmail>({
-    resolver: zodResolver(LoginSchemaEmail),
+function EmailRegister() {
+  const form = useForm({
+    resolver: zodResolver(registerZodSchemas.email),
   });
-  const { countdown: resendOtpTimer, setCountdown: setResendOtpTimer } =
-    useCountdown(0);
-
-  const handleSendOtpClick = async (email?: string) => {
-    form.clearErrors();
-
-    if (!email) {
-      form.setError("email", { message: "Email is required." });
-      return;
-    }
-
-    const ret = await sendOtpViaEmail(email);
-    if (!ret) {
-      setResendOtpTimer(60);
-    } else if (ret?.error === FailedToSendEmailOTP.error) {
-      form.setError("otp", {
-        message: "Failed to send passcode via Whatsapp.",
-      });
-    }
+  const onSubmit = (data: any) => {
+    console.log(data);
   };
-
-  const onSubmit = async (data: LoginTypesEmail) => {
-    form.clearErrors();
-    const ret = await signInFromLogin(data);
-    if (ret?.error === CredentialsSigninError.error) {
-      form.setError("root", {
-        message: "Failed to login.\nPlease check your passcode and try again.",
-      });
-    } else if (ret?.error === UnknownError.error) {
-      form.setError("root", { message: "Failed to login. Unknown Error" });
-    }
-  };
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <p className="text-sm font-medium text-destructive text-center">
-          Email passcode login is currently disabled.
-        </p>
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input
+                  onChange={field.onChange}
+                  name={field.name}
+                  type="text"
+                  placeholder="Your Name"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}
@@ -251,7 +181,6 @@ function EmailLogin() {
                   name={field.name}
                   type="email"
                   placeholder="patrick@haru.com"
-                  disabled
                 />
               </FormControl>
               <FormMessage />
@@ -267,12 +196,7 @@ function EmailLogin() {
               <FormLabel>One-Time Passcode</FormLabel>
               <div className="flex items-center gap-3">
                 <FormControl>
-                  <InputOTP
-                    maxLength={6}
-                    pattern="^[0-9]+$"
-                    {...field}
-                    disabled
-                  >
+                  <InputOTP maxLength={6} pattern="^[0-9]+$" {...field}>
                     <InputOTPGroup className="bg-background">
                       <InputOTPSlot index={0} />
                       <InputOTPSlot index={1} />
@@ -287,49 +211,54 @@ function EmailLogin() {
                   type="button"
                   variant="outline"
                   className="w-auto bg-blue-50 text-blue-600 border-blue-600"
-                  onClick={() => handleSendOtpClick(form.getValues("email"))}
-                  disabled={true || resendOtpTimer > 0}
                 >
                   Send Code
                 </Button>
               </div>
-              {resendOtpTimer > 0 && (
-                <p className="text-xs text-gray-600 mt-2">
-                  Resend OTP in {resendOtpTimer} seconds
-                </p>
-              )}
+              <FormDescription className="hidden bg-background px-4 py-2 rounded-md text-sm border">
+                Please enter the one-time password sent to your email. One time
+                passcode expires in {}
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <FormFooter form={form} disabled={true} />
+        <CreateAccountButton />
       </form>
     </Form>
   );
 }
 
-function PasswordLogin() {
-  const form = useForm<LoginTypesPassword>({
-    resolver: zodResolver(LoginSchemaPassword),
+function PasswordRegister() {
+  const form = useForm({
+    resolver: zodResolver(registerZodSchemas.password),
   });
-
-  const onSubmit = async (data: LoginTypesPassword) => {
-    form.clearErrors();
-    const ret = await signInFromLogin(data);
-    if (ret?.error === CredentialsSigninError.error) {
-      form.setError("root", {
-        message:
-          "Failed to login.\nPlease check your credentials and try again.",
-      });
-    } else if (ret?.error === UnknownError.error) {
-      form.setError("root", { message: "Failed to login. Unknown Error" });
-    }
+  const onSubmit = (data: any) => {
+    console.log(data);
   };
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input
+                  onChange={field.onChange}
+                  name={field.name}
+                  type="text"
+                  placeholder="Your Name"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="email"
@@ -348,6 +277,7 @@ function PasswordLogin() {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="password"
@@ -361,19 +291,34 @@ function PasswordLogin() {
             </FormItem>
           )}
         />
-        <FormFooter form={form} />
+
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <Input type="password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <CreateAccountButton />
       </form>
     </Form>
   );
 }
 
-function LoginCard() {
-  const [tabValue, setTabValue] = useState("password");
+function RegisterCard() {
+  const [tabValue, setTabValue] = useState("phone");
   return (
-    <Card className="w-full max-w-lg p-0 rounded-4xl shadow-xl overflow-hidden">
+    <Card className="w-full max-w-lg p-0 rounded-3xl shadow-xl overflow-hidden">
       <Tabs value={tabValue} onValueChange={setTabValue}>
         <CardHeader className="space-y-3 text-center pt-8">
-          <CardTitle className="text-3xl">Login</CardTitle>
+          <CardTitle className="text-3xl">Create an Account</CardTitle>
           <CardDescription className="text-base">
             Choose your preferred login method.
           </CardDescription>
@@ -393,28 +338,25 @@ function LoginCard() {
             <TabsTrigger value="password">Password</TabsTrigger>
           </TabsList>
         </CardHeader>
-        <CardContent className="bg-gray-50 p-12 pt-2 border-t">
+        <CardContent className="bg-gray-50 px-16 pt-2 pb-10 border-t">
           <TabsContent value="phone" className="space-y-4">
-            <PhoneLogin />
+            <PhoneRegister />
           </TabsContent>
           <TabsContent value="email" className="space-y-4">
-            <EmailLogin />
+            <EmailRegister />
           </TabsContent>
           <TabsContent value="password" className="space-y-4">
-            <PasswordLogin />
+            <PasswordRegister />
           </TabsContent>
         </CardContent>
       </Tabs>
     </Card>
   );
 }
-
-export default function Login() {
+export default function Register() {
   return (
     <SimpleLayout>
-      <div className="w-screen max-w-md rounded-2xl shadow-xl overflow-hidden">
-        <LoginCard />
-      </div>
+      <RegisterCard />
     </SimpleLayout>
   );
 }

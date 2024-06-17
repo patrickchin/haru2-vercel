@@ -1,7 +1,12 @@
 import NextAuth, { User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcrypt-ts";
-import { getUserAccountByEmail, getUserByEmail } from "@/lib/db";
+import {
+  getUserAccountByEmail,
+  getUserAccountByPhone,
+  getUserByEmail,
+  verifyOtp,
+} from "@/lib/db";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { authConfig } from "@/lib/auth.config";
 
@@ -23,30 +28,53 @@ export const {
   },
   providers: [
     Credentials({
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         const email = credentials.email as string;
         const password = credentials.password as string;
-        if (!password) return null;
+        const otp = credentials.otp as string;
+        const phone = credentials.phone as string;
 
-        const users = await getUserAccountByEmail(email as string);
-        if (users.length === 0) return null;
+        if (!email && !phone) return null;
+        let users;
 
-        const user = users[0];
-        if (!user.password) return null;
+        if (email) {
+          users = await getUserAccountByEmail(email);
+          if (users.length === 0) return null;
+        } else if (phone) {
+          users = await getUserAccountByPhone(phone);
+          if (users.length === 0) return null;
+        }
 
-        const passwordsMatch = await compare(
-          password as string,
-          user.password!,
-        );
-        if (!passwordsMatch) return null;
+        if (users !== undefined && users.length !== 0) {
+          const user = users[0];
+          let otpIsValid = false;
+          let passwordsMatch = false;
 
-        const authuser: User = {
-          id: user.id.toString(),
-          email: user.email,
-          name: user.name,
-          image: user?.avatarUrl || null,
-        };
-        return authuser;
+          // Verify OTP if provided
+          if (otp) {
+            const phone = user.phone;
+            if (phone) {
+              otpIsValid = await verifyOtp(phone, otp);
+            }
+          }
+
+          // Verify password if OTP is not provided or is invalid
+          if (password) {
+            passwordsMatch = await compare(password, user.password!);
+          }
+
+          if (otpIsValid || passwordsMatch) {
+            const authuser: User = {
+              id: user.id.toString(),
+              email: user.email,
+              name: user.name,
+              image: user.avatarUrl || null,
+            };
+            return authuser;
+          }
+        }
+
+        return null;
       },
     }),
   ],
