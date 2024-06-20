@@ -1,8 +1,9 @@
 "use client";
 
 import React, { Suspense } from "react";
-import { DesignTeam, teamNames } from "@/lib/types";
+import { DesignTeam, defaultTeams, teamNames } from "@/lib/types";
 import * as Actions from "@/lib/actions";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -11,6 +12,48 @@ import useSWR, { KeyedMutator } from "swr";
 import { Input } from "@/components/ui/input";
 import { LucideCheck, LucidePlus, LucideX } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+
+/*
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+function AddTeamButton({ onClick }: { onClick: (s: string) => void }) {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button className="flex gap-2">
+          Add Team
+          <LucidePlus className="h-3.5 w-3.5" />
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Choose a Team to Add</AlertDialogTitle>
+          <AlertDialogDescription></AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          {defaultTeams.map((type) => (
+            <AlertDialogAction onClick={() => onClick(type)} key={type}>
+              {teamNames[type]}
+            </AlertDialogAction>
+          ))}
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+*/
 
 function AddAddedButton({
   alreadyAdded,
@@ -41,7 +84,7 @@ function AddAddedButton({
   );
 }
 
-export function ManageTeamMembers({
+function ManageSingleTeamMembers({
   team,
   teamsMutate,
 }: {
@@ -77,6 +120,8 @@ export function ManageTeamMembers({
       <div className="flex py-2 justify-between items-center">
         <h3>{teamNames[team.type || "other"]}</h3>
         <Button
+          className="hidden"
+          disabled={true}
           variant="secondary"
           onClick={() => {
             Actions.deleteProjectTeam(team.id);
@@ -199,7 +244,7 @@ function ManageTeamMembersSkeleton({ team }: { team: DesignTeam }) {
 }
 
 
-export function ManageTeams({ projectId }: { projectId: number }) {
+export default function ManageAllTeamsMembers({ projectId }: { projectId: number }) {
   
   // TODO search on server
   const {
@@ -214,12 +259,10 @@ export function ManageTeams({ projectId }: { projectId: number }) {
     <section className="flex flex-col gap-4">
       <div className="flex justify-between px-6">
         <h3>Team Member Selection</h3>
-        <Button
-          onClick={() => teamsMutate(Actions.createProjectTeam(projectId))}
-        >
-          {/* <Button> */}
-          Add Team
-        </Button>
+        {/* <ComboboxDemo /> */}
+        {/* <AddTeamButton
+          onClick={(type: string) => teamsMutate(Actions.createProjectTeam(projectId, type))}
+        /> */}
       </div>
       <div className="grid grid-cols-1 gap-4">
         {teams?.map((team) => (
@@ -227,7 +270,7 @@ export function ManageTeams({ projectId }: { projectId: number }) {
             key={team.id}
             fallback={<ManageTeamMembersSkeleton team={team} />}
           >
-            <ManageTeamMembers team={team} teamsMutate={teamsMutate} />
+            <ManageSingleTeamMembers team={team} teamsMutate={teamsMutate} />
           </Suspense>
         ))}
       </div>

@@ -5,7 +5,7 @@ import * as Schemas from "@/drizzle/schema";
 import { signIn } from "@/lib/auth";
 import { auth } from "./auth";
 import * as blob from "@vercel/blob";
-import { DesignTaskSpec } from "./types";
+import { DesignTaskSpec, defaultTeams } from "./types";
 import {
   LoginTypesEmail,
   LoginTypesPassword,
@@ -102,6 +102,12 @@ export async function submitProjectForm2(formData: FormData) {
     extrainfo,
   });
 
+  Promise.all([
+    db.createTeams(project.id, defaultTeams),
+    db.createProjectTasksFromAllSpecs(project.id)
+  ]);
+
+
   const results = Array.from(files ?? []).map(async (file) => {
     // HACK FormData constructor from event.target adds a file with no filename ignore that file here.
     if (file.name == "undefined" && file.size == 0) {
@@ -172,12 +178,23 @@ export async function deleteFullProject(projectId: number) {
 
 export async function startProject(
   projectId: number,
-  taskSpecSelection: Record<number, boolean>,
 ) {
-  const newTasks = await createProjectTasks(projectId, taskSpecSelection);
-  if (!newTasks || newTasks.length == 0)
-    console.error("Failed to create project tasks");
+  const session = await auth();
+  if (!session?.user?.id) return;
+
   await updateProject(projectId, { status: "in progress" });
+}
+
+export async function startProjectForm(data: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+
+  const projectId = data.get("projectId") as unknown as number;
+  if (isNaN(projectId)) return;
+
+  await startProject(projectId);
+
+  redirect(`/project/${projectId}`)
 }
 
 export async function getProjectFiles(projectId: number) {
@@ -244,10 +261,16 @@ export async function updateProject(
 
 // members ===================================================================
 
-export async function createProjectTeam(projectId: number) {
+export async function createDefaultProjectTeams(projectId: number) {
   const session = await auth();
   if (!session?.user) return;
-  return db.createTeam(projectId);
+  return db.createTeams(projectId, defaultTeams);
+}
+
+export async function createProjectTeam(projectId: number, type: string) {
+  const session = await auth();
+  if (!session?.user) return;
+  return db.createTeam(projectId, type);
 }
 
 export async function deleteProjectTeam(teamId: number) {
@@ -259,7 +282,7 @@ export async function deleteProjectTeam(teamId: number) {
 export async function getProjectTeams(projectId: number) {
   const session = await auth();
   if (!session?.user) return;
-  return (await db.getProjectTeams(projectId)).reverse();
+  return await db.getProjectTeams(projectId);
 }
 
 export async function addTeamMember(teamId: number, userId: number) {
@@ -322,9 +345,10 @@ export async function getProjectTaskSpecsGroupedByTeam() {
   return groupedSpecs;
 }
 
+// TODO remove?
 export async function createProjectTasks(
   projectId: number,
-  enabled: Record<number, boolean>,
+  enabled?: Record<number, boolean>,
 ) {
   const session = await auth();
   if (!session?.user?.id) return;
@@ -349,6 +373,27 @@ export async function createProjectTasks(
     };
   });
   return await db.createProjectTasks(newTasks);
+}
+
+export async function enableProjectTaskSpec(projectId: number, specId: number, enabled: boolean) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  const tasks = await db.enableProjectTaskSpec(projectId, specId, enabled);
+  return tasks;
+}
+
+export async function enableProjectTask(taskId: number, enabled: boolean) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  const tasks = await db.enableProjectTask(taskId, enabled);
+  return tasks;
+}
+
+// include disabled
+export async function getProjectTasksAll(projectId: number) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  return await db.getProjectTasksAll(projectId);
 }
 
 export async function getProjectTasks(projectId: number) {

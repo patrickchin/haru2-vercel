@@ -4,25 +4,18 @@ import { notFound, redirect } from "next/navigation";
 import * as Actions from "@/lib/actions";
 import { auth } from "@/lib/auth";
 
+import { LucideMoveLeft } from "lucide-react";
 import { CenteredLayout } from "@/components/page-layouts";
 import { Button } from "@/components/ui/button";
-import { ManageTeams } from "./components/manage-team-members";
-import StartProjectButton from "./components/start-project-button";
-import { LucideMoveLeft } from "lucide-react";
-import ManageTeamTasksDropdown from "./components/manage-team-tasks";
+import ManageAllTeamsMembers from "./components/manage-team-members";
+import ManageAllTeamsTasks from "./components/manage-team-tasks";
 
 async function ProjectManagement({ projectId }: { projectId: number }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const [project, specs, teams] = await Promise.all([
-    Actions.getProject(projectId),
-    Actions.getProjectTaskSpecsGroupedByTeam(),
-    Actions.getProjectTeams(projectId),
-  ]);
-
+  const project = await Actions.getProject(projectId);
   if (project === undefined) notFound();
-  if (teams === undefined) notFound();
 
   return (
     <>
@@ -37,24 +30,15 @@ async function ProjectManagement({ projectId }: { projectId: number }) {
         </h3>
       </section>
 
-      <ManageTeams projectId={project.id} />
+      <ManageAllTeamsMembers projectId={project.id} />
+      <ManageAllTeamsTasks projectId={project.id} />
 
-      <section className="flex flex-col gap-4">
-        <div className="px-6">
-          <h3>Team Task Selection</h3>
-        </div>
-        {Object.keys(specs).map((team) => (
-          <ManageTeamTasksDropdown
-            key={team}
-            team={team}
-            groupedSpecs={specs}
-          />
-        ))}
-      </section>
-
-      <section className="flex justify-end">
-        <StartProjectButton projectId={projectId} />
-      </section>
+      <form action={Actions.startProjectForm} className="flex justify-end">
+        <input type="hidden" name="projectId" value={project.id} />
+        <Button type="submit" size="lg">
+          Save
+        </Button>
+      </form>
     </>
   );
 }
