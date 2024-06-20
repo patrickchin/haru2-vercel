@@ -102,7 +102,7 @@ function AddTeamMemberDialogContent({
           onChange={(e) => setSearchValue(e.target.value)}
         />
 
-        <ScrollArea className="grow border rounded">
+        <ScrollArea className="grow border rounded h-[36rem]">
           <div
             className={cn(
               "flex gap-4 p-4 items-center hover:bg-accent border-b",
