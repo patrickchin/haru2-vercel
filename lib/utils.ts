@@ -2,7 +2,6 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { addTaskFile, updateAvatarForUser } from "./actions";
 
-
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -66,12 +65,9 @@ export async function uploadProjectFile(
     fileUrl,
     projectId,
   );
-
 }
 
-export async function uploadAvatar(
-  file: File,
-) {
+export async function uploadAvatar(file: File) {
   const response = await fetch("/api/upload/avatar", {
     method: "POST",
     headers: {

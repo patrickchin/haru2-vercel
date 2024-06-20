@@ -3,8 +3,8 @@ import { auth } from "@/lib/auth";
 import { createPresigned } from "@/lib/s3";
 
 export async function POST(
-  request: Request, 
-  { params: { type } }: { params: { type: string } }
+  request: Request,
+  { params: { type } }: { params: { type: string } },
 ): Promise<NextResponse> {
   const params = await request.json();
   const session = await auth();
@@ -14,21 +14,24 @@ export async function POST(
       { status: 400 },
     );
 
-  let uniqueKey = ''
+  let uniqueKey = "";
 
-  if (type === 'avatar') {
+  if (type === "avatar") {
     const { filename } = params;
     const userId = Number(session.user.id);
-    uniqueKey = `user/${userId}/${filename}`
-  } else if (type === 'project-files') {
-    const { filename, projectId, specId } = params
+    uniqueKey = `user/${userId}/${filename}`;
+  } else if (type === "project-files") {
+    const { filename, projectId, specId } = params;
     uniqueKey = `project/${projectId}/task/${specId}/${filename}`;
   } else {
-    return NextResponse.json({ error: "Unknown file type." }, { status: 400 })
+    return NextResponse.json({ error: "Unknown file type." }, { status: 400 });
   }
 
   try {
-    const { url, fields } = await createPresigned(uniqueKey, params.contentType);
+    const { url, fields } = await createPresigned(
+      uniqueKey,
+      params.contentType,
+    );
     const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${uniqueKey}`;
 
     return NextResponse.json({ url, fileUrl, fields });
