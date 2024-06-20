@@ -1,7 +1,7 @@
 "use client";
 
 import { LucideChevronDown } from "lucide-react";
-import useSWR from "swr";
+import useSWR, { KeyedMutator } from "swr";
 
 import { DesignTask, DesignTaskSpec, DesignTeam, teamNames } from "@/lib/types";
 import * as Actions from "@/lib/actions";
@@ -19,10 +19,12 @@ function TaskCheckBox({
   projectId,
   spec,
   task,
+  tasksMutate,
 }: {
   projectId: number;
   spec?: DesignTaskSpec;
   task?: DesignTask;
+  tasksMutate: KeyedMutator<DesignTask[] | undefined>;
 }) {
   if (!task) return null;
   const label = `taskid-${task.id}`;
@@ -44,6 +46,7 @@ function TaskCheckBox({
             if (!projectId) return;
             // TODDO checked can be a string??
             Actions.enableProjectTask(task.id, checked == true);
+            tasksMutate();
           }}
           className="h-4 w-4"
         />
@@ -56,10 +59,12 @@ function ManageTeamTasks({
   team,
   specs,
   tasks,
+  tasksMutate,
 }: {
   team: DesignTeam;
   specs: DesignTaskSpec[];
   tasks: DesignTask[];
+  tasksMutate: KeyedMutator<DesignTask[] | undefined>;
 }) {
   const projectId = team.projectid;
   if (!team.type) return null;
@@ -77,7 +82,12 @@ function ManageTeamTasks({
           return a.id - b.id;
         })
         .map((task, i) => (
-          <TaskCheckBox key={i} projectId={projectId} task={task} />
+          <TaskCheckBox
+            key={i}
+            projectId={projectId}
+            task={task}
+            tasksMutate={tasksMutate}
+          />
         ))}
     </div>
   );
@@ -125,18 +135,32 @@ export default function ManageAllTeamsTasks({
         const teamSpecs = specs[team.type ?? "other"];
         const teamTasks = tasks?.filter((task) => task.type == team.type);
         if (!teamTasks) return null;
+        const nTasksEnabled = teamTasks.reduce(
+          (s, val) => s + (val.enabled ? 1 : 0),
+          0,
+        );
         return (
           <Card key={team.id}>
             <Collapsible className="grow">
-              <CollapsibleTrigger className="flex gap-4 w-full p-8 text-sm hover:bg-accent">
-                <CardTitle className="text-left">
-                  {teamNames[team.type || "other"]}
-                </CardTitle>
-                <span>(No assigned lead)</span>
-                <LucideChevronDown className="h-5" />
+              <CollapsibleTrigger className="flex gap-4 w-full p-8 text-sm hover:bg-accent justify-between">
+                <div className="flex gap-4">
+                  <CardTitle className="text-left">
+                    {teamNames[team.type || "other"]}
+                  </CardTitle>
+                  <span>(No assigned lead) TODO</span>
+                </div>
+                <div className="flex gap-4">
+                  {nTasksEnabled} of {teamTasks.length} tasks enabled
+                  <LucideChevronDown className="w-5 h-5" />
+                </div>
               </CollapsibleTrigger>
               <CollapsibleContent className="px-12 py-6">
-                <ManageTeamTasks team={team} specs={teamSpecs} tasks={teamTasks} />
+                <ManageTeamTasks
+                  team={team}
+                  specs={teamSpecs}
+                  tasks={teamTasks}
+                  tasksMutate={tasksMutate}
+                />
               </CollapsibleContent>
             </Collapsible>
           </Card>
