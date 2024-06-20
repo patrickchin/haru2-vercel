@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import * as Actions from "@/lib/actions";
 import { auth } from "@/lib/auth";
 
-import { LucideArrowLeft, LucideMoveLeft } from "lucide-react";
+import { LucideArrowRight, LucideMoveLeft } from "lucide-react";
 import { CenteredLayout } from "@/components/page-layouts";
 import { Button } from "@/components/ui/button";
 import ManageAllTeamsMembers from "./components/manage-team-members";
@@ -38,13 +38,12 @@ async function ProjectManagement({ projectId }: { projectId: number }) {
         className="flex justify-end items-center gap-4"
       >
         <input type="hidden" name="projectId" value={project.id} />
-        <span className="text-sm">Settings are saved automatically</span>
+        <span className="text-sm">(Changes are saved automatically)</span>
         <Button type="submit" size="lg" className="flex gap-3 text-base">
-          <LucideArrowLeft className="w-5 h-5"/>
-          Go Back To Project
+          Start Project
+          <LucideArrowRight className="w-5 h-5" />
         </Button>
       </form>
-
     </>
   );
 }
