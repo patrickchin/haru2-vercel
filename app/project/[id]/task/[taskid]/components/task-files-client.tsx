@@ -54,15 +54,7 @@ export default function TaskFilesClient({
     for (let i = 0; i < selectedFiles.length; i++) {
       const file = selectedFiles[i];
 
-      const fileUrl = await uploadProjectFile(file, projectId, specId);
-      await addTaskFile(
-        taskId,
-        file.type,
-        file.name,
-        file.size,
-        fileUrl,
-        projectId,
-      );
+      await uploadProjectFile(file, projectId, specId, taskId);
     }
 
     const files = await getTaskFiles(taskId);

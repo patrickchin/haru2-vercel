@@ -2,8 +2,6 @@
 
 import { ChangeEvent, useState } from "react";
 import assert from "assert";
-import { useSession } from "next-auth/react";
-import { updateAvatarForUser } from "@/lib/actions";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CenteredLayout } from "@/components/page-layouts";
@@ -13,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { LucideLoader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CurrentUserAvatar } from "@/components/user-avatar";
+import { uploadAvatar } from "@/lib/utils";
 
 function SettingsPage() {
   const [errorMessage, setErrorMessage] = useState("");
@@ -31,32 +30,7 @@ function SettingsPage() {
       return;
     }
 
-    const response = await fetch("/api/upload/avatar", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ filename: file.name, contentType: file.type }),
-    });
-
-    const { url, fileUrl, fields } = await response.json();
-
-    const formData = new FormData();
-    Object.entries(fields).forEach(([key, value]) => {
-      formData.append(key, value as string);
-    });
-    formData.append("file", file);
-
-    const uploadResponse = await fetch(url, {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!uploadResponse.ok) {
-      throw new Error("Failed to upload file");
-    }
-
-    const updatedUser = await updateAvatarForUser(fileUrl);
+    const updatedUser = await uploadAvatar(file);
 
     if (updatedUser) {
       window.location.reload();

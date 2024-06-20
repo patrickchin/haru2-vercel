@@ -314,15 +314,8 @@ function UploadAttachment({
     for (let i = 0; i < selectedFiles.length; i++) {
       const file = selectedFiles[i];
 
-      const fileUrl = await uploadProjectFile(file, projectId, specId);
-      const newFile = await addTaskFile(
-        taskId,
-        file.type,
-        file.name,
-        file.size,
-        fileUrl,
-        projectId,
-      );
+      const newFile = await uploadProjectFile(file, projectId, specId, taskId);
+  
       if (newFile) setCurrentAttachments((l) => [...l, newFile as DesignFile]);
     }
 
