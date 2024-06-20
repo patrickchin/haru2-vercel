@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import * as Actions from "@/lib/actions";
 import { auth } from "@/lib/auth";
 
-import { LucideMoveLeft } from "lucide-react";
+import { LucideArrowLeft, LucideMoveLeft } from "lucide-react";
 import { CenteredLayout } from "@/components/page-layouts";
 import { Button } from "@/components/ui/button";
 import ManageAllTeamsMembers from "./components/manage-team-members";
@@ -33,12 +33,18 @@ async function ProjectManagement({ projectId }: { projectId: number }) {
       <ManageAllTeamsMembers projectId={project.id} />
       <ManageAllTeamsTasks projectId={project.id} />
 
-      <form action={Actions.startProjectForm} className="flex justify-end">
+      <form
+        action={Actions.startProjectForm}
+        className="flex justify-end items-center gap-4"
+      >
         <input type="hidden" name="projectId" value={project.id} />
-        <Button type="submit" size="lg">
-          Save
+        <span className="text-sm">Settings are saved automatically</span>
+        <Button type="submit" size="lg" className="flex gap-3 text-base">
+          <LucideArrowLeft className="w-5 h-5"/>
+          Go Back To Project
         </Button>
       </form>
+
     </>
   );
 }
