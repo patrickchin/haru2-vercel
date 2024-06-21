@@ -237,7 +237,7 @@ function ManageSingleTeamMembers({
         </div>
         <ScrollArea className="h-full border rounded">
           {Array.from(members ?? []).map((user, i) => {
-            const isLead = team.lead.id === user.id;
+            const isLead = team.lead?.id === user.id;
             return (
               <div
                 key={i}
