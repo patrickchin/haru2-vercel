@@ -303,6 +303,14 @@ export async function getTeamId(projectid: number, type: string) {
     );
 }
 
+export async function setTeamLead(teamid: number, userid: number) {
+  return db
+    .update(Schemas.teams1)
+    .set({ lead: userid })
+    .where(eq(Schemas.teams1.id, teamid))
+    .returning();
+}
+
 export async function addTeamMember(teamid: number, userid: number) {
   return db
     .insert(Schemas.teammembers1)

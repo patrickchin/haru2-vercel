@@ -236,35 +236,45 @@ function ManageSingleTeamMembers({
           </div>
         </div>
         <ScrollArea className="h-full border rounded">
-          {Array.from(members ?? []).map((user, i) => (
-            <div
-              key={i}
-              className="flex gap-4 p-4 items-center hover:bg-accent border-b"
-            >
-              <DesignUserAvatar user={user} />
-              <div className="grow">
-                <div className="font-medium">
-                  {user.name || "Unregistered Account"}
-                </div>
-                <div className="hidden text-sm text-muted-foreground md:inline">
-                  {user.email}
-                </div>
-              </div>
-              <Button variant="outline" disabled>
-                Set as Lead
-              </Button>
-              {/* <Button variant="outline" disabled>Send Invite</Button> */}
-              <Button
-                variant="outline"
-                className="flex gap-1"
-                onClick={() =>
-                  membersMutate(Actions.removeTeamMember(team.id, user.id))
-                }
+          {Array.from(members ?? []).map((user, i) => {
+            const isLead = team.lead === user.id;
+            return (
+              <div
+                key={i}
+                className="flex gap-6 px-6 py-4 items-center hover:bg-accent border-b"
               >
-                Remove <LucideX className="w-3.5 h-3.5" />
-              </Button>
-            </div>
-          ))}
+                <DesignUserAvatar user={user} />
+                <div className="grow">
+                  <div className="font-medium">
+                    {user.name || "Unregistered Account"}
+                  </div>
+                  <div className="hidden text-sm text-muted-foreground md:inline">
+                    {user.email}
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  disabled={isLead}
+                  onClick={() => {
+                    Actions.setTeamLead(team.id, user.id);
+                    teamsMutate();
+                  }}
+                >
+                  {isLead ? "Current Team Lead" : "Set as Lead"}
+                </Button>
+                {/* <Button variant="outline" disabled>Send Invite</Button> */}
+                <Button
+                  variant="outline"
+                  className="flex gap-1"
+                  onClick={() =>
+                    membersMutate(Actions.removeTeamMember(team.id, user.id))
+                  }
+                >
+                  Remove <LucideX className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            );
+          })}
         </ScrollArea>
       </CardContent>
     </Card>
@@ -295,6 +305,8 @@ export default function ManageAllTeamsMembers({
   } = useSWR(`/api/project/${projectId}/teams`, () => {
     return Actions.getProjectTeams(projectId);
   });
+
+  teams?.sort((a, b) => a.id - b.id).reverse();
 
   return (
     <section className="flex flex-col gap-4">

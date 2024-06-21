@@ -285,6 +285,12 @@ export async function getProjectTeams(projectId: number) {
   return await db.getProjectTeams(projectId);
 }
 
+export async function setTeamLead(teamId: number, userId: number) {
+  const session = await auth();
+  if (!session?.user) return;
+  return db.setTeamLead(teamId, userId);
+}
+
 export async function addTeamMember(teamId: number, userId: number) {
   const session = await auth();
   if (!session?.user) return;
