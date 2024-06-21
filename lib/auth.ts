@@ -33,6 +33,7 @@ export const {
         const password = credentials.password as string;
         const otp = credentials.otp as string;
         const phone = credentials.phone as string;
+    
 
         if (!email && !phone) return null;
         let users;
@@ -52,9 +53,11 @@ export const {
 
           // Verify OTP if provided
           if (otp) {
-            const phone = user.phone;
             if (phone) {
               otpIsValid = await verifyOtp(phone, otp);
+            }
+            if (email) {
+              otpIsValid = await verifyOtp(email, otp);
             }
           }
 

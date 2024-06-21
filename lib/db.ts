@@ -615,7 +615,7 @@ export async function deleteFile(fileId: number) {
 
 // TODO what about email?
 export async function saveOtp(
-  phoneNumber: string,
+  contactInfo: string,
   otp: string,
   expiresAt: Date,
 ) {
@@ -631,7 +631,7 @@ export async function saveOtp(
     const existingOtp = await tx
       .select()
       .from(Schemas.otps1)
-      .where(eq(Schemas.otps1.phoneNumber, phoneNumber))
+      .where(eq(Schemas.otps1.contactInfo, contactInfo))
       .limit(1);
 
     if (existingOtp.length > 0) {
@@ -654,7 +654,7 @@ export async function saveOtp(
         // If allowed, delete the existing OTP (to be overwritten)
         await tx
           .delete(Schemas.otps1)
-          .where(eq(Schemas.otps1.phoneNumber, phoneNumber));
+          .where(eq(Schemas.otps1.contactInfo, contactInfo));
       }
     }
 
@@ -666,7 +666,7 @@ export async function saveOtp(
     return await tx
       .insert(Schemas.otps1)
       .values({
-        phoneNumber,
+        contactInfo,
         otp: hashedOtp,
         expiresAt,
         createdAt: new Date(), // Save the current timestamp as an ISO string
@@ -676,7 +676,7 @@ export async function saveOtp(
 }
 
 export async function verifyOtp(
-  phoneNumber: string,
+  contactInfo: string,
   otp: string,
 ): Promise<boolean> {
   return await db.transaction(async (tx) => {
@@ -684,7 +684,7 @@ export async function verifyOtp(
     const record = await tx
       .select()
       .from(Schemas.otps1)
-      .where(eq(Schemas.otps1.phoneNumber, phoneNumber))
+      .where(eq(Schemas.otps1.contactInfo, contactInfo))
       .limit(1);
 
     // If no record is found, return false
@@ -699,7 +699,7 @@ export async function verifyOtp(
       // If expired, delete the OTP record and return false
       await tx
         .delete(Schemas.otps1)
-        .where(eq(Schemas.otps1.phoneNumber, phoneNumber));
+        .where(eq(Schemas.otps1.contactInfo, contactInfo));
       return false;
     }
 
@@ -710,7 +710,7 @@ export async function verifyOtp(
     if (isValidOtp) {
       await tx
         .delete(Schemas.otps1)
-        .where(eq(Schemas.otps1.phoneNumber, phoneNumber));
+        .where(eq(Schemas.otps1.contactInfo, contactInfo));
     }
 
     return isValidOtp;
