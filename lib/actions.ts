@@ -6,35 +6,69 @@ import { signIn } from "@/lib/auth";
 import { auth } from "./auth";
 import * as blob from "@vercel/blob";
 import { deleteFileFromS3 } from "@/lib/s3";
+import { DesignTaskSpec, defaultTeams } from "./types";
 import {
-  DesignTaskSpec,
+  LoginTypesEmail,
+  LoginTypesPassword,
+  LoginTypesPhone,
   NewProjectFormSchema,
+  RegisterSchema,
   RegisterSchemaType,
-} from "./types";
+} from "./forms";
 import { redirect } from "next/navigation";
 import { defaulTaskSpecs } from "content/tasks";
+import { AuthError } from "next-auth";
 import assert from "assert";
+import { CredentialsSigninError, InvalidInputError, UnknownError } from "./errors";
 
 const VERCEL_BLOB_FAKE_FILES = false;
 
+export async function getAllUsers() {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  // TODO separate users by organisation
+  return db.getAllUsers();
+}
+
 export async function registerUser(data: RegisterSchemaType) {
+
+  const parsed = RegisterSchema.safeParse(data);
+  if (!parsed.success) {
+    return InvalidInputError;
+  }
+
   try {
     await db.createUserIfNotExists(data);
-  } catch (error) {
-    throw error;
+  } catch (error: unknown) {
+    console.log(`Failed to register user ${error}`);
+    return UnknownError;
   }
 }
 
-export async function signInFromLogin(data: any) {
-  // TODO validate
-  return await signIn("credentials", data);
+export async function signInFromLogin(
+  data: LoginTypesPhone | LoginTypesEmail | LoginTypesPassword,
+) {
+  try {
+    return await signIn("credentials", {
+      ...data,
+      redirectTo: "/",
+    });
+  } catch (error: unknown) {
+    if (error instanceof AuthError) {
+      // is there any need to distinguish further?
+      // e.g. CredentialsSignin error
+      return CredentialsSigninError;
+    } else {
+      throw error;
+    }
+  }
 }
 
 export async function submitProjectForm2(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) {
     console.log("Invalid session on project form submit");
-    return null;
+    return;
   }
   const userId = Number(session.user.id); // error?
 
@@ -45,7 +79,7 @@ export async function submitProjectForm2(formData: FormData) {
   const parsed = NewProjectFormSchema.safeParse(formObj);
   if (!parsed.success) {
     console.error("submitProjectForm validation error", parsed.error);
-    return null;
+    return;
   }
 
   // not the prettiest ...
@@ -68,6 +102,12 @@ export async function submitProjectForm2(formData: FormData) {
     countrycode: country,
     extrainfo,
   });
+
+  Promise.all([
+    db.createTeams(project.id, defaultTeams),
+    db.createProjectTasksFromAllSpecs(project.id)
+  ]);
+
 
   const results = Array.from(files ?? []).map(async (file) => {
     // HACK FormData constructor from event.target adds a file with no filename ignore that file here.
@@ -142,20 +182,29 @@ export async function deleteFullProject(projectId: number) {
 
 export async function startProject(
   projectId: number,
-  taskSpecSelection: Record<number, boolean>,
 ) {
-  const newTasks = await createProjectTasks(projectId, taskSpecSelection);
-  if (!newTasks || newTasks.length == 0)
-    console.error("Failed to create project tasks");
+  const session = await auth();
+  if (!session?.user?.id) return;
+
   await updateProject(projectId, { status: "in progress" });
+}
+
+export async function startProjectForm(data: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+
+  const projectId = data.get("projectId") as unknown as number;
+  if (isNaN(projectId)) return;
+
+  await startProject(projectId);
+
+  redirect(`/project/${projectId}`)
 }
 
 export async function getProjectFiles(projectId: number) {
   const session = await auth();
-  if (!session?.user?.id) return undefined;
-  const userId = Number(session.user.id);
-  const fileUrls = await db.getFilesForProject(projectId);
-  return fileUrls;
+  if (!session?.user?.id) return;
+  return db.getFilesForProject(projectId);
 }
 
 //Update project title
@@ -163,13 +212,13 @@ export async function updateProjectTitle(projectId: number, newTitle: string) {
   const session = await auth();
   if (!session?.user?.id) {
     console.error("Invalid session on project form submit");
-    return null;
+    return;
   }
 
   const userId = Number(session.user.id);
   if (isNaN(userId)) {
     console.error("User ID is not a number:", session.user.id);
-    return null;
+    return;
   }
 
   const updatedProject = await db.updateProjectFields(projectId, {
@@ -216,6 +265,18 @@ export async function updateProject(
 
 // members ===================================================================
 
+export async function createDefaultProjectTeams(projectId: number) {
+  const session = await auth();
+  if (!session?.user) return;
+  return db.createTeams(projectId, defaultTeams);
+}
+
+export async function createProjectTeam(projectId: number, type: string) {
+  const session = await auth();
+  if (!session?.user) return;
+  return db.createTeam(projectId, type);
+}
+
 export async function deleteProjectTeam(teamId: number) {
   const session = await auth();
   if (!session?.user) return;
@@ -225,13 +286,26 @@ export async function deleteProjectTeam(teamId: number) {
 export async function getProjectTeams(projectId: number) {
   const session = await auth();
   if (!session?.user) return;
-  return db.getProjectTeamsEnsureDefault(projectId);
+  return await db.getProjectTeams(projectId);
 }
 
-export async function addTeamMember(teamId: number, email: string) {
+export async function setTeamLead(teamId: number, userId: number) {
   const session = await auth();
   if (!session?.user) return;
-  const newTeamMember = await db.addTeamMemberByEmail(teamId, email);
+  return db.setTeamLead(teamId, userId);
+}
+
+export async function addTeamMember(teamId: number, userId: number) {
+  const session = await auth();
+  if (!session?.user) return;
+  const newTeamMember = await db.addTeamMember(teamId, userId);
+  return db.getTeamMembersDetailed(teamId);
+}
+
+export async function removeTeamMember(teamId: number, userId: number) {
+  const session = await auth();
+  if (!session?.user) return;
+  const newTeamMember = await db.deleteTeamMember(teamId, userId);
   return db.getTeamMembersDetailed(teamId);
 }
 
@@ -281,9 +355,10 @@ export async function getProjectTaskSpecsGroupedByTeam() {
   return groupedSpecs;
 }
 
+// TODO remove?
 export async function createProjectTasks(
   projectId: number,
-  enabled: Record<number, boolean>,
+  enabled?: Record<number, boolean>,
 ) {
   const session = await auth();
   if (!session?.user?.id) return;
@@ -308,6 +383,27 @@ export async function createProjectTasks(
     };
   });
   return await db.createProjectTasks(newTasks);
+}
+
+export async function enableProjectTaskSpec(projectId: number, specId: number, enabled: boolean) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  const tasks = await db.enableProjectTaskSpec(projectId, specId, enabled);
+  return tasks;
+}
+
+export async function enableProjectTask(taskId: number, enabled: boolean) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  const tasks = await db.enableProjectTask(taskId, enabled);
+  return tasks;
+}
+
+// include disabled
+export async function getProjectTasksAll(projectId: number) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  return await db.getProjectTasksAll(projectId);
 }
 
 export async function getProjectTasks(projectId: number) {
@@ -379,6 +475,7 @@ export async function addTaskFile(
     filename: name,
     filesize: size,
     url: fileUrl,
+    // specid: specId,
     uploaderid: userId,
     projectid: projectId,
     // commentid: ?,
@@ -406,10 +503,31 @@ export async function updateAvatarForUser(fileUrl: string) {
   }
 }
 
+export async function deleteAvatarForUser() {
+  const session = await auth();
+  if (!session?.user) {
+    console.log("No user session found");
+    return;
+  }
+
+  const userId = Number(session.user.id);
+  if (isNaN(userId)) {
+    console.error("Invalid user ID");
+    return;
+  }
+
+  const { initial, updated } = await db.deleteUserAvatar(userId);
+
+  if (initial && initial.avatarUrl) {
+    await blob.del(initial.avatarUrl);
+  }
+  return updated;
+}
+
 export async function getTaskFiles(taskId: number) {
   const session = await auth();
   if (!session?.user?.id) return;
-  return db.getTaskFiles(taskId);
+  return db.getFilesForTask(taskId);
 }
 
 export async function deleteFile(fileId: number) {

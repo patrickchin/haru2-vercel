@@ -12,12 +12,13 @@ import {
   CarouselNext,
 } from "@/components/ui/carousel";
 import { getProjectFiles } from "@/lib/actions";
-import { Suspense, useMemo } from "react";
+import { Fragment, Suspense, useMemo } from "react";
 import * as Lucide from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { buildingTypes } from "content/buildingTypes";
 import EditableDescription from "@/components/editable-description";
 import { DesignProject } from "@/lib/types";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 function ProjectDesignViewsFallback() {
   return <p>Loading images ...</p>;
@@ -146,33 +147,41 @@ export default async function ProjectDescription({
         <>
           <div className="grid grid-cols-1 grid-rows-2 md:grid-cols-2 md:grid-rows-1 gap-5">
             <Card>
-              <CardHeader>Status</CardHeader>
+              <CardHeader>Progress and Milestones</CardHeader>
               <CardContent>
+                <Suspense fallback={<ProjectDesignViewsFallback />}>
+                  <ProjectProgressSummary project={project} />
+                </Suspense>
+              </CardContent>
+            </Card>
+
+            <Card className="row-span-2">
+              <CardHeader>Updates</CardHeader>
+              <CardContent className="flex flex-col gap-4">
                 <CardDescription>
-                  Your project is in a list waiting to be picked up.
+                  Here you will see the latest updates to your project
                 </CardDescription>
-                <CardDescription>Check back later for updates</CardDescription>
+                <ScrollArea className="h-96 py-4 rounded bg-gray-50">
+                  <ol className="space-y-2 pl-3 pr-4">
+                    {Array.from(Array(20)).map((v, i) => (
+                      <Fragment key={i}>
+                        <li className="h-18 border rounded p-2 bg-background">
+                          New Comment on Title Search
+                        </li>
+                        <li className="h-18 border rounded p-2 bg-background">
+                          New File Uploaded to Design Drafts
+                        </li>
+                      </Fragment>
+                    ))}
+                  </ol>
+                </ScrollArea>
               </CardContent>
             </Card>
 
             <Card>
-              <CardHeader>Updates</CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Here you will see the latest updates to your project
-                </CardDescription>
-              </CardContent>
+              <EditableDescription project={project} />
             </Card>
           </div>
-
-          <Card>
-            <CardHeader>Progress and Milestones</CardHeader>
-            <CardContent>
-              <Suspense fallback={<ProjectDesignViewsFallback />}>
-                <ProjectProgressSummary project={project} />
-              </Suspense>
-            </CardContent>
-          </Card>
         </>
       )}
 
@@ -184,10 +193,6 @@ export default async function ProjectDescription({
           </Suspense>
         </CardContent>
       </Card> */}
-
-      <Card>
-        <EditableDescription project={project} />
-      </Card>
     </div>
   );
 }

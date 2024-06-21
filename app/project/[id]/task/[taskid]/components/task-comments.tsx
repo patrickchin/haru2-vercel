@@ -369,14 +369,14 @@ export default function TaskCommentsClient({
   taskId: number;
 }) {
   const { data, error, mutate } = useSWR(
-    `/api/task/${taskId}`, // api route doesn't really exist
+    `/api/task/${taskId}/commments`, // api route doesn't really exist
     () => {
-      console.log("getting the data again", taskId);
       return getTaskCommentsAndFiles(taskId);
     },
   );
   const userComments: DesignTaskComment[] = (data && data[0]) || [];
-  const commentFiles: DesignFile[] = (data && data[1]) || [];
+  // TODO maybe bad design, data is missing the 'tasks' member
+  const commentFiles: DesignFile[] = ((data && data[1]) || []) as DesignFile[];
 
   // only the files to be attached
   const [currentAttachments, setCurrentAttachments] = useState<DesignFile[]>(

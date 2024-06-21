@@ -1,7 +1,7 @@
 "use client";
 
 import { redirect } from "next/navigation";
-import { deleteFullProject } from "@/lib/actions";
+import { createDefaultProjectTeams, deleteFullProject } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -43,6 +43,22 @@ export default function ProjectSettings({ project }: { project: any }) {
               {JSON.stringify(project, null, 2)}
             </pre>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Dev Area</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Button
+            variant="secondary"
+            onClick={() => {
+              createDefaultProjectTeams(project.id);
+            }}
+          >
+            Create Default Teams
+          </Button>
         </CardContent>
       </Card>
 

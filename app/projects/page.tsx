@@ -7,7 +7,7 @@ import { CenteredLayout } from "@/components/page-layouts";
 
 import { DesignProjectUser } from "@/lib/types";
 
-function ProjectItem({ project }: { project: DesignProjectUser}) {
+function ProjectItem({ project }: { project: DesignProjectUser }) {
   const displayNames = useMemo(() => {
     return new Intl.DisplayNames(["en"], { type: "region" });
   }, []);
@@ -25,7 +25,6 @@ function ProjectItem({ project }: { project: DesignProjectUser}) {
       className="flex justify-between gap-6 p-8 border rounded-lg hover:bg-accent"
     >
       <div className="flex min-w-0 gap-x-4">
-        
         <div className="min-w-0 flex-auto">
           <p className="text-md font-semibold leading-6">
             {title} - {where} - <span className="capitalize">{type}</span>

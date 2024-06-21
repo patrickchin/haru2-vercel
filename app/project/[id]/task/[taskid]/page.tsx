@@ -66,8 +66,6 @@ async function TaskPage({
     getProjectTask(projectId, specId),
   ]);
 
-  console.log("projectId:", projectId, "specId:", specId);
-
   // const project: DesignProject | undefined = await getProject(projectId);
   // const taskSpec: DesignTaskSpec | undefined = await getTaskSpec(specId);
   // const task: DesignTask | undefined = await getProjectTask(projectId, specId);
@@ -105,7 +103,9 @@ async function TaskPage({
       <Card className="h-full w-full">
         {/* <CardHeader className="font-bold">Description</CardHeader> */}
         <CardContent className="p-6">
-          <CardDescription className="text-base">{taskSpec?.description}</CardDescription>
+          <CardDescription className="text-base">
+            {taskSpec?.description}
+          </CardDescription>
         </CardContent>
       </Card>
 

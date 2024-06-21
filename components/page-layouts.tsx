@@ -10,7 +10,7 @@ export function SimpleLayout({ children }: { children: React.ReactNode }) {
       <main
         className={cn(
           "grow flex flex-col justify-center items-center",
-          "bg-gradient-to-r from-cyan-100 to-red-100",
+          "bg-gradient-to-br from-cyan-100 to-indigo-200",
         )}
       >
         {children}

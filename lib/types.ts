@@ -3,61 +3,11 @@ import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import * as db from "./db";
 
-function allFilesSmall(list: FileList | undefined) {
-  if (list === undefined) return true;
-  return Array.from(list).every((f: File) => f.size < 4_500_000);
-}
-
-export const NewProjectFormSchema = z.object({
-  title: z.string().max(255),
-  country: z.string(),
-  buildingType: z.string(), // enum?
-  buildingSubtype: z.string().optional(), // enum?
-  description: z.string().min(2),
-  files: z
-    .any()
-    .transform((f) => f as FileList)
-    .optional()
-    .refine(allFilesSmall, "Max file size 4.5MB"),
-
-  lifestyle: z.string().optional(),
-  future: z.string().optional(),
-  energy: z.string().optional(),
-  outdoors: z.string().optional(),
-  security: z.string().optional(),
-  maintenance: z.string().optional(),
-  special: z.string().optional(),
-});
-export type NewProjectFormSchemaType = z.infer<typeof NewProjectFormSchema>;
-export type NewProjectFormType = UseFormReturn<NewProjectFormSchemaType>;
-
-export const RegisterSchema = z
-  .object({
-    name: z.string().trim().min(1, { message: "Name is required" }),
-    phone: z
-      .string()
-      .min(5, { message: "Phone must contain at least 5 characters" })
-      .max(32, { message: "Phone cannot contain more than 32 characters" })
-      .regex(/^\+?[0-9\s-]+$/, { message: "Phone contains invalid characters" })
-      .optional()
-      .or(z.literal("")),
-    email: z.string().min(1, { message: "Email is required" }).email(),
-    password: z
-      .string()
-      .min(8, { message: "Password must contain at least 8 characters" }),
-    confirmPassword: z.string(),
-  })
-  .refine((schema) => schema.confirmPassword === schema.password, {
-    message: "Oops! Passwords don't match. Try again.",
-    path: ["confirmPassword"],
-  });
-
-export type RegisterSchemaType = z.infer<typeof RegisterSchema>;
-
 export type DesignUserBasic = NonNullable<
   Awaited<ReturnType<typeof db.getUserByEmail>>
 >;
-export type DesignUserDetailed = Awaited< // adds email
+export type DesignUserDetailed = Awaited<
+  // adds email
   ReturnType<typeof db.getTeamMembersDetailed>
 >[0];
 export type DesignProject = NonNullable<
@@ -66,11 +16,11 @@ export type DesignProject = NonNullable<
 export type DesignProjectUser = Awaited<
   ReturnType<typeof db.getUserProjects>
 >[0];
-export type DesignTeam = typeof Schemas.teams1.$inferSelect;
+export type DesignTeam = Awaited<ReturnType<typeof db.getProjectTeams>>[0];
 export type DesignTeamMember = typeof Schemas.teammembers1.$inferSelect;
 export type DesignTaskSpec = typeof Schemas.taskspecs1.$inferSelect;
 export type DesignTask = typeof Schemas.tasks1.$inferSelect;
-export type DesignFile = typeof Schemas.files1.$inferSelect;
+export type DesignFile = Awaited<ReturnType<typeof db.getFilesForTask>>[0];
 export type DesignTaskComment = Awaited<
   ReturnType<typeof db.getTaskComments>
 >[0];

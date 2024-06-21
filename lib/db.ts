@@ -11,7 +11,7 @@ import {
   getTableColumns,
 } from "drizzle-orm";
 import postgres from "postgres";
-import { genSaltSync, hashSync } from "bcrypt-ts";
+import { genSaltSync, hashSync, compareSync } from "bcrypt-ts";
 
 import * as Schemas from "@/drizzle/schema";
 import assert from "assert";
@@ -66,6 +66,16 @@ export async function getUserByPhone(phone: string) {
     .from(Schemas.users1)
     .leftJoin(Schemas.accounts1, eq(Schemas.accounts1.id, Schemas.users1.id))
     .where(eq(Schemas.accounts1.phone, phone));
+}
+
+export async function getAllUsers() {
+  return await db
+    .select({
+      ...getTableColumns(Schemas.users1),
+      email: Schemas.accounts1.email,
+    })
+    .from(Schemas.users1)
+    .leftJoin(Schemas.accounts1, eq(Schemas.accounts1.id, Schemas.users1.id));
 }
 
 export async function createUserIfNotExists({
@@ -129,6 +139,32 @@ export async function updateUserAvatar(
   });
 }
 
+export async function deleteUserAvatar(uploaderId: number) {
+  return await db.transaction(async (tx) => {
+    const oldUser = await tx
+      .select()
+      .from(Schemas.users1)
+      .where(eq(Schemas.users1.id, uploaderId))
+      .then((r) => r[0]);
+
+    if (!oldUser) {
+      throw new Error(`User with ID ${uploaderId} not found`);
+    }
+
+    const updatedUser = await tx
+      .update(Schemas.users1)
+      .set({ avatarUrl: null })
+      .where(eq(Schemas.users1.id, uploaderId))
+      .returning()
+      .then((r) => r[0]);
+
+    return {
+      initial: oldUser,
+      updated: updatedUser,
+    };
+  });
+}
+
 // projects ==========================================================================================
 
 export async function getUserProjects(userId: number, pagenum: number = 0) {
@@ -138,7 +174,7 @@ export async function getUserProjects(userId: number, pagenum: number = 0) {
       ...getTableColumns(Schemas.projects1),
       user: {
         ...getTableColumns(Schemas.users1),
-      }
+      },
     })
     .from(Schemas.projects1)
     .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.projects1.userid))
@@ -196,6 +232,27 @@ export async function updateProjectFields(
 
 // project members ==========================================================================================
 
+export async function createTeams(projectId: number, types: string[]) {
+  const values = types.map((type) => {
+    return { projectid: projectId, type };
+  });
+  return db.transaction(async (tx) => {
+    const existingTeam = await tx.select()
+      .from(Schemas.teams1)
+      .where(eq(Schemas.teams1.projectid, projectId))
+      .limit(1);
+    if (existingTeam.length > 0) return;
+    return tx.insert(Schemas.teams1).values(values).returning();
+  });
+}
+
+export async function createTeam(projectId: number, type: string) {
+  return db
+    .insert(Schemas.teams1)
+    .values({ projectid: projectId, type })
+    .returning();
+}
+
 export async function deleteTeam(teamId: number) {
   const deletedTeam = await db.transaction(async (tx) => {
     await tx
@@ -213,8 +270,12 @@ export async function deleteTeam(teamId: number) {
 
 export async function getProjectTeams(projectId: number) {
   return await db
-    .select()
+    .select({
+      ...getTableColumns(Schemas.teams1),
+      lead: getTableColumns(Schemas.users1),
+    })
     .from(Schemas.teams1)
+    .leftJoin(Schemas.users1, eq(Schemas.teams1.lead, Schemas.users1.id))
     .where(eq(Schemas.teams1.projectid, projectId));
 }
 
@@ -246,23 +307,23 @@ export async function getTeamId(projectid: number, type: string) {
     );
 }
 
-export async function addTeamMemberByEmail(teamid: number, email: string) {
-  // how to do "INSERT INTO x SELECT y FROM z"
-  return await db.transaction(async (tx) => {
-    const userid = await tx
-      .select({ id: Schemas.accounts1.id })
-      .from(Schemas.accounts1)
-      .where(eq(Schemas.accounts1.email, email))
-      .then((r) => r[0].id);
-    return tx
-      .insert(Schemas.teammembers1)
-      .values({
-        teamid,
-        userid,
-      })
-      .onConflictDoNothing()
-      .returning();
-  });
+export async function setTeamLead(teamid: number, userid: number) {
+  return db
+    .update(Schemas.teams1)
+    .set({ lead: userid })
+    .where(eq(Schemas.teams1.id, teamid))
+    .returning();
+}
+
+export async function addTeamMember(teamid: number, userid: number) {
+  return db
+    .insert(Schemas.teammembers1)
+    .values({
+      teamid,
+      userid,
+    })
+    .onConflictDoNothing()
+    .returning();
 }
 
 export async function deleteTeamMember(teamid: number, userid: number) {
@@ -333,11 +394,75 @@ export async function createProjectTasks(
   return await db.insert(Schemas.tasks1).values(values).returning();
 }
 
+export async function createProjectTasksFromAllSpecs(projectId: number) {
+  return db.transaction(async (tx) => {
+    const existingTasks = await tx
+      .select()
+      .from(Schemas.tasks1)
+      .where(eq(Schemas.tasks1.projectid, projectId))
+      .limit(1);
+    if (existingTasks.length > 0) return; // or throw error?
+
+    const specs = await tx.select().from(Schemas.taskspecs1);
+    const tasks = specs.map((spec) => {
+      return {
+        specid: spec.id,
+        projectid: projectId,
+        type: spec.type,
+        title: spec.title,
+        description: spec.description,
+        enabled: true,
+      };
+    });
+    return await tx.insert(Schemas.tasks1).values(tasks).returning();
+  });
+}
+
+export async function enableProjectTaskSpec(
+  projectId: number,
+  specId: number,
+  enabled: boolean,
+) {
+  return await db
+    .update(Schemas.tasks1)
+    .set({ enabled })
+    .where(
+      and(
+        eq(Schemas.tasks1.projectid, projectId),
+        eq(Schemas.tasks1.specid, specId),
+      ),
+    )
+    .returning()
+    .then((r) => r[0]);
+}
+
+export async function enableProjectTask(taskId: number, enabled: boolean) {
+  return await db
+    .update(Schemas.tasks1)
+    .set({ enabled })
+    .where(eq(Schemas.tasks1.id, taskId))
+    .returning()
+    .then((r) => r[0]);
+}
+
+export async function getProjectTasksAll(projectid: number) {
+  return await db
+    .select()
+    .from(Schemas.tasks1)
+    .where(and(eq(Schemas.tasks1.projectid, projectid)));
+}
+
 export async function getProjectTasks(projectid: number) {
   return await db
     .select()
     .from(Schemas.tasks1)
-    .where(eq(Schemas.tasks1.projectid, projectid));
+    .where(
+      and(
+        eq(Schemas.tasks1.projectid, projectid),
+        eq(Schemas.tasks1.enabled, true),
+      ),
+    )
+    .orderBy(Schemas.tasks1.id);
 }
 
 export async function getProjectTask(projectid: number, specid: number) {
@@ -365,13 +490,19 @@ export async function addFile(
 }
 
 export async function getFilesForProject(projectId: number) {
-  // tbh this join isn't needed if we just attach projectId to the file
   return await db
     .select({
-      ...getTableColumns(Schemas.files1)
+      ...getTableColumns(Schemas.files1),
+      uploader: {
+        ...getTableColumns(Schemas.users1),
+      },
+      task: {
+        ...getTableColumns(Schemas.tasks1),
+      },
     })
     .from(Schemas.files1)
     .leftJoin(Schemas.tasks1, eq(Schemas.tasks1.id, Schemas.files1.taskid))
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderid))
     .where(
       or(
         eq(Schemas.files1.projectid, projectId),
@@ -444,12 +575,21 @@ export async function editTaskFile(
   return editedFiles[0];
 }
 
-export async function getTaskFiles(taskid: number) {
+export async function getFilesForTask(taskId: number) {
   return await db
-    .select()
+    .select({
+      ...getTableColumns(Schemas.files1),
+      uploader: {
+        ...getTableColumns(Schemas.users1),
+      },
+      task: {
+        ...getTableColumns(Schemas.tasks1),
+      },
+    })
     .from(Schemas.files1)
-    .where(eq(Schemas.files1.taskid, taskid));
-  // .orderBy(desc(Schemas.files1.createdat));
+    .leftJoin(Schemas.tasks1, eq(Schemas.tasks1.id, Schemas.files1.taskid))
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderid))
+    .where(eq(Schemas.tasks1.id, taskId));
 }
 
 export async function getTaskCommentAttachments(taskid: number) {
@@ -469,4 +609,110 @@ export async function deleteFile(fileId: number) {
     .delete(Schemas.files1)
     .where(eq(Schemas.files1.id, fileId))
     .returning();
+}
+
+// OTP functions ==========================================================================================
+
+// TODO what about email?
+export async function saveOtp(
+  phoneNumber: string,
+  otp: string,
+  expiresAt: Date,
+) {
+  // Define the rate limit time window (e.g., 5 seconds between requests)
+  const RATE_LIMIT_WINDOW = 5 * 1000;
+
+  // Get the current time
+  const currentTime = new Date().getTime();
+
+  // Use a transaction to ensure atomicity and consistency
+  return await db.transaction(async (tx) => {
+    // Check if there is an existing OTP for the phone number
+    const existingOtp = await tx
+      .select()
+      .from(Schemas.otps1)
+      .where(eq(Schemas.otps1.phoneNumber, phoneNumber))
+      .limit(1);
+
+    if (existingOtp.length > 0) {
+      const lastOtpTimeValue = existingOtp[0].createdAt;
+
+      // Ensure that lastOtpTimeValue is not null
+      if (lastOtpTimeValue !== null) {
+        const lastOtpTime = lastOtpTimeValue.getTime(); // Convert to Unix timestamp in milliseconds
+
+        // Calculate the time difference
+        const timeDifference = currentTime - lastOtpTime;
+
+        // If the time difference is less than the rate limit window, throw an error
+        if (timeDifference < RATE_LIMIT_WINDOW) {
+          throw new Error(
+            "OTP requests are too frequent. Please try again later.",
+          );
+        }
+
+        // If allowed, delete the existing OTP (to be overwritten)
+        await tx
+          .delete(Schemas.otps1)
+          .where(eq(Schemas.otps1.phoneNumber, phoneNumber));
+      }
+    }
+
+    // Generate a salt and hash the OTP
+    const salt = genSaltSync(10);
+    const hashedOtp = hashSync(otp, salt);
+
+    // Save the new OTP
+    return await tx
+      .insert(Schemas.otps1)
+      .values({
+        phoneNumber,
+        otp: hashedOtp,
+        expiresAt,
+        createdAt: new Date(), // Save the current timestamp as an ISO string
+      })
+      .returning();
+  });
+}
+
+export async function verifyOtp(
+  phoneNumber: string,
+  otp: string,
+): Promise<boolean> {
+  return await db.transaction(async (tx) => {
+    // Retrieve the OTP record for the given phone number
+    const record = await tx
+      .select()
+      .from(Schemas.otps1)
+      .where(eq(Schemas.otps1.phoneNumber, phoneNumber))
+      .limit(1);
+
+    // If no record is found, return false
+    if (record.length === 0) {
+      return false;
+    }
+
+    const { otp: hashedOtp, expiresAt } = record[0];
+
+    // Check if the OTP has expired
+    if (new Date() > new Date(expiresAt)) {
+      // If expired, delete the OTP record and return false
+      await tx
+        .delete(Schemas.otps1)
+        .where(eq(Schemas.otps1.phoneNumber, phoneNumber));
+      return false;
+    }
+
+    // Compare the provided OTP with the hashed OTP
+    const isValidOtp = compareSync(otp, hashedOtp);
+
+    // If the OTP is valid, delete the OTP record
+    if (isValidOtp) {
+      await tx
+        .delete(Schemas.otps1)
+        .where(eq(Schemas.otps1.phoneNumber, phoneNumber));
+    }
+
+    return isValidOtp;
+  });
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, useState } from "react";
-import assert from "assert";
+import { useSession } from "next-auth/react";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CenteredLayout } from "@/components/page-layouts";
@@ -10,38 +10,54 @@ import { Label } from "@/components/ui/label";
 
 import { LucideLoader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CurrentUserAvatar } from "@/components/user-avatar";
+import { CurrentUserAvatar, } from "@/components/user-avatar";
 import { uploadAvatar } from "@/lib/utils";
+import { deleteAvatarForUser } from "@/lib/actions";
 
 function SettingsPage() {
+  const { data: session, update: updateSession } = useSession();
   const [errorMessage, setErrorMessage] = useState("");
   const [isUploading, setUpLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   async function onChangeAvatar(e: ChangeEvent<HTMLInputElement>) {
     const targetFiles = e.currentTarget.files;
     if (!targetFiles || targetFiles.length <= 0) return;
 
     setUpLoading(true);
-
-    assert(targetFiles.length >= 1);
     const file = targetFiles.item(0);
-
-    if (!file) {
-      return;
-    }
-
+    if (!file) return;
     const updatedUser = await uploadAvatar(file);
-
     if (updatedUser) {
-      window.location.reload();
+      location.reload();
     } else {
       setErrorMessage("Failed to update the avatar. Please try again.");
     }
-
     e.target.value = "";
     setUpLoading(false);
   }
 
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const deleteProfileAvatar = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteAvatarForUser();
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error deleting avatar:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+    location.reload();
+  };
   return (
     <>
       <Card>

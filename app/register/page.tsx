@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RegisterSchema, RegisterSchemaType } from "@/lib/types";
+import { RegisterSchema, RegisterSchemaType } from "@/lib/forms";
 
 export default function Page() {
   const router = useRouter();
@@ -24,11 +24,12 @@ export default function Page() {
   });
 
   const onSubmit: SubmitHandler<RegisterSchemaType> = async (data) => {
-    try {
-      await registerUser(data);
+    const ret = await registerUser(data);
+    if (!ret) {
       router.push("/login");
-    } catch (error) {
-      console.error("Error trying to register user: ", error);
+    } else if (ret?.error) {
+      // TODO
+      console.error("Error trying to register user");
     }
   };
 

@@ -1,7 +1,15 @@
 "use client";
 
 import * as React from "react";
-import TaskTable from "./task-table";
+import { DesignProject, DesignTask, DesignTeam, teamNames } from "@/lib/types";
+import {
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
+import useSWR from "swr";
+import { getProjectTeams } from "@/lib/actions";
+
 import { LucideChevronDown } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui/card";
 import {
@@ -9,15 +17,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import TaskTable from "./task-table";
 
-import { DesignTask, teamNames } from "@/lib/types";
-import { DesignProject } from "@/lib/types";
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
 
 function TeamProgress({
   project,
@@ -25,24 +26,24 @@ function TeamProgress({
   tasks,
 }: {
   project: DesignProject;
-  team: string;
+  team: DesignTeam;
   tasks: DesignTask[];
 }) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
-  const isOpen = params.get(team) == "1";
+  const isOpen = team.type ? params.get(team.type) == "1" : false;
 
   const updateQueryCurrentTeam = React.useCallback(
     (open: boolean) => {
       const newParams = new URLSearchParams(params.toString());
-      newParams.set(team, open ? "1" : "0");
+      if (team.type) newParams.set(team.type, open ? "1" : "0");
       return newParams.toString();
     },
     [params, team],
   );
 
-  tasks = tasks.filter((task) => task.type == team);
+  tasks = tasks.filter((task) => task.type == team.type);
 
   const completed = tasks.reduce(
     // how tf is this the best say to count instances?
@@ -66,8 +67,10 @@ function TeamProgress({
         }}
       >
         <CollapsibleTrigger className="flex gap-4 w-full p-8 text-sm hover:bg-accent">
-          <CardTitle className="text-left">{teamNames[team]}</CardTitle>
-          <span>(No assigned lead)</span>
+          <CardTitle className="text-left">{teamNames[team.type || "other"]}</CardTitle>
+          <span>
+            {team.lead ? `Team Lead: ${team.lead?.name}` : "(No assigned lead)"}
+          </span>
           <span className="grow text-right">
             Completed {completed} of {total} total tasks ({pct.toFixed(0)} %)
           </span>
@@ -97,11 +100,20 @@ export default function ProjectTeamsProgress({
   project: DesignProject;
   tasks: DesignTask[];
 }) {
-  const teams = ["legal", "architectural", "structural", "mep", "other"];
+  // const teams = ["legal", "architectural", "structural", "mep", "other"];
+
+  const {
+    data: teams,
+    error: teamsError,
+    mutate: teamsMutate,
+  } = useSWR(`/api/project/${project.id}/teams`, () => {
+    return getProjectTeams(project.id);
+  });
+
   return (
     <div className="flex flex-col gap-4">
-      {teams.map((team, i) => (
-        <TeamProgress key={team} project={project} team={team} tasks={tasks} />
+      {teams?.map((team) => (
+        <TeamProgress key={team.id} project={project} team={team} tasks={tasks} />
       ))}
     </div>
   );

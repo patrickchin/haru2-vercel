@@ -1,10 +1,10 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { useGLTF, OrbitControls, Stats, Gltf } from "@react-three/drei";
+import { OrbitControls, Stats, Gltf } from "@react-three/drei";
 
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
 import { useLoader } from "@react-three/fiber";
 import { Suspense } from "react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,36 +18,34 @@ function ProjectModelViewSkeleton() {
 }
 
 function ProjectModelViewInternal() {
-  // const obj = useLoader(OBJLoader, '/Bambo_House.obj');
-  // const loader = new GLTFLoader();
-  // const obj = loader.load(
-  //   'models/gltf/duck/duck.gltf');
-
-  // const model = useGLTF("DiffuseTransmissionPlant.glb");
+  const mtl = useLoader(MTLLoader, "/api/github/Condo.mtl");
+  const obj = useLoader(OBJLoader, "/api/github/Condo.obj", (loader) => {
+    mtl.preload();
+    loader.setMaterials(mtl);
+  });
 
   return (
     <Canvas
       shadows
-      camera={{ position: [0.0, 0.4, 0.8] }}
+      camera={{ position: [0, 40, 80] }}
       className="min-h-[600px]"
     >
-      <ambientLight color={"white"} intensity={0.3} />
-      <directionalLight color="white" position={[0, 2, 5]} />
+      <ambientLight color="white" intensity={0.9} />
+      <directionalLight color="orange" position={[0, 40, 80]} />
 
-      <Gltf
+      {/* <Gltf
         src="/tmp/DiffuseTransmissionPlant.glb"
         receiveShadow
         castShadow
         position={[0, -0.3, 0]}
+      /> */}
+
+      <primitive
+        receiveShadow={true}
+        castShadow
+        object={obj}
+        rotation={[Math.PI / 2, Math.PI, 0]}
       />
-
-      {/* <primitive object={model.scene} /> */}
-      {/* <primitive receiveShadow={true} castShadow object={obj} position={[-5, -2, 6]} /> */}
-
-      {/* <mesh receiveShadow={true} castShadow position={[-13, 2, 0]}>
-        <boxGeometry args={[6, 10, 10]} />
-        <meshPhysicalMaterial color="red" />
-      </mesh> */}
 
       <OrbitControls enableDamping={false} />
       <Stats />
