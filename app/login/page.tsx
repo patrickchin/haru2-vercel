@@ -215,7 +215,7 @@ function EmailLogin() {
       setResendOtpTimer(60);
     } else if (ret?.error === FailedToSendEmailOTP.error) {
       form.setError("otp", {
-        message: "Failed to send passcode via Whatsapp.",
+        message: "Failed to send passcode via email.",
       });
     }
   };
@@ -235,10 +235,6 @@ function EmailLogin() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <p className="text-sm font-medium text-destructive text-center">
-          Email passcode login is currently disabled.
-        </p>
-
         <FormField
           control={form.control}
           name="email"
@@ -251,7 +247,6 @@ function EmailLogin() {
                   name={field.name}
                   type="email"
                   placeholder="patrick@haru.com"
-                  disabled
                 />
               </FormControl>
               <FormMessage />
@@ -267,12 +262,7 @@ function EmailLogin() {
               <FormLabel>One-Time Passcode</FormLabel>
               <div className="flex items-center gap-3">
                 <FormControl>
-                  <InputOTP
-                    maxLength={6}
-                    pattern="^[0-9]+$"
-                    {...field}
-                    disabled
-                  >
+                  <InputOTP maxLength={6} pattern="^[0-9]+$" {...field}>
                     <InputOTPGroup className="bg-background">
                       <InputOTPSlot index={0} />
                       <InputOTPSlot index={1} />
@@ -288,7 +278,7 @@ function EmailLogin() {
                   variant="outline"
                   className="w-auto bg-blue-50 text-blue-600 border-blue-600"
                   onClick={() => handleSendOtpClick(form.getValues("email"))}
-                  disabled={true || resendOtpTimer > 0}
+                  disabled={resendOtpTimer > 0}
                 >
                   Send Code
                 </Button>
@@ -303,11 +293,12 @@ function EmailLogin() {
           )}
         />
 
-        <FormFooter form={form} disabled={true} />
+        <FormFooter form={form} />
       </form>
     </Form>
   );
 }
+
 
 function PasswordLogin() {
   const form = useForm<LoginTypesPassword>({
