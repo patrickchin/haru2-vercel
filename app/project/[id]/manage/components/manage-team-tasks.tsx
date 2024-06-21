@@ -151,7 +151,9 @@ export default function ManageAllTeamsTasks({
                   <CardTitle className="text-left">
                     {teamNames[team.type || "other"]}
                   </CardTitle>
-                  <span>(No assigned lead) TODO</span>
+                  <span>
+                    {team.lead ? `Team Lead: ${team.lead?.name}` : "(No assigned lead)"}
+                  </span>
                 </div>
                 <div className="flex gap-4">
                   {nTasksEnabled} of {teamTasks.length} tasks enabled

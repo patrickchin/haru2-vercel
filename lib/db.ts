@@ -270,8 +270,12 @@ export async function deleteTeam(teamId: number) {
 
 export async function getProjectTeams(projectId: number) {
   return await db
-    .select()
+    .select({
+      ...getTableColumns(Schemas.teams1),
+      lead: getTableColumns(Schemas.users1),
+    })
     .from(Schemas.teams1)
+    .leftJoin(Schemas.users1, eq(Schemas.teams1.lead, Schemas.users1.id))
     .where(eq(Schemas.teams1.projectid, projectId));
 }
 
