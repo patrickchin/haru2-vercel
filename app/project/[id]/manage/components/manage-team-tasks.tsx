@@ -124,6 +124,10 @@ export default function ManageAllTeamsTasks({
 
   if (!specs) return null;
 
+  teams?.sort((a, b) => a.id - b.id).reverse();
+  Object.values(specs).forEach((s) => s.sort((a, b) => a.id - b.id).reverse());
+  tasks?.sort((a, b) => a.id - b.id).reverse();
+
   return (
     <section className="flex flex-col gap-4">
       <div className="px-6">
