@@ -1,6 +1,8 @@
 import nodemailer from "nodemailer";
 import { Resend } from "resend";
 
+const from = "noreply@harpapro.com"
+
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST, // e.g., "smtp.example.com"
   port: parseInt(process.env.SMTP_PORT || "587", 10), // typically 587 for TLS or 465 for SSL
@@ -12,13 +14,7 @@ const transporter = nodemailer.createTransport({
 });
 
 async function sendEmailNodeMailer(to: string, subject: string, text: string) {
-  const mailOptions = {
-    from: process.env.SMTP_USER,
-    to,
-    subject,
-    text,
-  };
-
+  const mailOptions = { from, to, subject, text };
   return new Promise<void>((resolve, reject) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
@@ -30,13 +26,9 @@ async function sendEmailNodeMailer(to: string, subject: string, text: string) {
   });
 }
 
-const resend = new Resend(process.env.RESEND_API_TOKEN);
-
 async function sendEmailResend(to: string, subject: string, html: string) {
-  const from = "no-reply@harpapro.com";
-  console.log("resend sending otp email to: ", to);
+  const resend = new Resend(process.env.RESEND_API_TOKEN);
   const { data, error } = await resend.emails.send({ from, to, subject, html });
-  console.log("resend sent ", data, error);
   if (error) throw error;
 }
 
