@@ -144,7 +144,12 @@ function PhoneLogin() {
             <FormItem>
               <FormLabel>Phone number</FormLabel>
               <FormControl>
-                <Input type="tel" placeholder="+254 0755 555 555" {...field} />
+                <Input
+                  onChange={field.onChange}
+                  name={field.name}
+                  type="tel"
+                  placeholder="+254 0755 555 555"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -249,7 +254,12 @@ function EmailLogin() {
             <FormItem>
               <FormLabel>Email address</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="patrick@haru.com" {...field} />
+                <Input
+                  onChange={field.onChange}
+                  name={field.name}
+                  type="email"
+                  placeholder="patrick@haru.com"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -280,7 +290,7 @@ function EmailLogin() {
                   variant="outline"
                   className="w-auto bg-blue-50 text-blue-600 border-blue-600"
                   onClick={() => handleSendOtpClick(form.getValues("email"))}
-                  disabled={resendOtpTimer > 0}
+                  disabled={sendingOTP || resendOtpTimer > 0}
                 >
                   Send Code
                 </Button>
