@@ -34,7 +34,9 @@ const resend = new Resend(process.env.RESEND_API_TOKEN);
 
 async function sendEmailResend(to: string, subject: string, html: string) {
   const from = "no-reply@harpapro.com";
-  resend.emails.send({ from, to, subject, html });
+  const { data, error } = await resend.emails.send({ from, to, subject, html });
+  console.log("resend sent ", data, error);
+  if (error) throw error;
 }
 
 export async function sendEmail(to: string, subject: string, text: string) {
