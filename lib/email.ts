@@ -34,6 +34,7 @@ const resend = new Resend(process.env.RESEND_API_TOKEN);
 
 async function sendEmailResend(to: string, subject: string, html: string) {
   const from = "no-reply@harpapro.com";
+  console.log("resend sending otp email to: ", to);
   const { data, error } = await resend.emails.send({ from, to, subject, html });
   console.log("resend sent ", data, error);
   if (error) throw error;
