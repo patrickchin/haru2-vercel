@@ -306,7 +306,7 @@ export default function ManageAllTeamsMembers({
     return Actions.getProjectTeams(projectId);
   });
 
-  teams?.sort((a, b) => a.id - b.id).reverse();
+  teams?.sort((a, b) => a.id - b.id);
 
   return (
     <section className="flex flex-col gap-4">

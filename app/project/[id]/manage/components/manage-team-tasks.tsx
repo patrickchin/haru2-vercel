@@ -19,11 +19,13 @@ function TaskCheckBox({
   projectId,
   spec,
   task,
+  tasks,
   tasksMutate,
 }: {
   projectId: number;
   spec?: DesignTaskSpec;
   task?: DesignTask;
+  tasks: DesignTask[];
   tasksMutate: KeyedMutator<DesignTask[] | undefined>;
 }) {
   if (!task) return null;
@@ -42,11 +44,13 @@ function TaskCheckBox({
         <Checkbox
           id={label}
           defaultChecked={task.enabled ?? true}
-          onCheckedChange={(checked) => {
+          onCheckedChange={async (checked) => {
             if (!projectId) return;
-            // TODDO checked can be a string??
-            Actions.enableProjectTask(task.id, checked == true);
-            tasksMutate();
+            const enabled = checked == true;
+            task.enabled = enabled;
+            tasksMutate(tasks, { revalidate: false }); // optimistic set
+            await Actions.enableProjectTask(task.id, enabled);
+            tasksMutate(); // revalidate with ground truth
           }}
           className="h-4 w-4"
         />
@@ -73,19 +77,16 @@ function ManageTeamTasks({
 
   // specs or tasks?? or join them??
 
-  tasks?.sort((task) => task.id);
+  tasks?.sort((a, b) => a.id - b.id);
 
   return (
     <div className="grid grid-cols-2 gap-4 justify-center">
-      {tasks
-        .sort((a, b) => {
-          return a.id - b.id;
-        })
-        .map((task, i) => (
+      {tasks.map((task, i) => (
           <TaskCheckBox
             key={i}
             projectId={projectId}
             task={task}
+            tasks={tasks}
             tasksMutate={tasksMutate}
           />
         ))}
@@ -124,9 +125,9 @@ export default function ManageAllTeamsTasks({
 
   if (!specs) return null;
 
-  teams?.sort((a, b) => a.id - b.id).reverse();
-  Object.values(specs).forEach((s) => s.sort((a, b) => a.id - b.id).reverse());
-  tasks?.sort((a, b) => a.id - b.id).reverse();
+  teams?.sort((a, b) => a.id - b.id);
+  Object.values(specs).forEach((s) => s.sort((a, b) => a.id - b.id));
+  tasks?.sort((a, b) => a.id - b.id);
 
   return (
     <section className="flex flex-col gap-4">
