@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST, // e.g., "smtp.example.com"
@@ -10,11 +11,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function sendEmail(
-  to: string,
-  subject: string,
-  text: string,
-): Promise<void> {
+async function sendEmailNodeMailer(to: string, subject: string, text: string) {
   const mailOptions = {
     from: process.env.SMTP_USER,
     to,
@@ -31,4 +28,19 @@ export async function sendEmail(
       }
     });
   });
+}
+
+const resend = new Resend(process.env.RESEND_API_TOKEN);
+
+async function sendEmailResend(to: string, subject: string, html: string) {
+  const from = "no-reply@harpapro.com";
+  resend.emails.send({ from, to, subject, html });
+}
+
+export async function sendEmail(to: string, subject: string, text: string) {
+  if (true) {
+    sendEmailResend(to, subject, text);
+  } else {
+    sendEmailNodeMailer(to, subject, text);
+  }
 }
