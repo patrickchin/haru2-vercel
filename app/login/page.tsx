@@ -97,22 +97,28 @@ function PhoneLogin() {
   });
   const { countdown: resendOtpTimer, setCountdown: setResendOtpTimer } =
     useCountdown(0);
+  const [sendingOTP, setSendingOTP] = useState(false);
 
   const handleSendOtpClick = async (phone?: string) => {
-    form.clearErrors();
+    try {
+      form.clearErrors();
+      setSendingOTP(true);
 
-    if (!phone) {
-      form.setError("phone", { message: "Phone number is required." });
-      return;
-    }
+      if (!phone) {
+        form.setError("phone", { message: "Phone number is required." });
+        return;
+      }
 
-    const ret = await sendOtpViaWhatsApp(phone);
-    if (!ret) {
-      setResendOtpTimer(60);
-    } else if (ret?.error === FailedToSendWhatsappOTP.error) {
-      form.setError("otp", {
-        message: "Failed to send passcode via Whatsapp.",
-      });
+      const ret = await sendOtpViaWhatsApp(phone);
+      if (!ret) {
+        setResendOtpTimer(60);
+      } else if (ret?.error === FailedToSendWhatsappOTP.error) {
+        form.setError("otp", {
+          message: "Failed to send passcode via Whatsapp.",
+        });
+      }
+    } finally {
+      setSendingOTP(false);
     }
   };
 
@@ -138,12 +144,7 @@ function PhoneLogin() {
             <FormItem>
               <FormLabel>Phone number</FormLabel>
               <FormControl>
-                <Input
-                  onChange={field.onChange}
-                  name={field.name}
-                  type="tel"
-                  placeholder="+254 0755 555 555"
-                />
+                <Input type="tel" placeholder="+254 0755 555 555" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -174,7 +175,7 @@ function PhoneLogin() {
                   variant="outline"
                   className="w-auto bg-green-50 text-green-600 border-green-600"
                   onClick={() => handleSendOtpClick(form.getValues("phone"))}
-                  disabled={resendOtpTimer > 0}
+                  disabled={sendingOTP || resendOtpTimer > 0}
                 >
                   Send Code
                 </Button>
@@ -201,22 +202,28 @@ function EmailLogin() {
   });
   const { countdown: resendOtpTimer, setCountdown: setResendOtpTimer } =
     useCountdown(0);
+  const [sendingOTP, setSendingOTP] = useState(false);
 
   const handleSendOtpClick = async (email?: string) => {
-    form.clearErrors();
+    try {
+      form.clearErrors();
+      setSendingOTP(true);
 
-    if (!email) {
-      form.setError("email", { message: "Email is required." });
-      return;
-    }
+      if (!email) {
+        form.setError("email", { message: "Email is required." });
+        return;
+      }
 
-    const ret = await sendOtpViaEmail(email);
-    if (!ret) {
-      setResendOtpTimer(60);
-    } else if (ret?.error === FailedToSendEmailOTP.error) {
-      form.setError("otp", {
-        message: "Failed to send passcode via email.",
-      });
+      const ret = await sendOtpViaEmail(email);
+      if (!ret) {
+        setResendOtpTimer(60);
+      } else if (ret?.error === FailedToSendEmailOTP.error) {
+        form.setError("otp", {
+          message: "Failed to send passcode via email.",
+        });
+      }
+    } finally {
+      setSendingOTP(false);
     }
   };
 
@@ -242,12 +249,7 @@ function EmailLogin() {
             <FormItem>
               <FormLabel>Email address</FormLabel>
               <FormControl>
-                <Input
-                  onChange={field.onChange}
-                  name={field.name}
-                  type="email"
-                  placeholder="patrick@haru.com"
-                />
+                <Input type="email" placeholder="patrick@haru.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -298,7 +300,6 @@ function EmailLogin() {
     </Form>
   );
 }
-
 
 function PasswordLogin() {
   const form = useForm<LoginTypesPassword>({
