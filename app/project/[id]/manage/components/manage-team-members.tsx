@@ -15,11 +15,7 @@ import { Input } from "@/components/ui/input";
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
@@ -72,7 +68,7 @@ function AddTeamMemberRowUnregistered({
   searchValue: string;
 }) {
   return (
-    <div
+    <li
       className={cn(
         "flex gap-4 p-4 items-center hover:bg-accent border-b",
         // searchValue.length > 0 ? "" : "hidden",
@@ -91,7 +87,7 @@ function AddTeamMemberRowUnregistered({
         }}
         removeMember={() => {}}
       />
-    </div>
+    </li>
   );
 }
 
@@ -108,7 +104,7 @@ function AddTeamMemberRow({
 }) {
   const alreadyAdded = !!members?.find((val) => val.id == user.id);
   return (
-    <div className="flex gap-4 p-4 items-center hover:bg-accent border-b">
+    <li className="flex gap-4 p-4 items-center hover:bg-accent border-b">
       <DesignUserAvatar user={user} />
       <div className="grow">
         <div className="font-medium">{user.name || "Unregistered Account"}</div>
@@ -125,7 +121,7 @@ function AddTeamMemberRow({
           membersMutate(Actions.removeTeamMember(team.id, user.id))
         }
       />
-    </div>
+    </li>
   );
 }
 
@@ -163,17 +159,19 @@ function AddTeamMemberDialogContent({
         onChange={(e) => setSearchValue(e.target.value)}
       />
       {/* https://stackoverflow.com/questions/14962468/how-can-i-combine-flexbox-and-vertical-scroll-in-a-full-height-app */}
-      <ScrollArea className="grow border rounded h-0">
-        <AddTeamMemberRowUnregistered searchValue={searchValue} />
-        {Array.from(filteredUsers ?? []).map((user, i) => (
-          <AddTeamMemberRow
-            key={i}
-            user={user}
-            team={team}
-            members={members}
-            membersMutate={membersMutate}
-          />
-        ))}
+      <ScrollArea className="grow border rounded h-0 pb-4">
+        <ol>
+          <AddTeamMemberRowUnregistered searchValue={searchValue} />
+          {Array.from(filteredUsers ?? []).map((user, i) => (
+            <AddTeamMemberRow
+              key={i}
+              user={user}
+              team={team}
+              members={members}
+              membersMutate={membersMutate}
+            />
+          ))}
+        </ol>
       </ScrollArea>
       <AlertDialogAction>Done</AlertDialogAction>
     </AlertDialogContent>
@@ -206,7 +204,7 @@ function AddTeamMemberButton({
   );
 }
 
-function ManageSingleTeamMemberRow({
+function ManageTeamMemberRow({
   user,
   team,
   teamsMutate,
@@ -221,7 +219,7 @@ function ManageSingleTeamMemberRow({
 }) {
   const isLead = team.lead?.id === user.id;
   return (
-    <div className="flex gap-6 px-6 py-4 items-center hover:bg-accent border-b">
+    <li className="flex gap-6 px-6 py-4 items-center hover:bg-accent border-b">
       <DesignUserAvatar user={user} />
       <div className="grow">
         <div className="font-medium">{user.name || "Unregistered Account"}</div>
@@ -249,11 +247,11 @@ function ManageSingleTeamMemberRow({
       >
         Remove <LucideX className="w-3.5 h-3.5" />
       </Button>
-    </div>
+    </li>
   );
 }
 
-function ManageSingleTeamMembers({
+function ManageTeamMembers({
   team,
   teamsMutate,
 }: {
@@ -296,17 +294,20 @@ function ManageSingleTeamMembers({
             />
           </div>
         </div>
-        <ScrollArea className="h-full border rounded">
-          {members && Array.from(members).map((user, i) => (
-            <ManageSingleTeamMemberRow
-              key={i}
-              user={user}
-              team={team}
-              teamsMutate={teamsMutate}
-              members={members}
-              membersMutate={membersMutate}
-            />
-          ))}
+        <ScrollArea className="h-full border rounded pb-4">
+          <ol>
+            {members &&
+              Array.from(members).map((user, i) => (
+                <ManageTeamMemberRow
+                  key={i}
+                  user={user}
+                  team={team}
+                  teamsMutate={teamsMutate}
+                  members={members}
+                  membersMutate={membersMutate}
+                />
+              ))}
+          </ol>
         </ScrollArea>
       </CardContent>
     </Card>
@@ -355,7 +356,7 @@ export default function ManageAllTeamsMembers({
             key={team.id}
             fallback={<ManageTeamMembersSkeleton team={team} />}
           >
-            <ManageSingleTeamMembers team={team} teamsMutate={teamsMutate} />
+            <ManageTeamMembers team={team} teamsMutate={teamsMutate} />
           </Suspense>
         ))}
       </div>
