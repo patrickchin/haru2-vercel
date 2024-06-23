@@ -48,7 +48,7 @@ function ManageTaskRow({
     } finally {
       setIsPending(false);
     }
-  }
+  };
 
   return (
     <li
@@ -61,7 +61,7 @@ function ManageTaskRow({
         <h6>{task.title}</h6>
         <div className="text-xs">{task.description}</div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex">
         <Button
           variant="outline"
           className="flex gap-2"
@@ -171,7 +171,7 @@ export default function ManageAllTeamsTasks({
         );
         return (
           <Card key={team.id}>
-            <Collapsible className="grow">
+            <Collapsible className="grow" defaultOpen={true}>
               <CollapsibleTrigger className="flex gap-4 w-full p-8 text-sm hover:bg-accent justify-between">
                 <div className="flex gap-4">
                   <CardTitle className="text-left">
