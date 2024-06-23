@@ -86,7 +86,10 @@
     @apply text-2xl font-semibold;
   }
   h4 {
-    @apply text-xl font-semibold;
+    @apply text-2xl font-normal;
+  }
+  h5 {
+    @apply text-lg font-semibold;
   }
   p {
     /* @apply text-lg; */

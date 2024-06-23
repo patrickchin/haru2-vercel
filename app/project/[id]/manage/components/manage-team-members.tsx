@@ -206,10 +206,52 @@ function AddTeamMemberButton({
   );
 }
 
-/*
-function AddTeamButton({ onClick }: { onClick: (s: string) => void }) {
+function ManageSingleTeamMemberRow({
+  user,
+  team,
+  teamsMutate,
+  members,
+  membersMutate,
+}: {
+  user: DesignUserDetailed;
+  team: DesignTeam;
+  teamsMutate: KeyedMutator<DesignTeam[] | undefined>;
+  members: DesignUserDetailed[];
+  membersMutate: KeyedMutator<DesignUserDetailed[] | undefined>;
+}) {
+  const isLead = team.lead?.id === user.id;
+  return (
+    <div className="flex gap-6 px-6 py-4 items-center hover:bg-accent border-b">
+      <DesignUserAvatar user={user} />
+      <div className="grow">
+        <div className="font-medium">{user.name || "Unregistered Account"}</div>
+        <div className="hidden text-sm text-muted-foreground md:inline">
+          {user.email}
+        </div>
+      </div>
+      <Button
+        variant="outline"
+        disabled={isLead}
+        onClick={() => {
+          Actions.setTeamLead(team.id, user.id);
+          teamsMutate();
+        }}
+      >
+        {isLead ? "Current Team Lead" : "Set as Lead"}
+      </Button>
+      {/* <Button variant="outline" disabled>Send Invite</Button> */}
+      <Button
+        variant="outline"
+        className="flex gap-1"
+        onClick={() =>
+          membersMutate(Actions.removeTeamMember(team.id, user.id))
+        }
+      >
+        Remove <LucideX className="w-3.5 h-3.5" />
+      </Button>
+    </div>
+  );
 }
-*/
 
 function ManageSingleTeamMembers({
   team,
@@ -229,7 +271,7 @@ function ManageSingleTeamMembers({
   return (
     <Card className="flex flex-col px-8 py-6 gap-4">
       <div className="flex py-2 justify-between items-center">
-        <h3>{teamNames[team.type || "other"]}</h3>
+        <h5>{teamNames[team.type || "other"]}</h5>
         <Button
           className="hidden"
           disabled={true}
@@ -244,7 +286,7 @@ function ManageSingleTeamMembers({
       </div>
       <CardContent className="flex flex-col gap-3 px-0 min-h-48 max-h-[36rem]">
         <div className="flex gap-2 items-baseline justify-between">
-          <h4 className="">Team Members</h4>
+          <h6 className="">Team Members</h6>
           <div className="flex gap-3 items-center">
             <span className="text-sm">{members?.length} members</span>
             <AddTeamMemberButton
@@ -255,45 +297,16 @@ function ManageSingleTeamMembers({
           </div>
         </div>
         <ScrollArea className="h-full border rounded">
-          {Array.from(members ?? []).map((user, i) => {
-            const isLead = team.lead?.id === user.id;
-            return (
-              <div
-                key={i}
-                className="flex gap-6 px-6 py-4 items-center hover:bg-accent border-b"
-              >
-                <DesignUserAvatar user={user} />
-                <div className="grow">
-                  <div className="font-medium">
-                    {user.name || "Unregistered Account"}
-                  </div>
-                  <div className="hidden text-sm text-muted-foreground md:inline">
-                    {user.email}
-                  </div>
-                </div>
-                <Button
-                  variant="outline"
-                  disabled={isLead}
-                  onClick={() => {
-                    Actions.setTeamLead(team.id, user.id);
-                    teamsMutate();
-                  }}
-                >
-                  {isLead ? "Current Team Lead" : "Set as Lead"}
-                </Button>
-                {/* <Button variant="outline" disabled>Send Invite</Button> */}
-                <Button
-                  variant="outline"
-                  className="flex gap-1"
-                  onClick={() =>
-                    membersMutate(Actions.removeTeamMember(team.id, user.id))
-                  }
-                >
-                  Remove <LucideX className="w-3.5 h-3.5" />
-                </Button>
-              </div>
-            );
-          })}
+          {members && Array.from(members).map((user, i) => (
+            <ManageSingleTeamMemberRow
+              key={i}
+              user={user}
+              team={team}
+              teamsMutate={teamsMutate}
+              members={members}
+              membersMutate={membersMutate}
+            />
+          ))}
         </ScrollArea>
       </CardContent>
     </Card>
@@ -330,7 +343,7 @@ export default function ManageAllTeamsMembers({
   return (
     <section className="flex flex-col gap-4">
       <div className="flex justify-between px-6">
-        <h3>Team Member Selection</h3>
+        <h4>Team Member Selection</h4>
         {/* <ComboboxDemo /> */}
         {/* <AddTeamButton
           onClick={(type: string) => teamsMutate(Actions.createProjectTeam(projectId, type))}

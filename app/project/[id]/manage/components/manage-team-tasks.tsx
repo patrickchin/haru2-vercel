@@ -132,7 +132,7 @@ export default function ManageAllTeamsTasks({
   return (
     <section className="flex flex-col gap-4">
       <div className="px-6">
-        <h3>Team Task Selection</h3>
+        <h4>Team Task Selection</h4>
       </div>
 
       {teams?.map((team) => {
