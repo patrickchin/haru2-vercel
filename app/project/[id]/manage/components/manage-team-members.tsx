@@ -92,7 +92,7 @@ function AddTeamMemberDialogContent({
   }, [users, searchValue]);
 
   return (
-    <AlertDialogContent className="flex flex-col gap-8 max-w-3xl p-12">
+    <AlertDialogContent className="flex flex-col gap-8 max-w-3xl p-12 max-h-screen">
       <AlertDialogTitle className="text-2xl">Add Members:</AlertDialogTitle>
 
       <div className="flex flex-col gap-3 ">
@@ -102,7 +102,7 @@ function AddTeamMemberDialogContent({
           onChange={(e) => setSearchValue(e.target.value)}
         />
 
-        <ScrollArea className="grow border rounded h-[36rem]">
+        <ScrollArea className="grow border rounded h-[20rem]">
           <div
             className={cn(
               "flex gap-4 p-4 items-center hover:bg-accent border-b",
