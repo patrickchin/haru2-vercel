@@ -66,6 +66,69 @@ function AddAddedButton({
   );
 }
 
+function AddTeamMemberRowUnregistered({
+  searchValue,
+}: {
+  searchValue: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex gap-4 p-4 items-center hover:bg-accent border-b",
+        // searchValue.length > 0 ? "" : "hidden",
+      )}
+    >
+      <div className="grow">
+        <div className="font-medium">Unregistered</div>
+        <div className="text-sm text-muted-foreground md:inline">
+          {searchValue.length > 0 ? searchValue : "Search to Send Email Invite"}
+        </div>
+      </div>
+      <AddAddedButton
+        alreadyAdded={false} // TODO
+        addMember={async () => {
+          // membersMutate(await Actions.addTeamMember(team.id, user.id));
+        }}
+        removeMember={() => {}}
+      />
+    </div>
+  );
+}
+
+function AddTeamMemberRow({
+  user,
+  team,
+  members,
+  membersMutate,
+}: {
+  user: DesignUserDetailed;
+  team: DesignTeam;
+  members: DesignUserDetailed[];
+  membersMutate: KeyedMutator<DesignUserDetailed[] | undefined>;
+}) {
+  const alreadyAdded = !!members?.find((val) => val.id == user.id);
+  return (
+    <div className="flex gap-4 p-4 items-center hover:bg-accent border-b">
+      <DesignUserAvatar user={user} />
+      <div className="grow">
+        <div className="font-medium">{user.name || "Unregistered Account"}</div>
+        <div className="hidden text-sm text-muted-foreground md:inline">
+          {user.email}
+        </div>
+      </div>
+      <AddAddedButton
+        alreadyAdded={alreadyAdded}
+        addMember={async () =>
+          membersMutate(await Actions.addTeamMember(team.id, user.id))
+        }
+        removeMember={() =>
+          membersMutate(Actions.removeTeamMember(team.id, user.id))
+        }
+      />
+    </div>
+  );
+}
+
 function AddTeamMemberDialogContent({
   team,
   members,
@@ -92,71 +155,27 @@ function AddTeamMemberDialogContent({
   }, [users, searchValue]);
 
   return (
-    <AlertDialogContent className="flex flex-col gap-8 max-w-3xl p-12">
+    <AlertDialogContent className="flex flex-col gap-4 max-w-3xl p-12 h-[90vh] max-h-svh">
       <AlertDialogTitle className="text-2xl">Add Members:</AlertDialogTitle>
-
-      <div className="flex flex-col gap-3 ">
-        <Input
-          type="search"
-          placeholder="Search for user or enter an email ..."
-          onChange={(e) => setSearchValue(e.target.value)}
-        />
-
-        <ScrollArea className="grow border rounded h-[36rem]">
-          <div
-            className={cn(
-              "flex gap-4 p-4 items-center hover:bg-accent border-b",
-              // searchValue.length > 0 ? "" : "hidden",
-            )}
-          >
-            <div className="grow">
-              <div className="font-medium">Unregistered</div>
-              <div className="text-sm text-muted-foreground md:inline">
-                {searchValue.length > 0
-                  ? searchValue
-                  : "Search to Send Email Invite"}
-              </div>
-            </div>
-            <AddAddedButton
-              alreadyAdded={false} // TODO
-              addMember={async () => {
-                // membersMutate(await Actions.addTeamMember(team.id, user.id));
-              }}
-              removeMember={() => {}}
-            />
-          </div>
-
-          {Array.from(filteredUsers ?? []).map((user, i) => {
-            const alreadyAdded = !!members?.find((val) => val.id == user.id);
-            return (
-              <div
-                key={i}
-                className="flex gap-4 p-4 items-center hover:bg-accent border-b"
-              >
-                <DesignUserAvatar user={user} />
-                <div className="grow">
-                  <div className="font-medium">
-                    {user.name || "Unregistered Account"}
-                  </div>
-                  <div className="hidden text-sm text-muted-foreground md:inline">
-                    {user.email}
-                  </div>
-                </div>
-                <AddAddedButton
-                  alreadyAdded={alreadyAdded}
-                  addMember={async () =>
-                    membersMutate(await Actions.addTeamMember(team.id, user.id))
-                  }
-                  removeMember={() =>
-                    membersMutate(Actions.removeTeamMember(team.id, user.id))
-                  }
-                />
-              </div>
-            );
-          })}
-        </ScrollArea>
-        <AlertDialogAction>Done</AlertDialogAction>
-      </div>
+      <Input
+        type="search"
+        placeholder="Search for user or enter an email ..."
+        onChange={(e) => setSearchValue(e.target.value)}
+      />
+      {/* https://stackoverflow.com/questions/14962468/how-can-i-combine-flexbox-and-vertical-scroll-in-a-full-height-app */}
+      <ScrollArea className="grow border rounded h-0">
+        <AddTeamMemberRowUnregistered searchValue={searchValue} />
+        {Array.from(filteredUsers ?? []).map((user, i) => (
+          <AddTeamMemberRow
+            key={i}
+            user={user}
+            team={team}
+            members={members}
+            membersMutate={membersMutate}
+          />
+        ))}
+      </ScrollArea>
+      <AlertDialogAction>Done</AlertDialogAction>
     </AlertDialogContent>
   );
 }
