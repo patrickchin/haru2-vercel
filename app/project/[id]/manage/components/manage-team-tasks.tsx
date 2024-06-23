@@ -58,10 +58,10 @@ function ManageTaskRow({
       )}
     >
       <div className="space-y-2">
-        <h6>{task.title}</h6>
+        <h6>{task.title} ({taskEnabled ? "Enabled" : "Disabled"})</h6>
         <div className="text-xs">{task.description}</div>
       </div>
-      <div className="flex">
+      <div className="flex gap-2">
         <Button
           variant="outline"
           className="flex gap-2"
@@ -82,40 +82,73 @@ function ManageTaskRow({
   );
 }
 
-function ManageTeamTasks({
-  team,
-  specs,
-  tasks,
-  tasksMutate,
-}: {
-  team: DesignTeam;
-  specs: DesignTaskSpec[];
-  tasks: DesignTask[];
-  tasksMutate: KeyedMutator<DesignTask[] | undefined>;
-}) {
+function ManageTeamTasks({ team }: { team: DesignTeam }) {
+  const {
+    data: specs,
+    error: specsError,
+    mutate: specsMutate,
+  } = useSWR(`/api/specs/${team.type}`, () => {
+    if (team.type) return Actions.getTaskSpecsType(team.type);
+  });
+
+  const {
+    data: tasks,
+    error: tasksError,
+    mutate: tasksMutate,
+  } = useSWR(`/api/project/${team.projectid}/tasks/${team.type}`, () => {
+    if (team.projectid && team.type)
+      return Actions.getProjectTasksAllOfType(team.projectid, team.type);
+  });
+
   const projectId = team.projectid;
   if (!team.type) return null;
+  if (!team.projectid) return null;
   if (!specs) return null;
+  if (!tasks) return null;
   if (!projectId) return null;
 
   // specs or tasks?? or join them??
 
-  tasks?.sort((a, b) => a.id - b.id);
+  tasks.sort((a, b) => a.id - b.id);
+
+  // const nTasksEnabled = tasks.reduce((s, val) => s + (val.enabled ? 1 : 0), 0);
 
   return (
-    <ScrollArea className="min-h-48 h-[36rem] border rounded">
-      <ol className="pb-4 h-full">
-        {tasks.map((task, i) => (
-          <ManageTaskRow
-            key={i}
-            projectId={projectId}
-            task={task}
-            tasks={tasks}
-            tasksMutate={tasksMutate}
-          />
-        ))}
-      </ol>
-    </ScrollArea>
+    <Card key={team.id}>
+      <Collapsible className="grow" defaultOpen={true}>
+        <CollapsibleTrigger className="flex gap-4 w-full p-8 text-sm hover:bg-accent justify-between">
+          <div className="flex gap-4">
+            <CardTitle className="text-left">
+              {teamNames[team.type || "other"]}
+            </CardTitle>
+            <span>
+              {team.lead
+                ? `Team Lead: ${team.lead?.name}`
+                : "(No assigned lead)"}
+            </span>
+          </div>
+          <div className="flex gap-4">
+            {/* {nTasksEnabled} of {teamTasks.length} tasks enabled */}
+            <LucideChevronDown className="w-5 h-5" />
+          </div>
+        </CollapsibleTrigger>
+        <CollapsibleContent className="px-12 py-6">
+          <ScrollArea className="min-h-48 h-[36rem] border rounded">
+            <ol className="pb-4 h-full">
+              {tasks.map((task, i) => (
+                <ManageTaskRow
+                  key={i}
+                  projectId={projectId}
+                  task={task}
+                  tasks={tasks}
+                  tasksMutate={tasksMutate}
+                />
+              ))}
+            </ol>
+          </ScrollArea>
+        </CollapsibleContent>
+      </Collapsible>
+    </Card>
   );
 }
 
@@ -132,27 +165,7 @@ export default function ManageAllTeamsTasks({
     return Actions.getProjectTeams(projectId);
   });
 
-  const {
-    data: specs,
-    error: specsError,
-    mutate: specsMutate,
-  } = useSWR(`/api/specs/grouped`, () => {
-    return Actions.getProjectTaskSpecsGroupedByTeam();
-  });
-
-  const {
-    data: tasks,
-    error: tasksError,
-    mutate: tasksMutate,
-  } = useSWR(`/api/project/${projectId}/tasks`, () => {
-    return Actions.getProjectTasksAll(projectId);
-  });
-
-  if (!specs) return null;
-
   teams?.sort((a, b) => a.id - b.id);
-  Object.values(specs).forEach((s) => s.sort((a, b) => a.id - b.id));
-  tasks?.sort((a, b) => a.id - b.id);
 
   return (
     <section className="flex flex-col gap-4">
@@ -161,43 +174,9 @@ export default function ManageAllTeamsTasks({
       </div>
 
       {teams?.map((team) => {
-        // this seems very flimsy
-        const teamSpecs = specs[team.type ?? "other"];
-        const teamTasks = tasks?.filter((task) => task.type == team.type);
-        if (!teamTasks) return null;
-        const nTasksEnabled = teamTasks.reduce(
-          (s, val) => s + (val.enabled ? 1 : 0),
-          0,
-        );
         return (
-          <Card key={team.id}>
-            <Collapsible className="grow" defaultOpen={true}>
-              <CollapsibleTrigger className="flex gap-4 w-full p-8 text-sm hover:bg-accent justify-between">
-                <div className="flex gap-4">
-                  <CardTitle className="text-left">
-                    {teamNames[team.type || "other"]}
-                  </CardTitle>
-                  <span>
-                    {team.lead
-                      ? `Team Lead: ${team.lead?.name}`
-                      : "(No assigned lead)"}
-                  </span>
-                </div>
-                <div className="flex gap-4">
-                  {nTasksEnabled} of {teamTasks.length} tasks enabled
-                  <LucideChevronDown className="w-5 h-5" />
-                </div>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="px-12 py-6">
-                <ManageTeamTasks
-                  team={team}
-                  specs={teamSpecs}
-                  tasks={teamTasks}
-                  tasksMutate={tasksMutate}
-                />
-              </CollapsibleContent>
-            </Collapsible>
-          </Card>
+          <ManageTeamTasks key={team.id} team={team} />
+          
         );
       })}
     </section>

@@ -376,6 +376,13 @@ export async function createTaskSpecs(
     .returning();
 }
 
+export async function getTaskSpecsOfType(type: string) {
+  return await db
+    .select()
+    .from(Schemas.taskspecs1)
+    .where(eq(Schemas.taskspecs1.type, type));
+}
+
 export async function getTaskSpecs() {
   return await db.select().from(Schemas.taskspecs1);
 }
@@ -443,6 +450,18 @@ export async function enableProjectTask(taskId: number, enabled: boolean) {
     .where(eq(Schemas.tasks1.id, taskId))
     .returning()
     .then((r) => r[0]);
+}
+
+export async function getProjectTasksAllOfType(projectid: number, type: string) {
+  return await db
+    .select()
+    .from(Schemas.tasks1)
+    .where(
+      and(
+        eq(Schemas.tasks1.projectid, projectid),
+        eq(Schemas.tasks1.type, type),
+      ),
+    );
 }
 
 export async function getProjectTasksAll(projectid: number) {

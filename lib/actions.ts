@@ -326,6 +326,12 @@ async function getTaskSpecsInternal() {
   return db.createTaskSpecs(defaulTaskSpecs);
 }
 
+export async function getTaskSpecsType(type: string) {
+  const session = await auth();
+  if (!session?.user) return;
+  return db.getTaskSpecsOfType(type);
+}
+
 export async function getTaskSpecs() {
   const session = await auth();
   if (!session?.user) return;
@@ -393,6 +399,13 @@ export async function enableProjectTask(taskId: number, enabled: boolean) {
   if (!session?.user?.id) return;
   const tasks = await db.enableProjectTask(taskId, enabled);
   return tasks;
+}
+
+// include disabled
+export async function getProjectTasksAllOfType(projectId: number, type: string) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  return await db.getProjectTasksAllOfType(projectId, type);
 }
 
 // include disabled
