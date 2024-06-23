@@ -154,23 +154,30 @@ function AddTeamMemberDialogContent({
     <AlertDialogContent className="flex flex-col gap-4 max-w-3xl p-12 h-[90vh] max-h-svh">
       <AlertDialogTitle className="text-2xl">Add Members:</AlertDialogTitle>
       <Input
+        maxLength={50}
         type="search"
         placeholder="Search for user or enter an email ..."
         onChange={(e) => setSearchValue(e.target.value)}
       />
       {/* https://stackoverflow.com/questions/14962468/how-can-i-combine-flexbox-and-vertical-scroll-in-a-full-height-app */}
-      <ScrollArea className="grow border rounded h-0 pb-4">
-        <ol>
+      <ScrollArea className="grow border rounded h-0">
+        <ol className="pb-4">
           <AddTeamMemberRowUnregistered searchValue={searchValue} />
-          {Array.from(filteredUsers ?? []).map((user, i) => (
-            <AddTeamMemberRow
-              key={i}
-              user={user}
-              team={team}
-              members={members}
-              membersMutate={membersMutate}
-            />
-          ))}
+          {filteredUsers && filteredUsers.length > 0 ? (
+            Array.from(filteredUsers).map((user, i) => (
+              <AddTeamMemberRow
+                key={i}
+                user={user}
+                team={team}
+                members={members}
+                membersMutate={membersMutate}
+              />
+            ))
+          ) : (
+            <li className="p-8 pb-0 flex justify-center items-center align-bottom">
+              No users found with this name or email: {searchValue}
+            </li>
+          )}
         </ol>
       </ScrollArea>
       <AlertDialogAction>Done</AlertDialogAction>
@@ -282,7 +289,7 @@ function ManageTeamMembers({
           Delete Team
         </Button>
       </div>
-      <CardContent className="flex flex-col gap-3 px-0 min-h-48 max-h-[36rem]">
+      <CardContent className="flex flex-col gap-3 px-0">
         <div className="flex gap-2 items-baseline justify-between">
           <h6 className="">Team Members</h6>
           <div className="flex gap-3 items-center">
@@ -294,9 +301,9 @@ function ManageTeamMembers({
             />
           </div>
         </div>
-        <ScrollArea className="h-full border rounded pb-4">
-          <ol>
-            {members &&
+        <ScrollArea className="min-h-48 max-h-[28rem] border rounded">
+          <ol className="pb-4 h-full">
+            {members && members.length > 0 ? (
               Array.from(members).map((user, i) => (
                 <ManageTeamMemberRow
                   key={i}
@@ -306,7 +313,12 @@ function ManageTeamMembers({
                   members={members}
                   membersMutate={membersMutate}
                 />
-              ))}
+              ))
+            ) : (
+              <li className="flex h-48 items-center justify-center">
+                This team has no members
+              </li>
+            )}
           </ol>
         </ScrollArea>
       </CardContent>
