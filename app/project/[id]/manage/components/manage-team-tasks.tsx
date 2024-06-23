@@ -1,6 +1,7 @@
 "use client";
 
-import { LucideChevronDown } from "lucide-react";
+import { useState } from "react";
+import { LucideCheck, LucideChevronDown, LucideLoader2, LucideX } from "lucide-react";
 import useSWR, { KeyedMutator } from "swr";
 
 import { DesignTask, DesignTaskSpec, DesignTeam, teamNames } from "@/lib/types";
@@ -13,9 +14,11 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-function TaskCheckBox({
+function ManageTaskRow({
   projectId,
   spec,
   task,
@@ -28,34 +31,54 @@ function TaskCheckBox({
   tasks: DesignTask[];
   tasksMutate: KeyedMutator<DesignTask[] | undefined>;
 }) {
+  const [isPending, setIsPending] = useState(false);
+  const [taskEnabled, setTaskEnabled] = useState(task?.enabled ?? true);
+
   if (!task) return null;
-  const label = `taskid-${task.id}`;
+  if (!projectId) return null;
+
+  const toggleTaskEnabled = async () => {
+    try {
+      setIsPending(true);
+      setTaskEnabled(!taskEnabled);
+      task.enabled = !taskEnabled;
+      tasksMutate(tasks, { revalidate: false }); // optimistic set
+      await Actions.enableProjectTask(task.id, !taskEnabled);
+      tasksMutate(); // revalidate with ground truth
+    } finally {
+      setIsPending(false);
+    }
+  }
 
   return (
-    <Label
-      htmlFor={label}
-      className="flex justify-between gap-4 items-center py-4 px-6 border rounded-md font-normal"
+    <li
+      className={cn(
+        "flex justify-between gap-4 items-center py-4 px-6 border-b",
+        taskEnabled ? "" : "text-muted-foreground bg-muted",
+      )}
     >
       <div className="space-y-2">
-        <h5>{task.title}</h5>
+        <h6>{task.title}</h6>
         <div className="text-xs">{task.description}</div>
       </div>
-      <div>
-        <Checkbox
-          id={label}
-          defaultChecked={task.enabled ?? true}
-          onCheckedChange={async (checked) => {
-            if (!projectId) return;
-            const enabled = checked == true;
-            task.enabled = enabled;
-            tasksMutate(tasks, { revalidate: false }); // optimistic set
-            await Actions.enableProjectTask(task.id, enabled);
-            tasksMutate(); // revalidate with ground truth
-          }}
-          className="h-4 w-4"
-        />
+      <div className="flex gap-2">
+        <Button
+          variant="outline"
+          className="flex gap-2"
+          disabled={isPending}
+          onClick={toggleTaskEnabled}
+        >
+          {taskEnabled ? "Disable" : "Enable"}
+          {isPending ? (
+            <LucideLoader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : taskEnabled ? (
+            <LucideX className="w-3.5 h-3.5" />
+          ) : (
+            <LucideCheck className="w-3.5 h-3.5" />
+          )}
+        </Button>
       </div>
-    </Label>
+    </li>
   );
 }
 
@@ -80,9 +103,10 @@ function ManageTeamTasks({
   tasks?.sort((a, b) => a.id - b.id);
 
   return (
-    <div className="grid grid-cols-2 gap-4 justify-center">
-      {tasks.map((task, i) => (
-          <TaskCheckBox
+    <ScrollArea className="min-h-48 h-[36rem] border rounded">
+      <ol className="pb-4 h-full">
+        {tasks.map((task, i) => (
+          <ManageTaskRow
             key={i}
             projectId={projectId}
             task={task}
@@ -90,7 +114,8 @@ function ManageTeamTasks({
             tasksMutate={tasksMutate}
           />
         ))}
-    </div>
+      </ol>
+    </ScrollArea>
   );
 }
 
@@ -153,7 +178,9 @@ export default function ManageAllTeamsTasks({
                     {teamNames[team.type || "other"]}
                   </CardTitle>
                   <span>
-                    {team.lead ? `Team Lead: ${team.lead?.name}` : "(No assigned lead)"}
+                    {team.lead
+                      ? `Team Lead: ${team.lead?.name}`
+                      : "(No assigned lead)"}
                   </span>
                 </div>
                 <div className="flex gap-4">
