@@ -34,8 +34,8 @@ async function sendEmailResend(to: string, subject: string, html: string) {
 
 export async function sendEmail(to: string, subject: string, text: string) {
   if (true) {
-    sendEmailResend(to, subject, text);
+    await sendEmailResend(to, subject, text);
   } else {
-    sendEmailNodeMailer(to, subject, text);
+    await sendEmailNodeMailer(to, subject, text);
   }
 }
