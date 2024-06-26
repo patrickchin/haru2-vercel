@@ -3,6 +3,8 @@ import { twMerge } from "tailwind-merge";
 import { addTaskFile, updateAvatarForUser } from "./actions";
 import { formatDistanceToNow } from "date-fns";
 
+import { toast } from "@/components/ui/use-toast";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -59,8 +61,7 @@ export async function uploadProjectFile(
   });
 
   if (!uploadResponse.ok) {
-    // to replace by toast
-    console.log("Failed to upload file");
+    return toast({ description: "Failed to update the file. Please try again." });
   }
 
   return addTaskFile(

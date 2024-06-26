@@ -55,9 +55,7 @@ export default function TaskFiles({
 
     const selectedFiles = Array.from(targetFiles);
 
-    for (let i = 0; i < selectedFiles.length; i++) {
-      const file = selectedFiles[i];
-
+    for (const file of selectedFiles) {
       await uploadProjectFile(file, projectId, specId, taskId);
     }
 

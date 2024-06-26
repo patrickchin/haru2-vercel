@@ -137,8 +137,6 @@ export async function submitProjectForm2(formData: FormData) {
     });
   });
 
-  console.log("Results", results, "Files:", files);
-
   Promise.all(results).catch((e) => {
     console.error("Failed to upload all files.");
     console.log(e);
