@@ -61,7 +61,7 @@ export async function uploadProjectFile(
   });
 
   if (!uploadResponse.ok) {
-    return toast({ description: "Failed to update the file. Please try again." });
+    return toast({ description: "Failed to upload file. Please try again." });
   }
 
   return addTaskFile(
