@@ -83,6 +83,7 @@ function AddTeamMemberRowUnregistered({
       <AddAddedButton
         alreadyAdded={false} // TODO
         addMember={async () => {
+          // add an unregistered user
           // membersMutate(await Actions.addTeamMember(team.id, user.id));
         }}
         removeMember={() => {}}
@@ -114,11 +115,15 @@ function AddTeamMemberRow({
       </div>
       <AddAddedButton
         alreadyAdded={alreadyAdded}
-        addMember={async () =>
-          membersMutate(await Actions.addTeamMember(team.id, user.id))
+        addMember={() =>
+          membersMutate(Actions.addTeamMember(team.id, user.id), {
+            revalidate: false,
+          })
         }
         removeMember={() =>
-          membersMutate(Actions.removeTeamMember(team.id, user.id))
+          membersMutate(Actions.removeTeamMember(team.id, user.id), {
+            revalidate: false,
+          })
         }
       />
     </li>
@@ -134,7 +139,7 @@ function AddTeamMemberDialogContent({
   members: DesignUserDetailed[];
   membersMutate: KeyedMutator<DesignUserDetailed[] | undefined>;
 }) {
-  // TODO search on server if too many users
+
   const {
     data: users,
     error: usersError,
@@ -249,7 +254,9 @@ function ManageTeamMemberRow({
         variant="outline"
         className="flex gap-1"
         onClick={() =>
-          membersMutate(Actions.removeTeamMember(team.id, user.id))
+          membersMutate(Actions.removeTeamMember(team.id, user.id), {
+            revalidate: false,
+          })
         }
       >
         Remove <LucideX className="w-3.5 h-3.5" />

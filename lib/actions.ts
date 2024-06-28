@@ -397,8 +397,11 @@ export async function enableProjectTaskSpec(projectId: number, specId: number, e
 export async function enableProjectTask(taskId: number, enabled: boolean) {
   const session = await auth();
   if (!session?.user?.id) return;
-  const tasks = await db.enableProjectTask(taskId, enabled);
-  return tasks;
+  const task = await db.enableProjectTask(taskId, enabled);
+  if (!task.projectid) return;
+  if (!task.type) return;
+  // tbh should this really be returning all of the tasks? ...
+  return await db.getProjectTasksAllOfType(task.projectid, task.type);
 }
 
 // include disabled

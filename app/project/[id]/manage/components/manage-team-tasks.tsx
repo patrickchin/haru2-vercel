@@ -42,9 +42,10 @@ function ManageTaskRow({
       setIsPending(true);
       setTaskEnabled(!taskEnabled);
       task.enabled = !taskEnabled;
-      tasksMutate(tasks, { revalidate: false }); // optimistic set
-      await Actions.enableProjectTask(task.id, !taskEnabled);
-      tasksMutate(); // revalidate with ground truth
+      tasksMutate(Actions.enableProjectTask(task.id, !taskEnabled), {
+        revalidate: false,
+        optimisticData: tasks,
+      });
     } finally {
       setIsPending(false);
     }
