@@ -1,8 +1,9 @@
 "use client";
 
 import * as React from "react";
-import * as Tan from "@tanstack/react-table";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import * as Tan from "@tanstack/react-table";
 import prettyBytes from "pretty-bytes";
 import {
   LucideArrowUpRight,
@@ -10,6 +11,8 @@ import {
   LucideChevronDown,
 } from "lucide-react";
 import { getTimeAgo } from "@/lib/utils";
+import { DesignFile, DesignProject, DesignTask } from "@/lib/types";
+import { deleteFile } from "@/lib/actions";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,10 +26,7 @@ import {
 } from "@/components/ui/table";
 import { UserAvatar } from "@/components/user-avatar";
 import { Input } from "@/components/ui/input";
-
-import { DesignFile, DesignProject, DesignTask } from "@/lib/types";
 import DeleteAlertDialog from "@/components/delete-alert";
-import { deleteFile } from "@/lib/actions";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -34,7 +34,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DataTablePagination } from "@/components/ui/pagination";
-import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 import CustomTooltip from "@/components/ui/tooltip-custom";
 import ColumnSortHeader from "@/components/ui/column-sort";

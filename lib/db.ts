@@ -608,7 +608,8 @@ export async function deleteFile(fileId: number) {
   return db
     .delete(Schemas.files1)
     .where(eq(Schemas.files1.id, fileId))
-    .returning();
+    .returning()
+    .then((r) => r[0]);
 }
 
 // OTP functions ==========================================================================================

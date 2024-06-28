@@ -531,5 +531,11 @@ export async function getTaskFiles(taskId: number) {
 export async function deleteFile(fileId: number) {
   const session = await auth();
   if (!session?.user?.id) return;
-  return db.deleteFile(fileId);
+  const f = await db.deleteFile(fileId);
+  if (f.url)  {
+    // todo do this inside deleteFileFromS3
+    const key = new URL(f.url).pathname.substring(1);
+    deleteFileFromS3(key);
+  }
+  return f;
 }
