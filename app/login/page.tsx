@@ -97,22 +97,28 @@ function PhoneLogin() {
   });
   const { countdown: resendOtpTimer, setCountdown: setResendOtpTimer } =
     useCountdown(0);
+  const [sendingOTP, setSendingOTP] = useState(false);
 
   const handleSendOtpClick = async (phone?: string) => {
-    form.clearErrors();
+    try {
+      form.clearErrors();
+      setSendingOTP(true);
 
-    if (!phone) {
-      form.setError("phone", { message: "Phone number is required." });
-      return;
-    }
+      if (!phone) {
+        form.setError("phone", { message: "Phone number is required." });
+        return;
+      }
 
-    const ret = await sendOtpViaWhatsApp(phone);
-    if (!ret) {
-      setResendOtpTimer(60);
-    } else if (ret?.error === FailedToSendWhatsappOTP.error) {
-      form.setError("otp", {
-        message: "Failed to send passcode via Whatsapp.",
-      });
+      const ret = await sendOtpViaWhatsApp(phone);
+      if (!ret) {
+        setResendOtpTimer(60);
+      } else if (ret?.error === FailedToSendWhatsappOTP.error) {
+        form.setError("otp", {
+          message: "Failed to send passcode via Whatsapp.",
+        });
+      }
+    } finally {
+      setSendingOTP(false);
     }
   };
 
@@ -174,7 +180,7 @@ function PhoneLogin() {
                   variant="outline"
                   className="w-auto bg-green-50 text-green-600 border-green-600"
                   onClick={() => handleSendOtpClick(form.getValues("phone"))}
-                  disabled={resendOtpTimer > 0}
+                  disabled={sendingOTP || resendOtpTimer > 0}
                 >
                   Send Code
                 </Button>
@@ -201,22 +207,28 @@ function EmailLogin() {
   });
   const { countdown: resendOtpTimer, setCountdown: setResendOtpTimer } =
     useCountdown(0);
+  const [sendingOTP, setSendingOTP] = useState(false);
 
   const handleSendOtpClick = async (email?: string) => {
-    form.clearErrors();
+    try {
+      form.clearErrors();
+      setSendingOTP(true);
 
-    if (!email) {
-      form.setError("email", { message: "Email is required." });
-      return;
-    }
+      if (!email) {
+        form.setError("email", { message: "Email is required." });
+        return;
+      }
 
-    const ret = await sendOtpViaEmail(email);
-    if (!ret) {
-      setResendOtpTimer(60);
-    } else if (ret?.error === FailedToSendEmailOTP.error) {
-      form.setError("otp", {
-        message: "Failed to send passcode via Whatsapp.",
-      });
+      const ret = await sendOtpViaEmail(email);
+      if (!ret) {
+        setResendOtpTimer(60);
+      } else if (ret?.error === FailedToSendEmailOTP.error) {
+        form.setError("otp", {
+          message: "Failed to send passcode via email.",
+        });
+      }
+    } finally {
+      setSendingOTP(false);
     }
   };
 
@@ -235,10 +247,6 @@ function EmailLogin() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <p className="text-sm font-medium text-destructive text-center">
-          Email passcode login is currently disabled.
-        </p>
-
         <FormField
           control={form.control}
           name="email"
@@ -251,7 +259,6 @@ function EmailLogin() {
                   name={field.name}
                   type="email"
                   placeholder="patrick@haru.com"
-                  disabled
                 />
               </FormControl>
               <FormMessage />
@@ -267,12 +274,7 @@ function EmailLogin() {
               <FormLabel>One-Time Passcode</FormLabel>
               <div className="flex items-center gap-3">
                 <FormControl>
-                  <InputOTP
-                    maxLength={6}
-                    pattern="^[0-9]+$"
-                    {...field}
-                    disabled
-                  >
+                  <InputOTP maxLength={6} pattern="^[0-9]+$" {...field}>
                     <InputOTPGroup className="bg-background">
                       <InputOTPSlot index={0} />
                       <InputOTPSlot index={1} />
@@ -288,7 +290,7 @@ function EmailLogin() {
                   variant="outline"
                   className="w-auto bg-blue-50 text-blue-600 border-blue-600"
                   onClick={() => handleSendOtpClick(form.getValues("email"))}
-                  disabled={true || resendOtpTimer > 0}
+                  disabled={sendingOTP || resendOtpTimer > 0}
                 >
                   Send Code
                 </Button>
@@ -303,7 +305,7 @@ function EmailLogin() {
           )}
         />
 
-        <FormFooter form={form} disabled={true} />
+        <FormFooter form={form} />
       </form>
     </Form>
   );

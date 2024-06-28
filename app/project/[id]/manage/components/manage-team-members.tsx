@@ -15,11 +15,7 @@ import { Input } from "@/components/ui/input";
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
@@ -66,6 +62,74 @@ function AddAddedButton({
   );
 }
 
+function AddTeamMemberRowUnregistered({
+  searchValue,
+}: {
+  searchValue: string;
+}) {
+  return (
+    <li
+      className={cn(
+        "flex gap-4 p-4 items-center hover:bg-accent border-b",
+        // searchValue.length > 0 ? "" : "hidden",
+      )}
+    >
+      <div className="grow">
+        <div className="font-medium">Unregistered</div>
+        <div className="text-sm text-muted-foreground md:inline">
+          {searchValue.length > 0 ? searchValue : "Search to Send Email Invite"}
+        </div>
+      </div>
+      <AddAddedButton
+        alreadyAdded={false} // TODO
+        addMember={async () => {
+          // add an unregistered user
+          // membersMutate(await Actions.addTeamMember(team.id, user.id));
+        }}
+        removeMember={() => {}}
+      />
+    </li>
+  );
+}
+
+function AddTeamMemberRow({
+  user,
+  team,
+  members,
+  membersMutate,
+}: {
+  user: DesignUserDetailed;
+  team: DesignTeam;
+  members: DesignUserDetailed[];
+  membersMutate: KeyedMutator<DesignUserDetailed[] | undefined>;
+}) {
+  const alreadyAdded = !!members?.find((val) => val.id == user.id);
+  return (
+    <li className="flex gap-4 p-4 items-center hover:bg-accent border-b">
+      <DesignUserAvatar user={user} />
+      <div className="grow">
+        <div className="font-medium">{user.name || "Unregistered Account"}</div>
+        <div className="hidden text-sm text-muted-foreground md:inline">
+          {user.email}
+        </div>
+      </div>
+      <AddAddedButton
+        alreadyAdded={alreadyAdded}
+        addMember={() =>
+          membersMutate(Actions.addTeamMember(team.id, user.id), {
+            revalidate: false,
+          })
+        }
+        removeMember={() =>
+          membersMutate(Actions.removeTeamMember(team.id, user.id), {
+            revalidate: false,
+          })
+        }
+      />
+    </li>
+  );
+}
+
 function AddTeamMemberDialogContent({
   team,
   members,
@@ -75,7 +139,7 @@ function AddTeamMemberDialogContent({
   members: DesignUserDetailed[];
   membersMutate: KeyedMutator<DesignUserDetailed[] | undefined>;
 }) {
-  // TODO search on server if too many users
+
   const {
     data: users,
     error: usersError,
@@ -92,71 +156,36 @@ function AddTeamMemberDialogContent({
   }, [users, searchValue]);
 
   return (
-    <AlertDialogContent className="flex flex-col gap-8 max-w-3xl p-12">
+    <AlertDialogContent className="flex flex-col gap-4 max-w-3xl p-12 h-[90vh] max-h-svh">
       <AlertDialogTitle className="text-2xl">Add Members:</AlertDialogTitle>
-
-      <div className="flex flex-col gap-3 ">
-        <Input
-          type="search"
-          placeholder="Search for user or enter an email ..."
-          onChange={(e) => setSearchValue(e.target.value)}
-        />
-
-        <ScrollArea className="grow border rounded h-[36rem]">
-          <div
-            className={cn(
-              "flex gap-4 p-4 items-center hover:bg-accent border-b",
-              // searchValue.length > 0 ? "" : "hidden",
-            )}
-          >
-            <div className="grow">
-              <div className="font-medium">Unregistered</div>
-              <div className="text-sm text-muted-foreground md:inline">
-                {searchValue.length > 0
-                  ? searchValue
-                  : "Search to Send Email Invite"}
-              </div>
-            </div>
-            <AddAddedButton
-              alreadyAdded={false} // TODO
-              addMember={async () => {
-                // membersMutate(await Actions.addTeamMember(team.id, user.id));
-              }}
-              removeMember={() => {}}
-            />
-          </div>
-
-          {Array.from(filteredUsers ?? []).map((user, i) => {
-            const alreadyAdded = !!members?.find((val) => val.id == user.id);
-            return (
-              <div
+      <Input
+        maxLength={50}
+        type="search"
+        placeholder="Search for user or enter an email ..."
+        onChange={(e) => setSearchValue(e.target.value)}
+      />
+      {/* https://stackoverflow.com/questions/14962468/how-can-i-combine-flexbox-and-vertical-scroll-in-a-full-height-app */}
+      <ScrollArea className="grow border rounded h-0">
+        <ol className="pb-4">
+          <AddTeamMemberRowUnregistered searchValue={searchValue} />
+          {filteredUsers && filteredUsers.length > 0 ? (
+            Array.from(filteredUsers).map((user, i) => (
+              <AddTeamMemberRow
                 key={i}
-                className="flex gap-4 p-4 items-center hover:bg-accent border-b"
-              >
-                <DesignUserAvatar user={user} />
-                <div className="grow">
-                  <div className="font-medium">
-                    {user.name || "Unregistered Account"}
-                  </div>
-                  <div className="hidden text-sm text-muted-foreground md:inline">
-                    {user.email}
-                  </div>
-                </div>
-                <AddAddedButton
-                  alreadyAdded={alreadyAdded}
-                  addMember={async () =>
-                    membersMutate(await Actions.addTeamMember(team.id, user.id))
-                  }
-                  removeMember={() =>
-                    membersMutate(Actions.removeTeamMember(team.id, user.id))
-                  }
-                />
-              </div>
-            );
-          })}
-        </ScrollArea>
-        <AlertDialogAction>Done</AlertDialogAction>
-      </div>
+                user={user}
+                team={team}
+                members={members}
+                membersMutate={membersMutate}
+              />
+            ))
+          ) : (
+            <li className="p-8 pb-0 flex justify-center items-center align-bottom">
+              No users found with this name or email: {searchValue}
+            </li>
+          )}
+        </ol>
+      </ScrollArea>
+      <AlertDialogAction>Done</AlertDialogAction>
     </AlertDialogContent>
   );
 }
@@ -187,12 +216,56 @@ function AddTeamMemberButton({
   );
 }
 
-/*
-function AddTeamButton({ onClick }: { onClick: (s: string) => void }) {
+function ManageTeamMemberRow({
+  user,
+  team,
+  teamsMutate,
+  members,
+  membersMutate,
+}: {
+  user: DesignUserDetailed;
+  team: DesignTeam;
+  teamsMutate: KeyedMutator<DesignTeam[] | undefined>;
+  members: DesignUserDetailed[];
+  membersMutate: KeyedMutator<DesignUserDetailed[] | undefined>;
+}) {
+  const isLead = team.lead?.id === user.id;
+  return (
+    <li className="flex gap-6 px-6 py-4 items-center hover:bg-accent border-b">
+      <DesignUserAvatar user={user} />
+      <div className="grow">
+        <div className="font-medium">{user.name || "Unregistered Account"}</div>
+        <div className="hidden text-sm text-muted-foreground md:inline">
+          {user.email}
+        </div>
+      </div>
+      <Button
+        variant="outline"
+        disabled={isLead}
+        onClick={() => {
+          Actions.setTeamLead(team.id, user.id);
+          teamsMutate();
+        }}
+      >
+        {isLead ? "Current Team Lead" : "Set as Lead"}
+      </Button>
+      {/* <Button variant="outline" disabled>Send Invite</Button> */}
+      <Button
+        variant="outline"
+        className="flex gap-1"
+        onClick={() =>
+          membersMutate(Actions.removeTeamMember(team.id, user.id), {
+            revalidate: false,
+          })
+        }
+      >
+        Remove <LucideX className="w-3.5 h-3.5" />
+      </Button>
+    </li>
+  );
 }
-*/
 
-function ManageSingleTeamMembers({
+function ManageTeamMembers({
   team,
   teamsMutate,
 }: {
@@ -210,7 +283,7 @@ function ManageSingleTeamMembers({
   return (
     <Card className="flex flex-col px-8 py-6 gap-4">
       <div className="flex py-2 justify-between items-center">
-        <h3>{teamNames[team.type || "other"]}</h3>
+        <h5>{teamNames[team.type || "other"]}</h5>
         <Button
           className="hidden"
           disabled={true}
@@ -223,9 +296,9 @@ function ManageSingleTeamMembers({
           Delete Team
         </Button>
       </div>
-      <CardContent className="flex flex-col gap-3 px-0 min-h-48 max-h-[36rem]">
+      <CardContent className="flex flex-col gap-3 px-0">
         <div className="flex gap-2 items-baseline justify-between">
-          <h4 className="">Team Members</h4>
+          <h6 className="">Team Members</h6>
           <div className="flex gap-3 items-center">
             <span className="text-sm">{members?.length} members</span>
             <AddTeamMemberButton
@@ -235,46 +308,25 @@ function ManageSingleTeamMembers({
             />
           </div>
         </div>
-        <ScrollArea className="h-full border rounded">
-          {Array.from(members ?? []).map((user, i) => {
-            const isLead = team.lead?.id === user.id;
-            return (
-              <div
-                key={i}
-                className="flex gap-6 px-6 py-4 items-center hover:bg-accent border-b"
-              >
-                <DesignUserAvatar user={user} />
-                <div className="grow">
-                  <div className="font-medium">
-                    {user.name || "Unregistered Account"}
-                  </div>
-                  <div className="hidden text-sm text-muted-foreground md:inline">
-                    {user.email}
-                  </div>
-                </div>
-                <Button
-                  variant="outline"
-                  disabled={isLead}
-                  onClick={() => {
-                    Actions.setTeamLead(team.id, user.id);
-                    teamsMutate();
-                  }}
-                >
-                  {isLead ? "Current Team Lead" : "Set as Lead"}
-                </Button>
-                {/* <Button variant="outline" disabled>Send Invite</Button> */}
-                <Button
-                  variant="outline"
-                  className="flex gap-1"
-                  onClick={() =>
-                    membersMutate(Actions.removeTeamMember(team.id, user.id))
-                  }
-                >
-                  Remove <LucideX className="w-3.5 h-3.5" />
-                </Button>
-              </div>
-            );
-          })}
+        <ScrollArea className="min-h-48 max-h-[28rem] border rounded">
+          <ol className="pb-4 h-full">
+            {members && members.length > 0 ? (
+              Array.from(members).map((user, i) => (
+                <ManageTeamMemberRow
+                  key={i}
+                  user={user}
+                  team={team}
+                  teamsMutate={teamsMutate}
+                  members={members}
+                  membersMutate={membersMutate}
+                />
+              ))
+            ) : (
+              <li className="flex h-48 items-center justify-center">
+                This team has no members
+              </li>
+            )}
+          </ol>
         </ScrollArea>
       </CardContent>
     </Card>
@@ -306,12 +358,12 @@ export default function ManageAllTeamsMembers({
     return Actions.getProjectTeams(projectId);
   });
 
-  teams?.sort((a, b) => a.id - b.id).reverse();
+  teams?.sort((a, b) => a.id - b.id);
 
   return (
     <section className="flex flex-col gap-4">
       <div className="flex justify-between px-6">
-        <h3>Team Member Selection</h3>
+        <h4>Team Member Selection</h4>
         {/* <ComboboxDemo /> */}
         {/* <AddTeamButton
           onClick={(type: string) => teamsMutate(Actions.createProjectTeam(projectId, type))}
@@ -323,7 +375,7 @@ export default function ManageAllTeamsMembers({
             key={team.id}
             fallback={<ManageTeamMembersSkeleton team={team} />}
           >
-            <ManageSingleTeamMembers team={team} teamsMutate={teamsMutate} />
+            <ManageTeamMembers team={team} teamsMutate={teamsMutate} />
           </Suspense>
         ))}
       </div>
