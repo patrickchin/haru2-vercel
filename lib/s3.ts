@@ -15,7 +15,7 @@ export function createPresigned(uniqueKey: string, contentType: string) {
       acl: "public-read",
       "Content-Type": contentType,
     },
-    Expires: 600, // Presigned URL expiration in seconds
+    Expires: 60, // Presigned URL expiration in seconds
   });
 }
 
