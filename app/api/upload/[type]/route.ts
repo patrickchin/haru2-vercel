@@ -3,6 +3,9 @@ import { auth } from "@/lib/auth";
 import { createPresigned } from "@/lib/s3";
 import * as Actions from "@/lib/actions";
 
+// is this even still maintained??
+import sanitizeFilename from "sanitize-filename";
+
 export async function POST(
   request: Request,
   { params: { type } }: { params: { type: string } },
@@ -21,10 +24,9 @@ export async function POST(
     { status: 400 },
   );
 
-  const filename = params.filename as string;
-  if (!filename || filename.length <= 0) {
-    return invalidParamsResponse;
-  }
+  const unsanFilename = params.filename as string;
+  if (!unsanFilename || unsanFilename.length <= 0) return invalidParamsResponse;
+  const filename = sanitizeFilename(unsanFilename);
 
   let path = "";
 
