@@ -19,7 +19,11 @@ import { redirect } from "next/navigation";
 import { defaulTaskSpecs } from "content/tasks";
 import { AuthError } from "next-auth";
 import assert from "assert";
-import { CredentialsSigninError, InvalidInputError, UnknownError } from "./errors";
+import {
+  CredentialsSigninError,
+  InvalidInputError,
+  UnknownError,
+} from "./errors";
 
 const VERCEL_BLOB_FAKE_FILES = false;
 
@@ -31,7 +35,6 @@ export async function getAllUsers() {
 }
 
 export async function registerUser(data: RegisterSchemaType) {
-
   const parsed = RegisterSchema.safeParse(data);
   if (!parsed.success) {
     return InvalidInputError;
@@ -105,9 +108,8 @@ export async function submitProjectForm2(formData: FormData) {
 
   Promise.all([
     db.createTeams(project.id, defaultTeams),
-    db.createProjectTasksFromAllSpecs(project.id)
+    db.createProjectTasksFromAllSpecs(project.id),
   ]);
-
 
   const results = Array.from(files ?? []).map(async (file) => {
     // HACK FormData constructor from event.target adds a file with no filename ignore that file here.
@@ -178,9 +180,7 @@ export async function deleteFullProject(projectId: number) {
   redirect("/projects");
 }
 
-export async function startProject(
-  projectId: number,
-) {
+export async function startProject(projectId: number) {
   const session = await auth();
   if (!session?.user?.id) return;
 
@@ -196,7 +196,7 @@ export async function startProjectForm(data: FormData) {
 
   await startProject(projectId);
 
-  redirect(`/project/${projectId}`)
+  redirect(`/project/${projectId}`);
 }
 
 export async function getProjectFiles(projectId: number) {
@@ -389,7 +389,11 @@ export async function createProjectTasks(
   return await db.createProjectTasks(newTasks);
 }
 
-export async function enableProjectTaskSpec(projectId: number, specId: number, enabled: boolean) {
+export async function enableProjectTaskSpec(
+  projectId: number,
+  specId: number,
+  enabled: boolean,
+) {
   const session = await auth();
   if (!session?.user?.id) return;
   const tasks = await db.enableProjectTaskSpec(projectId, specId, enabled);
@@ -407,7 +411,10 @@ export async function enableProjectTask(taskId: number, enabled: boolean) {
 }
 
 // include disabled
-export async function getProjectTasksAllOfType(projectId: number, type: string) {
+export async function getProjectTasksAllOfType(
+  projectId: number,
+  type: string,
+) {
   const session = await auth();
   if (!session?.user?.id) return;
   return await db.getProjectTasksAllOfType(projectId, type);
@@ -431,6 +438,14 @@ export async function getProjectTask(projectId: number, specId: number) {
   const session = await auth();
   if (!session?.user?.id) return;
   const tasks = await db.getProjectTask(projectId, specId);
+  if (tasks.length <= 0) return;
+  return tasks[0];
+}
+
+export async function getTask(taskId: number) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  const tasks = await db.getTask(taskId);
   if (tasks.length <= 0) return;
   return tasks[0];
 }
@@ -477,7 +492,6 @@ export async function addTaskFile(
   name: string,
   size: number,
   fileUrl: string,
-  projectId: number,
 ) {
   const session = await auth();
   if (!session?.user?.id) return;
@@ -491,7 +505,6 @@ export async function addTaskFile(
     url: fileUrl,
     // specid: specId,
     uploaderid: userId,
-    projectid: projectId,
     // commentid: ?,
   });
 }
@@ -548,7 +561,7 @@ export async function deleteFile(fileId: number) {
   const session = await auth();
   if (!session?.user?.id) return;
   const f = await db.deleteFile(fileId);
-  if (f.url)  {
+  if (f.url) {
     // todo do this inside deleteFileFromS3
     const key = new URL(f.url).pathname.substring(1);
     deleteFileFromS3(key);

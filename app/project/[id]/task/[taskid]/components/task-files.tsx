@@ -1,10 +1,19 @@
 "use client";
 
 import { ChangeEvent, useRef, useState } from "react";
-import assert from "assert";
+import useSWR from "swr";
 import Link from "next/link";
 import { getTaskFiles } from "@/lib/actions";
+import { cn } from "@/lib/utils";
+import { uploadTaskFile } from "@/lib/utils/upload";
+import { DesignFile } from "@/lib/types";
 
+import {
+  LucideDownload,
+  LucideLoader2,
+  LucideUpload,
+  LucideView,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,27 +23,10 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  LucideDownload,
-  LucideLoader2,
-  LucideUpload,
-  LucideView,
-} from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import FileTypeToIcon from "@/components/filetype-icon";
-import { cn, uploadProjectFile } from "@/lib/utils";
-import useSWR from "swr";
-import { DesignFile } from "@/lib/types";
 
-export default function TaskFiles({
-  projectId,
-  specId,
-  taskId,
-}: {
-  projectId: number;
-  specId: number;
-  taskId: number;
-}) {
+export default function TaskFiles({ taskId }: { taskId: number }) {
   const uploadFileInputRef = useRef(null);
   const [showDetailed, setShowDetailed] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -42,7 +34,7 @@ export default function TaskFiles({
   const { data, error, mutate } = useSWR(
     `/api/task/${taskId}/files`, // api route doesn't really exist
     () => {
-      return getTaskFiles(taskId);
+      return getTaskFiles(taskId) ?? [];
     },
   );
   const files: DesignFile[] = data ?? [];
@@ -56,11 +48,14 @@ export default function TaskFiles({
     const selectedFiles = Array.from(targetFiles);
 
     for (const file of selectedFiles) {
-      await uploadProjectFile(file, projectId, specId, taskId);
+      const newFile = await uploadTaskFile(file, taskId);
+      if (newFile) {
+        mutate((cur) => {
+          if (cur) return [...cur, newFile as DesignFile];
+          return [newFile as DesignFile];
+        });
+      }
     }
-
-    const files = await getTaskFiles(taskId);
-    mutate(files);
 
     e.target.value = "";
     setIsUploading(false);

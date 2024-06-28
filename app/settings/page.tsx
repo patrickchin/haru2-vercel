@@ -10,8 +10,8 @@ import { Label } from "@/components/ui/label";
 
 import { LucideLoader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CurrentUserAvatar, } from "@/components/user-avatar";
-import { uploadAvatar } from "@/lib/utils";
+import { CurrentUserAvatar } from "@/components/user-avatar";
+import { uploadAvatarFile } from "@/lib/utils/upload";
 import { deleteAvatarForUser } from "@/lib/actions";
 
 function SettingsPage() {
@@ -28,7 +28,7 @@ function SettingsPage() {
     setUpLoading(true);
     const file = targetFiles.item(0);
     if (!file) return;
-    const updatedUser = await uploadAvatar(file);
+    const updatedUser = await uploadAvatarFile(file);
     if (updatedUser) {
       location.reload();
     } else {

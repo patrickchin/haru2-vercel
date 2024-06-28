@@ -237,7 +237,8 @@ export async function createTeams(projectId: number, types: string[]) {
     return { projectid: projectId, type };
   });
   return db.transaction(async (tx) => {
-    const existingTeam = await tx.select()
+    const existingTeam = await tx
+      .select()
       .from(Schemas.teams1)
       .where(eq(Schemas.teams1.projectid, projectId))
       .limit(1);
@@ -452,7 +453,10 @@ export async function enableProjectTask(taskId: number, enabled: boolean) {
     .then((r) => r[0]);
 }
 
-export async function getProjectTasksAllOfType(projectid: number, type: string) {
+export async function getProjectTasksAllOfType(
+  projectid: number,
+  type: string,
+) {
   return await db
     .select()
     .from(Schemas.tasks1)
@@ -494,6 +498,14 @@ export async function getProjectTask(projectid: number, specid: number) {
         eq(Schemas.tasks1.specid, specid),
       ),
     );
+}
+
+export async function getTask(taskId: number) {
+  return await db
+    .select()
+    .from(Schemas.tasks1)
+    .where(and(eq(Schemas.tasks1.id, taskId)))
+    .orderBy(Schemas.tasks1.id);
 }
 
 // files ==========================================================================================

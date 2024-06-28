@@ -35,11 +35,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DesignUserAvatar } from "@/components/user-avatar";
 
-import { cn, uploadProjectFile } from "@/lib/utils";
+import { uploadTaskFile } from "@/lib/utils/upload";
+import { cn } from "@/lib/utils";
 import { DesignFile, DesignTaskComment } from "@/lib/types";
 import {
   addTaskComment,
-  addTaskFile,
   deleteFile,
   getTaskCommentsAndFiles,
 } from "@/lib/actions";
@@ -150,13 +150,9 @@ function CommentsList({
 }
 
 function AddCommentFormInternal({
-  projectId,
-  specId,
   taskId,
   setCurrentAttachments,
 }: {
-  projectId: number;
-  specId: number;
   taskId: number;
   setCurrentAttachments: Dispatch<SetStateAction<DesignFile[]>>;
 }) {
@@ -171,8 +167,6 @@ function AddCommentFormInternal({
       />
       <div className="flex justify-end gap-4">
         <UploadAttachment
-          projectId={projectId}
-          specId={specId}
           taskId={taskId}
           setCurrentAttachments={setCurrentAttachments}
         />
@@ -208,15 +202,11 @@ function AddCommentFormInternal({
 }
 
 function AddCommentForm({
-  projectId,
-  specId,
   taskId,
   attachments,
   setAttachments,
   swrMutateComments,
 }: {
-  projectId: number;
-  specId: number;
   taskId: number;
   attachments: DesignFile[];
   setAttachments: Dispatch<SetStateAction<DesignFile[]>>;
@@ -244,8 +234,6 @@ function AddCommentForm({
   return (
     <form onSubmit={formSubmitNewComment} className="flex flex-col gap-4">
       <AddCommentFormInternal
-        projectId={projectId}
-        specId={specId}
         taskId={taskId}
         setCurrentAttachments={setAttachments}
       />
@@ -288,13 +276,9 @@ function AttachmentList({
 }
 
 function UploadAttachment({
-  projectId,
-  specId,
   taskId,
   setCurrentAttachments,
 }: {
-  projectId: number;
-  specId: number;
   taskId: number;
   setCurrentAttachments: Dispatch<SetStateAction<DesignFile[]>>;
 }) {
@@ -312,7 +296,7 @@ function UploadAttachment({
     const selectedFiles = Array.from(targetFiles);
 
     for (const file of selectedFiles) {
-      const newFile = await uploadProjectFile(file, projectId, specId, taskId);
+      const newFile = await uploadTaskFile(file, taskId);
 
       if (newFile) setCurrentAttachments((l) => [...l, newFile as DesignFile]);
     }
@@ -357,15 +341,7 @@ function UploadAttachment({
   );
 }
 
-export default function TaskCommentsClient({
-  projectId,
-  specId,
-  taskId,
-}: {
-  projectId: number;
-  specId: number;
-  taskId: number;
-}) {
+export default function TaskCommentsClient({ taskId }: { taskId: number }) {
   const { data, error, mutate } = useSWR(
     `/api/task/${taskId}/commments`, // api route doesn't really exist
     () => {
@@ -395,8 +371,6 @@ export default function TaskCommentsClient({
         />
 
         <AddCommentForm
-          projectId={projectId}
-          specId={specId}
           taskId={taskId}
           attachments={currentAttachments}
           setAttachments={setCurrentAttachments}
