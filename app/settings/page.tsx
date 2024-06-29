@@ -12,7 +12,7 @@ import { LucideLoader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CurrentUserAvatar } from "@/components/user-avatar";
 import { uploadAvatarFile } from "@/lib/utils/upload";
-import { deleteAvatarForUser } from "@/lib/actions";
+import { updateAvatarForUser } from "@/lib/actions";
 import DeleteAlertDialog from "@/components/delete-alert";
 
 function SettingsPage() {
@@ -51,7 +51,7 @@ function SettingsPage() {
   const deleteProfileAvatar = async () => {
     setIsDeleting(true);
     try {
-      await deleteAvatarForUser();
+      await updateAvatarForUser(null);
       setIsModalOpen(false);
     } catch (error) {
       console.error("Error deleting avatar:", error);

@@ -509,7 +509,7 @@ export async function addTaskFile(
   });
 }
 
-export async function updateAvatarForUser(fileUrl: string) {
+export async function updateAvatarForUser(fileUrl: string | null) {
   const session = await auth();
   if (!session?.user?.id) return;
   const userId = Number(session.user.id);
@@ -528,27 +528,6 @@ export async function updateAvatarForUser(fileUrl: string) {
     console.error("Failed to update avatar:", error);
     throw error;
   }
-}
-
-export async function deleteAvatarForUser() {
-  const session = await auth();
-  if (!session?.user) {
-    console.log("No user session found");
-    return;
-  }
-
-  const userId = Number(session.user.id);
-  if (isNaN(userId)) {
-    console.error("Invalid user ID");
-    return;
-  }
-
-  const { initial, updated } = await db.deleteUserAvatar(userId);
-
-  if (initial && initial.avatarUrl) {
-    await blob.del(initial.avatarUrl);
-  }
-  return updated;
 }
 
 export async function getTaskFiles(taskId: number) {

@@ -118,7 +118,7 @@ export async function createUserIfNotExists({
 
 export async function updateUserAvatar(
   uploaderid: number,
-  values: { avatarUrl: string },
+  values: { avatarUrl: string | null },
 ) {
   return await db.transaction(async (tx) => {
     const oldUser = await tx
