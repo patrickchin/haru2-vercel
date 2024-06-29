@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { CurrentUserAvatar } from "@/components/user-avatar";
 import { uploadAvatarFile } from "@/lib/utils/upload";
 import { deleteAvatarForUser } from "@/lib/actions";
+import DeleteAlertDialog from "@/components/delete-alert";
 
 function SettingsPage() {
   const { data: session, update: updateSession } = useSession();
@@ -24,18 +25,19 @@ function SettingsPage() {
   async function onChangeAvatar(e: ChangeEvent<HTMLInputElement>) {
     const targetFiles = e.currentTarget.files;
     if (!targetFiles || targetFiles.length <= 0) return;
-
-    setUpLoading(true);
-    const file = targetFiles.item(0);
-    if (!file) return;
-    const updatedUser = await uploadAvatarFile(file);
-    if (updatedUser) {
-      location.reload();
-    } else {
-      setErrorMessage("Failed to update the avatar. Please try again.");
+    try {
+      setUpLoading(true);
+      const file = targetFiles.item(0);
+      if (!file) return;
+      const updatedUser = await uploadAvatarFile(file);
+      if (!updatedUser) 
+        setErrorMessage("Failed to update the avatar. Please try again.");
+    } finally {
+      e.target.value = "";
+      setUpLoading(false);
     }
-    e.target.value = "";
-    setUpLoading(false);
+    // TODO is there a better way to refresh session?
+    location.reload();
   }
 
   const handleOpenModal = () => {
@@ -81,12 +83,22 @@ function SettingsPage() {
             </p>
           )}
 
-          <Button asChild variant="outline">
-            <Label htmlFor="photo">
-              Select New Photo
-              {isUploading && <LucideLoader2 className="animate-spin h-4" />}
-            </Label>
-          </Button>
+          <div className="flex gap-2">
+            <DeleteAlertDialog
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              onConfirm={deleteProfileAvatar}
+              isLoading={isDeleting}
+              disabled={!session?.user?.image}
+              variant="text"
+            />
+            <Button asChild variant="outline">
+              <Label htmlFor="photo">
+                Select New Photo
+                {isUploading && <LucideLoader2 className="animate-spin h-4" />}
+              </Label>
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
