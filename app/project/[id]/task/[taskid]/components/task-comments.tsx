@@ -35,11 +35,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DesignUserAvatar } from "@/components/user-avatar";
 
+import { uploadTaskFile } from "@/lib/utils/upload";
 import { cn } from "@/lib/utils";
 import { DesignFile, DesignTaskComment } from "@/lib/types";
 import {
   addTaskComment,
-  addTaskFile,
   deleteFile,
   getTaskCommentsAndFiles,
 } from "@/lib/actions";
@@ -291,16 +291,15 @@ function UploadAttachment({
 
     setIsUploading(true);
 
-    assert(targetFiles.length == 1);
-    const file = targetFiles.item(0);
-    assert(file);
+    assert(targetFiles.length >= 1);
 
-    // server action arguments can only be primatives or FormData
-    const data = new FormData();
-    data.set("file", file);
-    const newFile = await addTaskFile(taskId, data);
-    // as DesignFile might be a sign of bad typing ... TODO improve
-    if (newFile) setCurrentAttachments((l) => [...l, newFile as DesignFile]);
+    const selectedFiles = Array.from(targetFiles);
+
+    for (const file of selectedFiles) {
+      const newFile = await uploadTaskFile(file, taskId);
+
+      if (newFile) setCurrentAttachments((l) => [...l, newFile as DesignFile]);
+    }
 
     e.target.value = "";
     setIsUploading(false);
@@ -315,6 +314,7 @@ function UploadAttachment({
         ref={uploadFileInputRef}
         onChange={onChangeUploadFile}
         disabled={isUploading}
+        multiple
       />
       <Button asChild type="button" variant="secondary" disabled={isUploading}>
         <Label

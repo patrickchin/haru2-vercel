@@ -5,6 +5,7 @@ import * as Schemas from "@/drizzle/schema";
 import { signIn } from "@/lib/auth";
 import { auth } from "./auth";
 import * as blob from "@vercel/blob";
+import { deleteFileFromS3 } from "@/lib/s3";
 import { DesignTaskSpec, defaultTeams } from "./types";
 import {
   LoginTypesEmail,
@@ -18,7 +19,11 @@ import { redirect } from "next/navigation";
 import { defaulTaskSpecs } from "content/tasks";
 import { AuthError } from "next-auth";
 import assert from "assert";
-import { CredentialsSigninError, InvalidInputError, UnknownError } from "./errors";
+import {
+  CredentialsSigninError,
+  InvalidInputError,
+  UnknownError,
+} from "./errors";
 
 const VERCEL_BLOB_FAKE_FILES = false;
 
@@ -30,7 +35,6 @@ export async function getAllUsers() {
 }
 
 export async function registerUser(data: RegisterSchemaType) {
-
   const parsed = RegisterSchema.safeParse(data);
   if (!parsed.success) {
     return InvalidInputError;
@@ -104,9 +108,8 @@ export async function submitProjectForm2(formData: FormData) {
 
   Promise.all([
     db.createTeams(project.id, defaultTeams),
-    db.createProjectTasksFromAllSpecs(project.id)
+    db.createProjectTasksFromAllSpecs(project.id),
   ]);
-
 
   const results = Array.from(files ?? []).map(async (file) => {
     // HACK FormData constructor from event.target adds a file with no filename ignore that file here.
@@ -138,6 +141,7 @@ export async function submitProjectForm2(formData: FormData) {
 
   Promise.all(results).catch((e) => {
     console.error("Failed to upload all files.");
+    console.log(e);
   });
 
   redirect(`/project/${project.id}`);
@@ -176,9 +180,7 @@ export async function deleteFullProject(projectId: number) {
   redirect("/projects");
 }
 
-export async function startProject(
-  projectId: number,
-) {
+export async function startProject(projectId: number) {
   const session = await auth();
   if (!session?.user?.id) return;
 
@@ -194,7 +196,7 @@ export async function startProjectForm(data: FormData) {
 
   await startProject(projectId);
 
-  redirect(`/project/${projectId}`)
+  redirect(`/project/${projectId}`);
 }
 
 export async function getProjectFiles(projectId: number) {
@@ -387,7 +389,11 @@ export async function createProjectTasks(
   return await db.createProjectTasks(newTasks);
 }
 
-export async function enableProjectTaskSpec(projectId: number, specId: number, enabled: boolean) {
+export async function enableProjectTaskSpec(
+  projectId: number,
+  specId: number,
+  enabled: boolean,
+) {
   const session = await auth();
   if (!session?.user?.id) return;
   const tasks = await db.enableProjectTaskSpec(projectId, specId, enabled);
@@ -405,7 +411,10 @@ export async function enableProjectTask(taskId: number, enabled: boolean) {
 }
 
 // include disabled
-export async function getProjectTasksAllOfType(projectId: number, type: string) {
+export async function getProjectTasksAllOfType(
+  projectId: number,
+  type: string,
+) {
   const session = await auth();
   if (!session?.user?.id) return;
   return await db.getProjectTasksAllOfType(projectId, type);
@@ -429,6 +438,14 @@ export async function getProjectTask(projectId: number, specId: number) {
   const session = await auth();
   if (!session?.user?.id) return;
   const tasks = await db.getProjectTask(projectId, specId);
+  if (tasks.length <= 0) return;
+  return tasks[0];
+}
+
+export async function getTask(taskId: number) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  const tasks = await db.getTask(taskId);
   if (tasks.length <= 0) return;
   return tasks[0];
 }
@@ -469,111 +486,48 @@ export async function addTaskComment(
   return getTaskCommentsAndFiles(taskId);
 }
 
-export async function addTaskFile(taskId: number, data: FormData) {
-  const file = data.get("file") as File;
-  if (!file) {
-    console.log("addTaskFile file not correcty uploaded");
-    return;
-  }
-
+export async function addTaskFile(
+  taskId: number,
+  type: string,
+  name: string,
+  size: number,
+  fileUrl: string,
+) {
   const session = await auth();
   if (!session?.user?.id) return;
   const userId = Number(session.user.id); // error?
 
-  const newFileP = db.addTaskFile({
-    type: file.type,
-    // projectid: ?,
+  return db.addTaskFile({
     taskid: taskId,
+    type: type,
+    filename: name,
+    filesize: size,
+    url: fileUrl,
     // specid: specId,
     uploaderid: userId,
     // commentid: ?,
-    filename: file.name,
-    filesize: file.size,
-    // url: ?,
   });
-
-  const fileBytes =
-    VERCEL_BLOB_FAKE_FILES && file.size > 512
-      ? new ArrayBuffer(8)
-      : await file.arrayBuffer();
-  // I would prefer the file to be saved here:
-  // const blobResult = await blob.put(`project/${projectId}/task/${taskSpecId}/${file.name}`, fileBytes, {
-  const blobResult = await blob.put(`task/${taskId}/${file.name}`, fileBytes, {
-    access: "public",
-  });
-
-  const newFile = await newFileP;
-  const editedFile = await db.editTaskFile(newFile.id, { url: blobResult.url });
-  assert(newFile.id === editedFile.id, "added and edited files differ");
-  return editedFile;
 }
 
-export async function addTaskFileReturnAll(taskId: number, data: FormData) {
-  // no auth because done in addTaskFile
-  await addTaskFile(taskId, data);
-  return db.getFilesForTask(taskId);
-}
-
-export async function updateAvatarForUser(data: FormData) {
-  const file = data.get("file") as File;
-
-  if (!file) {
-    console.error("file not correcty uploaded");
-    return;
-  }
-  if (file.size > 250000) {
-    console.error("file size is too big", file);
-    return;
-  }
-
+export async function updateAvatarForUser(fileUrl: string | null) {
   const session = await auth();
-  if (!session?.user) {
-    console.log("No user session found");
-    return;
-  }
-
-  const userId = Number(session.user.id); // error?
-  if (isNaN(userId)) {
-    console.error("Invalid user ID");
-    return;
-  }
-
-  const fileBytes = await file.arrayBuffer();
-
-  const blobResult = await blob.put(`user/${userId}/${file.name}`, fileBytes, {
-    access: "public",
-  });
-
-  //Start a database transaction
-  const { initial, updated } = await db.updateUserAvatar(userId, {
-    avatarUrl: blobResult.url,
-  });
-
-  if (initial && initial.avatarUrl) {
-    await blob.del(initial.avatarUrl);
-  }
-  return updated;
-}
-
-export async function deleteAvatarForUser() {
-  const session = await auth();
-  if (!session?.user) {
-    console.log("No user session found");
-    return;
-  }
-
+  if (!session?.user?.id) return;
   const userId = Number(session.user.id);
-  if (isNaN(userId)) {
-    console.error("Invalid user ID");
-    return;
-  }
 
-  const { initial, updated } = await db.deleteUserAvatar(userId);
+  try {
+    const { initial, updated } = await db.updateUserAvatar(userId, {
+      avatarUrl: fileUrl,
+    });
 
-  if (initial && initial.avatarUrl) {
-    await blob.del(initial.avatarUrl);
+    if (initial && initial.avatarUrl) {
+      const key = new URL(initial.avatarUrl).pathname.substring(1);
+      await deleteFileFromS3(key);
+    }
+    return updated;
+  } catch (error) {
+    console.error("Failed to update avatar:", error);
+    throw error;
   }
-  return updated;
 }
 
 export async function getTaskFiles(taskId: number) {
@@ -585,5 +539,11 @@ export async function getTaskFiles(taskId: number) {
 export async function deleteFile(fileId: number) {
   const session = await auth();
   if (!session?.user?.id) return;
-  return db.deleteFile(fileId);
+  const f = await db.deleteFile(fileId);
+  if (f.url) {
+    // todo do this inside deleteFileFromS3
+    const key = new URL(f.url).pathname.substring(1);
+    deleteFileFromS3(key);
+  }
+  return f;
 }

@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { useSession } from "next-auth/react";
-import { deleteAvatarForUser, updateAvatarForUser } from "@/lib/actions";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CenteredLayout } from "@/components/page-layouts";
@@ -12,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { LucideLoader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CurrentUserAvatar } from "@/components/user-avatar";
+import { uploadAvatarFile } from "@/lib/utils/upload";
+import { updateAvatarForUser } from "@/lib/actions";
 import DeleteAlertDialog from "@/components/delete-alert";
 
 function SettingsPage() {
@@ -21,37 +22,23 @@ function SettingsPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleFileChange = async (event: any) => {
-    const file = event.target.files[0];
-    if (!file) {
-      setErrorMessage("Please select a file.");
-      return;
+  async function onChangeAvatar(e: ChangeEvent<HTMLInputElement>) {
+    const targetFiles = e.currentTarget.files;
+    if (!targetFiles || targetFiles.length <= 0) return;
+    try {
+      setUpLoading(true);
+      const file = targetFiles.item(0);
+      if (!file) return;
+      const updatedUser = await uploadAvatarFile(file);
+      if (!updatedUser) 
+        setErrorMessage("Failed to update the avatar. Please try again.");
+    } finally {
+      e.target.value = "";
+      setUpLoading(false);
     }
-
-    if (file.size > 250000) {
-      setErrorMessage(
-        "File size is too large. Please upload a file smaller than 250 KB.",
-      );
-      return;
-    }
-
-    setErrorMessage("");
-    const data = new FormData();
-    data.set("file", file);
-
-    setUpLoading(true);
-    const updatedUser = await updateAvatarForUser(data);
-    if (updatedUser) {
-      // This update doesn't really work
-      // const newSession = await updateSession({ user: { image: "update" } });
-      // const newSession = await updateSession({ user: { image: updatedUser.avatarUrl } });
-      // await updateSession();
-    } else {
-      setErrorMessage("Failed to update the avatar. Please try again.");
-    }
-    setUpLoading(false);
+    // TODO is there a better way to refresh session?
     location.reload();
-  };
+  }
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -64,7 +51,7 @@ function SettingsPage() {
   const deleteProfileAvatar = async () => {
     setIsDeleting(true);
     try {
-      await deleteAvatarForUser();
+      await updateAvatarForUser(null);
       setIsModalOpen(false);
     } catch (error) {
       console.error("Error deleting avatar:", error);
@@ -84,7 +71,7 @@ function SettingsPage() {
             type="file"
             className="hidden"
             id="photo"
-            onChange={handleFileChange}
+            onChange={onChangeAvatar}
             accept="image/*"
             disabled={isUploading}
           />
@@ -95,6 +82,7 @@ function SettingsPage() {
               {errorMessage}
             </p>
           )}
+
           <div className="flex gap-2">
             <DeleteAlertDialog
               isOpen={isModalOpen}
@@ -104,7 +92,7 @@ function SettingsPage() {
               disabled={!session?.user?.image}
               variant="text"
             />
-            <Button className="cursor-pointer" asChild variant="outline">
+            <Button asChild variant="outline">
               <Label htmlFor="photo">
                 Select New Photo
                 {isUploading && <LucideLoader2 className="animate-spin h-4" />}
