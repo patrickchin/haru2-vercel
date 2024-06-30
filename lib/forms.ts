@@ -11,7 +11,9 @@ export const NewProjectFormSchema = z.object({
   country: z.string(),
   buildingType: z.string(), // enum?
   buildingSubtype: z.string().optional(), // enum?
-  description: z.string().min(1),
+  description: z
+    .string()
+    .min(1, "Please add a project description, this can be edited after submition"),
   files: z
     .any()
     .transform((f) => f as FileList)
