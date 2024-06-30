@@ -283,7 +283,7 @@ function ManageTeamMembers({
   return (
     <Card className="flex flex-col px-8 py-6 gap-4">
       <div className="flex py-2 justify-between items-center">
-        <h5>{teamNames[team.type || "other"]}</h5>
+        <CardTitle>{teamNames[team.type || "other"]}</CardTitle>
         <Button
           className="hidden"
           disabled={true}
