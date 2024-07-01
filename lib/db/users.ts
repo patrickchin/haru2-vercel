@@ -31,7 +31,8 @@ export async function getUserAccountByEmail(email: string) {
     })
     .from(Schemas.accounts1)
     .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.accounts1.id))
-    .where(eq(Schemas.accounts1.email, email));
+    .where(eq(Schemas.accounts1.email, email))
+    .then((r) => r[0]);
 }
 
 export async function getUserAccountByPhone(phone: string) {
@@ -42,7 +43,8 @@ export async function getUserAccountByPhone(phone: string) {
     })
     .from(Schemas.accounts1)
     .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.accounts1.id))
-    .where(eq(Schemas.accounts1.phone, phone));
+    .where(eq(Schemas.accounts1.phone, phone))
+    .then((r) => r[0]);
 }
 
 export async function getUserByEmail(email: string) {
@@ -63,7 +65,8 @@ export async function getUserByPhone(phone: string) {
     })
     .from(Schemas.users1)
     .leftJoin(Schemas.accounts1, eq(Schemas.accounts1.id, Schemas.users1.id))
-    .where(eq(Schemas.accounts1.phone, phone));
+    .where(eq(Schemas.accounts1.phone, phone))
+    .then((r) => r.at(0));
 }
 
 export async function getAllUsers() {
