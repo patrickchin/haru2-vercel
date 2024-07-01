@@ -39,7 +39,7 @@ function MembersList({ taskId }: { taskId: number }) {
           <ul className="flex flex-col gap-4">
             {members.map((mem, i) => (
               <li key={i} className="flex gap-4 items-center">
-                <UserAvatar user={mem} />
+                {/* <UserAvatar user={mem} /> */}
               </li>
             ))}
           </ul>
