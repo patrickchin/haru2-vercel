@@ -10,6 +10,12 @@ import {
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { authConfig } from "@/lib/auth.config";
 
+declare module "next-auth" {
+  interface User {
+    idn: number;
+  }
+}
+
 export const {
   handlers: { GET, POST },
   auth,
@@ -69,6 +75,7 @@ export const {
           if (otpIsValid || passwordsMatch) {
             const authuser: User = {
               id: user.id.toString(),
+              idn: user.id,
               email: user.email,
               name: user.name,
               image: user.avatarUrl || null,
