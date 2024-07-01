@@ -11,12 +11,20 @@ import {
   boolean,
   unique,
   primaryKey,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 
 // pnpm drizzle-kit push
 // pnpm drizzle-kit introspect
 // pnpm drizzle-kit generate
 // pnpm drizzle-kit migrate
+
+export const accountRoleEnum = pgEnum("role", [
+  "admin",
+  "client",
+  "manager",
+  "designer",
+]);
 
 export const accounts1 = pgTable("accounts1", {
   id: serial("id").primaryKey(),
@@ -26,6 +34,7 @@ export const accounts1 = pgTable("accounts1", {
   phone: varchar("phone", { length: 32 }),
   phoneVerified: timestamp("phoneVerified", { mode: "date" }),
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  role: accountRoleEnum("role").default("client"),
 });
 
 export const users1 = pgTable("users1", {
