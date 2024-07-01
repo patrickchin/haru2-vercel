@@ -1,19 +1,17 @@
 "use server";
-
 import * as db from "@/lib/db";
+import { Session } from "next-auth";
+import "@/lib/auth";
 import { auth } from "@/lib/auth";
 import * as blob from "@vercel/blob";
-import { defaultTeams } from "@/lib/types";
+import { DesignProject, defaultTeams } from "@/lib/types";
 import { NewProjectFormSchema } from "@/lib/forms";
 import { redirect } from "next/navigation";
 
 export async function submitProjectForm2(formData: FormData) {
   const session = await auth();
-  if (!session?.user?.id) {
-    console.log("Invalid session on project form submit");
-    return;
-  }
-  const userId = Number(session.user.id); // error?
+  if (!session?.user) return; 
+  const userId = session.user.idn;
 
   const formObj = {
     ...Object.fromEntries(formData),
@@ -87,20 +85,70 @@ export async function submitProjectForm2(formData: FormData) {
   redirect(`/project/${project.id}`);
 }
 
+function canViewProject(session?: Session | null, project?: DesignProject) {
+  if (!project) return false;
+  if (!session) return false;
+  if (!session.user) return false;
+  const isOwner = project?.userid === session.user.idn;
+  switch (session.user.role) {
+    case "client": return isOwner;
+    case "designer": return true; // TODO only if my project manager is my manager
+    case "manager": return true;
+    case "admin": return true;
+  }
+}
+
+function canEditProject(session?: Session | null, project?: DesignProject) {
+  if (!project) return false;
+  if (!session) return false;
+  if (!session.user) return false;
+  const isOwner = project?.userid === session.user.idn;
+  switch (session.user.role) {
+    case "client": return isOwner;
+    case "designer": return false;
+    case "manager": return true;
+    case "admin": return true;
+  }
+}
+
 export async function getProject(projectId: number) {
   const session = await auth();
-  if (!session?.user?.id) return undefined;
-  const userId = Number(session.user.id);
-  return await db.getProject(projectId);
+  const project = await db.getProject(projectId);
+  if (canViewProject(session, project))
+    return project;
+}
+
+export async function getCurrentUsersProjects() {
+  const session = await auth();
+  if (!session?.user) return;
+  return db.getUserProjects(session.user.idn);
+}
+
+export async function startProjectForm(data: FormData) {
+  // calls another action so auth not necessary
+  const projectId = data.get("projectId") as unknown as number;
+  if (isNaN(projectId)) return;
+  const updated = await updateProject(projectId, { status: "in progress" });
+  if (updated) redirect(`/project/${projectId}`);
+}
+
+//update any field of the project
+export async function updateProject(
+  projectId: number,
+  updates: Record<string, any>,
+) {
+  const session = await auth();
+  const project = await db.getProject(projectId);
+  if (canEditProject(session, project))
+    return await db.updateProjectFields(projectId, updates);
 }
 
 export async function deleteFullProject(projectId: number) {
   // disable deletions for now
   return;
 
-  // TODO needs more security
   const session = await auth();
-  if (!session?.user?.id) return;
+  if (session?.user?.role !== "admin")
 
   // A lot more thought has to go into deleting projects.
   // - what happens if something fails in the middle?
@@ -118,79 +166,4 @@ export async function deleteFullProject(projectId: number) {
   console.log("DELETED PROJECT", deletedProject);
 
   redirect("/projects");
-}
-
-export async function startProject(projectId: number) {
-  const session = await auth();
-  if (!session?.user?.id) return;
-
-  await updateProject(projectId, { status: "in progress" });
-}
-
-export async function startProjectForm(data: FormData) {
-  const session = await auth();
-  if (!session?.user?.id) return;
-
-  const projectId = data.get("projectId") as unknown as number;
-  if (isNaN(projectId)) return;
-
-  await startProject(projectId);
-
-  redirect(`/project/${projectId}`);
-}
-
-//Update project title
-export async function updateProjectTitle(projectId: number, newTitle: string) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    console.error("Invalid session on project form submit");
-    return;
-  }
-
-  const userId = Number(session.user.id);
-  if (isNaN(userId)) {
-    console.error("User ID is not a number:", session.user.id);
-    return;
-  }
-
-  const updatedProject = await db.updateProjectFields(projectId, {
-    title: newTitle,
-  });
-  if (!updatedProject) {
-    console.error("Failed to update project title.");
-    return null;
-  }
-  return updatedProject;
-}
-
-export async function getCurrentUsersProjects() {
-  const session = await auth();
-  if (session?.user?.id)
-    // linter is stupid
-    return db.getUserProjects(parseInt(session.user.id));
-}
-
-//update any field of the project
-export async function updateProject(
-  projectId: number,
-  updates: Record<string, any>,
-) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    console.error("Invalid session on project form submit");
-    return null;
-  }
-
-  const userId = Number(session.user.id);
-  if (isNaN(userId)) {
-    console.error("User ID is not a number:", session.user.id);
-    return null;
-  }
-
-  const updatedProject = await db.updateProjectFields(projectId, updates);
-  if (!updatedProject) {
-    console.error("Failed to update project title.");
-    return null;
-  }
-  return updatedProject;
 }

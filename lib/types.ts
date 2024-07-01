@@ -25,6 +25,8 @@ export type DesignTaskComment = Awaited<
   ReturnType<typeof db.getTaskComments>
 >[0];
 
+export type AccountRole = typeof Schemas.accountRoleEnum.enumValues[number];
+
 export const defaultTeams = ["legal", "architectural", "structural", "mep"];
 
 export const teamNames: Record<string, string> = {

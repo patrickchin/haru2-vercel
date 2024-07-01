@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 import { LucidePencil, CheckSquare, XSquare } from "lucide-react";
 import { useState } from "react";
 import { Input } from "./ui/input";
-import { updateProjectTitle } from "@/lib/actions";
+import { updateProject } from "@/lib/actions";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 
@@ -20,7 +20,7 @@ export default function EditableTitle({ project }: { project: DesignProject }) {
 
   async function clickUpdateProject() {
     try {
-      await updateProjectTitle(project.id, title);
+      await updateProject(project.id, { title });
       setOriginalTitle(title);
       setEditing(false);
       toast({ description: "Project updated succesfully." });
