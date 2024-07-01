@@ -1,11 +1,11 @@
 "use server";
 
 import { tokenGenerate } from "@vonage/jwt";
-import * as db from "./db";
+import * as db from "../db";
 import crypto from "crypto";
-import { saveOtp, verifyOtp } from "./db";
-import { sendEmail } from "./email";
-import { FailedToSendEmailOTP, FailedToSendWhatsappOTP } from "./errors";
+import { saveOtp, verifyOtp } from "../db";
+import { sendEmail } from "../email";
+import { FailedToSendEmailOTP, FailedToSendWhatsappOTP } from "../errors";
 
 // Vonage configuration
 const applicationId = process.env.VONAGE_APPLICATION_ID as string;
