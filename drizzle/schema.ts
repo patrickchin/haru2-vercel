@@ -20,10 +20,10 @@ import {
 // pnpm drizzle-kit migrate
 
 export const accountRoleEnum = pgEnum("role", [
-  "admin",
   "client",
-  "manager",
   "designer",
+  "manager",
+  "admin",
 ]);
 
 export const accounts1 = pgTable("accounts1", {
