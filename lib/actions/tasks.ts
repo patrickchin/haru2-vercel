@@ -4,7 +4,51 @@ import * as db from "@/lib/db";
 import * as Schemas from "@/drizzle/schema";
 import { auth } from "@/lib/auth";
 import { defaulTaskSpecs } from "content/tasks";
-import { DesignTaskSpec } from "@/lib/types";
+import { DesignProject, DesignTaskSpec } from "@/lib/types";
+import { Session } from "next-auth";
+
+function canViewProjectTasks(
+  session?: Session | null,
+  project?: DesignProject,
+) {
+  if (!project || !session?.user) return false;
+  const isOwner = project?.userid === session.user.idn;
+  switch (session.user.role) {
+    case "client":
+      return isOwner;
+    case "designer":
+      return true; // TODO only if my project manager is my manager
+    case "manager":
+      return true;
+    case "admin":
+      return true;
+  }
+}
+
+function canEditProjectTasks(
+  session?: Session | null,
+  project?: DesignProject,
+) {
+  if (!project || !session?.user) return false;
+  const isOwner = project?.userid === session.user.idn;
+  switch (session.user.role) {
+    case "client":
+      return isOwner;
+    case "designer":
+      return true; // TODO only if my project manager is my manager
+    case "manager":
+      return true;
+    case "admin":
+      return true;
+  }
+}
+
+function canAddProjectTaskComment(
+  session?: Session | null,
+  project?: DesignProject,
+) {
+  return canViewProjectTasks(session, project);
+}
 
 async function getTaskSpecsInternal() {
   const specs: DesignTaskSpec[] = await db.getTaskSpecs();
@@ -50,7 +94,8 @@ export async function createProjectTasks(
   enabled?: Record<number, boolean>,
 ) {
   const session = await auth();
-  if (!session?.user?.id) return;
+  const project = await db.getProject(projectId);
+  if (!canEditProjectTasks(session, project)) return;
 
   const tasks = await db.getProjectTasks(projectId);
   if (tasks.length > 0) return tasks;
@@ -80,19 +125,25 @@ export async function enableProjectTaskSpec(
   enabled: boolean,
 ) {
   const session = await auth();
-  if (!session?.user?.id) return;
+  const project = await db.getProject(projectId);
+  if (!canEditProjectTasks(session, project)) return;
+
   const tasks = await db.enableProjectTaskSpec(projectId, specId, enabled);
   return tasks;
 }
 
 export async function enableProjectTask(taskId: number, enabled: boolean) {
   const session = await auth();
-  if (!session?.user?.id) return;
-  const task = await db.enableProjectTask(taskId, enabled);
+  const task = await db.getTask(taskId);
   if (!task.projectid) return;
-  if (!task.type) return;
+  const project = await db.getProject(task.projectid);
+  if (!canEditProjectTasks(session, project)) return;
+
+  const task2 = await db.enableProjectTask(taskId, enabled);
+  if (!task2.projectid) return;
+  if (!task2.type) return;
   // tbh should this really be returning all of the tasks? ...
-  return await db.getProjectTasksAllOfType(task.projectid, task.type);
+  return await db.getProjectTasksAllOfType(task2.projectid, task2.type);
 }
 
 // include disabled
@@ -101,27 +152,35 @@ export async function getProjectTasksAllOfType(
   type: string,
 ) {
   const session = await auth();
-  if (!session?.user?.id) return;
+  const project = await db.getProject(projectId);
+  if (!canViewProjectTasks(session, project)) return;
+
   return await db.getProjectTasksAllOfType(projectId, type);
 }
 
 // include disabled
 export async function getProjectTasksAll(projectId: number) {
   const session = await auth();
-  if (!session?.user?.id) return;
+  const project = await db.getProject(projectId);
+  if (!canViewProjectTasks(session, project)) return;
+
   return await db.getProjectTasksAll(projectId);
 }
 
 export async function getProjectTasks(projectId: number) {
   const session = await auth();
-  if (!session?.user?.id) return;
+  const project = await db.getProject(projectId);
+  if (!canViewProjectTasks(session, project)) return;
+
   const tasks = await db.getProjectTasks(projectId);
   return tasks;
 }
 
 export async function getProjectTask(projectId: number, specId: number) {
   const session = await auth();
-  if (!session?.user?.id) return;
+  const project = await db.getProject(projectId);
+  if (!canViewProjectTasks(session, project)) return;
+
   const tasks = await db.getProjectTask(projectId, specId);
   if (tasks.length <= 0) return;
   return tasks[0];
@@ -129,15 +188,21 @@ export async function getProjectTask(projectId: number, specId: number) {
 
 export async function getTask(taskId: number) {
   const session = await auth();
-  if (!session?.user?.id) return;
-  const tasks = await db.getTask(taskId);
-  if (tasks.length <= 0) return;
-  return tasks[0];
+  const task = await db.getTask(taskId);
+  if (!task.projectid) return;
+  const project = await db.getProject(task.projectid);
+  if (!canViewProjectTasks(session, project)) return;
+
+  return await db.getTask(taskId);
 }
 
 export async function getTaskCommentsAndFiles(taskId: number) {
   const session = await auth();
-  if (!session?.user?.id) return;
+  const task = await db.getTask(taskId);
+  if (!task.projectid) return;
+  const project = await db.getProject(task.projectid);
+  if (!canViewProjectTasks(session, project)) return;
+
   const comments = db.getTaskComments(taskId);
   const files = db.getTaskCommentAttachments(taskId);
   return Promise.all([comments, files]);
@@ -145,7 +210,11 @@ export async function getTaskCommentsAndFiles(taskId: number) {
 
 export async function getTaskComments(taskId: number) {
   const session = await auth();
-  if (!session?.user?.id) return;
+  const task = await db.getTask(taskId);
+  if (!task.projectid) return;
+  const project = await db.getProject(task.projectid);
+  if (!canViewProjectTasks(session, project)) return;
+
   const comments = db.getTaskComments(taskId);
   return comments;
 }
@@ -156,8 +225,12 @@ export async function addTaskComment(
   attachmentsIds: number[],
 ) {
   const session = await auth();
-  if (!session?.user?.id) return;
-  const userId = Number(session.user.id);
+  const task = await db.getTask(taskId);
+  if (!task.projectid) return;
+  const project = await db.getProject(task.projectid);
+  if (!canAddProjectTaskComment(session, project)) return;
+
+  const userId = Number(session?.user?.id);
   const comments = await db.addTaskComment({
     taskid: taskId,
     userid: userId,

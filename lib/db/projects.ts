@@ -23,7 +23,6 @@ import { defaultTeams } from "@/lib/types";
 const client = postgres(`${process.env.POSTGRES_URL!}`);
 const db = drizzle(client);
 
-
 export async function getUserProjects(userId: number, pagenum: number = 0) {
   const pagesize = 30;
   return await db
@@ -86,4 +85,3 @@ export async function updateProjectFields(
     .returning()
     .then((r) => r[0]);
 }
-

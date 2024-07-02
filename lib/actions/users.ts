@@ -18,10 +18,19 @@ import {
   UnknownError,
 } from "@/lib/errors";
 
-
 export async function getAllUsers() {
   const session = await auth();
-  if (!session?.user?.id) return;
+  if (!session?.user) return;
+  switch (session.user.role) {
+    case "client":
+      break;
+    case "designer":
+      break;
+    case "manager":
+      break;
+    case "admin":
+      break;
+  }
   // TODO separate users by organisation
   return db.getAllUsers();
 }
@@ -61,11 +70,10 @@ export async function signInFromLogin(
 
 export async function updateAvatarForUser(fileUrl: string | null) {
   const session = await auth();
-  if (!session?.user?.id) return;
-  const userId = Number(session.user.id);
+  if (!session?.user) return;
 
   try {
-    const { initial, updated } = await db.updateUserAvatar(userId, {
+    const { initial, updated } = await db.updateUserAvatar(session.user.idn, {
       avatarUrl: fileUrl,
     });
 

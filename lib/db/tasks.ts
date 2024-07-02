@@ -23,7 +23,6 @@ import { defaultTeams } from "@/lib/types";
 const client = postgres(`${process.env.POSTGRES_URL!}`);
 const db = drizzle(client);
 
-
 export async function createTaskSpecs(
   values: (typeof Schemas.taskspecs1.$inferInsert)[],
 ) {
@@ -162,5 +161,6 @@ export async function getTask(taskId: number) {
     .select()
     .from(Schemas.tasks1)
     .where(and(eq(Schemas.tasks1.id, taskId)))
-    .orderBy(Schemas.tasks1.id);
+    .orderBy(Schemas.tasks1.id)
+    .then((r) => r[0]);
 }
