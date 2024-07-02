@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import { Resend } from "resend";
 
-const from = "noreply@harpapro.com"
+const from = "noreply@harpapro.com";
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST, // e.g., "smtp.example.com"
