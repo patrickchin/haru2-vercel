@@ -156,23 +156,6 @@ export async function getTeamMembersDetailed(teamId: number) {
       ...getTableColumns(Schemas.users1),
       email: Schemas.accounts1.email,
     })
-    .from(Schemas.teammembers1)
-    .leftJoin(
-      Schemas.users1,
-      eq(Schemas.users1.id, Schemas.teammembers1.userid),
-    )
-    .leftJoin(
-      Schemas.accounts1,
-      eq(Schemas.accounts1.id, Schemas.teammembers1.userid),
-    )
-    .where(eq(Schemas.teammembers1.teamid, teamId));
-
-  return [];
-  return await db
-    .select({
-      ...getTableColumns(Schemas.users1),
-      email: Schemas.accounts1.email,
-    })
     .from(Schemas.users1)
     .leftJoin(Schemas.accounts1, eq(Schemas.accounts1.id, Schemas.users1.id))
     .leftJoin(

@@ -1,7 +1,12 @@
 "use client";
 
 import React, { Suspense } from "react";
-import { DesignTeam, DesignUserDetailed, teamNames } from "@/lib/types";
+import {
+  DesignTeam,
+  DesignUserBasic,
+  DesignUserDetailed,
+  teamNames,
+} from "@/lib/types";
 import * as Actions from "@/lib/actions";
 import { cn } from "@/lib/utils";
 import useSWR, { KeyedMutator } from "swr";
@@ -106,7 +111,7 @@ function AddTeamMemberRow({
   const alreadyAdded = !!members?.find((val) => val.id == user.id);
   return (
     <li className="flex gap-4 p-4 items-center hover:bg-accent border-b">
-      <DesignUserAvatar user={user} />
+      <DesignUserAvatar user={user as DesignUserBasic} />
       <div className="grow">
         <div className="font-medium">{user.name || "Unregistered Account"}</div>
         <div className="hidden text-sm text-muted-foreground md:inline">
