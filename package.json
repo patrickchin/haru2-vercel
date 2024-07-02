@@ -81,7 +81,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@playwright/test": "^1.43.0",
+    "@playwright/test": "^1.45.1",
     "@types/nodemailer": "^6.4.15",
     "@types/uuid": "^9.0.8",
     "autoprefixer": "^10.4.19",
