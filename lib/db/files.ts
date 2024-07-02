@@ -23,7 +23,6 @@ import { defaultTeams } from "@/lib/types";
 const client = postgres(`${process.env.POSTGRES_URL!}`);
 const db = drizzle(client);
 
-
 export async function addFile(
   values: Omit<typeof Schemas.files1._.inferInsert, "id">,
 ) {
@@ -149,6 +148,14 @@ export async function getTaskCommentAttachments(taskid: number) {
     );
 }
 
+export async function getFile(fileId: number) {
+  return db
+    .select()
+    .from(Schemas.files1)
+    .where(eq(Schemas.files1.id, fileId))
+    .then((r) => r[0]);
+}
+
 export async function deleteFile(fileId: number) {
   return db
     .delete(Schemas.files1)
@@ -156,4 +163,3 @@ export async function deleteFile(fileId: number) {
     .returning()
     .then((r) => r[0]);
 }
-

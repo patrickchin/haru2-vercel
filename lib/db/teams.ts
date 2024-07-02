@@ -16,13 +16,13 @@ import { genSaltSync, hashSync, compareSync } from "bcrypt-ts";
 import * as Schemas from "@/drizzle/schema";
 import assert from "assert";
 import { defaultTeams } from "@/lib/types";
+import { getAllUsers } from "./users";
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
 // https://authjs.dev/reference/adapter/drizzle
 const client = postgres(`${process.env.POSTGRES_URL!}`);
 const db = drizzle(client);
-
 
 export async function createTeams(projectId: number, types: string[]) {
   const values = types.map((type) => {
@@ -142,7 +142,32 @@ export async function getTeamMembers(teamId: number) {
     .where(eq(Schemas.teammembers1.teamid, teamId));
 }
 
+export async function getTeam(teamId: number) {
+  return await db
+    .select()
+    .from(Schemas.teams1)
+    .where(eq(Schemas.teams1.id, teamId))
+    .then((r) => r[0]);
+}
+
 export async function getTeamMembersDetailed(teamId: number) {
+  return await db
+    .select({
+      ...getTableColumns(Schemas.users1),
+      email: Schemas.accounts1.email,
+    })
+    .from(Schemas.teammembers1)
+    .leftJoin(
+      Schemas.users1,
+      eq(Schemas.users1.id, Schemas.teammembers1.userid),
+    )
+    .leftJoin(
+      Schemas.accounts1,
+      eq(Schemas.accounts1.id, Schemas.teammembers1.userid),
+    )
+    .where(eq(Schemas.teammembers1.teamid, teamId));
+
+  return [];
   return await db
     .select({
       ...getTableColumns(Schemas.users1),
@@ -156,4 +181,3 @@ export async function getTeamMembersDetailed(teamId: number) {
     )
     .where(eq(Schemas.teammembers1.teamid, teamId));
 }
-

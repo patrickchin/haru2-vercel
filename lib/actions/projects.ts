@@ -10,7 +10,7 @@ import { redirect } from "next/navigation";
 
 export async function submitProjectForm2(formData: FormData) {
   const session = await auth();
-  if (!session?.user) return; 
+  if (!session?.user) return;
   const userId = session.user.idn;
 
   const formObj = {
@@ -86,36 +86,39 @@ export async function submitProjectForm2(formData: FormData) {
 }
 
 function canViewProject(session?: Session | null, project?: DesignProject) {
-  if (!project) return false;
-  if (!session) return false;
-  if (!session.user) return false;
+  if (!project || !session?.user) return false;
   const isOwner = project?.userid === session.user.idn;
   switch (session.user.role) {
-    case "client": return isOwner;
-    case "designer": return true; // TODO only if my project manager is my manager
-    case "manager": return true;
-    case "admin": return true;
+    case "client":
+      return isOwner;
+    case "designer":
+      return true; // TODO only if my project manager is my manager
+    case "manager":
+      return true;
+    case "admin":
+      return true;
   }
 }
 
 function canEditProject(session?: Session | null, project?: DesignProject) {
-  if (!project) return false;
-  if (!session) return false;
-  if (!session.user) return false;
+  if (!project || !session?.user) return false;
   const isOwner = project?.userid === session.user.idn;
   switch (session.user.role) {
-    case "client": return isOwner;
-    case "designer": return false;
-    case "manager": return true;
-    case "admin": return true;
+    case "client":
+      return isOwner;
+    case "designer":
+      return false;
+    case "manager":
+      return true;
+    case "admin":
+      return true;
   }
 }
 
 export async function getProject(projectId: number) {
   const session = await auth();
   const project = await db.getProject(projectId);
-  if (canViewProject(session, project))
-    return project;
+  if (canViewProject(session, project)) return project;
 }
 
 export async function getCurrentUsersProjects() {
@@ -149,12 +152,11 @@ export async function deleteFullProject(projectId: number) {
 
   const session = await auth();
   if (session?.user?.role !== "admin")
+    // A lot more thought has to go into deleting projects.
+    // - what happens if something fails in the middle?
+    // - what happens if ... what else?
 
-  // A lot more thought has to go into deleting projects.
-  // - what happens if something fails in the middle?
-  // - what happens if ... what else?
-
-  console.log("DELETING PROJECT", projectId);
+    console.log("DELETING PROJECT", projectId);
 
   const deletedFiles = await db.deleteAllFilesFromProject(projectId);
   deletedFiles.map((f) => {

@@ -25,7 +25,7 @@ function generateOTP(): string {
 export async function sendOtpViaWhatsApp(phone: string) {
   try {
     const user = await db.getUserAccountByPhone(phone);
-    if (user.length === 0) {
+    if (!user) {
       console.log(`Phone number ${phone} not registered`);
       return FailedToSendWhatsappOTP;
     }
@@ -103,7 +103,7 @@ export async function sendOtpViaWhatsApp(phone: string) {
 export async function sendOtpViaEmail(email: string) {
   try {
     const user = await db.getUserAccountByEmail(email);
-    if (user.length === 0) {
+    if (!user) {
       console.log(`Email number ${email} not registered`);
       return FailedToSendEmailOTP;
     }
