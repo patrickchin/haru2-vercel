@@ -139,7 +139,6 @@ function AddTeamMemberDialogContent({
   members: DesignUserDetailed[];
   membersMutate: KeyedMutator<DesignUserDetailed[] | undefined>;
 }) {
-
   const {
     data: users,
     error: usersError,

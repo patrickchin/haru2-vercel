@@ -2,11 +2,7 @@
 
 import * as React from "react";
 import { DesignProject, DesignTask, DesignTeam, teamNames } from "@/lib/types";
-import {
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { getProjectTeams } from "@/lib/actions";
 
@@ -18,7 +14,6 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import TaskTable from "./task-table";
-
 
 function TeamProgress({
   project,
@@ -67,7 +62,9 @@ function TeamProgress({
         }}
       >
         <CollapsibleTrigger className="flex gap-4 w-full p-8 text-sm hover:bg-accent">
-          <CardTitle className="text-left">{teamNames[team.type || "other"]}</CardTitle>
+          <CardTitle className="text-left">
+            {teamNames[team.type || "other"]}
+          </CardTitle>
           <span>
             {team.lead ? `Team Lead: ${team.lead?.name}` : "(No assigned lead)"}
           </span>
@@ -113,7 +110,12 @@ export default function ProjectTeamsProgress({
   return (
     <div className="flex flex-col gap-4">
       {teams?.map((team) => (
-        <TeamProgress key={team.id} project={project} team={team} tasks={tasks} />
+        <TeamProgress
+          key={team.id}
+          project={project}
+          team={team}
+          tasks={tasks}
+        />
       ))}
     </div>
   );

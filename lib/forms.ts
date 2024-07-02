@@ -13,7 +13,10 @@ export const NewProjectFormSchema = z.object({
   buildingSubtype: z.string().optional(), // enum?
   description: z
     .string()
-    .min(1, "Please add a project description, this can be edited after submition"),
+    .min(
+      1,
+      "Please add a project description, this can be edited after submition",
+    ),
   files: z
     .any()
     .transform((f) => f as FileList)

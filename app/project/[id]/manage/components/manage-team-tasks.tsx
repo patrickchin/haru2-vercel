@@ -233,10 +233,7 @@ export default function ManageAllTeamsTasks({
       </div>
 
       {teams?.map((team) => {
-        return (
-          <ManageTeamTasks key={team.id} team={team} />
-          
-        );
+        return <ManageTeamTasks key={team.id} team={team} />;
       })}
     </section>
   );

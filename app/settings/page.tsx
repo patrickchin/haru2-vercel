@@ -30,7 +30,7 @@ function SettingsPage() {
       const file = targetFiles.item(0);
       if (!file) return;
       const updatedUser = await uploadAvatarFile(file);
-      if (!updatedUser) 
+      if (!updatedUser)
         setErrorMessage("Failed to update the avatar. Please try again.");
     } finally {
       e.target.value = "";
