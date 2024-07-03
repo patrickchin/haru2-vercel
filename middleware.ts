@@ -21,6 +21,7 @@ export default auth((req) => {
   if (!req.auth && !isPublic) {
     // TODO redirect to original url after logging in
     // req.nextUrl.searchParams.append();
+    console.log("No valid auth, redirecting to login: ", req);
     req.nextUrl.pathname = "/login";
     return Response.redirect(req.nextUrl);
   }
