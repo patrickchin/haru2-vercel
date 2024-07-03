@@ -1,8 +1,8 @@
 "use server";
 
+import { redirect } from "next/navigation";
+import { signIn, auth } from "@/lib/auth";
 import * as db from "@/lib/db";
-import { signIn } from "@/lib/auth";
-import { auth } from "@/lib/auth";
 import { deleteFileFromS3 } from "@/lib/s3";
 import {
   LoginTypesEmail,
@@ -59,8 +59,9 @@ export async function registerUser(data: RegisterSchemaType) {
 export async function signInFromLogin(
   data: LoginTypesPhone | LoginTypesEmail | LoginTypesPassword,
 ) {
+  let url;
   try {
-    return await signIn("credentials", {
+    url = await signIn("credentials", {
       ...data,
       redirectTo: "/",
       redirect: false,
@@ -74,6 +75,8 @@ export async function signInFromLogin(
       return UnknownError;
     }
   }
+  if (url) redirect(url);
+  return UnknownError;
 }
 
 export async function updateAvatarForUser(fileUrl: string | null) {

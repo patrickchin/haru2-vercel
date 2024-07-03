@@ -22,14 +22,15 @@ export const {
   ...authConfig,
   // adapter: DrizzleAdapter(db),
   callbacks: {
+    async jwt({ token, user }) {
+      if (user) token = { ...token, ...user };
+      return token;
+    },
     async session({ token, session, newSession, trigger }) {
-      const user = await db.getUserAccountByEmail(session.user.email);
-      session.user.id = token?.sub || "invalid";
-      if (user) {
-        session.user.idn = user.id;
-        session.user.role = user.role ?? undefined;
-        session.user.image = user.avatarUrl;
-      }
+      session.user.id = token.sub || "invalid";
+      session.user.idn = token.idn as number;
+      session.user.role = token.role as AccountRole;
+      session.user.image = token.image as string;
       return session;
     },
   },
@@ -47,11 +48,11 @@ export const {
         phone?: string;
       }) {
         if (!email && !phone) return null;
-        const user = email
-          ? await db.getUserAccountByEmail(email)
-          : phone
-            ? await db.getUserAccountByPhone(phone)
-            : undefined;
+
+        // prettier-ignore
+        const user = email ? await db.getUserAccountByEmail(email)
+                   : phone ? await db.getUserAccountByPhone(phone)
+                   : undefined;
         if (!user) return null;
 
         let otpIsValid = false;
