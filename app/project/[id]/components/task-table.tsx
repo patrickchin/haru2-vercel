@@ -33,7 +33,7 @@ import {
 
 import { DesignTask } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { UserAvatar } from "@/components/user-avatar";
+import { DesignUserAvatar } from "@/components/user-avatar";
 import { DataTablePagination } from "@/components/ui/pagination";
 
 // a company and a way they work should be able to determine
@@ -75,7 +75,7 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
     cell: ({ row }) => (
       <div className="w-full flex overflow-hidden w-12 items-center justify-center">
         {/* TODO (row.getValue("lead") as string) */}
-        <UserAvatar user={undefined} />
+        <DesignUserAvatar user={undefined} />
       </div>
     ),
   },

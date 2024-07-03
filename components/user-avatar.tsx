@@ -1,8 +1,9 @@
 import { DesignUserBasic } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { cn, getAvatarInitials } from "@/lib/utils";
-import { User } from "next-auth";
 import { useSession } from "next-auth/react";
+import * as Actions from "@/lib/actions";
+import useSWR from "swr";
 
 export function DesignUserAvatar({
   user,
@@ -11,14 +12,16 @@ export function DesignUserAvatar({
   user?: DesignUserBasic;
   className?: string;
 }) {
-  // const userId: number = Math.floor(Math.random() * 1000);
-  const userId: number = user?.id ?? 0;
-  const randomHue: number = ((userId - 1) * 80) % 360;
-  const bgCol: string = `hsl(${randomHue} 100 75)`;
-  const bgCol2: string = `hsl(${randomHue + 60} 100 90)`;
+  const userId = user?.id ?? 0;
+  const name = user?.name ?? "?";
+  const avatarUrl = user?.avatarUrl ?? undefined;
+
+  const hue: number = ((userId - 1) * 80) % 360;
+  const bgCol: string = `hsl(${hue} 100 75)`;
+  const bgCol2: string = `hsl(${hue + 60} 100 90)`;
   return (
     <Avatar className={cn("border border-foreground", className)}>
-      <AvatarImage src={user?.avatarUrl ?? undefined} />
+      <AvatarImage src={avatarUrl} />
       <AvatarFallback
         style={{
           backgroundColor: bgCol,
@@ -26,28 +29,9 @@ export function DesignUserAvatar({
         }}
         className="text-lg text-align-center"
       >
-        {getAvatarInitials(user?.name ?? undefined)}
+        {getAvatarInitials(name)}
       </AvatarFallback>
     </Avatar>
-  );
-}
-
-export function UserAvatar({
-  user,
-  className,
-}: {
-  user?: User;
-  className?: string;
-}) {
-  return (
-    <DesignUserAvatar
-      className={className}
-      user={{
-        id: Number(user?.id),
-        name: user?.name ?? "?",
-        avatarUrl: user?.image ?? null,
-      }}
-    />
   );
 }
 

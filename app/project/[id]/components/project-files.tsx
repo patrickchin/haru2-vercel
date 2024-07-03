@@ -11,7 +11,12 @@ import {
   LucideChevronDown,
 } from "lucide-react";
 import { getTimeAgo } from "@/lib/utils";
-import { DesignFile, DesignProject, DesignTask } from "@/lib/types";
+import {
+  DesignFile,
+  DesignProject,
+  DesignTask,
+  DesignUserBasic,
+} from "@/lib/types";
 import { deleteFile } from "@/lib/actions";
 
 import { Button } from "@/components/ui/button";
@@ -24,7 +29,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { UserAvatar } from "@/components/user-avatar";
+import { DesignUserAvatar } from "@/components/user-avatar";
 import { Input } from "@/components/ui/input";
 import DeleteAlertDialog from "@/components/delete-alert";
 import {
@@ -75,11 +80,13 @@ const filesColumns: (
     header: ({ column }) => (
       <ColumnSortHeader label="Uploader" column={column} />
     ),
-    cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        <UserAvatar user={row.getValue("uploader")} className="w-8 h-8" />
-      </div>
-    ),
+    cell: ({ row }) => {
+      const uploader = row.getValue("uploader") as DesignUserBasic;
+      return (
+        <div className="flex items-center justify-center">
+          <DesignUserAvatar user={uploader} className="w-8 h-8" />
+        </div>
+      );},
     size: 0,
     enableSorting: true,
   },

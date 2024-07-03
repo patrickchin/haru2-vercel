@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { UserAvatar } from "./user-avatar";
+import { CurrentUserAvatar } from "./user-avatar";
 
 const navigation = [
   { name: "New Project", href: "/new-project" },
@@ -51,7 +51,7 @@ function UserNav({ user }: { user?: User }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="items-center cursor-pointer">
-        <UserAvatar user={user} />
+        <CurrentUserAvatar />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent sideOffset={20} align="end" className="w-48">
