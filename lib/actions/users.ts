@@ -56,6 +56,7 @@ export async function signInFromLogin(
     return await signIn("credentials", {
       ...data,
       redirectTo: "/",
+      redirect: false,
     });
   } catch (error: unknown) {
     if (error instanceof AuthError) {
@@ -63,7 +64,7 @@ export async function signInFromLogin(
       // e.g. CredentialsSignin error
       return CredentialsSigninError;
     } else {
-      throw error;
+      return UnknownError;
     }
   }
 }

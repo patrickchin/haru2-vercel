@@ -2,10 +2,17 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { signInFromLogin } from "@/lib/actions";
-import { sendOtpViaWhatsApp, sendOtpViaEmail } from "@/lib/actions";
+import { useRouter } from "next/navigation";
+import { LucideLoader2 } from "lucide-react";
 import { UseFormReturn, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { cn } from "@/lib/utils";
+import { useCountdown } from "@/lib/hooks";
+import {
+  signInFromLogin,
+  sendOtpViaWhatsApp,
+  sendOtpViaEmail,
+} from "@/lib/actions";
 import {
   LoginSchemaPhone,
   LoginSchemaEmail,
@@ -14,6 +21,12 @@ import {
   LoginTypesPassword,
   LoginTypesPhone,
 } from "@/lib/forms";
+import {
+  CredentialsSigninError,
+  FailedToSendEmailOTP,
+  FailedToSendWhatsappOTP,
+  UnknownError,
+} from "@/lib/errors";
 
 import {
   Card,
@@ -39,15 +52,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { LucideLoader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useCountdown } from "@/lib/hooks";
-import {
-  CredentialsSigninError,
-  FailedToSendEmailOTP,
-  FailedToSendWhatsappOTP,
-  UnknownError,
-} from "@/lib/errors";
 
 function FormFooter({
   form,
@@ -92,6 +96,7 @@ function FormFooter({
 }
 
 function PhoneLogin() {
+  const router = useRouter();
   const form = useForm<LoginTypesPhone>({
     resolver: zodResolver(LoginSchemaPhone),
   });
@@ -131,6 +136,9 @@ function PhoneLogin() {
       });
     } else if (ret?.error === UnknownError.error) {
       form.setError("root", { message: "Failed to login. Unknown Error" });
+    } else {
+      location.reload();
+      router.push(ret);
     }
   };
 
@@ -202,6 +210,7 @@ function PhoneLogin() {
 }
 
 function EmailLogin() {
+  const router = useRouter();
   const form = useForm<LoginTypesEmail>({
     resolver: zodResolver(LoginSchemaEmail),
   });
@@ -241,6 +250,9 @@ function EmailLogin() {
       });
     } else if (ret?.error === UnknownError.error) {
       form.setError("root", { message: "Failed to login. Unknown Error" });
+    } else {
+      location.reload();
+      router.push(ret);
     }
   };
 
@@ -312,6 +324,7 @@ function EmailLogin() {
 }
 
 function PasswordLogin() {
+  const router = useRouter();
   const form = useForm<LoginTypesPassword>({
     resolver: zodResolver(LoginSchemaPassword),
   });
@@ -326,6 +339,9 @@ function PasswordLogin() {
       });
     } else if (ret?.error === UnknownError.error) {
       form.setError("root", { message: "Failed to login. Unknown Error" });
+    } else {
+      location.reload();
+      router.push(ret);
     }
   };
 
