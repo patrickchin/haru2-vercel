@@ -57,7 +57,7 @@ export async function signInFromLogin(
       ...data,
       redirectTo: "/",
       redirect: false,
-    });
+    }) as string;
   } catch (error: unknown) {
     if (error instanceof AuthError) {
       // is there any need to distinguish further?

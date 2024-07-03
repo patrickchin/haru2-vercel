@@ -117,7 +117,7 @@ function PhoneLogin() {
       const ret = await sendOtpViaWhatsApp(phone);
       if (!ret) {
         setResendOtpTimer(60);
-      } else if (ret?.error === FailedToSendWhatsappOTP.error) {
+      } else if (typeof ret === typeof FailedToSendWhatsappOTP) {
         form.setError("otp", {
           message: "Failed to send passcode via Whatsapp.",
         });
@@ -130,15 +130,15 @@ function PhoneLogin() {
   const onSubmit = async (data: LoginTypesPhone) => {
     form.clearErrors();
     const ret = await signInFromLogin(data);
-    if (ret?.error === CredentialsSigninError.error) {
+    if (typeof ret === "string") {
+      location.reload();
+      router.push(ret);
+    } else if (typeof ret === typeof CredentialsSigninError) {
       form.setError("root", {
         message: "Failed to login.\nPlease check your passcode and try again.",
       });
-    } else if (ret?.error === UnknownError.error) {
+    } else if (typeof ret === typeof UnknownError) {
       form.setError("root", { message: "Failed to login. Unknown Error" });
-    } else {
-      location.reload();
-      router.push(ret);
     }
   };
 
@@ -231,7 +231,7 @@ function EmailLogin() {
       const ret = await sendOtpViaEmail(email);
       if (!ret) {
         setResendOtpTimer(60);
-      } else if (ret?.error === FailedToSendEmailOTP.error) {
+      } else if (typeof ret === typeof FailedToSendEmailOTP) {
         form.setError("otp", {
           message: "Failed to send passcode via email.",
         });
@@ -244,15 +244,15 @@ function EmailLogin() {
   const onSubmit = async (data: LoginTypesEmail) => {
     form.clearErrors();
     const ret = await signInFromLogin(data);
-    if (ret?.error === CredentialsSigninError.error) {
+    if (typeof ret === "string") {
+      location.reload();
+      router.push(ret);
+    } else if (typeof ret === typeof CredentialsSigninError) {
       form.setError("root", {
         message: "Failed to login.\nPlease check your passcode and try again.",
       });
-    } else if (ret?.error === UnknownError.error) {
+    } else if (typeof ret === typeof UnknownError) {
       form.setError("root", { message: "Failed to login. Unknown Error" });
-    } else {
-      location.reload();
-      router.push(ret);
     }
   };
 
@@ -332,16 +332,16 @@ function PasswordLogin() {
   const onSubmit = async (data: LoginTypesPassword) => {
     form.clearErrors();
     const ret = await signInFromLogin(data);
-    if (ret?.error === CredentialsSigninError.error) {
+    if (typeof ret === "string") {
+      location.reload();
+      router.push(ret);
+    } else if (typeof ret === typeof CredentialsSigninError) {
       form.setError("root", {
         message:
           "Failed to login.\nPlease check your credentials and try again.",
       });
-    } else if (ret?.error === UnknownError.error) {
+    } else if (typeof ret === typeof UnknownError) {
       form.setError("root", { message: "Failed to login. Unknown Error" });
-    } else {
-      location.reload();
-      router.push(ret);
     }
   };
 
