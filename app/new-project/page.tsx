@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, Suspense, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { FieldValues, useForm } from "react-hook-form";
@@ -430,7 +430,9 @@ export default function Page() {
       <section className="grow flex flex-row items-center justify-center">
         <div className="flex flex-col gap-12 w-full max-w-3xl">
           <h3>Create a New Project</h3>
-          <NewProjectForm />
+          <Suspense fallback="Loading...">
+            <NewProjectForm />
+          </Suspense>
         </div>
       </section>
     </CenteredLayout>
