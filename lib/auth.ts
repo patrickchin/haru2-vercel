@@ -1,12 +1,7 @@
 import NextAuth, { User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcrypt-ts";
-import {
-  getUserAccountByEmail,
-  getUserAccountByPhone,
-  getUserByEmail,
-  verifyOtp,
-} from "@/lib/db";
+import * as db from "@/lib/db";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { authConfig } from "@/lib/auth.config";
 import { AccountRole } from "@/lib/types";
@@ -28,7 +23,7 @@ export const {
   // adapter: DrizzleAdapter(db),
   callbacks: {
     async session({ token, session, newSession, trigger }) {
-      const user = await getUserAccountByEmail(session.user.email);
+      const user = await db.getUserAccountByEmail(session.user.email);
       session.user.id = token?.sub || "invalid";
       if (user) {
         session.user.idn = user.id;
@@ -40,17 +35,22 @@ export const {
   },
   providers: [
     Credentials({
-      async authorize(credentials) {
-        const email = credentials.email as string;
-        const password = credentials.password as string;
-        const otp = credentials.otp as string;
-        const phone = credentials.phone as string;
-
+      async authorize({
+        email,
+        password,
+        otp,
+        phone,
+      }: {
+        email?: string;
+        password?: string;
+        otp?: string;
+        phone?: string;
+      }) {
         if (!email && !phone) return null;
         const user = email
-          ? await getUserAccountByEmail(email)
+          ? await db.getUserAccountByEmail(email)
           : phone
-            ? await getUserAccountByPhone(phone)
+            ? await db.getUserAccountByPhone(phone)
             : undefined;
         if (!user) return null;
 
@@ -60,10 +60,10 @@ export const {
         // Verify OTP if provided
         if (otp) {
           if (phone) {
-            otpIsValid = await verifyOtp(phone, otp);
+            otpIsValid = await db.verifyOtp(phone, otp);
           }
           if (email) {
-            otpIsValid = await verifyOtp(email, otp);
+            otpIsValid = await db.verifyOtp(email, otp);
           }
         }
 

@@ -23,6 +23,26 @@ import { defaultTeams } from "@/lib/types";
 const client = postgres(`${process.env.POSTGRES_URL!}`);
 const db = drizzle(client);
 
+export async function getUser(id: number) {
+  return db
+    .select()
+    .from(Schemas.users1)
+    .where(eq(Schemas.users1.id, id))
+    .then((r) => r[0]);
+}
+
+export async function getUserAccount(id: number) {
+  return db
+    .select({
+      ...getTableColumns(Schemas.users1),
+      ...getTableColumns(Schemas.accounts1),
+    })
+    .from(Schemas.accounts1)
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.accounts1.id))
+    .where(eq(Schemas.accounts1.id, id))
+    .then((r) => r[0]);
+}
+
 export async function getUserAccountByEmail(email: string) {
   return db
     .select({

@@ -3,9 +3,7 @@ import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import * as db from "./db";
 
-export type DesignUserBasic = NonNullable<
-  Awaited<ReturnType<typeof db.getUserByEmail>>
->;
+export type DesignUserBasic = typeof Schemas.users1.$inferSelect;
 export type DesignUserDetailed = Awaited<
   // adds email
   ReturnType<typeof db.getTeamMembersDetailed>

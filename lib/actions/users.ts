@@ -18,6 +18,13 @@ import {
   UnknownError,
 } from "@/lib/errors";
 
+export async function getCurrentUser() {
+  const session = await auth();
+  const userId = Number(session?.user?.id);
+  if (isNaN(userId)) return;
+  return db.getUser(userId);
+}
+
 export async function getAllUsers() {
   const session = await auth();
   if (!session?.user) return;
@@ -56,6 +63,7 @@ export async function signInFromLogin(
     return await signIn("credentials", {
       ...data,
       redirectTo: "/",
+      redirect: false,
     });
   } catch (error: unknown) {
     if (error instanceof AuthError) {
@@ -63,7 +71,7 @@ export async function signInFromLogin(
       // e.g. CredentialsSignin error
       return CredentialsSigninError;
     } else {
-      throw error;
+      return UnknownError;
     }
   }
 }
