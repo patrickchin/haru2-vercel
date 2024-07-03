@@ -27,15 +27,12 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
-
   return (
     <html lang="en">
       <body className={cn("overflow-y-scroll", GeistSans.variable)}>
         <SpeedInsights />
         <Analytics />
-
-        <SessionProvider session={session}>{children}</SessionProvider>
+        <SessionProvider>{children}</SessionProvider>
         <Toaster />
       </body>
     </html>
