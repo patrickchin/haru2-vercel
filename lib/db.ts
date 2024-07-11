@@ -6,3 +6,4 @@ export * from "./db/teams";
 export * from "./db/tasks";
 export * from "./db/files";
 export * from "./db/otp";
+export * from "./db/comments";

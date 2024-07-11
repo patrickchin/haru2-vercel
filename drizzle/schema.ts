@@ -59,6 +59,7 @@ export const projects1 = pgTable("projects1", {
     withTimezone: true,
     mode: "string",
   }).defaultNow(),
+  commentsId: integer("commentSectionId").references(() => commentSections1.id),
 });
 
 export const teams1 = pgTable("teams1", {
@@ -108,15 +109,20 @@ export const tasks1 = pgTable("tasks1", {
   title: varchar("title", { length: 255 }),
   description: text("description"),
   enabled: boolean("enabled").default(true),
+  commentsId: integer("commentSectionId").references(() => commentSections1.id),
   // updated: timestamp("updated", { withTimezone: true, mode: 'string' }).defaultNow(),
 });
 
 // export const taskupdate1 = pgTable("taskupdate1", {
 // })
 
-export const taskcomments1 = pgTable("taskcomments1", {
+export const commentSections1 = pgTable("commentSections1", {
   id: serial("id").primaryKey(),
-  taskid: integer("taskId").references(() => tasks1.id),
+});
+
+export const comments1 = pgTable("comments1", {
+  id: serial("id").primaryKey(),
+  sectionId: integer("sectionId").references(() => commentSections1.id),
   userid: integer("userId").references(() => users1.id),
   createdAt: timestamp("createdAt", {
     withTimezone: true,
@@ -130,7 +136,7 @@ export const files1 = pgTable("files1", {
   uploaderid: integer("uploaderId").references(() => users1.id),
   projectid: integer("projectId").references(() => projects1.id),
   taskid: integer("taskId").references(() => tasks1.id),
-  commentid: integer("commentId").references(() => taskcomments1.id),
+  commentid: integer("commentId").references(() => comments1.id),
   filename: varchar("filename", { length: 255 }).notNull().default(""),
   filesize: integer("filesize"),
   url: varchar("url", { length: 255 }),

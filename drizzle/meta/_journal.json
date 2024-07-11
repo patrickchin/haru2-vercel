@@ -57,6 +57,13 @@
       "when": 1719870663975,
       "tag": "0007_hot_wendell_vaughn",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1720769448197,
+      "tag": "0008_green_maddog",
+      "breakpoints": true
     }
   ]
 }

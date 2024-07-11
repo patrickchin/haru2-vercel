@@ -38,11 +38,7 @@ import { DesignUserAvatar } from "@/components/user-avatar";
 import { uploadTaskFile } from "@/lib/utils/upload";
 import { cn } from "@/lib/utils";
 import { DesignFile, DesignTaskComment } from "@/lib/types";
-import {
-  addTaskComment,
-  deleteFile,
-  getTaskCommentsAndFiles,
-} from "@/lib/actions";
+import * as Actions from "@/lib/actions";
 
 function CommentAttachments({ attachments }: { attachments: DesignFile[] }) {
   if (!attachments || attachments.length == 0) return null;
@@ -98,7 +94,7 @@ function CommentsList({
 
   return (
     <ul className="">
-      {comments.map((c, i) => (
+      {comments.map((c: DesignTaskComment, i: number) => (
         <li
           id={`comment-${c.id}`}
           key={i}
@@ -115,7 +111,6 @@ function CommentsList({
               <span className="font-bold">
                 {c.user?.name ?? "<Invalid User>"}
               </span>
-              {/* <span className="text-sm">{c.taskcomments1.createdat}</span> */}
               <Link
                 href={{
                   pathname: pathname,
@@ -125,16 +120,18 @@ function CommentsList({
                 className="text-sm text-muted-foreground"
                 onClick={(e) => setFragment(`#comment-${c.id}`)}
               >
-                <time
-                  dateTime={(c.createdAt as unknown as Date).toISOString()}
-                  suppressHydrationWarning
-                >
-                  {(c.createdAt as unknown as Date).toLocaleString()}
-                </time>
+                {c.createdAt && (
+                  <time
+                    dateTime={new Date(c.createdAt).toISOString()}
+                    suppressHydrationWarning
+                  >
+                    {new Date(c.createdAt).toLocaleString()}
+                  </time>
+                )}
               </Link>
             </div>
 
-            {attachments.length > 0 && (
+            {attachments.length > 0 && c.id && (
               <CommentAttachments attachments={groupedAttachments[c.id]} />
             )}
 
@@ -221,7 +218,7 @@ function AddCommentForm({
     if (!comment) return;
 
     e.currentTarget.reset();
-    const userCommentFiles = addTaskComment(
+    const userCommentFiles = Actions.addTaskComment(
       taskId,
       comment as string,
       attachmentIds,
@@ -250,7 +247,7 @@ function AttachmentList({
 }) {
   function removeAttachment(fileId: number) {
     setCurrentAttachments((list) => list.filter((f) => f.id !== fileId));
-    deleteFile(fileId);
+    Actions.deleteFile(fileId);
   }
 
   return (
@@ -345,7 +342,7 @@ export default function TaskCommentsClient({ taskId }: { taskId: number }) {
   const { data, error, mutate } = useSWR(
     `/api/task/${taskId}/commments`, // api route doesn't really exist
     () => {
-      return getTaskCommentsAndFiles(taskId);
+      return Actions.getTaskCommentsAndFiles(taskId);
     },
   );
   const userComments: DesignTaskComment[] = (data && data[0]) || [];
