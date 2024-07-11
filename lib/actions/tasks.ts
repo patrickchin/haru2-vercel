@@ -231,8 +231,7 @@ export async function addTaskComment(
   if (!canAddProjectTaskComment(session, project)) return;
 
   const userId = Number(session?.user?.id);
-  const comments = await db.addTaskComment({
-    taskid: taskId,
+  const comments = await db.addTaskComment(taskId, {
     userid: userId,
     comment: comment,
   });
