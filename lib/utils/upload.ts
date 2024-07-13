@@ -1,4 +1,4 @@
-import { addTaskFile, updateAvatarForUser } from "../actions";
+import * as Actions from "@/lib/actions";
 
 async function doUpload(type: string, params: Record<string, any>, file: File) {
   const response = await fetch(`/api/upload/${type}`, {
@@ -22,26 +22,26 @@ async function doUpload(type: string, params: Record<string, any>, file: File) {
   return fileUrl;
 }
 
-/*
-export async function uploadProjectFile(file: File, projectId: number) {
+export async function uploadFile(
+  args: ({ taskId: number } | { projectId: number }) & { file: File },
+) {
+  const taskId = "taskId" in args ? args.taskId : null;
+  const projectId = "projectId" in args ? args.projectId : null;
   const params = {
-    filename: file.name,
-    contentType: file.type,
-    projectId,
+    filename: args.file.name,
+    contentType: args.file.type,
+    taskId
   };
-  const fileUrl = await doUpload("project", params, file);
-  return addProjectFile(taskId, file.type, file.name, file.size, fileUrl);
-}
-*/
+  const fileUrl = await doUpload("task", params, args.file);
 
-export async function uploadTaskFile(file: File, taskId: number) {
-  const params = {
-    filename: file.name,
-    contentType: file.type,
-    taskId,
+  const actionParams = {
+    type: args.file.type,
+    name: args.file.name,
+    size: args.file.size,
+    fileUrl,
   };
-  const fileUrl = await doUpload("task", params, file);
-  return addTaskFile(taskId, file.type, file.name, file.size, fileUrl);
+  if (taskId) return Actions.addFile({ ...actionParams, taskId });
+  if (projectId) return Actions.addFile({ ...actionParams, projectId });
 }
 
 export async function uploadAvatarFile(file: File) {
@@ -50,5 +50,5 @@ export async function uploadAvatarFile(file: File) {
     contentType: file.type,
   };
   const fileUrl = await doUpload("avatar", params, file);
-  return await updateAvatarForUser(fileUrl);
+  return await Actions.updateAvatarForUser(fileUrl);
 }

@@ -20,25 +20,17 @@ import {
   LucideView,
   LucideX,
 } from "lucide-react";
-import assert from "assert";
 import useSWR, { KeyedMutator } from "swr";
-
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DesignUserAvatar } from "@/components/user-avatar";
 
-import { uploadTaskFile } from "@/lib/utils/upload";
 import { cn } from "@/lib/utils";
-import { DesignFile, DesignTaskComment } from "@/lib/types";
+import { DesignFile, DesignComment, DesignCommentSection } from "@/lib/types";
 import * as Actions from "@/lib/actions";
+import { uploadFile } from "@/lib/utils/upload";
 
 function CommentAttachments({ attachments }: { attachments: DesignFile[] }) {
   if (!attachments || attachments.length == 0) return null;
@@ -75,7 +67,7 @@ function CommentsList({
   comments,
   attachments,
 }: {
-  comments: DesignTaskComment[];
+  comments: DesignComment[];
   attachments: DesignFile[];
 }) {
   const pathname = usePathname();
@@ -94,7 +86,7 @@ function CommentsList({
 
   return (
     <ul className="">
-      {comments.map((c: DesignTaskComment, i: number) => (
+      {comments && comments.map((c: DesignComment, i: number) => (
         <li
           id={`comment-${c.id}`}
           key={i}
@@ -147,10 +139,10 @@ function CommentsList({
 }
 
 function AddCommentFormInternal({
-  taskId,
+  commentSection,
   setCurrentAttachments,
 }: {
-  taskId: number;
+  commentSection: DesignCommentSection;
   setCurrentAttachments: Dispatch<SetStateAction<DesignFile[]>>;
 }) {
   const formStatus = useFormStatus();
@@ -164,7 +156,7 @@ function AddCommentFormInternal({
       />
       <div className="flex justify-end gap-4">
         <UploadAttachment
-          taskId={taskId}
+          commentSection={commentSection}
           setCurrentAttachments={setCurrentAttachments}
         />
 
@@ -199,42 +191,46 @@ function AddCommentFormInternal({
 }
 
 function AddCommentForm({
-  taskId,
-  attachments,
-  setAttachments,
+  commentSection,
   swrMutateComments,
 }: {
-  taskId: number;
-  attachments: DesignFile[];
-  setAttachments: Dispatch<SetStateAction<DesignFile[]>>;
+  commentSection: DesignCommentSection;
   swrMutateComments: KeyedMutator<any>; // getting the Data type is hard
 }) {
+  const [attachments, setAttachments] = useState<DesignFile[]>([]);
   const attachmentIds: number[] = attachments.map((f) => f.id);
 
   async function formSubmitNewComment(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
-    const comment = data.get("comment");
-    if (!comment) return;
+    const commentString = data.get("comment") as string;
+    if (!commentString) return;
 
-    e.currentTarget.reset();
-    const userCommentFiles = Actions.addTaskComment(
-      taskId,
-      comment as string,
+    const userCommentFiles = Actions.addComment({
+      commentSection,
+      commentString,
       attachmentIds,
-    );
+    });
     swrMutateComments(userCommentFiles, { revalidate: false });
 
+    e.currentTarget.reset();
     setAttachments([]);
   }
 
   return (
-    <form onSubmit={formSubmitNewComment} className="flex flex-col gap-4">
-      <AddCommentFormInternal
-        taskId={taskId}
+    <>
+      <AttachmentList
+        currentAttachments={attachments}
         setCurrentAttachments={setAttachments}
       />
-    </form>
+
+      <form onSubmit={formSubmitNewComment} className="flex flex-col gap-4">
+        <AddCommentFormInternal
+          commentSection={commentSection}
+          setCurrentAttachments={setAttachments}
+        />
+      </form>
+    </>
   );
 }
 
@@ -273,10 +269,10 @@ function AttachmentList({
 }
 
 function UploadAttachment({
-  taskId,
+  commentSection,
   setCurrentAttachments,
 }: {
-  taskId: number;
+  commentSection: DesignCommentSection;
   setCurrentAttachments: Dispatch<SetStateAction<DesignFile[]>>;
 }) {
   const uploadFileInputRef = useRef(null);
@@ -288,14 +284,17 @@ function UploadAttachment({
 
     setIsUploading(true);
 
-    assert(targetFiles.length >= 1);
-
-    const selectedFiles = Array.from(targetFiles);
-
-    for (const file of selectedFiles) {
-      const newFile = await uploadTaskFile(file, taskId);
-
-      if (newFile) setCurrentAttachments((l) => [...l, newFile as DesignFile]);
+    for (const file of Array.from(targetFiles)) {
+      let newFile;
+      if (commentSection.taskid) {
+        newFile = await uploadFile({ file, taskId: commentSection.taskid });
+      } else if (commentSection.projectid) {
+        newFile = await uploadFile({
+          file,
+          projectId: commentSection.projectid,
+        });
+      }
+      if (newFile) setCurrentAttachments((l) => [...l, newFile]);
     }
 
     e.target.value = "";
@@ -328,8 +327,7 @@ function UploadAttachment({
             </>
           ) : (
             <>
-              Add Attachment
-              <LucideUpload className="w-4" />
+              Add Attachment <LucideUpload className="w-4" />
             </>
           )}
         </Label>
@@ -338,43 +336,42 @@ function UploadAttachment({
   );
 }
 
-export default function TaskCommentsClient({ taskId }: { taskId: number }) {
+export function TaskComments({ taskId }: { taskId: number }) {
   const { data, error, mutate } = useSWR(
     `/api/task/${taskId}/commments`, // api route doesn't really exist
     () => {
       return Actions.getTaskCommentsAndFiles(taskId);
     },
   );
-  const userComments: DesignTaskComment[] = (data && data[0]) || [];
-  // TODO maybe bad design, data is missing the 'tasks' member
-  const commentFiles: DesignFile[] = ((data && data[1]) || []) as DesignFile[];
-
-  // only the files to be attached
-  const [currentAttachments, setCurrentAttachments] = useState<DesignFile[]>(
-    [],
-  );
-
+  if (!data) return null;
+  const commentSection: DesignCommentSection = data[0];
+  const userComments: DesignComment[] = data[1] || [];
+  const commentFiles: DesignFile[] = data[2] || [];
+  if (!commentSection) return null;
   return (
-    <Card>
-      <CardHeader className="font-bold">Comments</CardHeader>
-      <CardContent className="flex flex-col gap-4 px-6 py-6">
-        {/* <Button variant="secondary">Load all older Comments</Button> */}
+    <>
+      <CommentsList comments={userComments} attachments={commentFiles} />
+      <AddCommentForm commentSection={commentSection} swrMutateComments={mutate} />
+    </>
+  );
+}
 
-        <CommentsList comments={userComments} attachments={commentFiles} />
-
-        <AttachmentList
-          currentAttachments={currentAttachments}
-          setCurrentAttachments={setCurrentAttachments}
-        />
-
-        <AddCommentForm
-          taskId={taskId}
-          attachments={currentAttachments}
-          setAttachments={setCurrentAttachments}
-          swrMutateComments={mutate}
-        />
-      </CardContent>
-      <CardFooter></CardFooter>
-    </Card>
+export function ProjectComments({ projectId }: { projectId: number }) {
+  const { data, error, mutate } = useSWR(
+    `/api/project/${projectId}/commments`, // api route doesn't really exist
+    () => {
+      return Actions.getProjectCommentsAndFiles(projectId);
+    },
+  );
+  if (!data) return null;
+  const commentSection: DesignCommentSection = data[0];
+  const userComments: DesignComment[] = data[1] || [];
+  const commentFiles: DesignFile[] = data[2] || [];
+  if (!commentSection) return null;
+  return (
+    <>
+      <CommentsList comments={userComments} attachments={commentFiles} />
+      <AddCommentForm commentSection={commentSection} swrMutateComments={mutate} />
+    </>
   );
 }

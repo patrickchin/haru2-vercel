@@ -5,8 +5,7 @@ import useSWR from "swr";
 import Link from "next/link";
 import { getTaskFiles } from "@/lib/actions";
 import { cn } from "@/lib/utils";
-import { uploadTaskFile } from "@/lib/utils/upload";
-import { DesignFile } from "@/lib/types";
+import { uploadFile } from "@/lib/utils/upload";
 
 import {
   LucideDownload,
@@ -31,13 +30,12 @@ export default function TaskFiles({ taskId }: { taskId: number }) {
   const [showDetailed, setShowDetailed] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
-  const { data, error, mutate } = useSWR(
+  const { data: files, error, mutate } = useSWR(
     `/api/task/${taskId}/files`, // api route doesn't really exist
     () => {
       return getTaskFiles(taskId) ?? [];
     },
   );
-  const files: DesignFile[] = data ?? [];
 
   async function onChangeUploadFile(e: ChangeEvent<HTMLInputElement>) {
     const targetFiles = e.currentTarget.files;
@@ -48,11 +46,10 @@ export default function TaskFiles({ taskId }: { taskId: number }) {
     const selectedFiles = Array.from(targetFiles);
 
     for (const file of selectedFiles) {
-      const newFile = await uploadTaskFile(file, taskId);
+      const newFile = await uploadFile({ file, taskId });
       if (newFile) {
         mutate((cur) => {
-          if (cur) return [...cur, newFile as DesignFile];
-          return [newFile as DesignFile];
+          return cur ? [...cur, newFile] : [newFile];
         });
       }
     }
@@ -108,7 +105,7 @@ export default function TaskFiles({ taskId }: { taskId: number }) {
         </Button>
       </CardHeader>
       <CardContent className="grid grid-cols-3 gap-3 text-sm">
-        {files.map((f, i) => (
+        {files && files.map((f, i) => (
           <div
             key={i}
             className={cn(

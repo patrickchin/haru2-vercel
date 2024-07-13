@@ -4,7 +4,8 @@ import { auth } from "@/lib/auth";
 import * as db from "@/lib/db";
 import { deleteFileFromS3 } from "@/lib/s3";
 import { Session } from "next-auth";
-import { DesignProject } from "@/lib/types";
+import { DesignFile, DesignProject } from "@/lib/types";
+import assert from "assert";
 
 function canViewProjectFiles(
   session?: Session | null,
@@ -50,7 +51,7 @@ export async function getProjectFiles(projectId: number) {
   return db.getFilesForProject(projectId);
 }
 
-export async function addTaskFile(
+export async function addProjectFile(
   taskId: number,
   type: string,
   name: string,
@@ -64,8 +65,8 @@ export async function addTaskFile(
   if (!canEditProjectFiles(session, project)) return;
 
   const userId = Number(session?.user?.id); // error?
-  return db.addTaskFile({
-    taskid: taskId,
+  return db.addFile({
+    projectid: taskId,
     type: type,
     filename: name,
     filesize: size,
@@ -76,7 +77,45 @@ export async function addTaskFile(
   });
 }
 
-export async function getTaskFiles(taskId: number) {
+export async function addFile(
+  args: ({ projectId: number } | { taskId: number }) & {
+    type: string;
+    name: string;
+    size: number;
+    fileUrl: string;
+  },
+) {
+  const session = await auth();
+
+  // this is a bit more complicated than it should be
+  const taskid = "taskId" in args ? args.taskId : null;
+  let projectid = "projectId" in args ? args.projectId : null;
+  assert(taskid || projectid);
+  if (!projectid) {
+    if (!taskid) return;
+    const task = await db.getTask(taskid);
+    if (!task.projectid) return;
+    projectid = task.projectid;
+  }
+  const project = await db.getProject(projectid);
+  if (!canEditProjectFiles(session, project)) return;
+
+  return db.addFile({
+    taskid,
+    projectid,
+    type: args.type,
+    filename: args.name,
+    filesize: args.size,
+    url: args.fileUrl,
+    // specid: specId,
+    uploaderid: Number(session?.user?.id),
+    // commentid: ?,
+  });
+}
+
+export async function getTaskFiles(
+  taskId: number,
+): Promise<DesignFile[] | undefined> {
   const session = await auth();
   const task = await db.getTask(taskId);
   if (!task.projectid) return;
