@@ -59,7 +59,6 @@ export const projects1 = pgTable("projects1", {
     withTimezone: true,
     mode: "string",
   }).defaultNow(),
-  commentsId: integer("commentSectionId").references(() => commentSections1.id),
 });
 
 export const teams1 = pgTable("teams1", {
@@ -109,7 +108,6 @@ export const tasks1 = pgTable("tasks1", {
   title: varchar("title", { length: 255 }),
   description: text("description"),
   enabled: boolean("enabled").default(true),
-  commentsId: integer("commentSectionId").references(() => commentSections1.id),
   // updated: timestamp("updated", { withTimezone: true, mode: 'string' }).defaultNow(),
 });
 
@@ -118,6 +116,8 @@ export const tasks1 = pgTable("tasks1", {
 
 export const commentSections1 = pgTable("commentSections1", {
   id: serial("id").primaryKey(),
+  projectid: integer("projectId").references(() => projects1.id),
+  taskid: integer("taskId").references(() => tasks1.id),
 });
 
 export const comments1 = pgTable("comments1", {

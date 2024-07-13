@@ -4,116 +4,112 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import { eq, asc, getTableColumns } from "drizzle-orm";
 import postgres from "postgres";
 import * as Schemas from "@/drizzle/schema";
+import { DesignComment, DesignCommentNew } from "@/lib/types";
 
 const client = postgres(`${process.env.POSTGRES_URL!}`);
 const db = drizzle(client);
 
-async function getProjectCommentSectionId(projectId: number) {
+const haruCommentColumns = {
+  ...getTableColumns(Schemas.comments1),
+  user: {
+    ...getTableColumns(Schemas.users1),
+  },
+};
+
+export async function getProjectCommentSection(projectId: number) {
   return await db.transaction(async (tx) => {
-    const { commentSectionsId } = await tx
-      .select({ commentSectionsId: Schemas.projects1.commentsId })
-      .from(Schemas.projects1)
-      .where(eq(Schemas.projects1.id, projectId))
-      .then((r) => r[0]);
-    if (commentSectionsId) return commentSectionsId;
     const section = await tx
+      .select()
+      .from(Schemas.commentSections1)
+      .where(eq(Schemas.commentSections1.projectid, projectId))
+      .then((r) => (r.length > 0 ? r[0] : null));
+    if (section) return section;
+    return await tx
       .insert(Schemas.commentSections1)
-      .values([{}])
+      .values({ projectid: projectId })
       .returning()
       .then((r) => r[0]);
-    await tx
-      .update(Schemas.projects1)
-      .set({ commentsId: section.id })
-      .where(eq(Schemas.projects1.id, projectId))
-      .then((r) => r[0]);
-    return section.id;
   });
 }
 
-async function getTaskCommentSectionId(taskId: number) {
+export async function getTaskCommentSection(taskId: number) {
   return await db.transaction(async (tx) => {
-    const { commentSectionsId } = await tx
-      .select({ commentSectionsId: Schemas.tasks1.commentsId })
-      .from(Schemas.tasks1)
-      .where(eq(Schemas.tasks1.id, taskId))
-      .then((r) => r[0]);
-    if (commentSectionsId) return commentSectionsId;
     const section = await tx
+      .select()
+      .from(Schemas.commentSections1)
+      .where(eq(Schemas.commentSections1.taskid, taskId))
+      .then((r) => (r.length > 0 ? r[0] : null));
+    if (section) return section;
+    return await tx
       .insert(Schemas.commentSections1)
-      .values([{}])
+      .values({ taskid: taskId })
       .returning()
       .then((r) => r[0]);
-    await tx
-      .update(Schemas.tasks1)
-      .set({ commentsId: section.id })
-      .where(eq(Schemas.tasks1.id, taskId))
-      .then((r) => r[0]);
-    return section.id;
   });
 }
 
-export async function getTaskComment(commentid: number) {
+export async function getComment(commentid: number) {
   return await db
-    .select()
+    .select(haruCommentColumns)
     .from(Schemas.comments1)
     .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.comments1.userid))
-    .where(eq(Schemas.comments1.id, commentid));
+    .where(eq(Schemas.comments1.id, commentid))
+    .limit(1)
+    .then((r) => r[0]);
 }
 
-export async function getCommentSectionComments(sectionId: number) {
-  return await db
-    .select({
-      ...getTableColumns(Schemas.comments1),
-      user: {
-        ...getTableColumns(Schemas.users1),
-      },
-    })
-    .from(Schemas.commentSections1)
+export async function getCommentSectionComments(
+  sectionId: number,
+): Promise<DesignComment[]> {
+  return db
+    .select(haruCommentColumns)
+    .from(Schemas.comments1)
     .leftJoin(
-      Schemas.comments1,
-      eq(Schemas.comments1.sectionId, Schemas.commentSections1.id),
+      Schemas.commentSections1,
+      eq(Schemas.commentSections1.id, Schemas.comments1.sectionId),
     )
     .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.comments1.userid))
     .where(eq(Schemas.commentSections1.id, sectionId))
-    .orderBy(asc(Schemas.comments1.createdAt));
-  // .limit(pagesize).offset(pagesize * pagenum)
+    .orderBy(Schemas.comments1.id);
 }
 
 export async function getProjectComments(projectId: number) {
-  const sectionId = await getProjectCommentSectionId(projectId);
-  return getCommentSectionComments(sectionId);
+  const section = await getProjectCommentSection(projectId);
+  return [section, getCommentSectionComments(section.id)];
 }
 
 export async function getTaskComments(taskid: number) {
-  const sectionId = await getTaskCommentSectionId(taskid);
-  return getCommentSectionComments(sectionId);
+  const section = await getTaskCommentSection(taskid);
+  return [section, getCommentSectionComments(section.id)];
 }
 
 export async function addSectionComment(
   sectionId: number,
   value: Omit<typeof Schemas.comments1.$inferInsert, "id" | "sectionId">,
 ) {
-  return await db
+  const c = await db
     .insert(Schemas.comments1)
     .values({
       ...value,
       sectionId,
     })
-    .returning();
+    .returning()
+    .then((r) => r[0]);
+  return getComment(c.id);
 }
 
 export async function addProjectComment(
   taskId: number,
-  value: Omit<typeof Schemas.comments1.$inferInsert, "id" | "sectionId">,
+  value: DesignCommentNew,
 ) {
-  const sectionId = await getProjectCommentSectionId(taskId);
-  return addSectionComment(sectionId, value);
+  const section = await getProjectCommentSection(taskId);
+  return addSectionComment(section.id, value);
 }
 
 export async function addTaskComment(
   taskId: number,
-  value: Omit<typeof Schemas.comments1.$inferInsert, "id" | "sectionId">,
+  value: DesignCommentNew,
 ) {
-  const sectionId = await getTaskCommentSectionId(taskId);
-  return addSectionComment(sectionId, value);
+  const section = await getTaskCommentSection(taskId);
+  return addSectionComment(section.id, value);
 }

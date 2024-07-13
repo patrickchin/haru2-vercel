@@ -100,8 +100,8 @@ const filesColumns: (
     accessorKey: "task.title",
     header: ({ column }) => <ColumnSortHeader label="Task" column={column} />,
     cell: ({ row }) => {
-      const file: DesignFile = row.original;
-      const task: DesignTask | null = file.task;
+      const file = row.original;
+      const task = file.task;
       const projectid = file.projectid ?? file.task?.projectid;
       const commentid = file.commentid;
       const commentHash = commentid ? `#comment-${commentid}` : "";

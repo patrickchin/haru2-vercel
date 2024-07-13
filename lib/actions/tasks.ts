@@ -43,13 +43,6 @@ function canEditProjectTasks(
   }
 }
 
-function canAddProjectTaskComment(
-  session?: Session | null,
-  project?: DesignProject,
-) {
-  return canViewProjectTasks(session, project);
-}
-
 async function getTaskSpecsInternal() {
   const specs: DesignTaskSpec[] = await db.getTaskSpecs();
   if (specs.length > 0) return specs;
@@ -194,51 +187,4 @@ export async function getTask(taskId: number) {
   if (!canViewProjectTasks(session, project)) return;
 
   return await db.getTask(taskId);
-}
-
-export async function getTaskCommentsAndFiles(taskId: number) {
-  const session = await auth();
-  const task = await db.getTask(taskId);
-  if (!task.projectid) return;
-  const project = await db.getProject(task.projectid);
-  if (!canViewProjectTasks(session, project)) return;
-
-  const comments = db.getTaskComments(taskId);
-  const files = db.getTaskCommentAttachments(taskId);
-  return Promise.all([comments, files]);
-}
-
-export async function getTaskComments(taskId: number) {
-  const session = await auth();
-  const task = await db.getTask(taskId);
-  if (!task.projectid) return;
-  const project = await db.getProject(task.projectid);
-  if (!canViewProjectTasks(session, project)) return;
-
-  const comments = db.getTaskComments(taskId);
-  return comments;
-}
-
-export async function addTaskComment(
-  taskId: number,
-  comment: string,
-  attachmentsIds: number[],
-) {
-  const session = await auth();
-  const task = await db.getTask(taskId);
-  if (!task.projectid) return;
-  const project = await db.getProject(task.projectid);
-  if (!canAddProjectTaskComment(session, project)) return;
-
-  const userId = Number(session?.user?.id);
-  const comments = await db.addTaskComment(taskId, {
-    userid: userId,
-    comment: comment,
-  });
-  if (comments.length == 0) return;
-  const editedFiles = attachmentsIds.map((fileid) =>
-    db.editTaskFile(fileid, { commentid: comments[0].id }),
-  );
-  const allEditedFiles = await Promise.all(editedFiles);
-  return getTaskCommentsAndFiles(taskId);
 }

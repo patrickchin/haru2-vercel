@@ -10,6 +10,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
 } from "@/components/ui/card";
 import { UserAvatar } from "@/components/user-avatar";
@@ -19,7 +20,7 @@ import BackButton from "@/components/back-button";
 
 import { ProjectInfoBar } from "../../components/project-description";
 import TaskFiles from "./components/task-files";
-import TaskComments from "./components/task-comments";
+import { TaskComments } from "./components/task-comments";
 
 function MembersList({ taskId }: { taskId: number }) {
   // TODO
@@ -153,7 +154,15 @@ async function TaskPage({
       )}
 
       <TaskFiles taskId={task.id} />
-      <TaskComments taskId={task.id} />
+
+      <Card>
+        <CardHeader className="font-bold">Comments</CardHeader>
+        <CardContent className="flex flex-col gap-4 px-6 py-6">
+          <TaskComments taskId={task.id} />
+        </CardContent>
+        <CardFooter></CardFooter>
+      </Card>
+
     </section>
   );
 }
