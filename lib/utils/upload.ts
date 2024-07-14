@@ -1,14 +1,19 @@
 import * as Actions from "@/lib/actions";
 
 async function doUpload(type: string, params: Record<string, any>, file: File) {
-  const response = await fetch(`/api/upload/${type}`, {
+  const presignedResponse = await fetch(`/api/upload/${type}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(params),
   });
+  const presignedResponseJson = await presignedResponse.json();
+  if (presignedResponse.status !== 200) {
+    throw new Error(
+      `PresignedUrlFailed ${presignedResponseJson.error}: ${JSON.stringify(params)}`,
+    );
+  }
 
-  const { url, fileUrl, fields } = await response.json();
-
+  const { url, fileUrl, fields } = presignedResponseJson;
   const formData = new FormData();
   Object.entries(fields).forEach(([key, value]) => {
     formData.append(key, value as string);
@@ -30,9 +35,13 @@ export async function uploadFile(
   const params = {
     filename: args.file.name,
     contentType: args.file.type,
-    taskId
+    ...(taskId !== null ? { taskId } : { projectId }),
   };
-  const fileUrl = await doUpload("task", params, args.file);
+  const fileUrl = await doUpload(
+    taskId !== null ? "task" : "project",
+    params,
+    args.file,
+  );
 
   const actionParams = {
     type: args.file.type,

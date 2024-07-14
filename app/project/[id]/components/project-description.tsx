@@ -3,6 +3,7 @@ import {
   CardContent,
   CardHeader,
   CardDescription,
+  CardFooter,
 } from "@/components/ui/card";
 import {
   Carousel,
@@ -19,6 +20,7 @@ import { buildingTypes } from "content/buildingTypes";
 import EditableDescription from "@/components/editable-description";
 import { DesignProject } from "@/lib/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ProjectComments } from "@/components/comments";
 
 function ProjectDesignViewsFallback() {
   return <p>Loading images ...</p>;
@@ -182,6 +184,14 @@ export default async function ProjectDescription({
               <EditableDescription project={project} />
             </Card>
           </div>
+
+          <Card>
+            <CardHeader className="font-bold">Comments</CardHeader>
+            <CardContent className="flex flex-col gap-4 px-6 py-6">
+              <ProjectComments projectId={project.id} />
+            </CardContent>
+            <CardFooter></CardFooter>
+          </Card>
         </>
       )}
 

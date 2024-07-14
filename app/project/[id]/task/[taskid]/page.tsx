@@ -20,7 +20,7 @@ import BackButton from "@/components/back-button";
 
 import { ProjectInfoBar } from "../../components/project-description";
 import TaskFiles from "./components/task-files";
-import { TaskComments } from "./components/task-comments";
+import { TaskComments } from "../../../../../components/comments";
 
 function MembersList({ taskId }: { taskId: number }) {
   // TODO
@@ -162,7 +162,6 @@ async function TaskPage({
         </CardContent>
         <CardFooter></CardFooter>
       </Card>
-
     </section>
   );
 }
