@@ -86,51 +86,52 @@ function CommentsList({
 
   return (
     <ul className="">
-      {comments && comments.map((c: DesignComment, i: number) => (
-        <li
-          id={`comment-${c.id}`}
-          key={i}
-          className={cn(
-            "flex gap-3 p-3 items-start justify-center border-b hover:bg-accent",
-            fragment === `#comment-${c.id}` ? "bg-yellow-50" : "",
-          )}
-        >
-          <div className="pt-2">
-            <DesignUserAvatar user={c.user ? { ...c.user } : undefined} />
-          </div>
-          <div className="flex flex-col gap-1 w-full">
-            <div className="flex flex-row gap-4 items-end">
-              <span className="font-bold">
-                {c.user?.name ?? "<Invalid User>"}
-              </span>
-              <Link
-                href={{
-                  pathname: pathname,
-                  hash: `#comment-${c.id}`,
-                }}
-                replace={true}
-                className="text-sm text-muted-foreground"
-                onClick={(e) => setFragment(`#comment-${c.id}`)}
-              >
-                {c.createdAt && (
-                  <time
-                    dateTime={new Date(c.createdAt).toISOString()}
-                    suppressHydrationWarning
-                  >
-                    {new Date(c.createdAt).toLocaleString()}
-                  </time>
-                )}
-              </Link>
-            </div>
-
-            {attachments.length > 0 && c.id && (
-              <CommentAttachments attachments={groupedAttachments[c.id]} />
+      {comments &&
+        comments.map((c: DesignComment, i: number) => (
+          <li
+            id={`comment-${c.id}`}
+            key={i}
+            className={cn(
+              "flex gap-3 p-3 items-start justify-center border-b hover:bg-accent",
+              fragment === `#comment-${c.id}` ? "bg-yellow-50" : "",
             )}
+          >
+            <div className="pt-2">
+              <DesignUserAvatar user={c.user ? { ...c.user } : undefined} />
+            </div>
+            <div className="flex flex-col gap-1 w-full">
+              <div className="flex flex-row gap-4 items-end">
+                <span className="font-bold">
+                  {c.user?.name ?? "<Invalid User>"}
+                </span>
+                <Link
+                  href={{
+                    pathname: pathname,
+                    hash: `#comment-${c.id}`,
+                  }}
+                  replace={true}
+                  className="text-sm text-muted-foreground"
+                  onClick={(e) => setFragment(`#comment-${c.id}`)}
+                >
+                  {c.createdAt && (
+                    <time
+                      dateTime={new Date(c.createdAt).toISOString()}
+                      suppressHydrationWarning
+                    >
+                      {new Date(c.createdAt).toLocaleString()}
+                    </time>
+                  )}
+                </Link>
+              </div>
 
-            <div className="whitespace-pre-wrap break-words">{c.comment}</div>
-          </div>
-        </li>
-      ))}
+              {attachments.length > 0 && c.id && (
+                <CommentAttachments attachments={groupedAttachments[c.id]} />
+              )}
+
+              <div className="whitespace-pre-wrap break-words">{c.comment}</div>
+            </div>
+          </li>
+        ))}
       {comments.length == 0 && (
         <li>There are currently no coments to display</li>
       )}
@@ -284,21 +285,26 @@ function UploadAttachment({
 
     setIsUploading(true);
 
-    for (const file of Array.from(targetFiles)) {
-      let newFile;
-      if (commentSection.taskid) {
-        newFile = await uploadFile({ file, taskId: commentSection.taskid });
-      } else if (commentSection.projectid) {
-        newFile = await uploadFile({
-          file,
-          projectId: commentSection.projectid,
-        });
+    try {
+      for (const file of Array.from(targetFiles)) {
+        let newFile;
+        // surely this could be better
+        if (commentSection.taskid) {
+          newFile = await uploadFile({ file, taskId: commentSection.taskid });
+        } else if (commentSection.projectid) {
+          newFile = await uploadFile({
+            file,
+            projectId: commentSection.projectid,
+          });
+        } else {
+          throw new Error("Invalid comment section");
+        }
+        if (newFile) setCurrentAttachments((l) => [...l, newFile]);
       }
-      if (newFile) setCurrentAttachments((l) => [...l, newFile]);
+      e.target.value = "";
+    } finally {
+      setIsUploading(false);
     }
-
-    e.target.value = "";
-    setIsUploading(false);
   }
 
   return (
@@ -351,7 +357,10 @@ export function TaskComments({ taskId }: { taskId: number }) {
   return (
     <>
       <CommentsList comments={userComments} attachments={commentFiles} />
-      <AddCommentForm commentSection={commentSection} swrMutateComments={mutate} />
+      <AddCommentForm
+        commentSection={commentSection}
+        swrMutateComments={mutate}
+      />
     </>
   );
 }
@@ -371,7 +380,10 @@ export function ProjectComments({ projectId }: { projectId: number }) {
   return (
     <>
       <CommentsList comments={userComments} attachments={commentFiles} />
-      <AddCommentForm commentSection={commentSection} swrMutateComments={mutate} />
+      <AddCommentForm
+        commentSection={commentSection}
+        swrMutateComments={mutate}
+      />
     </>
   );
 }
