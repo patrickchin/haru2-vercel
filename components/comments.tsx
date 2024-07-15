@@ -31,6 +31,7 @@ import { cn } from "@/lib/utils";
 import { DesignFile, DesignComment, DesignCommentSection } from "@/lib/types";
 import * as Actions from "@/lib/actions";
 import { uploadFile } from "@/lib/utils/upload";
+import { toast } from "@/components/ui/use-toast";
 
 function CommentAttachments({ attachments }: { attachments: DesignFile[] }) {
   if (!attachments || attachments.length == 0) return null;
@@ -287,21 +288,23 @@ function UploadAttachment({
 
     try {
       for (const file of Array.from(targetFiles)) {
-        let newFile;
+        const projectId = commentSection.projectid;
+        const taskId = commentSection.taskid;
+
+        let f;
         // surely this could be better
-        if (commentSection.taskid) {
-          newFile = await uploadFile({ file, taskId: commentSection.taskid });
-        } else if (commentSection.projectid) {
-          newFile = await uploadFile({
-            file,
-            projectId: commentSection.projectid,
-          });
+        if (taskId) {
+          f = await uploadFile({ file, taskId });
+        } else if (projectId) {
+          f = await uploadFile({ file, projectId });
         } else {
-          throw new Error("Invalid comment section");
+          toast({ description: "Error: No task or project to upload file to." });
         }
-        if (newFile) setCurrentAttachments((l) => [...l, newFile]);
+        if (f) setCurrentAttachments((l) => [...l, f]);
       }
       e.target.value = "";
+    } catch (e) {
+      toast({ description: `Error: ${e}` });
     } finally {
       setIsUploading(false);
     }
