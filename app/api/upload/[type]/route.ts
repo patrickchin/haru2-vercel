@@ -33,18 +33,20 @@ async function getProjectFilePath(
   return `project/${project.id}/${filename}`;
 }
 
-async function getPath(session: Session, params: Record<string, string>) {
+async function getPath(type: string, session: Session, params: Record<string, string>) {
   const unsanFilename = params.filename;
   if (!unsanFilename || unsanFilename.length <= 0) return;
   const filename = sanitizeFilename(unsanFilename);
 
-  if (params.type === "avatar") {
+  if (type === "avatar") {
     return getAvatarPath(session, filename);
-  } else if (params.type === "task") {
+  } else if (type === "task") {
     return getTaskFilePath(params, filename);
-  } else if (params.type === "project") {
+  } else if (type === "project") {
     return getProjectFilePath(params, filename);
   }
+
+  console.error("api/upload getPath unknown type:", type);
 }
 
 export async function POST(
@@ -60,7 +62,7 @@ export async function POST(
     );
   }
 
-  const path = await getPath(session, params);
+  const path = await getPath(type, session, params);
   if (!path) {
     return NextResponse.json({ error: "Invalid Params" }, { status: 400 });
   }
