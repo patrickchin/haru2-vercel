@@ -8,49 +8,54 @@ import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
 import { useLoader } from "@react-three/fiber";
 import { Suspense } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { toast } from "@/components/ui/use-toast";
 
-function ProjectModelViewSkeleton() {
+function ProjectModelViewSkeleton({ text }: { text?: string }) {
   return (
     <div className="h-full flex justify-center items-center">
-      Loading model view ...
+      {text ??  "Loading model view ..."}
     </div>
   );
 }
 
 function ProjectModelViewInternal() {
-  const mtl = useLoader(MTLLoader, "/api/github/Condo.mtl");
-  const obj = useLoader(OBJLoader, "/api/github/Condo.obj", (loader) => {
-    mtl.preload();
-    loader.setMaterials(mtl);
-  });
+  try {
+    const mtl = useLoader(MTLLoader, "/api/github/Condo.mtl");
+    const obj = useLoader(OBJLoader, "/api/github/Condo.obj", (loader) => {
+      mtl.preload();
+      loader.setMaterials(mtl);
+    });
 
-  return (
-    <Canvas
-      shadows
-      camera={{ position: [0, 40, 80] }}
-      className="min-h-[600px]"
-    >
-      <ambientLight color="white" intensity={0.9} />
-      <directionalLight color="orange" position={[0, 40, 80]} />
+    return (
+      <Canvas
+        shadows
+        camera={{ position: [0, 40, 80] }}
+        className="min-h-[600px]"
+      >
+        <ambientLight color="white" intensity={0.9} />
+        <directionalLight color="orange" position={[0, 40, 80]} />
 
-      {/* <Gltf
+        {/* <Gltf
         src="/tmp/DiffuseTransmissionPlant.glb"
         receiveShadow
         castShadow
         position={[0, -0.3, 0]}
       /> */}
 
-      <primitive
-        receiveShadow={true}
-        castShadow
-        object={obj}
-        rotation={[Math.PI / 2, Math.PI, 0]}
-      />
+        <primitive
+          receiveShadow={true}
+          castShadow
+          object={obj}
+          rotation={[Math.PI / 2, Math.PI, 0]}
+        />
 
-      <OrbitControls enableDamping={false} />
-      <Stats />
-    </Canvas>
-  );
+        <OrbitControls enableDamping={false} />
+        <Stats />
+      </Canvas>
+    );
+  } catch (e) {
+    return <ProjectModelViewSkeleton text="Failed to load default model from Github." />;
+  }
 }
 
 export default function ProjectModelView() {
