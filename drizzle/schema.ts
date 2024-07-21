@@ -96,15 +96,17 @@ export const tasks1 = pgTable("tasks1", {
   id: serial("id").primaryKey(),
   specid: integer("specId").references(() => taskspecs1.id),
   projectid: integer("projectId").references(() => projects1.id),
-  lead: varchar("lead", { length: 255 }),
-  // lead1: integer("leadId").references(() => users1.id),
+  lead: varchar("lead", { length: 255 }), // TODO deprecate replace with leadId
+  // leadId: integer("leadId").references(() => users1.id),
   // owner: integer("ownerid").references(() => users1.id),
   // members: integer("ownerid").references(() => users1.id),
   type: varchar("type", { length: 255 }),
   status: varchar("status", { length: 255 }).default("pending"),
   startdate: date("startDate", { mode: "date" }),
   enddate: date("endDate", { mode: "date" }),
-  estimation: integer("estimation"), // in days
+  estimation: integer("estimation"), // TODO deprecate
+  duration: integer("duration"), // in days
+  cost: integer("cost"), // what units???
   title: varchar("title", { length: 255 }),
   description: text("description"),
   enabled: boolean("enabled").default(true),

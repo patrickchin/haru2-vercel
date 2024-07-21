@@ -16,6 +16,10 @@ export type DesignTeam = Omit<typeof Schemas.teams1.$inferSelect, "lead"> & {
 };
 export type DesignTeamMember = typeof Schemas.teammembers1.$inferSelect;
 export type DesignTaskSpec = typeof Schemas.taskspecs1.$inferSelect;
+export type DesignTaskNew = Omit<
+  typeof Schemas.tasks1.$inferInsert,
+  "id" | "specid" | "projectid"
+>;
 export type DesignTask = typeof Schemas.tasks1.$inferSelect;
 export type DesignFileNew = Omit<typeof Schemas.files1.$inferInsert, "id">;
 export type DesignFile = typeof Schemas.files1.$inferSelect & {

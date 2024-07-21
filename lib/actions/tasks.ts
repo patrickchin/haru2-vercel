@@ -6,6 +6,10 @@ import { auth } from "@/lib/auth";
 import { defaulTaskSpecs } from "content/tasks";
 import { DesignProject, DesignTaskSpec } from "@/lib/types";
 import { Session } from "next-auth";
+import {
+  ManageTaskEditEstimatesSchema,
+  ManageTaskEditEstimatesType,
+} from "@/lib/forms";
 
 function canViewProjectTasks(
   session?: Session | null,
@@ -132,7 +136,27 @@ export async function enableProjectTask(taskId: number, enabled: boolean) {
   const project = await db.getProject(task.projectid);
   if (!canEditProjectTasks(session, project)) return;
 
-  const task2 = await db.enableProjectTask(taskId, enabled);
+  const task2 = await db.updateProjectTask(taskId, { enabled });
+  if (!task2.projectid) return;
+  if (!task2.type) return;
+  // tbh should this really be returning all of the tasks? ...
+  return await db.getProjectTasksAllOfType(task2.projectid, task2.type);
+}
+
+export async function updateTaskEstimations(
+  taskId: number,
+  data: ManageTaskEditEstimatesType,
+) {
+  const session = await auth();
+  const task = await db.getTask(taskId);
+  if (!task.projectid) return;
+  const project = await db.getProject(task.projectid);
+  if (!canEditProjectTasks(session, project)) return;
+
+  const parsed = ManageTaskEditEstimatesSchema.safeParse(data);
+  if (!parsed.success) return;
+
+  const task2 = await db.updateProjectTask(taskId, parsed.data);
   if (!task2.projectid) return;
   if (!task2.type) return;
   // tbh should this really be returning all of the tasks? ...

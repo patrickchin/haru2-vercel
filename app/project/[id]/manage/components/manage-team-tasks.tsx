@@ -5,13 +5,16 @@ import {
   LucideCheck,
   LucideChevronDown,
   LucideLoader2,
-  LucideMinus,
-  LucidePlus,
   LucideX,
 } from "lucide-react";
 import useSWR, { KeyedMutator } from "swr";
+import { useForm } from "react-hook-form";
 
 import { DesignTask, DesignTaskSpec, DesignTeam, teamNames } from "@/lib/types";
+import {
+  ManageTaskEditEstimatesSchema,
+  ManageTaskEditEstimatesType,
+} from "@/lib/forms";
 import * as Actions from "@/lib/actions";
 
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
@@ -27,41 +30,96 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Popover } from "@/components/ui/popover";
 import { PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-function NumberInput() {
-  return (
-    <div className="flex">
-      <Button
-        variant="outline"
-        size="icon"
-        className="rounded-r-none focus:z-10 shrink-0 w-8"
-      >
-        <LucideMinus className="w-3.5 h-3.5" />
-      </Button>
-      <Input className="rounded-none border-l-0 border-r-0 focus:z-10" />
-      <Button
-        variant="outline"
-        size="icon"
-        className="rounded-l-none focus:z-0 shrink-0 w-8"
-      >
-        <LucidePlus className="w-3.5 h-3.5" />
-      </Button>
-    </div>
-  );
-}
+function EditEstimatesPopupForm({
+  task,
+  tasks,
+  tasksMutate,
+}: {
+  task: DesignTask;
+  tasks: DesignTask[];
+  tasksMutate: KeyedMutator<DesignTask[] | undefined>;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isPending, setIsPending] = useState(false);
+  const form = useForm<ManageTaskEditEstimatesType>({
+    resolver: zodResolver(ManageTaskEditEstimatesSchema),
+    defaultValues: {
+      duration: task.duration ?? 0,
+      cost: task.cost ?? 0,
+    },
+  });
 
-function NumperInputPopup() {
-  const [est, setEst] = useState(1);
+  const onSubmit = async (data: ManageTaskEditEstimatesType) => {
+    form.clearErrors();
+
+    try {
+      setIsPending(true);
+      task.duration = data.duration;
+      task.cost = data.cost;
+      console.log(task);
+      console.log(tasks[0]);
+      tasksMutate(Actions.updateTaskEstimations(task.id, data), {
+        revalidate: false,
+        optimisticData: tasks,
+      });
+      setIsOpen(false);
+    } finally {
+      setIsPending(false);
+    }
+  };
+
   return (
-    <Popover>
-      <PopoverTrigger>
-        <Button variant="outline">{est}</Button>
+    <Popover open={isOpen} onOpenChange={(o) => setIsOpen(o)}>
+      <PopoverTrigger asChild>
+        <Button disabled={!task.enabled} variant="outline">
+          Edit Estimates
+        </Button>
       </PopoverTrigger>
       <PopoverContent>
-        <Card className="flex flex-col">
-          Estimated number of days
-          <NumberInput />
-          <Button>Save</Button>
+        <Card className="flex flex-col p-6">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="duration"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Duration (days)</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="number" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="cost"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cost (CNY)</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="number" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" disabled={isPending}>
+                Save Changes
+              </Button>
+            </form>
+          </Form>
         </Card>
       </PopoverContent>
     </Popover>
@@ -116,10 +174,15 @@ function ManageTaskRow({
       </div>
 
       <div className="flex gap-2 items-center justify-center">
-        <div className="flex items-center w-36 hidden">
-          Days {task.estimation}
-          <NumperInputPopup />
-          {/* <NumberInput /> */}
+        <div className="flex gap-3 justify-end items-center w-80">
+          <div className="flex-none">Days {task.duration ?? 0}</div>
+          <div className="flex-none">Cost {task.cost ?? 0}</div>
+
+          <EditEstimatesPopupForm
+            task={task}
+            tasks={tasks}
+            tasksMutate={tasksMutate}
+          />
         </div>
         <Button
           variant="outline"

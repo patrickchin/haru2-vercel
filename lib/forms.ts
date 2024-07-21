@@ -109,3 +109,11 @@ export const registerZodSchemas = {
   email: registerEmailOtpSchema,
   password: registerPasswordSchema,
 };
+
+export const ManageTaskEditEstimatesSchema = z.object({
+  duration: z.coerce.number(),
+  cost: z.coerce.number(),
+});
+export type ManageTaskEditEstimatesType = z.infer<
+  typeof ManageTaskEditEstimatesSchema
+>;

@@ -1,21 +1,11 @@
 import "server-only";
 
 import { drizzle } from "drizzle-orm/postgres-js";
-import {
-  and,
-  eq,
-  or,
-  desc,
-  asc,
-  isNotNull,
-  getTableColumns,
-} from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import postgres from "postgres";
-import { genSaltSync, hashSync, compareSync } from "bcrypt-ts";
 
 import * as Schemas from "@/drizzle/schema";
-import assert from "assert";
-import { defaultTeams } from "@/lib/types";
+import { DesignTaskNew } from "@/lib/types";
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
@@ -100,10 +90,10 @@ export async function enableProjectTaskSpec(
     .then((r) => r[0]);
 }
 
-export async function enableProjectTask(taskId: number, enabled: boolean) {
+export async function updateProjectTask(taskId: number, values: DesignTaskNew) {
   return await db
     .update(Schemas.tasks1)
-    .set({ enabled })
+    .set(values)
     .where(eq(Schemas.tasks1.id, taskId))
     .returning()
     .then((r) => r[0]);
