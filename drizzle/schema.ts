@@ -106,7 +106,9 @@ export const tasks1 = pgTable("tasks1", {
   enddate: date("endDate", { mode: "date" }),
   estimation: integer("estimation"), // TODO deprecate
   duration: integer("duration"), // in days
-  cost: integer("cost"), // what units???
+  cost: integer("cost"),
+  costUnits: char("costUnits", { length: 3 }), // ISO 4217
+
   title: varchar("title", { length: 255 }),
   description: text("description"),
   enabled: boolean("enabled").default(true),

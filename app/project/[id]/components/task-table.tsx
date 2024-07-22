@@ -80,6 +80,26 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
     ),
   },
   {
+    accessorKey: "cost",
+    size: 64,
+    header: () => <div className="text-center">Cost</div>,
+    cell: ({ row }) => (
+      <div className="text-end pr-2 text-nowrap">
+        {row.getValue("cost") ?? "-"} {row.getValue("costUnits") ?? " USD (?)"}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "duration",
+    size: 64,
+    header: () => <div className="text-center">Duration</div>,
+    cell: ({ row }) => (
+      <div className="text-end pr-2 text-nowrap">
+        {row.getValue("duration") ?? "-"} days
+      </div>
+    ),
+  },
+  {
     accessorKey: "status",
     size: 64,
     header: () => <div className="text-center">Status</div>,
