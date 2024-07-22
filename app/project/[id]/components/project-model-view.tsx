@@ -13,19 +13,29 @@ import { toast } from "@/components/ui/use-toast";
 function ProjectModelViewSkeleton({ text }: { text?: string }) {
   return (
     <div className="h-full flex justify-center items-center">
-      {text ??  "Loading model view ..."}
+      {text ?? "Loading model view ..."}
     </div>
+  );
+}
+
+function ProjectModelDefault() {
+  const mtl = useLoader(MTLLoader, "/api/github/Condo.mtl");
+  const obj = useLoader(OBJLoader, "/api/github/Condo.obj", (loader) => {
+    mtl.preload();
+    loader.setMaterials(mtl);
+  });
+  return (
+    <primitive
+      receiveShadow={true}
+      castShadow
+      object={obj}
+      rotation={[Math.PI / 2, Math.PI, 0]}
+    />
   );
 }
 
 function ProjectModelViewInternal() {
   try {
-    const mtl = useLoader(MTLLoader, "/api/github/Condo.mtl");
-    const obj = useLoader(OBJLoader, "/api/github/Condo.obj", (loader) => {
-      mtl.preload();
-      loader.setMaterials(mtl);
-    });
-
     return (
       <Canvas
         shadows
@@ -42,19 +52,16 @@ function ProjectModelViewInternal() {
         position={[0, -0.3, 0]}
       /> */}
 
-        <primitive
-          receiveShadow={true}
-          castShadow
-          object={obj}
-          rotation={[Math.PI / 2, Math.PI, 0]}
-        />
+        <ProjectModelDefault />
 
         <OrbitControls enableDamping={false} />
         <Stats />
       </Canvas>
     );
   } catch (e) {
-    return <ProjectModelViewSkeleton text="Failed to load default model from Github." />;
+    return (
+      <ProjectModelViewSkeleton text="Failed to load default model from Github." />
+    );
   }
 }
 
