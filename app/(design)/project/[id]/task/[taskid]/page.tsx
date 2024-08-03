@@ -1,7 +1,6 @@
 import { Suspense } from "react";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { LucideMoveLeft } from "lucide-react";
-import { auth } from "@/lib/auth";
 import { getProject, getProjectTask, getTaskSpec } from "@/lib/actions";
 import { DesignProject, DesignTask, DesignTaskSpec } from "@/lib/types";
 
@@ -13,14 +12,13 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { UserAvatar } from "@/components/user-avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
 import BackButton from "@/components/back-button";
 
 import { ProjectInfoBar } from "../../components/project-description";
 import TaskFiles from "./components/task-files";
-import { TaskComments } from "../../../../../components/comments";
+import { TaskComments } from "@/components/comments";
 
 function MembersList({ taskId }: { taskId: number }) {
   // TODO
