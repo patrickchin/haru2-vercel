@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowRightIcon } from "lucide-react";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-import { cn } from "@/lib/utils";
 
 export default function Page() {
   return (
@@ -16,16 +15,18 @@ export default function Page() {
         </div>
 
         <div className="flex flex-col gap-16 max-w-7xl">
-          <h1 className="flex justify-center items-center text-6xl">
+          <h1 className="flex text-center text-6xl">
             Streamlined Construction Management
           </h1>
 
-          <div className="grid grid-cols-2 items-center mb-48 gap-32">
-            <div className="flex flex-col gap-4 items-end">
-              <h2 className="font-bold">Design Management</h2>
-              <p className="font-bold text-lg">
-                {"Tell us about your project and let's"}
-                <Button asChild className="w-fit ml-2 font-bold text-base">
+          <div className="grid grid-cols-2 items-center mb-48">
+            <div className="flex flex-col gap-4 items-end px-16">
+              <h2 className="font-bold whitespace-nowrap">Design Management</h2>
+              <p className="font-bold text-lg text-end">
+                <span className="whitespace-nowrap pr-2">
+                  Tell us about your project and let's
+                </span>
+                <Button asChild className="w-fit font-bold text-base">
                   <Link href="/new-project">
                     get started <ArrowRightIcon className="ml-2" />
                   </Link>
@@ -33,11 +34,13 @@ export default function Page() {
               </p>
             </div>
 
-            <div className="flex flex-col gap-4">
-              <h2 className="font-bold">Site Supervision</h2>
+            <div className="flex flex-col gap-4 px-16">
+              <h2 className="font-bold whitespace-nowrap">Site Supervision</h2>
               <p className="font-bold text-lg">
-                {"Hire our site analysis professionals"}
-                <Button asChild className="w-fit ml-2 font-bold text-base">
+                <span className="whitespace-nowrap pr-2">
+                  Hire our site analysis professionals
+                </span>
+                <Button asChild className="w-fit font-bold text-base">
                   <Link href="#">
                     get started <ArrowRightIcon className="ml-2" />
                   </Link>
@@ -46,11 +49,6 @@ export default function Page() {
             </div>
           </div>
         </div>
-        {/*
-         */}
-
-        {/* <div className="grow flex flex-col space-y-12 w-screen mx-auto max-w-4xl px-12 pt-52">
-        </div> */}
       </main>
       <Footer />
     </div>
