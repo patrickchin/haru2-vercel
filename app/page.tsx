@@ -24,7 +24,7 @@ export default function Page() {
               <h2 className="font-bold whitespace-nowrap">Design Management</h2>
               <p className="font-bold text-lg text-end">
                 <span className="whitespace-nowrap pr-2">
-                  Tell us about your project and let's
+                  {"Tell us about your project and let's"}
                 </span>
                 <Button asChild className="w-fit font-bold text-base">
                   <Link href="/new-project">
