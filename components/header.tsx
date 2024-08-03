@@ -105,7 +105,7 @@ export default function Header() {
         <Link href="/" className="mr-6 flex items-center space-x-2">
           <LucideConstruction className="h-6 w-6" />
           <span className="hidden font-bold sm:inline-block">
-            Haru Construction
+            HarpaPro
           </span>
         </Link>
 

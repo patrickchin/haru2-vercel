@@ -9,7 +9,7 @@ import { GeistSans } from "geist/font/sans";
 import { auth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
-let title = "Haru Construct";
+let title = "HarpaPro";
 let description = "Plan and organise and your construction projects";
 
 export const metadata = {
