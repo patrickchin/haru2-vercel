@@ -41,7 +41,7 @@ export default function Page() {
                   Hire our site analysis professionals
                 </span>
                 <Button asChild className="w-fit font-bold text-base">
-                  <Link href="#">
+                  <Link href="/reports">
                     get started <ArrowRightIcon className="ml-2" />
                   </Link>
                 </Button>
