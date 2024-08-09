@@ -137,7 +137,8 @@ function PictureCarosel() {
   );
 }
 
-export default function Page() {
+export default function Page({ params }: { params: { report: string[] } }) {
+
   return (
     <div className="flex flex-col h-screen">
       <Header />
