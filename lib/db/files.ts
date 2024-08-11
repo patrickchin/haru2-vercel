@@ -109,3 +109,12 @@ export async function getFilesForCommentSection(sectionId: number) {
     )
     .where(eq(Schemas.commentSections1.id, sectionId));
 }
+
+export async function getFilesForReport(reportId: number) {
+  return await db
+    .select(HaruFileColumns)
+    .from(Schemas.files1)
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderid))
+    .leftJoin(Schemas.siteReports1, eq(Schemas.siteReportFiles1.fileId, Schemas.files1.id))
+    .where(eq(Schemas.siteReportFiles1.reportId, reportId));
+}

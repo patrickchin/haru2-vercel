@@ -155,3 +155,30 @@ export const otps1 = pgTable("otps1", {
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
   expiresAt: timestamp("expiresAt", { mode: "date" }).notNull(),
 });
+
+
+
+// TODO could move to a separate file:
+// ============================== Site Analysis ==============================
+
+export const sites1 = pgTable("sites1", {
+  id: serial("id").primaryKey().notNull(),
+});
+
+export const siteMembers1 = pgTable("siteMembers1", {
+  siteId: integer("siteId").references(() => sites1.id),
+  memberId: integer("memberId").references(() => users1.id),
+  // role: ,
+});
+
+export const siteReports1 = pgTable("siteReports1", {
+  id: serial("id").primaryKey().notNull(),
+  reporterId: integer("reporterId").references(() => users1.id),
+  siteId: integer("siteId").references(() => sites1.id),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+});
+
+export const siteReportFiles1 = pgTable("siteReportFiles1", {
+  reportId: integer("reportId").references(() => siteReports1.id),
+  fileId: integer("filedId").references(() => files1.id),
+});
