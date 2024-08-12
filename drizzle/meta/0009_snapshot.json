@@ -1,6 +1,6 @@
 {
-  "id": "12ccc467-c752-472b-a7ac-c46efdbc56ac",
-  "prevId": "43a4e96d-c5e1-4d80-b930-7c5049444ec8",
+  "id": "b6280d14-bd5b-4836-a6ee-f11800c1b4c6",
+  "prevId": "12ccc467-c752-472b-a7ac-c46efdbc56ac",
   "version": "6",
   "dialect": "postgresql",
   "tables": {
@@ -445,6 +445,182 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.siteMembers1": {
+      "name": "siteMembers1",
+      "schema": "",
+      "columns": {
+        "siteId": {
+          "name": "siteId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "memberId": {
+          "name": "memberId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "siteMembers1_siteId_sites1_id_fk": {
+          "name": "siteMembers1_siteId_sites1_id_fk",
+          "tableFrom": "siteMembers1",
+          "tableTo": "sites1",
+          "columnsFrom": [
+            "siteId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "siteMembers1_memberId_users1_id_fk": {
+          "name": "siteMembers1_memberId_users1_id_fk",
+          "tableFrom": "siteMembers1",
+          "tableTo": "users1",
+          "columnsFrom": [
+            "memberId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.siteReportFiles1": {
+      "name": "siteReportFiles1",
+      "schema": "",
+      "columns": {
+        "reportId": {
+          "name": "reportId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "filedId": {
+          "name": "filedId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "siteReportFiles1_reportId_siteReports1_id_fk": {
+          "name": "siteReportFiles1_reportId_siteReports1_id_fk",
+          "tableFrom": "siteReportFiles1",
+          "tableTo": "siteReports1",
+          "columnsFrom": [
+            "reportId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "siteReportFiles1_filedId_files1_id_fk": {
+          "name": "siteReportFiles1_filedId_files1_id_fk",
+          "tableFrom": "siteReportFiles1",
+          "tableTo": "files1",
+          "columnsFrom": [
+            "filedId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.siteReports1": {
+      "name": "siteReports1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "reporterId": {
+          "name": "reporterId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "siteId": {
+          "name": "siteId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "siteReports1_reporterId_users1_id_fk": {
+          "name": "siteReports1_reporterId_users1_id_fk",
+          "tableFrom": "siteReports1",
+          "tableTo": "users1",
+          "columnsFrom": [
+            "reporterId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "siteReports1_siteId_sites1_id_fk": {
+          "name": "siteReports1_siteId_sites1_id_fk",
+          "tableFrom": "siteReports1",
+          "tableTo": "sites1",
+          "columnsFrom": [
+            "siteId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.sites1": {
+      "name": "sites1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
