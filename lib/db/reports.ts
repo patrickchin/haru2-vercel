@@ -1,7 +1,7 @@
 import "server-only";
 
 import { drizzle } from "drizzle-orm/postgres-js";
-import { eq, getTableColumns, isNull } from "drizzle-orm";
+import { desc, eq, getTableColumns } from "drizzle-orm";
 import postgres from "postgres";
 
 import * as Schemas from "@/drizzle/schema";
@@ -51,7 +51,7 @@ export async function addUserSite(userId: number): Promise<Site> {
 }
 
 export async function getSiteReports(
-  projectId: number | null,
+  projectId: number,
 ): Promise<SiteReport[]> {
   return db
     .select(SiteReportColumns)
@@ -60,11 +60,20 @@ export async function getSiteReports(
       Schemas.users1,
       eq(Schemas.users1.id, Schemas.siteReports1.reporterId),
     )
-    .where(
-      projectId == null
-        ? isNull(Schemas.siteReports1.siteId)
-        : eq(Schemas.siteReports1.siteId, projectId),
-    );
+    .where(eq(Schemas.siteReports1.siteId, projectId))
+    .orderBy(desc(Schemas.siteReports1.id));
+}
+
+export async function getSiteReport(reportId: number): Promise<SiteReport> {
+  return db
+    .select(SiteReportColumns)
+    .from(Schemas.siteReports1)
+    .leftJoin(
+      Schemas.users1,
+      eq(Schemas.users1.id, Schemas.siteReports1.reporterId),
+    )
+    .where(eq(Schemas.siteReports1.id, reportId))
+    .then((r) => r[0]);
 }
 
 export async function addSiteReport(

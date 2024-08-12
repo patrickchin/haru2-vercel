@@ -61,3 +61,19 @@ export async function uploadAvatarFile(file: File) {
   const fileUrl = await doUpload("avatar", params, file);
   return await Actions.updateAvatarForUser(fileUrl);
 }
+
+export async function uploadReportFile(reportId: number, file: File) {
+  const params = {
+    filename: file.name,
+    contentType: file.type,
+    reportId,
+  };
+  const fileUrl = await doUpload("report", params, file);
+  const actionParams = {
+    type: file.type,
+    name: file.name,
+    size: file.size,
+    fileUrl,
+  };
+  return Actions.addReportFile({ ...actionParams, reportId });
+}

@@ -162,7 +162,7 @@ export const otps1 = pgTable("otps1", {
 // ============================== Site Analysis ==============================
 
 export const sites1 = pgTable("sites1", {
-  id: serial("id").primaryKey().notNull(),
+  id: serial("id").primaryKey(),
 });
 
 export const siteMembers1 = pgTable("siteMembers1", {
@@ -172,10 +172,10 @@ export const siteMembers1 = pgTable("siteMembers1", {
 });
 
 export const siteReports1 = pgTable("siteReports1", {
-  id: serial("id").primaryKey().notNull(),
+  id: serial("id").primaryKey(),
   reporterId: integer("reporterId").references(() => users1.id),
   siteId: integer("siteId").references(() => sites1.id),
-  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
 });
 
 export const siteReportFiles1 = pgTable("siteReportFiles1", {

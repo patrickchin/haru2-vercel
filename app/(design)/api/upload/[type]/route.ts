@@ -33,6 +33,16 @@ async function getProjectFilePath(
   return `project/${project.id}/${filename}`;
 }
 
+async function getReportFilePath(
+  params: Record<string, string>,
+  filename: string,
+) {
+  if (!params.reportId) return;
+  const report = await Actions.getSiteReport(Number(params.reportId));
+  if (!report) return;
+  return `report/${report.id}/${filename}`;
+}
+
 async function getPath(type: string, session: Session, params: Record<string, string>) {
   const unsanFilename = params.filename;
   if (!unsanFilename || unsanFilename.length <= 0) return;
@@ -44,6 +54,8 @@ async function getPath(type: string, session: Session, params: Record<string, st
     return getTaskFilePath(params, filename);
   } else if (type === "project") {
     return getProjectFilePath(params, filename);
+  } else if (type === "report") {
+    return getReportFilePath(params, filename);
   }
 
   console.error("api/upload getPath unknown type:", type);

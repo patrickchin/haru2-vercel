@@ -12,3 +12,10 @@ export type SiteReportNew = Omit<
   typeof Schemas.siteReports1.$inferInsert,
   "id" | "createdAt"
 >;
+export const nullSiteReport: SiteReport = {
+  id: 0,
+  reporterId: null,
+  reporter: null,
+  siteId: null,
+  createdAt: null,
+};

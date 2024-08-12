@@ -51,32 +51,6 @@ export async function getProjectFiles(projectId: number) {
   return db.getFilesForProject(projectId);
 }
 
-export async function addProjectFile(
-  taskId: number,
-  type: string,
-  name: string,
-  size: number,
-  fileUrl: string,
-) {
-  const session = await auth();
-  const task = await db.getTask(taskId);
-  if (!task.projectid) return;
-  const project = await db.getProject(task.projectid);
-  if (!canEditProjectFiles(session, project)) return;
-
-  const userId = Number(session?.user?.id); // error?
-  return db.addFile({
-    projectid: taskId,
-    type: type,
-    filename: name,
-    filesize: size,
-    url: fileUrl,
-    // specid: specId,
-    uploaderid: userId,
-    // commentid: ?,
-  });
-}
-
 export async function addFile(
   args: ({ projectId: number } | { taskId: number }) & {
     type: string;
@@ -144,4 +118,25 @@ export async function deleteFile(fileId: number) {
     deleteFileFromS3(key);
   }
   return f;
+}
+
+export async function addReportFile(args: {
+  reportId: number;
+  type: string;
+  name: string;
+  size: number;
+  fileUrl: string;
+}) {
+  const session = await auth();
+  // if (!canEditProjectFiles(session, project)) return;
+  if (!session?.user) return; // TODO
+
+  return db.addFile({
+    reportId: args.reportId,
+    type: args.type,
+    filename: args.name,
+    filesize: args.size,
+    url: args.fileUrl,
+    uploaderid: session.user.idn,
+  });
 }

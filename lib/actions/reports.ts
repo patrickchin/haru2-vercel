@@ -2,23 +2,21 @@
 
 import * as db from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { z } from "zod";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 
 export async function addUserSite() {
   const session = await auth();
   if (!session?.user) return;
   if (isNaN(session.user.idn)) return;
-  return db.addUserSite(session.user.idn);
+  const sites = db.addUserSite(session.user.idn);
+  revalidatePath("/sites");
+  return sites;
 }
 
 export async function getUserSites() {
   const session = await auth();
   if (!session?.user) return;
   if (isNaN(session.user.idn)) return;
-  const projects = await db.getUserSites(session.user.idn);
-  if (projects.length > 0) return projects;
-  db.addUserSite(session.user.idn);
   return db.getUserSites(session.user.idn);
 }
 
@@ -28,19 +26,20 @@ export async function getSiteReports(siteId: number) {
   return db.getSiteReports(siteId);
 }
 
-export async function addSiteReportForm(siteId: number, data: FormData) {
-  addSiteReport(siteId);
+export async function getSiteReport(reportId: number) {
+  const session = await auth();
+  if (!session?.user) return;
+  return db.getSiteReport(reportId);
 }
 
 export async function addSiteReport(siteId: number) {
   const session = await auth();
   if (!session?.user) return;
-  await db.addSiteReport({
+  return await db.addSiteReport({
     reporterId: session.user.idn,
     siteId: siteId,
   });
-  revalidatePath("/site/[[...slug]]", "page");
-  // revalidateTag();
+  // revalidatePath("/site/[[...slug]]", "page");
 }
 
 export async function getFilesForReport(reportId: number) {
