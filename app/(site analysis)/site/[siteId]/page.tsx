@@ -85,15 +85,15 @@ function ReportsList({
 
   const noreports = !reports || reports.length < 1;
   return (
-    <div className="shrink-0 flex flex-col min-h-0 w-56 p-4 gap-4">
-      <form onSubmit={addSiteReportOnSubmit} className="flex flex-col">
+    <div className="shrink-0 flex flex-col min-h-0 w-56 gap-4 pt-12">
+      <form onSubmit={addSiteReportOnSubmit} className="flex flex-col pr-4">
         <Button>Add Example Report</Button>
       </form>
       <div className={cn("text-center pt-16", noreports ? "" : "hidden")}>
         No Site Reports
       </div>
       <ScrollArea className={cn("grow min-h-0", noreports ? "hidden" : "")}>
-        <ol className="flex flex-col gap-2 p-1 pr-3">
+        <ol className="flex flex-col gap-2 p-1 pr-4">
           {reports?.map((r, i) => (
             <li
               key={i}
@@ -186,13 +186,12 @@ function FileSelector({
     { label: "All" },
     { label: "Pictures" },
     { label: "Videos" },
-    { label: "Documents" },
   ];
 
   return (
-    <div className="flex min-w-0 max-h-64 min-h-64">
-      <ScrollArea className="shrink-0 p-0 bg-muted">
-        <div className="grid gap-2 w-36 py-2">
+    <div className="shrink-0 flex flex-col w-44 pt-12 gap-3">
+      <ScrollArea>
+        <div className="grid gap-2 w-44 px-1">
           <Button className={cn("p-0", selectedReport ? "" : "hidden")}>
             <Label
               htmlFor="upload-report-file"
@@ -210,45 +209,49 @@ function FileSelector({
             </Label>
           </Button>
 
-          {filters.map((f, i) => (
-            <div key={i} className="p-2 bg-background cursor-pointer">
-              {f.label}
-            </div>
-          ))}
-        </div>
-      </ScrollArea>
-
-      <Separator orientation="vertical" />
-
-      {false ? null : (
-        <ScrollArea className="grow flex items-center justify-center min-w-0">
-          <ul className="flex flex-wrap gap-2 p-4 items-center">
-            {files?.map((r, i) => (
-              <li key={i} onClick={() => setSelectedFile(r)}>
-                <Card className="flex flex-col justify-center items-center p-2 overflow-hidden w-28 h-28">
-                  {(r.type?.startsWith("image/") &&
-                    ((r.url && r.url.length > 0 && (
-                      <div className="w-full grow relative">
-                        <Image
-                          src={r.url}
-                          alt={"missing image"}
-                          fill={true}
-                          objectFit="contain"
-                        />
-                      </div>
-                    )) || <LucideCamera className="grow" />)) ||
-                    (r.type?.startsWith("video/") && (
-                      <LucideVideo className="grow" />
-                    )) || <LucideFileText className="grow" />}
-                  <CardDescription className="w-full text-nowrap text-center overflow-hidden">
-                    {r.filename}
-                  </CardDescription>
-                </Card>
+          <ul className="flex flex-col gap-2">
+            {filters.map((f, i) => (
+              <li key={i} className="bg-background cursor-pointer">
+                <Button className="w-full" variant="outline">
+                  {f.label}
+                </Button>
               </li>
             ))}
           </ul>
-        </ScrollArea>
-      )}
+        </div>
+      </ScrollArea>
+
+      <ScrollArea>
+        <ul className="flex flex-col gap-1 p-1 w-44">
+          {files?.map((r, i) => (
+            <li key={i}>
+              <Button
+                variant="secondary"
+                onClick={() => setSelectedFile(r)}
+                className={cn(
+                  "gap-2 px-3 w-full justify-start",
+                  r.id === selectedFile?.id ? "outline" : "",
+                )}
+                disabled={r.id === selectedFile?.id}
+              >
+                <div>
+                  {r.type?.startsWith("image/") ? (
+                    <LucideCamera className="w-4" />
+                  ) : r.type?.startsWith("video/") ? (
+                    <LucideVideo className="w-4" />
+                  ) : (
+                    <LucideFileText className="w-4" />
+                  )}
+                </div>
+
+                <p className="text-nowrap overflow-hidden text-ellipsis">
+                  {r.filename}
+                </p>
+              </Button>
+            </li>
+          ))}
+        </ul>
+      </ScrollArea>
     </div>
   );
 }
@@ -281,11 +284,11 @@ function FileDisplay({
             objectFit="contain"
           />
         ) : selectedFile.type?.startsWith("video/") ? (
-          <video controls>
+          <video controls className="max-w-full max-h-full">
             <source src={selectedFile.url} type={selectedFile.type} />
           </video>
         ) : (
-          <pre className="text-begin w-full">
+          <pre className="text-begin w-full overflow-hidden p-8">
             {JSON.stringify(selectedFile, undefined, 4)}
           </pre>
         ))}
@@ -313,6 +316,7 @@ export default function Page({ params }: { params: { siteId: string } }) {
 
       <main className="grow min-h-0 min-w-0">
         <div className="flex h-full min-h-0 max-w-7xl mx-auto gap-4 py-8">
+          <FileSelector {...props} />
           {/* <div className="flex h-full min-h-0 mx-auto gap-4 py-8"> */}
           <div className="grow flex flex-col min-w-0 gap-4">
             <div className="flex justify-between">
@@ -330,7 +334,6 @@ export default function Page({ params }: { params: { siteId: string } }) {
               </Button>
             </div>
             <FileDisplay {...props} />
-            <FileSelector {...props} />
           </div>
           <ReportsList {...props} />
         </div>
