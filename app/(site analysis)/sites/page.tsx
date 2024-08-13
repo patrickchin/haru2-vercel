@@ -19,17 +19,17 @@ export default async function Page() {
       <form action={Actions.addUserSite}>
         <Button>Register Construction Site</Button>
       </form>
-    <ol>
-      {sites.map((site, i) => {
-        return (
-          <li key={i}>
-            <Button asChild variant="outline">
-              <Link href={`/site/${site.id}`}>Site {site.id}</Link>
-            </Button>
-          </li>
-        );
-      })}
-    </ol>
+      <ol>
+        {sites.map((site, i) => {
+          return (
+            <li key={i}>
+              <Button asChild variant="outline">
+                <Link href={`/site/${site.id}`}>Site {site.id}</Link>
+              </Button>
+            </li>
+          );
+        })}
+      </ol>
     </>
   );
 }

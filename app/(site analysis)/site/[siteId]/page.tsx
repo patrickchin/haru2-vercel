@@ -13,7 +13,6 @@ import { cn } from "@/lib/utils";
 import * as Actions from "@/lib/actions";
 import {
   LucideCamera,
-  LucideChevronRight,
   LucideFileText,
   LucideVideo,
 } from "lucide-react";
@@ -36,7 +35,7 @@ interface ReportsViewerProps {
   setSelectedFile: Dispatch<SetStateAction<HaruFile | undefined>>;
   selectedReport: SiteReport | undefined;
   setSelectedReport: Dispatch<SetStateAction<SiteReport | undefined>>;
-};
+}
 
 function ReportsList({
   siteId,
@@ -57,6 +56,7 @@ function ReportsList({
   );
 
   const addSiteReportOnSubmit = (e: FormEvent) => {
+    e.preventDefault();
     const optimisticData: SiteReport[] = (() => {
       const optimisticReport = {
         ...nullSiteReport,
@@ -72,71 +72,50 @@ function ReportsList({
         return [report, ...cur];
       },
       {
-        revalidate: false,
+        revalidate: true,
         optimisticData,
       },
     );
   };
 
   const onSelectReport = (r: SiteReport) => {
-    // window.history.pushState(
-    //   null,
-    //   "",
-    //   `/site/${siteId}/report/${r.id}`,
-    // );
     setSelectedFile((f?: HaruFile) => undefined);
     setSelectedReport(r);
   };
 
-  if (isLoading) {
-    return (
-      <div className="shrink-0 flex flex-col min-h-0 w-72">Loading...</div>
-    );
-  }
-
-  if (!reports || reports.length < 1) {
-    return (
-      <div className="shrink-0 flex flex-col min-h-0 w-72 py-28 px-8">
-        <form onSubmit={addSiteReportOnSubmit} className="flex flex-col">
-          <Button>Add Example Report</Button>
-        </form>
-        <div className="text-center pt-16">No Site Reports</div>
-      </div>
-    );
-  }
-
+  const noreports = !reports || reports.length < 1;
   return (
-    <div className="shrink-0 flex flex-col min-h-0 w-72">
-      <div className="p-4 border-b">
-        <p>Search </p>
-        <Input />
-      </div>
+    <div className="shrink-0 flex flex-col min-h-0 w-56 p-4 gap-4">
       <form onSubmit={addSiteReportOnSubmit} className="flex flex-col">
         <Button>Add Example Report</Button>
       </form>
-      <ScrollArea className="grow min-h-0 bg-muted">
-        <ol className="flex flex-col gap-2 py-2">
+      <div className={cn("text-center pt-16", noreports ? "" : "hidden")}>
+        No Site Reports
+      </div>
+      <ScrollArea className={cn("grow min-h-0", noreports ? "hidden" : "")}>
+        <ol className="flex flex-col gap-2 p-1 pr-3">
           {reports?.map((r, i) => (
             <li
               key={i}
-              className={cn(
-                "flex flex-col border-b cursor-pointer",
-                // pathname == `/site/${siteId}/report/${r.id}`
-                selectedReport && selectedReport.id === r.id
-                  ? "bg-accent"
-                  : "bg-background ",
-              )}
+              className="flex flex-col"
               onClick={() => onSelectReport(r)}
             >
-              <div className="h-full w-full p-3 flex items-center">
-                <div className="grow">
-                  <div>Date: {r.createdAt?.toLocaleString()}</div>
-                  <div>Reporter: {r.reporter?.name}</div>
+              <Button
+                className={cn(
+                  "h-full w-full p-3 flex items-center",
+                  selectedReport?.id === r.id ? "outline" : "",
+                )}
+                variant="secondary"
+                disabled={selectedReport?.id === r.id}
+              >
+                <div className="grow text-left">
+                  <div>
+                    {r.createdAt?.toLocaleDateString()}{" "}
+                    <span className="text-xs font-normal">{`(${r.id})`}</span>
+                  </div>
+                  <div>{r.reporter?.name}</div>
                 </div>
-                <div>
-                  <LucideChevronRight />
-                </div>
-              </div>
+              </Button>
             </li>
           ))}
         </ol>
@@ -241,7 +220,7 @@ function FileSelector({
 
       <Separator orientation="vertical" />
 
-      {isLoading ? null : (
+      {false ? null : (
         <ScrollArea className="grow flex items-center justify-center min-w-0">
           <ul className="flex flex-wrap gap-2 p-4 items-center">
             {files?.map((r, i) => (
@@ -260,10 +239,7 @@ function FileSelector({
                     )) || <LucideCamera className="grow" />)) ||
                     (r.type?.startsWith("video/") && (
                       <LucideVideo className="grow" />
-                    )) || (
-                      <LucideFileText className="grow" />
-                    )
-                    }
+                    )) || <LucideFileText className="grow" />}
                   <CardDescription className="w-full text-nowrap text-center overflow-hidden">
                     {r.filename}
                   </CardDescription>
@@ -287,8 +263,9 @@ function FileDisplay({
   return (
     <div
       className={cn(
-        "h-full w-full flex flex-col gap-8 items-center justify-center",
-        "overflow-y-scroll relative",
+        "h-[36rem] w-full flex flex-col gap-8 items-center justify-center relative",
+        // "overflow-y-scroll",
+        "border-4 border-black",
         "bg-gradient-to-r from-cyan-100 to-blue-100",
       )}
     >
@@ -316,17 +293,6 @@ function FileDisplay({
   );
 }
 
-// export default function Page({ params }: { params: { slug: string[] } }) {
-//   const origSiteId = params.slug.length > 0 ? Number(params.slug[0]) : NaN;
-//   const origReportId =
-//     params.slug.length >= 3 && params.slug[1] == "report"
-//       ? Number(params.slug[2])
-//       : NaN;
-//   const origFileId =
-//     params.slug.length >= 5 && params.slug[3] == "file"
-//       ? Number(params.slug[4])
-//       : NaN;
-
 export default function Page({ params }: { params: { siteId: string } }) {
   const origSiteId = Number(params.siteId);
   const [siteId, setSiteId] = useState(origSiteId);
@@ -345,13 +311,28 @@ export default function Page({ params }: { params: { siteId: string } }) {
     <div className="flex flex-col h-screen">
       <Header />
 
-      <main className="grow flex min-h-0 min-w-0">
-        <ReportsList {...props} />
-        <Separator orientation="vertical" />
-        <div className="grow flex flex-col min-w-0">
-          <FileDisplay {...props} />
-          <Separator />
-          <FileSelector {...props} />
+      <main className="grow min-h-0 min-w-0">
+        <div className="flex h-full min-h-0 max-w-7xl mx-auto gap-4 py-8">
+          {/* <div className="flex h-full min-h-0 mx-auto gap-4 py-8"> */}
+          <div className="grow flex flex-col min-w-0 gap-4">
+            <div className="flex justify-between">
+              <h3>Site Report - {selectedReport?.createdAt?.toDateString()}</h3>
+              <Button
+                className="hidden"
+                variant="destructive"
+                onClick={() => {
+                  selectedReport && Actions.deleteSiteReport(selectedReport.id);
+                  setSelectedReport(() => undefined);
+                }
+                }
+              >
+                Delete Report
+              </Button>
+            </div>
+            <FileDisplay {...props} />
+            <FileSelector {...props} />
+          </div>
+          <ReportsList {...props} />
         </div>
       </main>
     </div>

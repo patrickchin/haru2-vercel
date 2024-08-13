@@ -42,6 +42,13 @@ export async function addSiteReport(siteId: number) {
   // revalidatePath("/site/[[...slug]]", "page");
 }
 
+export async function deleteSiteReport(reportId: number) {
+  const session = await auth();
+  if (!session?.user) return;
+  return await db.deleteSiteReport(reportId);
+  // revalidatePath("/site/[[...slug]]", "page");
+}
+
 export async function getFilesForReport(reportId: number) {
   const session = await auth();
   if (!session?.user) return;

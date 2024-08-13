@@ -85,3 +85,11 @@ export async function addSiteReport(
     .returning()
     .then((r) => r[0]);
 }
+
+export async function deleteSiteReport(reportId: number): Promise<SiteReport> {
+  return db
+    .delete(Schemas.siteReports1)
+    .where(eq(Schemas.siteReports1.id, reportId))
+    .returning()
+    .then((r) => r[0]);
+}
