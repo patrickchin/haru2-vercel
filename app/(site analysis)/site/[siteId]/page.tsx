@@ -26,6 +26,8 @@ import { nullSiteReport, SiteReport } from "@/lib/types/site";
 import { uploadReportFile } from "@/lib/utils/upload";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
+import Footer from "@/components/footer";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ReportsViewerProps {
   siteId: number;
@@ -83,15 +85,15 @@ function ReportsList({
 
   const noreports = !reports || reports.length < 1;
   return (
-    <div className="shrink-0 flex flex-col min-h-0 w-56 gap-4 pt-12">
-      <form onSubmit={addSiteReportOnSubmit} className="flex flex-col pr-4">
+    <div className="flex-none flex flex-col min-h-0 gap-4 w-56">
+      <form onSubmit={addSiteReportOnSubmit} className="flex flex-col p-1">
         <Button>Add Example Report</Button>
       </form>
       <div className={cn("text-center pt-16", noreports ? "" : "hidden")}>
         No Site Reports
       </div>
       <ScrollArea className={cn("grow min-h-0", noreports ? "hidden" : "")}>
-        <ol className="flex flex-col gap-2 p-1 pr-4">
+        <ol className="flex flex-col gap-2 p-1">
           {reports?.map((r, i) => (
             <li
               key={i}
@@ -104,7 +106,7 @@ function ReportsList({
                   selectedReport?.id === r.id ? "outline" : "",
                 )}
                 variant="secondary"
-                disabled={selectedReport?.id === r.id}
+                // disabled={selectedReport?.id === r.id}
               >
                 <div className="grow text-left">
                   <div>
@@ -196,7 +198,7 @@ function FileSelector({
   }
 
   return (
-    <div className="shrink-0 flex flex-col w-44 pt-12 gap-3">
+    <div className="flex-none flex flex-col gap-3">
       <div className="grid gap-2 w-44 px-1">
         <Button className={cn("p-0", selectedReport ? "" : "hidden")}>
           <Label
@@ -209,7 +211,7 @@ function FileSelector({
               id="upload-report-file"
               className="hidden"
               onChange={onChangeUploadFile}
-              disabled={isUploading}
+              // disabled={isUploading}
               multiple
             />
           </Label>
@@ -237,29 +239,36 @@ function FileSelector({
         <ul className="flex flex-col gap-1 p-1 w-44">
           {filteredFiles?.map((r, i) => (
             <li key={i}>
-              <Button
-                variant="secondary"
-                onClick={() => setSelectedFile(r)}
-                className={cn(
-                  "gap-2 px-3 w-full justify-start",
-                  r.id === selectedFile?.id ? "outline" : "",
-                )}
-                disabled={r.id === selectedFile?.id}
-              >
-                <div>
-                  {r.type?.startsWith("image/") ? (
-                    <LucideCamera className="w-4" />
-                  ) : r.type?.startsWith("video/") ? (
-                    <LucideVideo className="w-4" />
-                  ) : (
-                    <LucideFileText className="w-4" />
-                  )}
-                </div>
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="secondary"
+                      onClick={() => setSelectedFile(r)}
+                      className={cn(
+                        "gap-2 px-3 w-full justify-start",
+                        r.id === selectedFile?.id ? "outline" : "",
+                      )}
+                      // disabled={r.id === selectedFile?.id}
+                    >
+                      <div>
+                        {r.type?.startsWith("image/") ? (
+                          <LucideCamera className="w-4" />
+                        ) : r.type?.startsWith("video/") ? (
+                          <LucideVideo className="w-4" />
+                        ) : (
+                          <LucideFileText className="w-4" />
+                        )}
+                      </div>
 
-                <p className="text-nowrap overflow-hidden text-ellipsis">
-                  {r.filename}
-                </p>
-              </Button>
+                      <p className="text-nowrap overflow-hidden text-ellipsis">
+                        {r.filename}
+                      </p>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="left">{r.filename}</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </li>
           ))}
         </ul>
@@ -278,9 +287,9 @@ function FileDisplay({
   return (
     <div
       className={cn(
-        "h-[36rem] w-full flex flex-col gap-8 items-center justify-center relative",
+        "grow flex flex-col items-center justify-center relative",
         // "overflow-y-scroll",
-        "border-4 border-black",
+        "border-4 border-black rounded",
         "bg-gradient-to-r from-cyan-100 to-blue-100",
       )}
     >
@@ -300,10 +309,31 @@ function FileDisplay({
             <source src={selectedFile.url} type={selectedFile.type} />
           </video>
         ) : (
-          <pre className="text-begin w-full overflow-hidden p-8">
-            {JSON.stringify(selectedFile, undefined, 4)}
-          </pre>
+          <div className="relative w-full h-full overflow-auto p-6">
+            <pre className="absolute text-begin overflow-hidden">
+              {JSON.stringify(selectedFile, undefined, 4)}
+            </pre>
+          </div>
         ))}
+    </div>
+  );
+}
+
+function ReportTitle(params: ReportsViewerProps) {
+  return (
+    <div className="flex justify-between">
+      <h3>Site Report - {params.selectedReport?.createdAt?.toDateString()}</h3>
+      <Button
+        className="hidden"
+        variant="destructive"
+        onClick={() => {
+          params.selectedReport &&
+            Actions.deleteSiteReport(params.selectedReport.id);
+          params.setSelectedReport(() => undefined);
+        }}
+      >
+        Delete Report
+      </Button>
     </div>
   );
 }
@@ -323,33 +353,22 @@ export default function Page({ params }: { params: { siteId: string } }) {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col min-h-screen">
       <Header />
 
-      <main className="grow min-h-0 min-w-0">
-        <div className="flex h-full min-h-0 max-w-7xl mx-auto gap-4 py-8">
-          <FileSelector {...props} />
-          {/* <div className="flex h-full min-h-0 mx-auto gap-4 py-8"> */}
-          <div className="grow flex flex-col min-w-0 gap-4">
-            <div className="flex justify-between">
-              <h3>Site Report - {selectedReport?.createdAt?.toDateString()}</h3>
-              <Button
-                className="hidden"
-                variant="destructive"
-                onClick={() => {
-                  selectedReport && Actions.deleteSiteReport(selectedReport.id);
-                  setSelectedReport(() => undefined);
-                }
-                }
-              >
-                Delete Report
-              </Button>
-            </div>
-            <FileDisplay {...props} />
-          </div>
-          <ReportsList {...props} />
+      <main className="grow flex flex-col items-center px-16 py-8 gap-4">
+        <div className="w-full max-w-7xl pl-60">
+          <ReportTitle {...props} />
         </div>
+        {/* <section className="grid grid-cols-[14rem_auto_11rem] gap-4 w-full max-w-7xl h-[36rem]"> */}
+        <section className="flex gap-4 w-full max-w-7xl h-[36rem]">
+          <ReportsList {...props} />
+          <FileDisplay {...props} />
+          <FileSelector {...props} />
+        </section>
       </main>
+
+      <Footer />
     </div>
   );
 }
