@@ -156,8 +156,6 @@ export const otps1 = pgTable("otps1", {
   expiresAt: timestamp("expiresAt", { mode: "date" }).notNull(),
 });
 
-
-
 // TODO could move to a separate file:
 // ============================== Site Analysis ==============================
 

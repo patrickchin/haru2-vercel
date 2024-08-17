@@ -126,7 +126,10 @@ export async function addReportFile(reportId: number) {
     .select(HaruFileColumns)
     .from(Schemas.files1)
     .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderid))
-    .leftJoin(Schemas.siteReportFiles1, eq(Schemas.siteReportFiles1.fileId, Schemas.files1.id))
+    .leftJoin(
+      Schemas.siteReportFiles1,
+      eq(Schemas.siteReportFiles1.fileId, Schemas.files1.id),
+    )
     .where(eq(Schemas.siteReportFiles1.reportId, reportId));
 }
 
@@ -135,6 +138,9 @@ export async function getFilesForReport(reportId: number) {
     .select(HaruFileColumns)
     .from(Schemas.files1)
     .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderid))
-    .leftJoin(Schemas.siteReportFiles1, eq(Schemas.siteReportFiles1.fileId, Schemas.files1.id))
+    .leftJoin(
+      Schemas.siteReportFiles1,
+      eq(Schemas.siteReportFiles1.fileId, Schemas.files1.id),
+    )
     .where(eq(Schemas.siteReportFiles1.reportId, reportId));
 }

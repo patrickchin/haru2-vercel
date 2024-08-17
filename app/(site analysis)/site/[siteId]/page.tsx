@@ -20,8 +20,6 @@ import {
 import Header from "@/components/header";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Card, CardDescription } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { HaruFile, nullHaruFile } from "@/lib/types";
 import { nullSiteReport, SiteReport } from "@/lib/types/site";
@@ -137,9 +135,11 @@ function FileSelector({
     isLoading,
   } = useSWR<HaruFile[] | undefined>(
     `/api/report/${selectedReport?.id}/files`, // api route doesn't really exist
-    () => {
+    async () => {
       if (!selectedReport) return [];
-      return Actions.getFilesForReport(selectedReport.id) || [];
+      // fetch("/api/v1/report/files/${id}")
+      const files = await Actions.getFilesForReport(selectedReport.id);
+      return files || [];
     },
   );
 
@@ -149,6 +149,18 @@ function FileSelector({
   if (!selectedFile && files?.length) {
     setSelectedFile(files[0]);
   }
+
+  const [mimeFilter, setMimeFilter] = useState("");
+
+  const filters = [
+    { label: "All", mime: ""},
+    { label: "Pictures", mime: "image/" },
+    { label: "Videos", mime: "video/" },
+  ];
+
+  const filteredFiles = files?.filter((f) => {
+    return f.type?.startsWith(mimeFilter);
+  });
 
   async function onChangeUploadFile(e: ChangeEvent<HTMLInputElement>) {
     const targetFiles = e.currentTarget.files;
@@ -182,11 +194,6 @@ function FileSelector({
       setIsUploading(false);
     }
   }
-  const filters = [
-    { label: "All" },
-    { label: "Pictures" },
-    { label: "Videos" },
-  ];
 
   return (
     <div className="shrink-0 flex flex-col w-44 pt-12 gap-3">
@@ -211,7 +218,14 @@ function FileSelector({
         <ul className="flex flex-col gap-2">
           {filters.map((f, i) => (
             <li key={i} className="bg-background cursor-pointer">
-              <Button className="w-full" variant="outline">
+              <Button
+                className={cn("w-full", f.mime == mimeFilter ? "outline" : "")}
+                variant="outline"
+                disabled={f.mime == mimeFilter}
+                onClick={() => {
+                  setMimeFilter(f.mime);
+                }}
+              >
                 {f.label}
               </Button>
             </li>
@@ -221,7 +235,7 @@ function FileSelector({
 
       <ScrollArea>
         <ul className="flex flex-col gap-1 p-1 w-44">
-          {files?.map((r, i) => (
+          {filteredFiles?.map((r, i) => (
             <li key={i}>
               <Button
                 variant="secondary"
