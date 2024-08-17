@@ -22,6 +22,7 @@ async function doUpload(type: string, params: Record<string, any>, file: File) {
 
   const uploadResponse = await fetch(url, { method: "POST", body: formData });
   if (!uploadResponse.ok) {
+    console.log("upload response: ", uploadResponse, uploadResponse.body);
     throw new Error("UploadFailed");
   }
   return fileUrl;
