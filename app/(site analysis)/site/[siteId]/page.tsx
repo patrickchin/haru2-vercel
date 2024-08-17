@@ -190,36 +190,34 @@ function FileSelector({
 
   return (
     <div className="shrink-0 flex flex-col w-44 pt-12 gap-3">
-      <ScrollArea>
-        <div className="grid gap-2 w-44 px-1">
-          <Button className={cn("p-0", selectedReport ? "" : "hidden")}>
-            <Label
-              htmlFor="upload-report-file"
-              className="flex w-full h-full cursor-pointer justify-center items-center"
-            >
-              Add Example File
-              <Input
-                type="file"
-                id="upload-report-file"
-                className="hidden"
-                onChange={onChangeUploadFile}
-                disabled={isUploading}
-                multiple
-              />
-            </Label>
-          </Button>
+      <div className="grid gap-2 w-44 px-1">
+        <Button className={cn("p-0", selectedReport ? "" : "hidden")}>
+          <Label
+            htmlFor="upload-report-file"
+            className="flex w-full h-full cursor-pointer justify-center items-center"
+          >
+            Add Example File
+            <Input
+              type="file"
+              id="upload-report-file"
+              className="hidden"
+              onChange={onChangeUploadFile}
+              disabled={isUploading}
+              multiple
+            />
+          </Label>
+        </Button>
 
-          <ul className="flex flex-col gap-2">
-            {filters.map((f, i) => (
-              <li key={i} className="bg-background cursor-pointer">
-                <Button className="w-full" variant="outline">
-                  {f.label}
-                </Button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </ScrollArea>
+        <ul className="flex flex-col gap-2">
+          {filters.map((f, i) => (
+            <li key={i} className="bg-background cursor-pointer">
+              <Button className="w-full" variant="outline">
+                {f.label}
+              </Button>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       <ScrollArea>
         <ul className="flex flex-col gap-1 p-1 w-44">
