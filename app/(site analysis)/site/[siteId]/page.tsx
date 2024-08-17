@@ -302,7 +302,7 @@ function FileDisplay({
             src={selectedFile.url}
             alt={selectedFile.filename || "<Untitled>"}
             fill={true}
-            objectFit="contain"
+            className="object-contain"
           />
         ) : selectedFile.type?.startsWith("video/") ? (
           <video controls className="max-w-full max-h-full">
@@ -324,7 +324,7 @@ function ReportTitle(params: ReportsViewerProps) {
     <div className="flex justify-between">
       <h3>Site Report - {params.selectedReport?.createdAt?.toDateString()}</h3>
       <Button
-        className="hidden"
+       className="hidden"
         variant="destructive"
         onClick={() => {
           params.selectedReport &&
@@ -334,6 +334,33 @@ function ReportTitle(params: ReportsViewerProps) {
       >
         Delete Report
       </Button>
+    </div>
+  );
+}
+
+function ReportDocument() {
+  const cnlabel = "font-bold text-end";
+  const cnvalue = "";
+  return (
+    <div className="grid grid-cols-[15rem_1fr] w-full gap-4">
+      <div className={cnlabel}>Visit Conducted By</div>
+      <div className={cnvalue}>a</div>
+      <div className={cnlabel}>Site Address</div>
+      <div className={cnvalue}>a</div>
+      <div className={cnlabel}>Site Condition</div>
+      <div className={cnvalue}>a</div>
+      <div className={cnlabel}>Work in Progress</div>
+      <div className={cnvalue}>a</div>
+      <div className={cnlabel}>Observations</div>
+      <div className={cnvalue}>a</div>
+      <div className={cnlabel}>Additional Details</div>
+      <div className={cnvalue}>a</div>
+      <div className={cnlabel}>In Charge Signature</div>
+      <div className={cnvalue}>a</div>
+      <div className={cnlabel}>Engineer Signature</div>
+      <div className={cnvalue}>a</div>
+      <div className={cnlabel}>Visitor Signature</div>
+      <div className={cnvalue}>a</div>
     </div>
   );
 }
@@ -357,7 +384,7 @@ export default function Page({ params }: { params: { siteId: string } }) {
       <Header />
 
       <main className="grow flex flex-col items-center px-16 py-8 gap-4">
-        <div className="w-full max-w-7xl pl-60">
+        <div className="w-full max-w-7xl pl-60 pr-48">
           <ReportTitle {...props} />
         </div>
         {/* <section className="grid grid-cols-[14rem_auto_11rem] gap-4 w-full max-w-7xl h-[36rem]"> */}
@@ -365,6 +392,10 @@ export default function Page({ params }: { params: { siteId: string } }) {
           <ReportsList {...props} />
           <FileDisplay {...props} />
           <FileSelector {...props} />
+        </section>
+
+        <section className="w-full max-w-7xl pl-60 pr-48 pt-8">
+          <ReportDocument />
         </section>
       </main>
 
