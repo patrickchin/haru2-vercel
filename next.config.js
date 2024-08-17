@@ -14,20 +14,17 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        hostname: process.env.BLOB_STORE_HOSTNAME || "",
+        hostname: `${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`,
       },
       {
-        protocol: "https",
-        hostname: `${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`,
-        port: "",
-        pathname: "**",
+        hostname: process.env.BLOB_STORE_HOSTNAME || "",
       },
     ],
     // deprecated, but I'm missing something from remotePatterns ...
     // so it doesn't work in dev
-    domains: [
-      `${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`,
-    ],
+    // domains: [
+    //   `${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`,
+    // ],
   },
 };
 
