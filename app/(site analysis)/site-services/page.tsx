@@ -1,5 +1,4 @@
 import { CenteredLayout } from "@/components/page-layouts";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";

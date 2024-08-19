@@ -18,9 +18,9 @@ import { UserAvatar } from "./user-avatar";
 const navigation = [
   { name: "New Design Project", href: "/new-project" },
   { name: "Design Projects", href: "/projects" },
-  { name: "New Site Projects", href: "/new-site" },
+  { name: "New Site Project", href: "/new-site" },
   { name: "Site Projects", href: "/sites" },
-  { name: "Site Services", href: "/services" },
+  { name: "Site Services", href: "/site-services" },
 ];
 
 export function MainNav() {
