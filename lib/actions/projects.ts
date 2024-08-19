@@ -1,7 +1,6 @@
 "use server";
 import * as db from "@/lib/db";
 import { Session } from "next-auth";
-import "@/lib/auth";
 import { auth } from "@/lib/auth";
 import * as blob from "@vercel/blob";
 import { DesignProject, defaultTeams } from "@/lib/types";
