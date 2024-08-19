@@ -73,7 +73,7 @@ function PersonnelDetailsFields({
   );
 }
 
-export function NewSiteForm() {
+function NewSiteForm() {
   const form = useForm({
     // resolver: zodResolver(LoginSchemaPassword),
   });

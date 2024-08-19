@@ -8,14 +8,11 @@ import {
   useState,
 } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import useSWR from "swr";
 import { cn } from "@/lib/utils";
 import * as Actions from "@/lib/actions";
-import {
-  LucideCamera,
-  LucideFileText,
-  LucideVideo,
-} from "lucide-react";
+import { LucideCamera, LucideFileText, LucideVideo } from "lucide-react";
 
 import Header from "@/components/header";
 import { Input } from "@/components/ui/input";
@@ -27,7 +24,12 @@ import { uploadReportFile } from "@/lib/utils/upload";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
 import Footer from "@/components/footer";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ReportsViewerProps {
   siteId: number;
@@ -155,7 +157,7 @@ function FileSelector({
   const [mimeFilter, setMimeFilter] = useState("");
 
   const filters = [
-    { label: "All", mime: ""},
+    { label: "All", mime: "" },
     { label: "Pictures", mime: "image/" },
     { label: "Videos", mime: "video/" },
   ];
@@ -323,17 +325,22 @@ function ReportTitle(params: ReportsViewerProps) {
   return (
     <div className="flex justify-between">
       <h3>Site Report - {params.selectedReport?.createdAt?.toDateString()}</h3>
-      <Button
-       className="hidden"
-        variant="destructive"
-        onClick={() => {
-          params.selectedReport &&
-            Actions.deleteSiteReport(params.selectedReport.id);
-          params.setSelectedReport(() => undefined);
-        }}
-      >
-        Delete Report
-      </Button>
+      <div className="flex gap-2">
+        <Button variant="secondary" onClick={() => {}}>
+          <Link href={`/site/${params.siteId}/questions`}>Add Questions</Link>
+        </Button>
+        <Button
+          // className="hidden"
+          variant="destructive"
+          onClick={() => {
+            params.selectedReport &&
+              Actions.deleteSiteReport(params.selectedReport.id);
+            params.setSelectedReport(() => undefined);
+          }}
+        >
+          Delete Report
+        </Button>
+      </div>
     </div>
   );
 }
