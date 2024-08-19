@@ -1,7 +1,7 @@
 import type { Config } from "drizzle-kit";
 
 // needed for drizzle studio
-require("dotenv").config({ path: [".env.production.local"] });
+require("dotenv").config({ path: [".env.local"] });
 console.log("Using SSL", process.env.POSTGRES_SSL, process.env.POSTGRES_SSL != "false");
 
 export default {
