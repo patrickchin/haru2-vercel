@@ -14,8 +14,6 @@ const apiUrl = process.env.VONAGE_WHATSAPP_API_URL as string;
 const privateKey = process.env.VONAGE_PRIVATE_KEY as string;
 const templateName = process.env.VONAGE_TEMPLATE_NAME as string;
 
-const JWT = tokenGenerate(applicationId, privateKey);
-
 // Function to generate OTP
 function generateOTP(): string {
   return crypto.randomInt(100000, 999999).toString();
@@ -79,6 +77,8 @@ export async function sendOtpViaWhatsApp(phone: string) {
       // or unknown?
       return FailedToSendWhatsappOTP;
     }
+
+    const JWT = tokenGenerate(applicationId, privateKey);
 
     const response = await fetch(apiUrl, {
       method: "POST",
