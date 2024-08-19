@@ -3,7 +3,7 @@ import Footer from "./footer";
 import Header from "./header";
 import { cn } from "@/lib/utils";
 
-export function SimpleLayout({ children }: { children: React.ReactNode }) {
+export function SimpleLayout({ children }: { children?: React.ReactNode }) {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -20,7 +20,7 @@ export function SimpleLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function CenteredLayout({ children }: { children: React.ReactNode }) {
+export function CenteredLayout({ children }: { children?: React.ReactNode }) {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -34,7 +34,7 @@ export function CenteredLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function WideLayout({ children }: { children: React.ReactNode }) {
+export function WideLayout({ children }: { children?: React.ReactNode }) {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
