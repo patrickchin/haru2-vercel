@@ -16,8 +16,11 @@ import {
 import { UserAvatar } from "./user-avatar";
 
 const navigation = [
-  { name: "New Project", href: "/new-project" },
-  { name: "My Projects", href: "/projects" },
+  { name: "New Design Project", href: "/new-project" },
+  { name: "Design Projects", href: "/projects" },
+  { name: "New Site Projects", href: "/new-site" },
+  { name: "Site Projects", href: "/sites" },
+  { name: "Site Services", href: "/services" },
 ];
 
 export function MainNav() {
@@ -40,7 +43,6 @@ export function MainNav() {
 }
 
 function UserNav({ user }: { user?: User }) {
-
   const signOutAction = async () => {
     await signOut({
       redirect: true,
@@ -104,9 +106,7 @@ export default function Header() {
       <div className="flex h-16 items-center px-8 mx-auto max-w-6xl">
         <Link href="/" className="mr-6 flex items-center space-x-2">
           <LucideConstruction className="h-6 w-6" />
-          <span className="hidden font-bold sm:inline-block">
-            HarpaPro
-          </span>
+          <span className="hidden font-bold sm:inline-block">HarpaPro</span>
         </Link>
 
         <MainNav />
