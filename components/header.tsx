@@ -15,33 +15,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { UserAvatar } from "./user-avatar";
 
-const navigation = [
-  { name: "New Design Project", href: "/new-project" },
-  { name: "Design Projects", href: "/projects" },
-  { name: "New Site Project", href: "/new-site" },
-  { name: "Site Projects", href: "/sites" },
-  { name: "Site Services", href: "/site-services" },
-];
-
-export function MainNav() {
-  const pathname = usePathname();
-  const firstPath = "/" + pathname.split("/", 2)[1]; // make sure length > 1 ?
-  return (
-    <div className="flex items-center mx-6">
-      {navigation.map((item, i) => (
-        <Button
-          key={i}
-          asChild
-          variant="link"
-          className={firstPath == item.href ? "underline" : ""}
-        >
-          <Link href={item.href}>{item.name}</Link>
-        </Button>
-      ))}
-    </div>
-  );
-}
-
 function UserNav({ user }: { user?: User }) {
   const signOutAction = async () => {
     await signOut({
@@ -108,8 +81,6 @@ export default function Header() {
           <LucideConstruction className="h-6 w-6" />
           <span className="hidden font-bold sm:inline-block">HarpaPro</span>
         </Link>
-
-        <MainNav />
 
         <div className="ml-auto flex items-center space-x-4">
           <LoginOrUserSettings />
