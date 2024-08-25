@@ -18,9 +18,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { LucideLoader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function Page() {
-  const router = useRouter();
   const form = useForm<RegisterSchemaType>({
     resolver: zodResolver(RegisterSchema),
   });
@@ -112,7 +113,7 @@ export default function Page() {
 
             <FormField
               control={form.control}
-              name="password"
+              name="confirmPassword"
               render={({ field }) => (
                 <FormItem className="flex flex-col items-start">
                   <FormLabel className="text-left">
@@ -127,8 +128,20 @@ export default function Page() {
               )}
             />
 
-            <Button className="text-sm mt-2" type="submit">
+            <FormMessage>{form.formState.errors.root?.message}</FormMessage>
+
+            <Button
+              type="submit"
+              className="w-full flex gap-2"
+              disabled={form.formState.isSubmitting}
+            >
               Sign Up
+              <LucideLoader2
+                className={cn(
+                  "animate-spin w-4 h-4",
+                  form.formState.isSubmitting ? "" : "hidden",
+                )}
+              />
             </Button>
 
             <p className="text-center text-sm text-gray-600">
