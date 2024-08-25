@@ -6,6 +6,7 @@ import * as Actions from "@/lib/actions";
 
 // is this even still maintained??
 import sanitizeFilename from "sanitize-filename";
+import { randomUUID } from "crypto";
 
 function getAvatarPath(session: Session, filename: string) {
   const userId = Number(session.user?.id);
@@ -43,10 +44,19 @@ async function getReportFilePath(
   return `report/${report.id}/${filename}`;
 }
 
-async function getPath(type: string, session: Session, params: Record<string, string>) {
+function addRandomUid(filename: string) {
+  const uuid = randomUUID();
+  return `${uuid}-${filename}`;
+}
+
+async function getPath(
+  type: string,
+  session: Session,
+  params: Record<string, string>,
+) {
   const unsanFilename = params.filename;
   if (!unsanFilename || unsanFilename.length <= 0) return;
-  const filename = sanitizeFilename(unsanFilename);
+  const filename = addRandomUid(sanitizeFilename(unsanFilename));
 
   if (type === "avatar") {
     return getAvatarPath(session, filename);
