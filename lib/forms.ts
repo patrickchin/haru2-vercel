@@ -1,6 +1,6 @@
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
-import { isValidPhoneNumber } from "react-phone-number-input";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 function allFilesSmall(list: FileList | undefined) {
   if (list === undefined) return true;

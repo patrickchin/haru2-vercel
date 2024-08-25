@@ -161,6 +161,9 @@ importers:
       javascript-time-ago:
         specifier: ^2.5.10
         version: 2.5.10
+      libphonenumber-js:
+        specifier: ^1.11.7
+        version: 1.11.7
       lucide-react:
         specifier: ^0.331.0
         version: 0.331.0(react@18.3.1)
