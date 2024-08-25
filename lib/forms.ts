@@ -1,5 +1,6 @@
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
+import { isValidPhoneNumber } from "react-phone-number-input";
 
 function allFilesSmall(list: FileList | undefined) {
   if (list === undefined) return true;
@@ -34,12 +35,9 @@ export const NewProjectFormSchema = z.object({
 export type NewProjectFormSchemaType = z.infer<typeof NewProjectFormSchema>;
 export type NewProjectFormType = UseFormReturn<NewProjectFormSchemaType>;
 
-export const phoneNumberRegex = /^\+?[0-9\s\-]+$/;
 export const phoneNumberZod = z
   .string()
-  .min(4, "Phone must contain at least 5 characters")
-  .max(32, "Phone cannot contain more than 32 characters")
-  .regex(phoneNumberRegex, "Phone contains invalid characters");
+  .refine(isValidPhoneNumber, { message: "Invalid phone number" });
 export const otpZod = z
   .string()
   .min(6, "Passcode must be 6 digits long")
@@ -64,11 +62,7 @@ export const RegisterSchema = z
 export type RegisterSchemaType = z.infer<typeof RegisterSchema>;
 
 export const LoginSchemaPhone = z.object({
-  phone: z
-    .string()
-    .min(4, "Phone must contain at least 5 characters")
-    .max(32, "Phone cannot contain more than 32 characters")
-    .regex(phoneNumberRegex, "Invalid phone number"),
+  phone: phoneNumberZod,
   otp: z.string().min(6).max(6).regex(/^\d+$/, "OTP must be 6 digits"),
 });
 export const LoginSchemaEmail = z.object({

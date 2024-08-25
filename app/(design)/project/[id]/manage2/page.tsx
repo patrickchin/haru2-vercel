@@ -3,9 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { getProject } from "@/lib/actions";
-import { auth } from "@/lib/auth";
-import { getTaskSpecs } from "@/lib/db";
+import { getProject, getTaskSpecs } from "@/lib/actions";
 import { DesignProject, DesignTaskSpec } from "@/lib/types";
 import { LucideMoveLeft } from "lucide-react";
 import Link from "next/link";
@@ -15,7 +13,7 @@ import { Suspense } from "react";
 async function ProjectManagement({ projectId }: { projectId: number }) {
   const project: DesignProject | undefined = await getProject(projectId);
   if (project === undefined) notFound();
-  const specs: DesignTaskSpec[] = await getTaskSpecs();
+  const specs: DesignTaskSpec[] = await getTaskSpecs() || [];
 
   const groupedSpecs: Record<string, DesignTaskSpec[]> = {};
   specs.forEach((spec) => {
