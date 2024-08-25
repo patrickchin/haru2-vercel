@@ -17,6 +17,7 @@ import {
   InvalidInputError,
   UnknownError,
 } from "@/lib/errors";
+import { redirect } from "next/navigation";
 
 export async function getAllUsers() {
   const session = await auth();
@@ -47,6 +48,8 @@ export async function registerUser(data: RegisterSchemaType) {
     console.log(`Failed to register user ${error}`);
     return UnknownError;
   }
+
+  redirect("/login");
 }
 
 export async function signInFromLogin(

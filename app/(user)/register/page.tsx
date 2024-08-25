@@ -4,32 +4,31 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { registerUser } from "@/lib/actions";
 import { SimpleLayout } from "@/components/page-layouts";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterSchema, RegisterSchemaType } from "@/lib/forms";
+import { PhoneInput } from "@/components/ui/phone-input";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 export default function Page() {
   const router = useRouter();
-  const {
-    register,
-    handleSubmit,
-    setError,
-    formState: { errors },
-  } = useForm<RegisterSchemaType>({
+  const form = useForm<RegisterSchemaType>({
     resolver: zodResolver(RegisterSchema),
   });
 
   const onSubmit: SubmitHandler<RegisterSchemaType> = async (data) => {
     const ret = await registerUser(data);
-    if (!ret) {
-      router.push("/login");
-    } else if (ret?.error) {
-      // TODO
-      console.error("Error trying to register user");
+    if (ret?.error) {
+      form.setError("root", { message: "Failed to register user" });
     }
   };
 
@@ -41,110 +40,106 @@ export default function Page() {
           <p>Create an account with your email and password</p>
         </div>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-y-4 bg-gray-50 px-16 py-6"
-        >
-          <div>
-            <Label htmlFor="name" className="text-xs uppercase">
-              Name <span className="font-bold text-red-400">*</span>
-              <Input
-                {...register("name")}
-                required
-                className="text-sm"
-                type="text"
-                placeholder=""
-              />
-            </Label>
-            {errors.name && (
-              <p className="text-sm font-medium text-destructive">
-                {errors.name.message}
-              </p>
-            )}
-          </div>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col gap-y-4 bg-gray-50 px-16 py-6"
+          >
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem className="flex flex-col items-start">
+                  <FormLabel className="text-left">
+                    Name
+                    <span className="font-bold text-red-400 ml-1">*</span>
+                  </FormLabel>
+                  <FormControl className="w-full">
+                    <Input placeholder="Enter a phone number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <div>
-            <Label htmlFor="phone" className="text-xs uppercase">
-              Phone Number
-              <Input
-                {...register("phone")}
-                className="text-sm"
-                type="tel"
-                placeholder="+254"
-              />
-            </Label>
-            {errors.phone && (
-              <p className="text-sm font-medium text-destructive">
-                {errors.phone.message}
-              </p>
-            )}
-          </div>
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem className="flex flex-col items-start">
+                  <FormLabel className="text-left">Phone Number</FormLabel>
+                  <FormControl className="w-full">
+                    <PhoneInput placeholder="Enter a phone number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <div>
-            <Label htmlFor="email" className="text-xs uppercase">
-              Email Address <span className="font-bold text-red-400">*</span>
-              <Input
-                {...register("email")}
-                type="email"
-                placeholder="user@acme.com"
-                autoComplete="email"
-                required
-                className="text-sm"
-              />
-            </Label>
-            {errors.email && (
-              <p className="text-sm font-medium text-destructive">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem className="flex flex-col items-start">
+                  <FormLabel className="text-left">
+                    Email Address
+                    <span className="font-bold text-red-400 ml-1">*</span>
+                  </FormLabel>
+                  <FormControl className="w-full">
+                    <Input type="email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <div>
-            <Label htmlFor="password" className="text-xs uppercase">
-              Password <span className="font-bold text-red-400">*</span>
-              <Input
-                {...register("password")}
-                type="password"
-                required
-                className="text-sm"
-              />
-            </Label>
-            {errors.password && (
-              <p className="text-sm font-medium text-destructive">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem className="flex flex-col items-start">
+                  <FormLabel className="text-left">
+                    Password
+                    <span className="font-bold text-red-400 ml-1">*</span>
+                  </FormLabel>
+                  <FormControl className="w-full">
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <div>
-            <Label className="text-xs uppercase">
-              Confirm Password <span className="font-bold text-red-400">*</span>
-              <Input
-                {...register("confirmPassword")}
-                type="password"
-                required
-                className="text-sm"
-              />
-            </Label>
-            {errors.confirmPassword && (
-              <p className="text-sm font-medium text-destructive">
-                {errors.confirmPassword.message}
-              </p>
-            )}
-          </div>
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem className="flex flex-col items-start">
+                  <FormLabel className="text-left">
+                    Confirm Password
+                    <span className="font-bold text-red-400 ml-1">*</span>
+                  </FormLabel>
+                  <FormControl className="w-full">
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <Button className="text-sm mt-2" type="submit">
-            Sign Up
-          </Button>
+            <Button className="text-sm mt-2" type="submit">
+              Sign Up
+            </Button>
 
-          <p className="text-center text-sm text-gray-600">
-            {"Already have an account? "}
-            <Link href="/login" className="font-bold hover:underline">
-              {"Login"}
-            </Link>
-            {" instead."}
-          </p>
-        </form>
+            <p className="text-center text-sm text-gray-600">
+              {"Already have an account? "}
+              <Link href="/login" className="font-bold hover:underline">
+                {"Login"}
+              </Link>
+              {" instead."}
+            </p>
+          </form>
+        </Form>
       </div>
     </SimpleLayout>
   );
