@@ -5,8 +5,8 @@ require("dotenv").config({ path: [".env.local"] });
 console.log("Using SSL", process.env.POSTGRES_SSL, process.env.POSTGRES_SSL != "false");
 
 export default {
-  schema: "./drizzle/schema.ts",
-  out: "./drizzle",
+  schema: "@/drizzle/schema.ts",
+  out: "@/drizzle",
   dialect: "postgresql",
   // dbCredentials : { url: `${process.env.POSTGRES_URL}?sslmode=require` },
   // dbCredentials : { url: process.env.POSTGRES_URL || "" },
