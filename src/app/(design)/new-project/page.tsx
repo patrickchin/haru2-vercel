@@ -27,15 +27,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { countries } from "content/countries";
-import { buildingTypes } from "content/buildingTypes";
+import { countries } from "@/content/countries";
+import { buildingTypes } from "@/content/buildingTypes";
 import { submitProjectForm2 } from "@/lib/actions";
 import {
   NewProjectFormSchema,
   NewProjectFormSchemaType,
   NewProjectFormType,
 } from "@/lib/forms";
-import { questions } from "content/questions";
+import { questions } from "@/content/questions";
 import { cn } from "@/lib/utils";
 
 function ProjectTitle({ form }: { form: NewProjectFormType }) {

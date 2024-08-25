@@ -16,7 +16,7 @@ import { getProjectFiles } from "@/lib/actions";
 import { Fragment, Suspense, useMemo } from "react";
 import * as Lucide from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import { buildingTypes } from "content/buildingTypes";
+import { buildingTypes } from "@/content/buildingTypes";
 import EditableDescription from "@/components/editable-description";
 import { DesignProject } from "@/lib/types";
 import { ScrollArea } from "@/components/ui/scroll-area";

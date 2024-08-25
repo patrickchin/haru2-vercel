@@ -3,7 +3,7 @@
 import * as db from "@/lib/db";
 import * as Schemas from "@/drizzle/schema";
 import { auth } from "@/lib/auth";
-import { defaulTaskSpecs } from "content/tasks";
+import { defaulTaskSpecs } from "src/content/tasks";
 import { DesignProject, DesignTaskSpec } from "@/lib/types";
 import { Session } from "next-auth";
 import {
