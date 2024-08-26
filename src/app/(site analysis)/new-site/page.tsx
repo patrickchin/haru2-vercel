@@ -2,6 +2,9 @@
 
 import { cn } from "@/lib/utils";
 import { useForm, UseFormReturn } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { addSiteSchema, AddSiteType } from "@/lib/forms";
+import * as Actions from "@/lib/actions";
 
 import {
   Form,
@@ -13,11 +16,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { LucideLoader2 } from "lucide-react";
 import { CenteredLayout } from "@/components/page-layouts";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import Link from "next/link";
+import { LucideLoader2 } from "lucide-react";
 
 function PersonnelDetailsFields({
   form,
@@ -29,6 +31,7 @@ function PersonnelDetailsFields({
   return (
     <>
       <FormField
+        disabled={true}
         control={form.control}
         name={`${name}-name`}
         render={({ field }) => (
@@ -74,27 +77,34 @@ function PersonnelDetailsFields({
 }
 
 function NewSiteForm() {
-  const form = useForm({
-    // resolver: zodResolver(LoginSchemaPassword),
+  const form = useForm<AddSiteType>({
+    resolver: zodResolver(addSiteSchema),
   });
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((d) => {})}
+        onSubmit={form.handleSubmit((d) => {
+          console.log(d);
+          Actions.addSite(d);
+        })}
+        // onSubmit={(e) => {
+        //   e.preventDefault();
+        //   console.log(e);
+        // }}
         className="grid grid-cols-2 gap-6"
       >
         <FormField
           control={form.control}
-          name="name"
+          name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Project Name/Owner</FormLabel>
+              <FormLabel>Project Title/Owner</FormLabel>
               <FormControl>
                 <Input
                   onChange={field.onChange}
                   name={field.name}
-                  placeholder="new project"
+                  placeholder="Blue Bird Housing Project 1"
                 />
               </FormControl>
               <FormMessage />
@@ -107,12 +117,12 @@ function NewSiteForm() {
           name="type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Project Name/Owner</FormLabel>
+              <FormLabel>Type of Construciton Project</FormLabel>
               <FormControl>
                 <Input
                   onChange={field.onChange}
                   name={field.name}
-                  placeholder="hotel, school, family home ..."
+                  placeholder="Hotel, School, Family Home ..."
                 />
               </FormControl>
               <FormMessage />
@@ -130,7 +140,7 @@ function NewSiteForm() {
                 <Input
                   onChange={field.onChange}
                   name={field.name}
-                  placeholder="site address "
+                  placeholder="1, My Street, Ilassan Lekki, Lagos"
                 />
               </FormControl>
               <FormMessage />
@@ -148,7 +158,7 @@ function NewSiteForm() {
                 <Input
                   onChange={field.onChange}
                   name={field.name}
-                  placeholder="site postcode"
+                  placeholder="123 123"
                 />
               </FormControl>
               <FormMessage />
@@ -158,16 +168,15 @@ function NewSiteForm() {
 
         <FormField
           control={form.control}
-          name="description"
+          name="countryCode"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Project Description</FormLabel>
+              <FormLabel>Country</FormLabel>
               <FormControl>
-                <Textarea
-                  name={field.name}
+                <Input
                   onChange={field.onChange}
-                  className="h-36"
-                  placeholder="Tell us a little bit about your project"
+                  name={field.name}
+                  placeholder="KY"
                 />
               </FormControl>
               <FormMessage />
@@ -175,24 +184,26 @@ function NewSiteForm() {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="completion"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Project Timeline</FormLabel>
-              <FormControl>
-                <Textarea
-                  name={field.name}
-                  onChange={field.onChange}
-                  className="h-36"
-                  placeholder="Tell us an approximate timeline of your project"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="col-span-2 space-y-4">
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Project Description</FormLabel>
+                <FormControl>
+                  <Textarea
+                    name={field.name}
+                    onChange={field.onChange}
+                    className="h-36"
+                    placeholder="Tell us a little bit about your project"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <Separator className="col-span-2" />
 
@@ -214,17 +225,15 @@ function NewSiteForm() {
           <Button
             type="submit"
             className="flex gap-2"
-            disabled={form.formState.isSubmitting}
+            // disabled={form.formState.isSubmitting}
           >
-            <Link href={`/sites`}>
-              Next
-              <LucideLoader2
-                className={cn(
-                  "animate-spin w-4 h-4",
-                  form.formState.isSubmitting ? "" : "hidden",
-                )}
-              />
-            </Link>
+            Next
+            <LucideLoader2
+              className={cn(
+                "animate-spin w-4 h-4",
+                form.formState.isSubmitting ? "" : "hidden",
+              )}
+            />
           </Button>
         </div>
       </form>

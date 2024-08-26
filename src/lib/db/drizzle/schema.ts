@@ -10,8 +10,8 @@ import {
   date,
   boolean,
   unique,
-  primaryKey,
   pgEnum,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 // pnpm drizzle-kit push
@@ -43,6 +43,13 @@ export const users1 = pgTable("users1", {
     .references(() => accounts1.id),
   name: varchar("name", { length: 255 }).notNull(),
   avatarUrl: varchar("avatarUrl", { length: 255 }),
+});
+
+export const contacts1 = pgTable("contacts1", {
+  id: serial("id")
+    .primaryKey()
+    .references(() => users1.id),
+  contactId: serial("contactId").references(() => users1.id),
 });
 
 export const projects1 = pgTable("projects1", {
@@ -161,12 +168,33 @@ export const otps1 = pgTable("otps1", {
 
 export const sites1 = pgTable("sites1", {
   id: serial("id").primaryKey(),
+  title: varchar("title", { length: 1024 }),
+  type: varchar("type", { length: 255 }),
+  countryCode: char("countryCode", { length: 2 }),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
 });
+
+export const siteDetails1 = pgTable("siteDetails1", {
+  id: serial("id")
+    .primaryKey()
+    .references(() => sites1.id),
+  address: text("address"),
+  postcode: varchar("postcode", { length: 255 }),
+  descriptionJson: jsonb("descriptionJson"),
+});
+
+export const siteMemberRole = pgEnum("siteMemberRole", [
+  "owner",
+  "manager",
+  "contractor",
+  "supervisor",
+  "member",
+]);
 
 export const siteMembers1 = pgTable("siteMembers1", {
   siteId: integer("siteId").references(() => sites1.id),
   memberId: integer("memberId").references(() => users1.id),
-  // role: ,
+  role: siteMemberRole("role").default("member"),
 });
 
 export const siteReports1 = pgTable("siteReports1", {

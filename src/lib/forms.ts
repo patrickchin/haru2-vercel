@@ -111,3 +111,13 @@ export const ManageTaskEditEstimatesSchema = z.object({
 export type ManageTaskEditEstimatesType = z.infer<
   typeof ManageTaskEditEstimatesSchema
 >;
+
+export const addSiteSchema = z.object({
+  title: z.string(),
+  type: z.string(),
+  countryCode: z.string().min(2).max(2),
+  address: z.string().optional(),
+  postcode: z.string().optional(),
+  description: z.string().optional(),
+});
+export type AddSiteType = z.infer<typeof addSiteSchema>;

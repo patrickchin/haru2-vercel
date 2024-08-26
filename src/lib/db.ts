@@ -7,4 +7,6 @@ export * from "./db/tasks";
 export * from "./db/files";
 export * from "./db/otp";
 export * from "./db/comments";
+
+export * from "./db/sites";
 export * from "./db/reports";
