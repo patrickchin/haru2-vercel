@@ -12,7 +12,12 @@ import Link from "next/link";
 import useSWR from "swr";
 import { cn } from "@/lib/utils";
 import * as Actions from "@/lib/actions";
-import { LucideCamera, LucideFileText, LucideVideo } from "lucide-react";
+import {
+  LucideCamera,
+  LucideFileText,
+  LucideMoveLeft,
+  LucideVideo,
+} from "lucide-react";
 
 import Header from "@/components/header";
 import { Input } from "@/components/ui/input";
@@ -30,6 +35,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import BackButton from "@/components/back-button";
 
 interface ReportsViewerProps {
   siteId: number;
@@ -323,7 +329,7 @@ function FileDisplay({
 
 function ReportTitle(params: ReportsViewerProps) {
   return (
-    <div className="flex justify-between">
+    <div className="grow flex justify-between">
       <h3>Site Report - {params.selectedReport?.createdAt?.toDateString()}</h3>
       <div className="flex gap-2">
         <Button variant="secondary" onClick={() => {}}>
@@ -391,7 +397,16 @@ export default function Page({ params }: { params: { siteId: string } }) {
       <Header />
 
       <main className="grow flex flex-col items-center px-16 py-8 gap-4">
-        <div className="w-full max-w-7xl pl-60 pr-48">
+        {/* <div className="w-full max-w-7xl pl-60 pr-48">
+          <ReportTitle {...props} />
+        </div> */}
+        <div className="flex gap-4 w-full max-w-7xl pr-48">
+          <div className="flex-none w-56">
+            <BackButton variant="outline" className="gap-4 w-full">
+              <LucideMoveLeft />
+              Back to Description
+            </BackButton>
+          </div>
           <ReportTitle {...props} />
         </div>
         {/* <section className="grid grid-cols-[14rem_auto_11rem] gap-4 w-full max-w-7xl h-[36rem]"> */}

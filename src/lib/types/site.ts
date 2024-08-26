@@ -4,6 +4,13 @@ import { HaruUserBasic } from "./common";
 
 export type Site = typeof Schemas.sites1.$inferSelect;
 export type SiteNew = Omit<typeof Schemas.sites1.$inferInsert, "id">;
+export type SiteDetails = Site & typeof Schemas.siteDetails1.$inferSelect;
+export type SiteDetailsNew = Omit<
+  typeof Schemas.siteDetails1.$inferInsert,
+  "id"
+>;
+export type SiteMember = typeof Schemas.siteMembers1.$inferSelect &
+  HaruUserBasic;
 
 export type SiteReport = typeof Schemas.siteReports1.$inferSelect & {
   reporter?: HaruUserBasic | null;
