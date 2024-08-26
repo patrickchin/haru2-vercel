@@ -59,8 +59,8 @@ function LoginSignup() {
       <Button asChild variant="secondary">
         <Link href="/login">Login</Link>
       </Button>
-      <Button asChild>
-        <Link href="/register">Sign Up</Link>
+      <Button asChild className="bg-gradient-to-br from-cyan-600 to-indigo-600">
+        <Link href="/register">Create an Account</Link>
       </Button>
     </div>
   );
@@ -83,6 +83,9 @@ export default function Header() {
         </Link>
 
         <div className="ml-auto flex items-center space-x-4">
+          <Button asChild variant="secondary" className="bg-background-white">
+            <Link href="/login">Schedule a Call</Link>
+          </Button>
           <LoginOrUserSettings />
         </div>
       </div>
