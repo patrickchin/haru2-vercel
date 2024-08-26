@@ -24,31 +24,36 @@ function UserNav({ user }: { user?: User }) {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger className="items-center cursor-pointer">
-        <UserAvatar user={user} />
-      </DropdownMenuTrigger>
+    <span>
+      <Button asChild variant="secondary" className="bg-background-white mx-4">
+        <Link href="/login">Schedule a Call</Link>
+      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger className="items-center cursor-pointer">
+          <UserAvatar user={user} />
+        </DropdownMenuTrigger>
 
-      <DropdownMenuContent sideOffset={20} align="end" className="w-48">
-        <DropdownMenuItem className="cursor-pointer flex flex-col items-start px-3">
-          <div className="text-lg font-semibold">{user?.name}</div>
-          <div>{user?.email}</div>
-        </DropdownMenuItem>
-        <Link href={"/settings"}>
-          <DropdownMenuItem className="cursor-pointer gap-2 px-3">
-            <LucideSettings className="w-4 p-0" />
-            Settings
+        <DropdownMenuContent sideOffset={20} align="end" className="w-48">
+          <DropdownMenuItem className="cursor-pointer flex flex-col items-start px-3">
+            <div className="text-lg font-semibold">{user?.name}</div>
+            <div>{user?.email}</div>
           </DropdownMenuItem>
-        </Link>
-        <DropdownMenuItem
-          onClick={signOutAction}
-          className="cursor-pointer gap-2 px-3"
-        >
-          <LucideLogOut className="w-4 p-0" />
-          Logout
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <Link href={"/settings"}>
+            <DropdownMenuItem className="cursor-pointer gap-2 px-3">
+              <LucideSettings className="w-4 p-0" />
+              Settings
+            </DropdownMenuItem>
+          </Link>
+          <DropdownMenuItem
+            onClick={signOutAction}
+            className="cursor-pointer gap-2 px-3"
+          >
+            <LucideLogOut className="w-4 p-0" />
+            Logout
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </span>
   );
 }
 
@@ -83,9 +88,6 @@ export default function Header() {
         </Link>
 
         <div className="ml-auto flex items-center space-x-4">
-          <Button asChild variant="secondary" className="bg-background-white">
-            <Link href="/login">Schedule a Call</Link>
-          </Button>
           <LoginOrUserSettings />
         </div>
       </div>

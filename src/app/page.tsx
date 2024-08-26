@@ -45,9 +45,8 @@ export default function Page() {
             Our Services Include
           </h2>
           <p className="text-center text-xl text-slate-500">
-            Whether personal or commercial, we oversee your construction
-            projects in Africa, delivering excellence and peace of mind wherever
-            you are.
+            We oversee your construction projects in Africa, ensuring excellence
+            and peace of mind, no matter where you are
           </p>
           <div className="flex flex-wrap justify-center my-8">
             {services.map((item) => (
@@ -88,7 +87,7 @@ export default function Page() {
           </span>
           <Button
             asChild
-            className="w-fit font-bold text-base bg-gradient-to-br from-cyan-600 to-indigo-600"
+            className="w-fit font-bold text-base bg-gradient-to-br from-cyan-600 to-indigo-600 mt-3"
           >
             <Link href="/sites">
               Get Started Now! <ArrowRightIcon className="ml-2 size-5" />
