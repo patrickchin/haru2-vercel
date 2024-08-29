@@ -6,16 +6,34 @@ import { Button } from "@/components/ui/button";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 
-export default async function Page() {
+function EmptySitesList() {
+  return <p>You currently do not have any sites registered with us</p>;
+}
+
+async function SitesList() {
   const sites = await Actions.getMySites();
 
-  if (!sites) {
-    redirect("/");
+  if (!sites || sites.length <= 0) {
+    return <EmptySitesList />;
   }
 
-  if (sites?.length === 1) {
-    redirect(`/site/${sites[0].id}`);
-  }
+  return (
+    <ol>
+      {sites?.map((site, i) => {
+        return (
+          <li key={i}>
+            <Button asChild variant="outline">
+              <Link href={`/site/${site.id}`}>Site {site.id}</Link>
+            </Button>
+          </li>
+        );
+      })}
+    </ol>
+  );
+
+}
+
+export default async function Page() {
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -23,19 +41,9 @@ export default async function Page() {
 
       <main className="grow flex flex-col items-center px-16 py-8 gap-4">
         <Button asChild>
-          <Link href="/new-site">Register Construction Site</Link>
+          <Link href="/new-site">Register New Construction Site</Link>
         </Button>
-        <ol>
-          {sites.map((site, i) => {
-            return (
-              <li key={i}>
-                <Button asChild variant="outline">
-                  <Link href={`/site/${site.id}`}>Site {site.id}</Link>
-                </Button>
-              </li>
-            );
-          })}
-        </ol>
+        <SitesList />
       </main>
 
       <Footer />
