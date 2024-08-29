@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 
 interface CustomProgressProps
   extends React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> {
-  indicatorColor: string;
+  indicatorColor?: string;
 }
 
 const Progress = React.forwardRef<
