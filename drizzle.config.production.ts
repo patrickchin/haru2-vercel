@@ -2,7 +2,7 @@ import assert from "assert";
 import type { Config } from "drizzle-kit";
 
 // needed for drizzle studio
-require("dotenv").config({ path: [".env.local"] });
+require("dotenv").config({ path: [".env.production.local"] });
 console.log("Drizzle connecting to ", process.env.POSTGRES_HOST);
 console.log("Using SSL", process.env.POSTGRES_SSL, process.env.POSTGRES_SSL != "false");
 
@@ -14,8 +14,8 @@ assert(process.env.POSTGRES_DATABASE);
 // assert(process.env.POSTGRES_SSL);
 
 export default {
-  schema: "src/lib/db/drizzle/schema.ts",
-  out: "@/drizzle",
+  schema: "./src/lib/db/drizzle/schema.ts",
+  out: "./src/lib/db/drizzle",
   dialect: "postgresql",
   // dbCredentials : { url: `${process.env.POSTGRES_URL}?sslmode=require` },
   // dbCredentials : { url: process.env.POSTGRES_URL || "" },
