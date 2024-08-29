@@ -91,7 +91,7 @@ export async function getSiteMembers(siteId: number): Promise<SiteMember[]> {
       Schemas.users1,
       eq(Schemas.users1.id, Schemas.siteMembers1.memberId),
     )
-    .where(eq(Schemas.siteDetails1.id, siteId));
+    .where(eq(Schemas.siteMembers1.siteId, siteId));
 }
 
 export async function addUserSite(
