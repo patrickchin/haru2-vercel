@@ -30,7 +30,7 @@ function SiteDescription({ site, members }: SiteDetailsProps) {
   );
 }
 
-export function SiteInfoBar({ site, members }: SiteDetailsProps) {
+function SiteInfoBar({ site, members }: SiteDetailsProps) {
   const displayNames = useMemo(() => {
     return new Intl.DisplayNames(["en"], { type: "region" });
   }, []);

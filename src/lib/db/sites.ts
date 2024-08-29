@@ -102,7 +102,7 @@ export async function addUserSite(
     countryCode: string;
     address?: string;
     postcode?: string;
-    descriptionJson?: string;
+    description?: string;
   },
 ): Promise<Site> {
   return db.transaction(async (tx) => {
@@ -122,7 +122,7 @@ export async function addUserSite(
         id: site.id,
         address: args.address,
         postcode: args.postcode,
-        descriptionJson: args.descriptionJson,
+        description: args.description,
       })
       .returning()
       .then((r) => r[0]);
