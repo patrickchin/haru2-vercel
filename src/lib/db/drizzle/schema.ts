@@ -180,7 +180,8 @@ export const siteDetails1 = pgTable("siteDetails1", {
     .references(() => sites1.id),
   address: text("address"),
   postcode: varchar("postcode", { length: 255 }),
-  descriptionJson: jsonb("descriptionJson"),
+  description: text("description"),
+  extraInfo: jsonb("extraInfo"),
 });
 
 export const siteMemberRole = pgEnum("siteMemberRole", [
