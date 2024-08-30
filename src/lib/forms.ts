@@ -71,7 +71,7 @@ export const LoginSchemaEmail = z.object({
 });
 export const LoginSchemaPassword = z.object({
   email: z.string().email("Invalid email address"),
-  password: z.string().min(7).max(100),
+  password: z.string(),
 });
 export type LoginTypesPhone = { phone: string; otp: string };
 export type LoginTypesEmail = { email: string; otp: string };
