@@ -56,7 +56,7 @@ export default function Page() {
                     <span className="font-bold text-red-400 ml-1">*</span>
                   </FormLabel>
                   <FormControl className="w-full">
-                    <Input placeholder="Enter a phone number" {...field} />
+                    <Input placeholder="Anthony Abu" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -70,7 +70,7 @@ export default function Page() {
                 <FormItem className="flex flex-col items-start">
                   <FormLabel className="text-left">Phone Number</FormLabel>
                   <FormControl className="w-full">
-                    <PhoneInput placeholder="Enter a phone number" {...field} />
+                    <PhoneInput placeholder="+234-803-4444 4444" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -87,7 +87,7 @@ export default function Page() {
                     <span className="font-bold text-red-400 ml-1">*</span>
                   </FormLabel>
                   <FormControl className="w-full">
-                    <Input type="email" {...field} />
+                    <Input type="email" placeholder="harpapro@email.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
