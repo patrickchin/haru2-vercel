@@ -21,61 +21,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { LucideLoader2 } from "lucide-react";
 
-function PersonnelDetailsFields({
-  form,
-  name,
-}: {
-  form: UseFormReturn<any>;
-  name: string;
-}) {
-  return (
-    <>
-      <FormField
-        disabled={true}
-        control={form.control}
-        name={`${name}-name`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Name</FormLabel>
-            <FormControl>
-              <Input name={field.name} onChange={field.onChange} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <FormField
-        control={form.control}
-        name={`${name}-email`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Email</FormLabel>
-            <FormControl>
-              <Input name={field.name} onChange={field.onChange} type="email" />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <FormField
-        control={form.control}
-        name={`${name}-phone`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Phone Number</FormLabel>
-            <FormControl>
-              <Input name={field.name} onChange={field.onChange} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    </>
-  );
-}
-
 function NewSiteForm() {
   const form = useForm<AddSiteType>({
     resolver: zodResolver(addSiteSchema),
@@ -206,20 +151,6 @@ function NewSiteForm() {
         </div>
 
         <Separator className="col-span-2" />
-
-        <div className="col-span-2 space-y-4">
-          <h5>Building Construction Project Manager</h5>
-          <div className="grid grid-cols-4 gap-4">
-            <PersonnelDetailsFields form={form} name="manager" />
-          </div>
-        </div>
-
-        <div className="col-span-2 space-y-4">
-          <h5>Building Contractor</h5>
-          <div className="grid grid-cols-4 gap-4">
-            <PersonnelDetailsFields form={form} name="contractor-1" />
-          </div>
-        </div>
 
         <div className="col-span-2 flex justify-end">
           <Button
