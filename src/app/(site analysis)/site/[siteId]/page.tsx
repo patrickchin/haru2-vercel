@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { SiteDetails, SiteMember } from "@/lib/types";
+import { SiteDetails, SiteMember, SiteMemberRole } from "@/lib/types";
 import * as Actions from "@/lib/actions";
 
 import SiteCalendar from "./site-calendar";
@@ -38,34 +38,59 @@ function SiteInfoBar({ site, members }: SiteDetailsProps) {
     ? displayNames.of(site.countryCode)
     : undefined;
 
-  const owner = members?.find((m) => m.role === "owner");
+  const keyMemberRoles: SiteMemberRole[] = [
+    "owner",
+    "manager",
+    "contractor",
+    "supervisor",
+  ];
+  const membersByRole = Object.fromEntries(
+    keyMemberRoles.map((r) => [r, members?.filter((m) => m.role === r)]),
+  );
 
   return (
-    <Card>
-      <CardHeader className="text-sm text-muted-foreground">
-        <ul className="inline-block">
-          <li className="inline-block border-r px-2">
-            <span className="font-bold">Project Id: </span>
-            {site.id}
-          </li>
-          <li className="inline-block border-r px-2">
-            <span className="font-bold">Owner: </span>
-            {owner?.name || "<unknown>"}
-          </li>
-          <li className="inline-block border-r px-2">
-            <span className="font-bold">Country: </span>
-            {country || "<unknown>"}
-          </li>
-          <li className="inline-block border-r px-2">
-            <span className="font-bold">Type: </span>
-            {site.type || "<unknown>"}
-          </li>
-          <li className="inline-block border-none px-2">
-            <span className="font-bold">Created: </span>
+    <Card className="flex flex-col gap-4 p-4">
+      <ul className="inline-flex gap-4">
+        <li>
+          <span>Project Id: </span>
+          <span className="font-semibold">{site.id}</span>
+        </li>
+        <li>
+          <span>Country: </span>
+          <span className="font-semibold capitalize">{country || "<unknown>"}</span>
+        </li>
+        <li>
+          <span>Type: </span>
+          <span className="font-semibold">{site.type || "<unknown>"}</span>
+        </li>
+        <li>
+          <span>Created: </span>
+          <span className="font-semibold">
             {site.createdAt?.toDateString() || "<unknown>"}
-          </li>
-        </ul>
-      </CardHeader>
+          </span>
+        </li>
+      </ul>
+      <ul className="inline-flex gap-4">
+        {Object.entries(membersByRole).map(([role, mems]) => {
+          if (mems && mems.length > 0) {
+            return mems.map((mem) => (
+              <li>
+                <span className="capitalize">{role}: </span>
+                <span className="font-semibold">
+                  {mem?.name ?? "<unknown>"}
+                </span>
+              </li>
+            ));
+          } else {
+            return (
+              <li>
+                <span className="capitalize">{role}: </span>
+                <span className="font-semibold">{"<unknown>"}</span>
+              </li>
+            );
+          }
+        })}
+      </ul>
     </Card>
   );
 }
