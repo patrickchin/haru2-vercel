@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { LucideArrowRight } from "lucide-react";
+import EditSiteMembersButtonPopup from "./site-members-add";
 
 interface SiteDetailsProps {
   site: SiteDetails;
@@ -101,17 +102,26 @@ function SiteMembersBar({ site, members }: SiteDetailsProps) {
           }
         })}
       </ul>
-      {/* <EditSiteMembersButtonPopup /> */}
+      <EditSiteMembersButtonPopup />
     </Card>
   );
 }
 
-export default async function Page({ params }: { params: { siteId: string } }) {
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: { siteId: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const siteId = Number(params.siteId);
   const [site, members] = await Promise.all([
     Actions.getSite(siteId),
     Actions.getSiteMembers(siteId),
   ]);
+
+  const membersDialogOpen = searchParams["m"] === "1";
+  console.log(membersDialogOpen);
 
   // TODO custom site not found page
   if (!site) notFound();
