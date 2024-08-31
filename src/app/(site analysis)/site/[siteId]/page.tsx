@@ -38,16 +38,6 @@ function SiteInfoBar({ site, members }: SiteDetailsProps) {
     ? displayNames.of(site.countryCode)
     : undefined;
 
-  const keyMemberRoles: SiteMemberRole[] = [
-    "owner",
-    "manager",
-    "contractor",
-    "supervisor",
-  ];
-  const membersByRole = Object.fromEntries(
-    keyMemberRoles.map((r) => [r, members?.filter((m) => m.role === r)]),
-  );
-
   return (
     <Card className="flex flex-col gap-4 p-4">
       <ul className="inline-flex gap-4">
@@ -70,27 +60,48 @@ function SiteInfoBar({ site, members }: SiteDetailsProps) {
           </span>
         </li>
       </ul>
-      <ul className="inline-flex gap-4">
+    </Card>
+  );
+}
+
+function SiteMembersBar({ site, members }: SiteDetailsProps) {
+  const keyMemberRoles: SiteMemberRole[] = [
+    "owner",
+    "manager",
+    "contractor",
+    "supervisor",
+  ];
+  const membersByRole: { [k: string]: SiteMember[] } = Object.fromEntries(
+    keyMemberRoles.map((r) => [
+      r,
+      (members?.filter((m) => m.role === r) ?? []) as SiteMember[],
+    ]),
+  );
+
+  return (
+    <Card className="flex items-center gap-3 p-4 px-6">
+      <ul className="grow inline-flex gap-4">
         {Object.entries(membersByRole).map(([role, mems]) => {
-          if (mems && mems.length > 0) {
-            return mems.map((mem) => (
-              <li>
+          if (mems.length === 0) {
+            return (
+              <li key={`${role}-0`}>
+                <span className="capitalize">{role}: </span>
+                <span className="font-semibold">{"<unknown>"}</span>
+              </li>
+            );
+          } else {
+            return mems.map((mem, i) => (
+              <li key={`${role}-${i}`}>
                 <span className="capitalize">{role}: </span>
                 <span className="font-semibold">
                   {mem?.name ?? "<unknown>"}
                 </span>
               </li>
             ));
-          } else {
-            return (
-              <li>
-                <span className="capitalize">{role}: </span>
-                <span className="font-semibold">{"<unknown>"}</span>
-              </li>
-            );
           }
         })}
       </ul>
+      {/* <EditSiteMembersButtonPopup /> */}
     </Card>
   );
 }
@@ -124,6 +135,7 @@ export default async function Page({ params }: { params: { siteId: string } }) {
         </div>
 
         <SiteInfoBar site={site} members={members} />
+        <SiteMembersBar site={site} members={members} />
 
         <div className="grid grid-cols-2 gap-4">
           <Card>
