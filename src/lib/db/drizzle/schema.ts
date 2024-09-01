@@ -29,7 +29,7 @@ export const accountRoleEnum = pgEnum("role", [
 export const accounts1 = pgTable("accounts1", {
   id: serial("id").primaryKey(),
   password: varchar("password", { length: 255 }),
-  email: varchar("email", { length: 255 }).notNull().unique(),
+  email: varchar("email", { length: 255 }).unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   phone: varchar("phone", { length: 32 }),
   phoneVerified: timestamp("phoneVerified", { mode: "date" }),
