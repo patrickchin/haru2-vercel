@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteDetails, SiteMember, SiteMemberRole } from "@/lib/types";
 import * as Actions from "@/lib/actions";
+import { LucideArrowRight } from "lucide-react";
 
 import SiteCalendar from "./site-calendar";
 
@@ -11,8 +12,15 @@ import Header from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { LucideArrowRight } from "lucide-react";
 import EditSiteMembersButtonPopup from "./site-members-add";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@/components/ui/table"
+
 
 export interface SiteDetailsProps {
   site: SiteDetails;
@@ -161,6 +169,12 @@ export default async function Page({
   // TODO custom site not found page
   if (!site) notFound();
 
+  const progressPct =
+    site.startDate && site.endDate
+      ? (new Date().getTime() - site.startDate.getTime()) /
+        (site.endDate.getTime() - site.startDate.getTime())
+      : undefined;
+
   return (
     <div className="flex flex-col min-h-screen items-center">
       <Header />
@@ -190,13 +204,47 @@ export default async function Page({
             </CardContent>
           </Card>
           <Card>
-            <CardHeader>Supervision Progress and Milestones</CardHeader>
+            <CardHeader className="font-semibold">Supervision Progress and Milestones</CardHeader>
             <CardContent className="flex flex-col gap-3">
-              <Progress value={20} />
-              <p>Start date: xxxx </p>
-              <p>End date: xxxx </p>
-              <p>Number of reports: xxxx </p>
-              <p>Next upcoming report date: xxx </p>
+              <Progress value={progressPct} />
+
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableHead className="font-medium">Creation</TableHead>
+                    <TableCell>{site.createdAt.toDateString()}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableHead className="font-medium">Start</TableHead>
+                    <TableCell>
+                      {site.startDate?.toDateString() ??
+                        "Site supervision has not yet started"}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableHead className="font-medium">End</TableHead>
+                    <TableCell>
+                      {site.endDate?.toDateString() ??
+                        "End date has not yet been agreed upon"}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableHead className="font-medium">Next</TableHead>
+                    <TableCell>
+                      {site.nextReportDate?.toDateString() ??
+                        "Next report date has not been set"}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableHead className="font-medium">Schedule</TableHead>
+                    <TableCell>
+                      {site.nextReportDate?.toDateString() ??
+                        "A report schedule has not yet been agreed on"}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+
             </CardContent>
           </Card>
         </div>

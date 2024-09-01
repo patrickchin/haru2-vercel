@@ -183,6 +183,11 @@ export const siteDetails1 = pgTable("siteDetails1", {
   description: text("description"),
   extraInfo: jsonb("extraInfo"),
 
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
+  startDate: timestamp("startDate"),
+  endDate: timestamp("endDate"),
+  nextReportDate: timestamp("nextReportDate"),
+
   // until something better is figured out with maybe temporary accounts ?
   managerName: varchar("managerName", { length: 256 }),
   managerPhone: varchar("managerPhone", { length: 256 }),
