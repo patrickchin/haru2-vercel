@@ -1,6 +1,6 @@
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
-import { isValidPhoneNumber } from "libphonenumber-js";
+import { isPossiblePhoneNumber, isValidPhoneNumber } from "libphonenumber-js";
 
 function allFilesSmall(list: FileList | undefined) {
   if (list === undefined) return true;
@@ -37,7 +37,7 @@ export type NewProjectFormType = UseFormReturn<NewProjectFormSchemaType>;
 
 export const phoneNumberZod = z
   .string()
-  .refine(isValidPhoneNumber, { message: "Invalid phone number" });
+  .refine(isPossiblePhoneNumber, { message: "Invalid phone number" });
 export const otpZod = z
   .string()
   .min(6, "Passcode must be 6 digits long")
