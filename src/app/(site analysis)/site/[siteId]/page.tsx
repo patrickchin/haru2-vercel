@@ -19,8 +19,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
-} from "@/components/ui/table"
-
+} from "@/components/ui/table";
 
 export interface SiteDetailsProps {
   site: SiteDetails;
@@ -48,29 +47,23 @@ function SiteInfoBar({ site, members }: SiteDetailsProps) {
     : undefined;
 
   return (
-    <Card className="flex flex-col gap-4 p-4">
-      <ul className="inline-flex gap-4">
-        <li>
-          <span>Project Id: </span>
-          <span className="font-semibold">{site.id}</span>
+    <Card className="flex flex-col gap-4 px-6">
+      <ul className="inline-flex">
+        <li className="hover:bg-accent py-4 px-8 space-x-1">
+          <span className="font-semibold">Project Id: </span>
+          <span className="">{site.id}</span>
         </li>
-        <li>
-          <span>Country: </span>
-          <span className="font-semibold uppercase">
-            {country || "<unknown>"}
-          </span>
+        <li className="hover:bg-accent py-4 px-8 space-x-1">
+          <span className="font-semibold">Country: </span>
+          <span className="">{country || "Unknown"}</span>
         </li>
-        <li>
-          <span>Type: </span>
-          <span className="font-semibold capitalize">
-            {site.type || "<unknown>"}
-          </span>
+        <li className="hover:bg-accent py-4 px-8 space-x-1">
+          <span className="font-semibold">Type: </span>
+          <span className="">{site.type || "Unknown"}</span>
         </li>
-        <li>
-          <span>Created: </span>
-          <span className="font-semibold">
-            {site.createdAt?.toDateString() || "<unknown>"}
-          </span>
+        <li className="hover:bg-accent py-4 px-8 space-x-1">
+          <span className="font-semibold">Created: </span>
+          <span className="">{site.createdAt.toDateString()}</span>
         </li>
       </ul>
     </Card>
@@ -98,17 +91,15 @@ function SiteMembersBar2({ site, members }: SiteDetailsProps) {
           if (mems.length === 0) {
             return (
               <li key={`${role}-0`}>
-                <span className="capitalize">{role}: </span>
-                <span className="font-semibold">{"<unknown>"}</span>
+                <span className="font-semibold capitalize">{role}: </span>
+                <span className="">{"<unknown>"}</span>
               </li>
             );
           } else {
             return mems.map((mem, i) => (
               <li key={`${role}-${i}`}>
-                <span className="capitalize">{role}: </span>
-                <span className="font-semibold">
-                  {mem?.name ?? "<unknown>"}
-                </span>
+                <span className="font-semibold capitalize">{role}: </span>
+                <span className="">{mem?.name ?? "<unknown>"}</span>
               </li>
             ));
           }
@@ -123,29 +114,29 @@ function SiteMembersBar({ site, members }: SiteDetailsProps) {
   const owner = members?.find((m) => m.role === "owner");
 
   return (
-    <Card className="flex items-center gap-3 p-4 px-6">
-      <ul className="grow inline-flex gap-4">
-        <li>
-          <span>Owner: </span>
-          <span className="font-semibold">{owner?.name ?? "<unknown>"}</span>
+    <Card className="flex items-center gap-5 px-6">
+      <ul className="grow flex max-w-full">
+        <li className="hover:bg-accent py-4 px-4">
+          <p className="font-semibold text-sm">Owner:</p>
+          <p className="text-nowrap">{owner?.name.length ? owner.name : "-"}</p>
         </li>
-        <li>
-          <span>Manager: </span>
-          <span className="font-semibold">
-            {site.managerName ?? "<unknown>"}
-          </span>
+        <li className="hover:bg-accent py-4 px-8">
+          <p className="font-semibold text-sm">Manager: </p>
+          <p className="text-nowrap">
+            {site.managerName?.length ? site.managerName : "-"}
+          </p>
         </li>
-        <li>
-          <span>Contractor: </span>
-          <span className="font-semibold">
-            {site.contractorName ?? "<unknown>"}
-          </span>
+        <li className="hover:bg-accent py-4 px-8">
+          <p className="font-semibold text-sm">Contractor: </p>
+          <p className="text-nowrap">
+            {site.contractorName?.length ? site.contractorName : "-"}
+          </p>
         </li>
-        <li>
-          <span>Supervisor: </span>
-          <span className="font-semibold">
-            {site.supervisorName ?? "<unknown>"}
-          </span>
+        <li className="hover:bg-accent py-4 px-8">
+          <p className="font-semibold text-sm">Supervisor: </p>
+          <p className="text-nowrap">
+            {site.supervisorName?.length ? site.supervisorName : "-"}
+          </p>
         </li>
       </ul>
       <EditSiteMembersButtonPopup site={site} members={members} />
@@ -198,13 +189,17 @@ export default async function Page({
 
         <div className="grid grid-cols-2 gap-4">
           <Card>
-            <CardHeader>Schedule a Zoom meeting with the Team</CardHeader>
+            <CardHeader className="font-semibold">
+              Schedule a Zoom meeting with the Team
+            </CardHeader>
             <CardContent className="flex justify-center">
               <SiteCalendar />
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="font-semibold">Supervision Progress and Milestones</CardHeader>
+            <CardHeader className="font-semibold">
+              Supervision Progress and Milestones
+            </CardHeader>
             <CardContent className="flex flex-col gap-3">
               <Progress value={progressPct} />
 
@@ -238,13 +233,12 @@ export default async function Page({
                   <TableRow>
                     <TableHead className="font-medium">Schedule</TableHead>
                     <TableCell>
-                      {site.nextReportDate?.toDateString() ??
+                      {site.schedule ??
                         "A report schedule has not yet been agreed on"}
                     </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
-
             </CardContent>
           </Card>
         </div>

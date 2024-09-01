@@ -187,6 +187,7 @@ export const siteDetails1 = pgTable("siteDetails1", {
   startDate: timestamp("startDate"),
   endDate: timestamp("endDate"),
   nextReportDate: timestamp("nextReportDate"),
+  schedule: text("schedule"),
 
   // until something better is figured out with maybe temporary accounts ?
   managerName: varchar("managerName", { length: 256 }),

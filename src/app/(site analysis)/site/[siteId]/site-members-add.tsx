@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { LucideLoader2 } from "lucide-react";
+import { LucideEdit, LucideLoader2 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { SiteDetailsProps } from "./page";
 
@@ -197,7 +197,9 @@ export default function EditSiteMembersButtonPopup({
       }
     >
       <DialogTrigger asChild>
-        <Button>Edit Members</Button>
+        <Button variant="outline" className="">
+          Edit Members <LucideEdit className="ml-2 w-3.5" />
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl">
         <DialogHeader>
