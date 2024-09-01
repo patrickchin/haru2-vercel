@@ -1,7 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
 import * as db from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { addSiteSchema, AddSiteType } from "@/lib/forms";
@@ -60,6 +58,47 @@ export async function addUserToSite({
     });
   } catch (e: any) {
     console.log(`Failed to add user ${userId} to site ${siteId} error: ${e}`);
+    return;
+  }
+}
+
+export async function updateKeySiteUsers(
+  siteId: number,
+  values: {
+    managerName?: string;
+    managerPhone?: string;
+    managerEmail?: string;
+    contractorName?: string;
+    contractorPhone?: string;
+    contractorEmail?: string;
+    supervisorName?: string;
+    supervisorPhone?: string;
+    supervisorEmail?: string;
+  },
+) {
+  const session = await auth();
+  if (!session?.user) return;
+  const userId = session.user.idn;
+  if (isNaN(userId)) return;
+
+  const role = await db.getMemberRole({ siteId, userId });
+  if (!role) return;
+  const allowedRoles = [
+    "manager",
+    "owner",
+    "contractor",
+    "supervisor",
+    // "member", // don't allow normal members to edit that information ?
+  ];
+  if (!allowedRoles.includes(role)) return;
+
+  try {
+    console.log(`User ${userId} updating key site user information ${values}`);
+    return db.updateKeySiteUsers(siteId, values);
+  } catch (e: any) {
+    console.log(
+      `Failed to update key site users (user ${userId}) (site ${siteId}) error: ${e}`,
+    );
     return;
   }
 }

@@ -14,7 +14,7 @@ import { Progress } from "@/components/ui/progress";
 import { LucideArrowRight } from "lucide-react";
 import EditSiteMembersButtonPopup from "./site-members-add";
 
-interface SiteDetailsProps {
+export interface SiteDetailsProps {
   site: SiteDetails;
   members: SiteMember[] | undefined;
 }
@@ -48,11 +48,15 @@ function SiteInfoBar({ site, members }: SiteDetailsProps) {
         </li>
         <li>
           <span>Country: </span>
-          <span className="font-semibold uppercase">{country || "<unknown>"}</span>
+          <span className="font-semibold uppercase">
+            {country || "<unknown>"}
+          </span>
         </li>
         <li>
           <span>Type: </span>
-          <span className="font-semibold capitalize">{site.type || "<unknown>"}</span>
+          <span className="font-semibold capitalize">
+            {site.type || "<unknown>"}
+          </span>
         </li>
         <li>
           <span>Created: </span>
@@ -65,7 +69,7 @@ function SiteInfoBar({ site, members }: SiteDetailsProps) {
   );
 }
 
-function SiteMembersBar({ site, members }: SiteDetailsProps) {
+function SiteMembersBar2({ site, members }: SiteDetailsProps) {
   const keyMemberRoles: SiteMemberRole[] = [
     "owner",
     "manager",
@@ -102,7 +106,41 @@ function SiteMembersBar({ site, members }: SiteDetailsProps) {
           }
         })}
       </ul>
-      <EditSiteMembersButtonPopup />
+      <EditSiteMembersButtonPopup site={site} members={members} />
+    </Card>
+  );
+}
+
+function SiteMembersBar({ site, members }: SiteDetailsProps) {
+  const owner = members?.find((m) => m.role === "owner");
+
+  return (
+    <Card className="flex items-center gap-3 p-4 px-6">
+      <ul className="grow inline-flex gap-4">
+        <li>
+          <span>Owner: </span>
+          <span className="font-semibold">{owner?.name ?? "<unknown>"}</span>
+        </li>
+        <li>
+          <span>Manager: </span>
+          <span className="font-semibold">
+            {site.managerName ?? "<unknown>"}
+          </span>
+        </li>
+        <li>
+          <span>Contractor: </span>
+          <span className="font-semibold">
+            {site.contractorName ?? "<unknown>"}
+          </span>
+        </li>
+        <li>
+          <span>Supervisor: </span>
+          <span className="font-semibold">
+            {site.supervisorName ?? "<unknown>"}
+          </span>
+        </li>
+      </ul>
+      <EditSiteMembersButtonPopup site={site} members={members} />
     </Card>
   );
 }

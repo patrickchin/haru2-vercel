@@ -182,6 +182,17 @@ export const siteDetails1 = pgTable("siteDetails1", {
   postcode: varchar("postcode", { length: 255 }),
   description: text("description"),
   extraInfo: jsonb("extraInfo"),
+
+  // until something better is figured out with maybe temporary accounts ?
+  managerName: varchar("managerName", { length: 256 }),
+  managerPhone: varchar("managerPhone", { length: 256 }),
+  managerEmail: varchar("managerEmail", { length: 256 }),
+  contractorName: varchar("contractorName", { length: 256 }),
+  contractorPhone: varchar("contractorPhone", { length: 256 }),
+  contractorEmail: varchar("contractorEmail", { length: 256 }),
+  supervisorName: varchar("supervisorName", { length: 256 }),
+  supervisorPhone: varchar("supervisorPhone", { length: 256 }),
+  supervisorEmail: varchar("supervisorEmail", { length: 256 }),
 });
 
 export const siteMemberRole = pgEnum("siteMemberRole", [

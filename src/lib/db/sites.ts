@@ -150,3 +150,43 @@ export async function addUserToSite({
     .returning()
     .then((r) => r[0]);
 }
+
+export async function getMemberRole({
+  siteId,
+  userId,
+}: {
+  siteId: number;
+  userId: number;
+}) {
+  return db
+    .select()
+    .from(Schemas.siteMembers1)
+    .where(
+      and(
+        eq(Schemas.siteMembers1.siteId, siteId),
+        eq(Schemas.siteMembers1.memberId, userId),
+      ),
+    )
+    .limit(1)
+    .then((r) => (r.length ? r[0].role : null));
+}
+
+export async function updateKeySiteUsers(
+  siteId: number,
+  values: {
+    managerName?: string;
+    managerPhone?: string;
+    managerEmail?: string;
+    contractorName?: string;
+    contractorPhone?: string;
+    contractorEmail?: string;
+    supervisorName?: string;
+    supervisorPhone?: string;
+    supervisorEmail?: string;
+  },
+) {
+  return db
+    .update(Schemas.siteDetails1)
+    .set(values)
+    .where(eq(Schemas.siteDetails1.id, siteId));
+}

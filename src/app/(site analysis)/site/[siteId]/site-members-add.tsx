@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -26,92 +26,134 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LucideLoader2 } from "lucide-react";
-import { redirect, usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { SiteDetailsProps } from "./page";
 
-function SiteMemberFields({ form,  prefix }: { form: any, prefix: string }) {
+function SiteMemberFields({
+  site,
+  form,
+  prefix,
+}: SiteDetailsProps & { form: any; prefix: string }) {
   return (
     <div className="flex flex-col">
-      <h5 className="capitalize">{prefix}</h5>
+      <h6 className="capitalize">{prefix}</h6>
 
-    <div className="grid grid-cols-3 gap-3">
-      <FormField
-        control={form.control}
-        name={`${prefix}Name`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="capitalize">Name</FormLabel>
-            <FormControl>
-              <Input onChange={field.onChange} name={field.name} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <div className="grid grid-cols-3 gap-3">
+        <FormField
+          control={form.control}
+          name={`${prefix}Name`}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="capitalize">Name</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <FormField
-        control={form.control}
-        name={`${prefix}Phone`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="capitalize">Phone Number</FormLabel>
-            <FormControl>
-              <Input onChange={field.onChange} name={field.name} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+        <FormField
+          control={form.control}
+          name={`${prefix}Phone`}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="capitalize">Phone Number</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  placeholder="Include International Code (+234 803 555 5555)"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <FormField
-        control={form.control}
-        name={`${prefix}Email`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="capitalize">Email</FormLabel>
-            <FormControl>
-              <Input onChange={field.onChange} name={field.name} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    </div>
+        <FormField
+          control={form.control}
+          name={`${prefix}Email`}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="capitalize">Email</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
     </div>
   );
 }
 
-function EditSiteMembersForm() {
+function EditSiteMembersForm({ site, members }: SiteDetailsProps) {
   const router = useRouter();
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const createQueryString = useCallback(
     (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString())
-      params.set(name, value)
-      return params.toString()
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+      return params.toString();
     },
-    [searchParams]
-  )
+    [searchParams],
+  );
 
   const form = useForm<UpdateSiteMembersType>({
     resolver: zodResolver(updateSiteMembersSchema),
+    defaultValues: {
+      // so ugly
+      managerName: site.managerName ?? undefined,
+      managerPhone: site.managerPhone ?? undefined,
+      managerEmail: site.managerEmail ?? undefined,
+      contractorName: site.contractorName ?? undefined,
+      contractorPhone: site.contractorPhone ?? undefined,
+      contractorEmail: site.contractorEmail ?? undefined,
+      supervisorName: site.supervisorName ?? undefined,
+      supervisorPhone: site.supervisorPhone ?? undefined,
+      supervisorEmail: site.supervisorEmail ?? undefined,
+    },
   });
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(async (d) => {
-          console.log(d);
-          await new Promise(r => setTimeout(r, 200));
-          router.replace(pathname + "?" + createQueryString("m", "0"));
+          Actions.updateKeySiteUsers(site.id, d);
+          router.replace(`${pathname}?${createQueryString("m", "0")}`);
         })}
         className="flex flex-col gap-2"
       >
-        <SiteMemberFields form={form} prefix="manager" />
-        <SiteMemberFields form={form} prefix="contractor" />
-        <SiteMemberFields form={form} prefix="supervisor" />
+        <SiteMemberFields
+          site={site}
+          members={members}
+          form={form}
+          prefix="manager"
+        />
+        <SiteMemberFields
+          site={site}
+          members={members}
+          form={form}
+          prefix="contractor"
+        />
+        <SiteMemberFields
+          site={site}
+          members={members}
+          form={form}
+          prefix="supervisor"
+        />
 
-        <div className="col-span-2 flex justify-end">
+        <div className="flex gap-3 justify-end pt-4">
+          <Button
+            variant="secondary"
+            type="button"
+            className="flex gap-2"
+            // disabled={form.formState.isSubmitting}
+          >
+            Cancel
+          </Button>
           <Button
             type="submit"
             className="flex gap-2"
@@ -131,19 +173,22 @@ function EditSiteMembersForm() {
   );
 }
 
-export default function EditSiteMembersButtonPopup() {
+export default function EditSiteMembersButtonPopup({
+  site,
+  members,
+}: SiteDetailsProps) {
   const router = useRouter();
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const createQueryString = useCallback(
     (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString())
+      const params = new URLSearchParams(searchParams.toString());
       console.log("setting ", name, value);
-      params.set(name, value)
-      return params.toString()
+      params.set(name, value);
+      return params.toString();
     },
-    [searchParams]
-  )
+    [searchParams],
+  );
   return (
     <Dialog
       open={searchParams.get("m") === "1"}
@@ -158,7 +203,7 @@ export default function EditSiteMembersButtonPopup() {
         <DialogHeader>
           <DialogTitle>Edit Key Site Member Information</DialogTitle>
         </DialogHeader>
-        <EditSiteMembersForm />
+        <EditSiteMembersForm site={site} members={members} />
       </DialogContent>
     </Dialog>
   );

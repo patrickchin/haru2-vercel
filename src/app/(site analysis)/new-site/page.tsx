@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export function CountrySelectForm({ form }: { form: any }) {
+function CountrySelectForm({ form }: { form: any }) {
   const displayNames = useMemo(() => {
     return new Intl.DisplayNames(["en"], { type: "region" });
   }, []);
@@ -50,7 +50,7 @@ export function CountrySelectForm({ form }: { form: any }) {
             <SelectContent>
               {["NG", "SL", "GH", "KE"].map((c) => {
                 return (
-                  <SelectItem value={c}>
+                  <SelectItem value={c} key={c}>
                     {displayNames.of(c)} ({c})
                   </SelectItem>
                 );
