@@ -48,11 +48,11 @@ function SiteInfoBar({ site, members }: SiteDetailsProps) {
         </li>
         <li>
           <span>Country: </span>
-          <span className="font-semibold capitalize">{country || "<unknown>"}</span>
+          <span className="font-semibold uppercase">{country || "<unknown>"}</span>
         </li>
         <li>
           <span>Type: </span>
-          <span className="font-semibold">{site.type || "<unknown>"}</span>
+          <span className="font-semibold capitalize">{site.type || "<unknown>"}</span>
         </li>
         <li>
           <span>Created: </span>
@@ -120,9 +120,6 @@ export default async function Page({
     Actions.getSiteMembers(siteId),
   ]);
 
-  const membersDialogOpen = searchParams["m"] === "1";
-  console.log(membersDialogOpen);
-
   // TODO custom site not found page
   if (!site) notFound();
 
@@ -131,8 +128,8 @@ export default async function Page({
       <Header />
 
       {/* <main className="grow flex flex-col px-16 py-8 gap-4"> */}
-      <main className="grow flex flex-col gap-4 max-w-6xl w-full px-16 py-8 w-full">
-        <div className="flex justify-between">
+      <main className="grow flex flex-col gap-4 max-w-6xl w-full px-16 py-8">
+        <div className="flex justify-between pb-3">
           <h3>
             Site {siteId}: {site?.title}
           </h3>
