@@ -4,12 +4,11 @@ import { compare } from "bcrypt-ts";
 import {
   getUserAccountByEmail,
   getUserAccountByPhone,
-  getUserByEmail,
   verifyOtp,
 } from "@/lib/db";
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { authConfig } from "@/lib/auth.config";
 import { AccountRole } from "@/lib/types";
+import { authorizeSchema } from "@/lib/forms";
 
 declare module "next-auth" {
   interface User {
@@ -41,10 +40,8 @@ export const {
   providers: [
     Credentials({
       async authorize(credentials) {
-        const email = credentials.email as string;
-        const password = credentials.password as string;
-        const otp = credentials.otp as string;
-        const phone = credentials.phone as string;
+        const { email, password, otp, phone } =
+          authorizeSchema.parse(credentials);
 
         if (!email && !phone) return null;
         const user = email

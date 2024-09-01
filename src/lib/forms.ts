@@ -1,6 +1,6 @@
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
-import { isPossiblePhoneNumber, isValidPhoneNumber } from "libphonenumber-js";
+import { isPossiblePhoneNumber, isValidPhoneNumber, parsePhoneNumber } from "libphonenumber-js";
 
 function allFilesSmall(list: FileList | undefined) {
   if (list === undefined) return true;
@@ -76,6 +76,32 @@ export const LoginSchemaPassword = z.object({
 export type LoginTypesPhone = { phone: string; otp: string };
 export type LoginTypesEmail = { email: string; otp: string };
 export type LoginTypesPassword = { email: string; password: string };
+export const authorizeSchema = z
+  .object({
+    email: z.string().email("Invalid email address").optional(),
+    phone: phoneNumberZod.optional(),
+    // phone: z
+    //   .string()
+    //   .transform((p) => parsePhoneNumber(p))
+    //   .optional()
+    //   .refine((n) => !n || n.isValid(), { message: "Invalid phone number" }),
+    otp: z
+      .string()
+      .min(6)
+      .max(6)
+      .regex(/^\d+$/, "OTP must be 6 digits")
+      .optional(),
+    password: z.string().optional(),
+  })
+  .refine((schema) => !!schema.email !== !!schema.phone, {
+    message: "Needs to specify one of email or phone number",
+  })
+  .refine((schema) => !!schema.otp !== !!schema.password, {
+    message: "Needs to specify one of otp or password",
+  })
+  .refine((schema) => !!schema.email === !!schema.password, {
+    message: "Only email and password supported for now",
+  });
 
 const registerPhoneOtpSchema = z.object({
   name: z.string().trim().min(0, { message: "Name is required" }),
