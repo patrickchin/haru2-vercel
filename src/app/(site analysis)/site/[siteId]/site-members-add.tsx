@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,7 +26,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LucideLoader2 } from "lucide-react";
-import { redirect, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter, useSearchParams } from "next/navigation";
 
 function SiteMemberFields({ form,  prefix }: { form: any, prefix: string }) {
   return (
@@ -82,6 +82,17 @@ function SiteMemberFields({ form,  prefix }: { form: any, prefix: string }) {
 
 function EditSiteMembersForm() {
   const router = useRouter();
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set(name, value)
+      return params.toString()
+    },
+    [searchParams]
+  )
+
   const form = useForm<UpdateSiteMembersType>({
     resolver: zodResolver(updateSiteMembersSchema),
   });
@@ -90,9 +101,9 @@ function EditSiteMembersForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(async (d) => {
+          console.log(d);
           await new Promise(r => setTimeout(r, 200));
-          // Actions.addSite(d);
-          router.refresh();
+          router.replace(pathname + "?" + createQueryString("m", "0"));
         })}
         className="flex flex-col gap-2"
       >
@@ -121,8 +132,25 @@ function EditSiteMembersForm() {
 }
 
 export default function EditSiteMembersButtonPopup() {
+  const router = useRouter();
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString())
+      console.log("setting ", name, value);
+      params.set(name, value)
+      return params.toString()
+    },
+    [searchParams]
+  )
   return (
-    <Dialog>
+    <Dialog
+      open={searchParams.get("m") === "1"}
+      onOpenChange={(o) =>
+        router.replace(pathname + "?" + createQueryString("m", o ? "1" : "0"))
+      }
+    >
       <DialogTrigger asChild>
         <Button>Edit Members</Button>
       </DialogTrigger>
