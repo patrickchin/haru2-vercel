@@ -4,6 +4,7 @@ import * as db from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { addSiteSchema, AddSiteType } from "@/lib/forms";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 export async function addSite(d: AddSiteType) {
   const session = await auth();
@@ -94,7 +95,9 @@ export async function updateKeySiteUsers(
 
   try {
     console.log(`User ${userId} updating key site user information ${values}`);
-    return db.updateKeySiteUsers(siteId, values);
+    const ret = await db.updateKeySiteUsers(siteId, values);
+    revalidatePath(`/site/${siteId}`);
+    return ret;
   } catch (e: any) {
     console.log(
       `Failed to update key site users (user ${userId}) (site ${siteId}) error: ${e}`,
