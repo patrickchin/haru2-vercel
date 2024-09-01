@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +21,48 @@ import { CenteredLayout } from "@/components/page-layouts";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { LucideLoader2 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+export function CountrySelectForm({ form }: { form: any }) {
+  const displayNames = useMemo(() => {
+    return new Intl.DisplayNames(["en"], { type: "region" });
+  }, []);
+
+  return (
+    <FormField
+      control={form.control}
+      name="countryCode"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Country</FormLabel>
+          <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <FormControl>
+              <SelectTrigger>
+                <SelectValue placeholder="Select the country of your site" />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              {["NG", "SL", "GH", "KE"].map((c) => {
+                return (
+                  <SelectItem value={c}>
+                    {displayNames.of(c)} ({c})
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
 
 function NewSiteForm() {
   const form = useForm<AddSiteType>({
@@ -111,23 +154,7 @@ function NewSiteForm() {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="countryCode"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Country</FormLabel>
-              <FormControl>
-                <Input
-                  onChange={field.onChange}
-                  name={field.name}
-                  placeholder="KY"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <CountrySelectForm form={form} />
 
         <div className="col-span-2 space-y-4">
           <FormField
