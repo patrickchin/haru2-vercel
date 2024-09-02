@@ -15,7 +15,7 @@ assert(process.env.POSTGRES_DATABASE);
 
 export default {
   schema: "src/lib/db/drizzle/schema.ts",
-  out: "@/drizzle",
+  out: "src/lib/db/drizzle",
   dialect: "postgresql",
   // dbCredentials : { url: `${process.env.POSTGRES_URL}?sslmode=require` },
   // dbCredentials : { url: process.env.POSTGRES_URL || "" },
