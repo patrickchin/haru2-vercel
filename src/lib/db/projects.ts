@@ -22,8 +22,8 @@ export async function getUserProjects(userId: number, pagenum: number = 0) {
       },
     })
     .from(Schemas.projects1)
-    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.projects1.userid))
-    .where(eq(Schemas.projects1.userid, userId))
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.projects1.userId))
+    .where(eq(Schemas.projects1.userId, userId))
     .orderBy(desc(Schemas.projects1.id)) // created at?
     .limit(pagesize)
     .offset(pagesize * pagenum);
@@ -62,9 +62,9 @@ export async function updateProjectFields(
     description?: string;
     type?: string;
     subtype?: string;
-    countrycode?: string;
+    countryCode?: string;
     status?: string;
-    extrainfo?: any;
+    extraInfo?: any;
   },
 ) {
   return await db

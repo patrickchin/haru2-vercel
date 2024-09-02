@@ -78,7 +78,7 @@ function CommentsList({
 
   const groupedAttachments: Record<number, DesignFile[]> = {};
   attachments.forEach((att) => {
-    const key: number | null = att.commentid;
+    const key: number | null = att.commentId;
     if (key === null) return;
     if (!Object.keys(groupedAttachments).includes(key.toString()))
       groupedAttachments[key] = [];
@@ -288,8 +288,8 @@ function UploadAttachment({
 
     try {
       for (const file of Array.from(targetFiles)) {
-        const projectId = commentSection.projectid;
-        const taskId = commentSection.taskid;
+        const projectId = commentSection.projectId;
+        const taskId = commentSection.taskId;
 
         let f;
         // surely this could be better

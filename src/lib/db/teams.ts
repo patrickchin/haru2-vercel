@@ -26,13 +26,13 @@ const db = drizzle(client);
 
 export async function createTeams(projectId: number, types: string[]) {
   const values = types.map((type) => {
-    return { projectid: projectId, type };
+    return { projectId: projectId, type };
   });
   return db.transaction(async (tx) => {
     const existingTeam = await tx
       .select()
       .from(Schemas.teams1)
-      .where(eq(Schemas.teams1.projectid, projectId))
+      .where(eq(Schemas.teams1.projectId, projectId))
       .limit(1);
     if (existingTeam.length > 0) return;
     return tx.insert(Schemas.teams1).values(values).returning();
@@ -42,15 +42,15 @@ export async function createTeams(projectId: number, types: string[]) {
 export async function createTeam(projectId: number, type: string) {
   return db
     .insert(Schemas.teams1)
-    .values({ projectid: projectId, type })
+    .values({ projectId: projectId, type })
     .returning();
 }
 
 export async function deleteTeam(teamId: number) {
   const deletedTeam = await db.transaction(async (tx) => {
     await tx
-      .delete(Schemas.teammembers1)
-      .where(eq(Schemas.teammembers1.teamid, teamId))
+      .delete(Schemas.teamMembers1)
+      .where(eq(Schemas.teamMembers1.teamId, teamId))
       .returning();
     return await tx
       .delete(Schemas.teams1)
@@ -69,7 +69,7 @@ export async function getProjectTeams(projectId: number) {
     })
     .from(Schemas.teams1)
     .leftJoin(Schemas.users1, eq(Schemas.teams1.lead, Schemas.users1.id))
-    .where(eq(Schemas.teams1.projectid, projectId));
+    .where(eq(Schemas.teams1.projectId, projectId));
 }
 
 export async function getProjectTeamsEnsureDefault(projectId: number) {
@@ -77,55 +77,55 @@ export async function getProjectTeamsEnsureDefault(projectId: number) {
     const teams = await tx
       .select()
       .from(Schemas.teams1)
-      .where(eq(Schemas.teams1.projectid, projectId));
+      .where(eq(Schemas.teams1.projectId, projectId));
     if (teams.length > 0) return teams;
 
     const values = defaultTeams.map((teamType) => {
-      return { projectid: projectId, type: teamType };
+      return { projectId: projectId, type: teamType };
     });
     return tx.insert(Schemas.teams1).values(values).returning();
   });
 }
 
-export async function getTeamId(projectid: number, type: string) {
+export async function getTeamId(projectId: number, type: string) {
   // may
   return db
     .select()
     .from(Schemas.teams1)
     .where(
       and(
-        eq(Schemas.teams1.projectid, projectid),
+        eq(Schemas.teams1.projectId, projectId),
         eq(Schemas.teams1.type, type),
       ),
     );
 }
 
-export async function setTeamLead(teamid: number, userid: number) {
+export async function setTeamLead(teamId: number, userId: number) {
   return db
     .update(Schemas.teams1)
-    .set({ lead: userid })
-    .where(eq(Schemas.teams1.id, teamid))
+    .set({ lead: userId })
+    .where(eq(Schemas.teams1.id, teamId))
     .returning();
 }
 
-export async function addTeamMember(teamid: number, userid: number) {
+export async function addTeamMember(teamId: number, userId: number) {
   return db
-    .insert(Schemas.teammembers1)
+    .insert(Schemas.teamMembers1)
     .values({
-      teamid,
-      userid,
+      teamId,
+      userId,
     })
     .onConflictDoNothing()
     .returning();
 }
 
-export async function deleteTeamMember(teamid: number, userid: number) {
+export async function deleteTeamMember(teamId: number, userId: number) {
   return await db
-    .delete(Schemas.teammembers1)
+    .delete(Schemas.teamMembers1)
     .where(
       and(
-        eq(Schemas.teammembers1.teamid, teamid),
-        eq(Schemas.teammembers1.userid, userid),
+        eq(Schemas.teamMembers1.teamId, teamId),
+        eq(Schemas.teamMembers1.userId, userId),
       ),
     )
     .returning();
@@ -136,10 +136,10 @@ export async function getTeamMembers(teamId: number) {
     .select({ ...getTableColumns(Schemas.users1) })
     .from(Schemas.users1)
     .leftJoin(
-      Schemas.teammembers1,
-      eq(Schemas.teammembers1.userid, Schemas.users1.id),
+      Schemas.teamMembers1,
+      eq(Schemas.teamMembers1.userId, Schemas.users1.id),
     )
-    .where(eq(Schemas.teammembers1.teamid, teamId));
+    .where(eq(Schemas.teamMembers1.teamId, teamId));
 }
 
 export async function getTeam(teamId: number) {
@@ -159,8 +159,8 @@ export async function getTeamMembersDetailed(teamId: number) {
     .from(Schemas.users1)
     .leftJoin(Schemas.accounts1, eq(Schemas.accounts1.id, Schemas.users1.id))
     .leftJoin(
-      Schemas.teammembers1,
-      eq(Schemas.teammembers1.userid, Schemas.users1.id),
+      Schemas.teamMembers1,
+      eq(Schemas.teamMembers1.userId, Schemas.users1.id),
     )
-    .where(eq(Schemas.teammembers1.teamid, teamId));
+    .where(eq(Schemas.teamMembers1.teamId, teamId));
 }

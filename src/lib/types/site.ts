@@ -23,8 +23,9 @@ export type SiteReportNew = Omit<
 >;
 export const nullSiteReport: SiteReport = {
   id: 0,
+  siteId: null,
   reporterId: null,
   reporter: null,
-  siteId: null,
   createdAt: null,
+  visitDate: null,
 };

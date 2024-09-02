@@ -10,7 +10,7 @@ function canViewProjectTasks(
   project?: DesignProject,
 ) {
   if (!project || !session?.user) return false;
-  const isOwner = project?.userid === session.user.idn;
+  const isOwner = project?.userId === session.user.idn;
   switch (session.user.role) {
     case "client":
       return isOwner;
@@ -48,8 +48,8 @@ export async function getProjectCommentsAndFiles(projectId: number) {
 export async function getTaskCommentsAndFiles(taskId: number) {
   const session = await auth();
   const task = await db.getTask(taskId);
-  if (!task.projectid) return;
-  const project = await db.getProject(task.projectid);
+  if (!task.projectId) return;
+  const project = await db.getProject(task.projectId);
   if (!canViewProjectTasks(session, project)) return;
 
   const sectionId = await db.getTaskCommentSection(taskId);
@@ -59,8 +59,8 @@ export async function getTaskCommentsAndFiles(taskId: number) {
 export async function getTaskComments(taskId: number) {
   const session = await auth();
   const task = await db.getTask(taskId);
-  if (!task.projectid) return;
-  const project = await db.getProject(task.projectid);
+  if (!task.projectId) return;
+  const project = await db.getProject(task.projectId);
   if (!canViewProjectTasks(session, project)) return;
 
   const comments = db.getTaskComments(taskId);
@@ -80,12 +80,12 @@ export async function addComment({
   if (!canAddComment(session, commentSection)) return;
 
   const comment = await db.addSectionComment(commentSection.id, {
-    userid: Number(session?.user?.id),
+    userId: Number(session?.user?.id),
     comment: commentString,
   });
   // link files that have already been uploaded to the current comment
   const editedFiles = attachmentIds.map((fileid) =>
-    db.updateFile(fileid, { commentid: comment.id }),
+    db.updateFile(fileid, { commentId: comment.id }),
   );
   const allEditedFiles = await Promise.all(editedFiles);
 

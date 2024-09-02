@@ -21,7 +21,7 @@ export default function ProjectTaskDetails({
     <Card>
       <CardContent className="pt-8">
         <TaskTable
-          projectid={project.id}
+          projectId={project.id}
           data={tasks}
           pageSize={8}
           showTypeColumn={true}

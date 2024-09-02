@@ -16,7 +16,7 @@ function canViewProjectTasks(
   project?: DesignProject,
 ) {
   if (!project || !session?.user) return false;
-  const isOwner = project?.userid === session.user.idn;
+  const isOwner = project?.userId === session.user.idn;
   switch (session.user.role) {
     case "client":
       return isOwner;
@@ -34,7 +34,7 @@ function canEditProjectTasks(
   project?: DesignProject,
 ) {
   if (!project || !session?.user) return false;
-  const isOwner = project?.userid === session.user.idn;
+  const isOwner = project?.userId === session.user.idn;
   switch (session.user.role) {
     case "client":
       return isOwner;
@@ -105,8 +105,8 @@ export async function createProjectTasks(
 
   const newTasks = specs.map((spec): typeof Schemas.tasks1.$inferInsert => {
     return {
-      specid: spec.id,
-      projectid: projectId,
+      specId: spec.id,
+      projectId: projectId,
       type: spec.type,
       title: spec.title,
       description: spec.description,
@@ -132,15 +132,15 @@ export async function enableProjectTaskSpec(
 export async function enableProjectTask(taskId: number, enabled: boolean) {
   const session = await auth();
   const task = await db.getTask(taskId);
-  if (!task.projectid) return;
-  const project = await db.getProject(task.projectid);
+  if (!task.projectId) return;
+  const project = await db.getProject(task.projectId);
   if (!canEditProjectTasks(session, project)) return;
 
   const task2 = await db.updateProjectTask(taskId, { enabled });
-  if (!task2.projectid) return;
+  if (!task2.projectId) return;
   if (!task2.type) return;
   // tbh should this really be returning all of the tasks? ...
-  return await db.getProjectTasksAllOfType(task2.projectid, task2.type);
+  return await db.getProjectTasksAllOfType(task2.projectId, task2.type);
 }
 
 export async function updateTaskEstimations(
@@ -149,18 +149,18 @@ export async function updateTaskEstimations(
 ) {
   const session = await auth();
   const task = await db.getTask(taskId);
-  if (!task.projectid) return;
-  const project = await db.getProject(task.projectid);
+  if (!task.projectId) return;
+  const project = await db.getProject(task.projectId);
   if (!canEditProjectTasks(session, project)) return;
 
   const parsed = ManageTaskEditEstimatesSchema.safeParse(data);
   if (!parsed.success) return;
 
   const task2 = await db.updateProjectTask(taskId, parsed.data);
-  if (!task2.projectid) return;
+  if (!task2.projectId) return;
   if (!task2.type) return;
   // tbh should this really be returning all of the tasks? ...
-  return await db.getProjectTasksAllOfType(task2.projectid, task2.type);
+  return await db.getProjectTasksAllOfType(task2.projectId, task2.type);
 }
 
 // include disabled
@@ -206,8 +206,8 @@ export async function getProjectTask(projectId: number, specId: number) {
 export async function getTask(taskId: number) {
   const session = await auth();
   const task = await db.getTask(taskId);
-  if (!task.projectid) return;
-  const project = await db.getProject(task.projectid);
+  if (!task.projectId) return;
+  const project = await db.getProject(task.projectId);
   if (!canViewProjectTasks(session, project)) return;
 
   return await db.getTask(taskId);

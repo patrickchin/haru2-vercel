@@ -14,10 +14,10 @@ const client = postgres(`${process.env.POSTGRES_URL!}`);
 const db = drizzle(client);
 
 export async function createTaskSpecs(
-  values: (typeof Schemas.taskspecs1.$inferInsert)[],
+  values: (typeof Schemas.taskSpecs1.$inferInsert)[],
 ) {
   return await db
-    .insert(Schemas.taskspecs1)
+    .insert(Schemas.taskSpecs1)
     .values(values)
     .onConflictDoNothing()
     .returning();
@@ -26,19 +26,19 @@ export async function createTaskSpecs(
 export async function getTaskSpecsOfType(type: string) {
   return await db
     .select()
-    .from(Schemas.taskspecs1)
-    .where(eq(Schemas.taskspecs1.type, type));
+    .from(Schemas.taskSpecs1)
+    .where(eq(Schemas.taskSpecs1.type, type));
 }
 
 export async function getTaskSpecs() {
-  return await db.select().from(Schemas.taskspecs1);
+  return await db.select().from(Schemas.taskSpecs1);
 }
 
-export async function getTaskSpec(specid: number) {
+export async function getTaskSpec(specId: number) {
   return await db
     .select()
-    .from(Schemas.taskspecs1)
-    .where(eq(Schemas.taskspecs1.id, specid))
+    .from(Schemas.taskSpecs1)
+    .where(eq(Schemas.taskSpecs1.id, specId))
     .limit(1);
 }
 
@@ -53,15 +53,15 @@ export async function createProjectTasksFromAllSpecs(projectId: number) {
     const existingTasks = await tx
       .select()
       .from(Schemas.tasks1)
-      .where(eq(Schemas.tasks1.projectid, projectId))
+      .where(eq(Schemas.tasks1.projectId, projectId))
       .limit(1);
     if (existingTasks.length > 0) return; // or throw error?
 
-    const specs = await tx.select().from(Schemas.taskspecs1);
+    const specs = await tx.select().from(Schemas.taskSpecs1);
     const tasks = specs.map((spec) => {
       return {
-        specid: spec.id,
-        projectid: projectId,
+        specId: spec.id,
+        projectId: projectId,
         type: spec.type,
         title: spec.title,
         description: spec.description,
@@ -82,8 +82,8 @@ export async function enableProjectTaskSpec(
     .set({ enabled })
     .where(
       and(
-        eq(Schemas.tasks1.projectid, projectId),
-        eq(Schemas.tasks1.specid, specId),
+        eq(Schemas.tasks1.projectId, projectId),
+        eq(Schemas.tasks1.specId, specId),
       ),
     )
     .returning()
@@ -100,7 +100,7 @@ export async function updateProjectTask(taskId: number, values: DesignTaskNew) {
 }
 
 export async function getProjectTasksAllOfType(
-  projectid: number,
+  projectId: number,
   type: string,
 ) {
   return await db
@@ -108,40 +108,40 @@ export async function getProjectTasksAllOfType(
     .from(Schemas.tasks1)
     .where(
       and(
-        eq(Schemas.tasks1.projectid, projectid),
+        eq(Schemas.tasks1.projectId, projectId),
         eq(Schemas.tasks1.type, type),
       ),
     );
 }
 
-export async function getProjectTasksAll(projectid: number) {
+export async function getProjectTasksAll(projectId: number) {
   return await db
     .select()
     .from(Schemas.tasks1)
-    .where(and(eq(Schemas.tasks1.projectid, projectid)));
+    .where(and(eq(Schemas.tasks1.projectId, projectId)));
 }
 
-export async function getProjectTasks(projectid: number) {
+export async function getProjectTasks(projectId: number) {
   return await db
     .select()
     .from(Schemas.tasks1)
     .where(
       and(
-        eq(Schemas.tasks1.projectid, projectid),
+        eq(Schemas.tasks1.projectId, projectId),
         eq(Schemas.tasks1.enabled, true),
       ),
     )
     .orderBy(Schemas.tasks1.id);
 }
 
-export async function getProjectTask(projectid: number, specid: number) {
+export async function getProjectTask(projectId: number, specId: number) {
   return await db
     .select()
     .from(Schemas.tasks1)
     .where(
       and(
-        eq(Schemas.tasks1.projectid, projectid),
-        eq(Schemas.tasks1.specid, specid),
+        eq(Schemas.tasks1.projectId, projectId),
+        eq(Schemas.tasks1.specId, specId),
       ),
     );
 }

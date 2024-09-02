@@ -11,8 +11,8 @@ import {
   unique,
   pgEnum,
   jsonb,
-  primaryKey,
   numeric,
+  primaryKey,
 } from "drizzle-orm/pg-core";
 
 // pnpm drizzle-kit push
@@ -35,7 +35,7 @@ export const accounts1 = pgTable("accounts1", {
     mode: "date",
     withTimezone: true,
   }),
-  phone: varchar("phone"),
+  phone: varchar("phone").unique(),
   phoneVerified: timestamp("phoneVerified", {
     mode: "date",
     withTimezone: true,
@@ -63,15 +63,15 @@ export const contacts1 = pgTable("contacts1", {
 
 export const projects1 = pgTable("projects1", {
   id: serial("id").primaryKey(),
-  userid: integer("userId").references(() => users1.id),
+  userId: integer("userId").references(() => users1.id),
   title: varchar("title"),
   description: varchar("description"),
   type: varchar("type"),
   subtype: varchar("subtype"),
-  countrycode: varchar("countryCode"),
+  countryCode: varchar("countryCode"),
   status: varchar("status").default("pending"),
-  extrainfo: json("info"),
-  createdat: timestamp("createdAt", {
+  extraInfo: json("info"),
+  createdAt: timestamp("createdAt", {
     withTimezone: true,
     mode: "date",
   }).defaultNow(),
@@ -80,27 +80,26 @@ export const projects1 = pgTable("projects1", {
 export const teams1 = pgTable("teams1", {
   id: serial("id").primaryKey(),
   // name: varchar("name"),
-  projectid: integer("projectId").references(() => projects1.id),
+  projectId: integer("projectId").references(() => projects1.id),
   type: varchar("type"), // legal, architectural, structural, mep
   lead: integer("leadId").references(() => users1.id),
 });
 
-export const teammembers1 = pgTable(
-  "teammembers1",
+export const teamMembers1 = pgTable(
+  "teamMembers1",
   {
-    teamid: integer("teamId").references(() => teams1.id),
-    userid: integer("userId").references(() => users1.id),
+    teamId: integer("teamId").references(() => teams1.id),
+    userId: integer("userId").references(() => users1.id),
   },
   (t) => {
     return {
-      unq: unique().on(t.teamid, t.userid),
-      // drizzle can't changing primary key automatically it seems
-      // pk: primaryKey({ columns: [t.teamid, t.userid], }),
+      uniq: unique().on(t.teamId, t.userId),
+      // pk: primaryKey({ columns: [t.teamId, t.userId] }),
     };
   },
 );
 
-export const taskspecs1 = pgTable("taskspecs1", {
+export const taskSpecs1 = pgTable("taskSpecs1", {
   id: serial("id").primaryKey(),
   type: varchar("type"),
   title: varchar("title"),
@@ -110,16 +109,16 @@ export const taskspecs1 = pgTable("taskspecs1", {
 
 export const tasks1 = pgTable("tasks1", {
   id: serial("id").primaryKey(),
-  specid: integer("specId").references(() => taskspecs1.id),
-  projectid: integer("projectId").references(() => projects1.id),
+  specId: integer("specId").references(() => taskSpecs1.id),
+  projectId: integer("projectId").references(() => projects1.id),
   lead: varchar("lead"), // TODO deprecate replace with leadId
   // leadId: integer("leadId").references(() => users1.id),
   // owner: integer("ownerid").references(() => users1.id),
   // members: integer("ownerid").references(() => users1.id),
   type: varchar("type"),
   status: varchar("status").default("pending"),
-  startdate: date("startDate", { mode: "date" }),
-  enddate: date("endDate", { mode: "date" }),
+  startDate: date("startDate", { mode: "date" }),
+  endDate: date("endDate", { mode: "date" }),
   estimation: integer("estimation"), // TODO deprecate
   duration: integer("duration"), // in days
   cost: integer("cost"),
@@ -139,14 +138,14 @@ export const tasks1 = pgTable("tasks1", {
 
 export const commentSections1 = pgTable("commentSections1", {
   id: serial("id").primaryKey(),
-  projectid: integer("projectId").references(() => projects1.id),
-  taskid: integer("taskId").references(() => tasks1.id),
+  projectId: integer("projectId").references(() => projects1.id),
+  taskId: integer("taskId").references(() => tasks1.id),
 });
 
 export const comments1 = pgTable("comments1", {
   id: serial("id").primaryKey(),
   sectionId: integer("sectionId").references(() => commentSections1.id),
-  userid: integer("userId").references(() => users1.id),
+  userId: integer("userId").references(() => users1.id),
   createdAt: timestamp("createdAt", {
     withTimezone: true,
     mode: "date",
@@ -158,19 +157,19 @@ export const files1 = pgTable("files1", {
   id: serial("id").primaryKey(),
 
   // TODO deprecate in favour of fileGroups1
-  uploaderid: integer("uploaderId").references(() => users1.id),
+  uploaderId: integer("uploaderId").references(() => users1.id),
   // TODO deprecate in favour of fileGroups1
-  projectid: integer("projectId").references(() => projects1.id),
+  projectId: integer("projectId").references(() => projects1.id),
   // TODO deprecate in favour of fileGroups1
-  taskid: integer("taskId").references(() => tasks1.id),
+  taskId: integer("taskId").references(() => tasks1.id),
   // TODO deprecate in favour of fileGroups1
-  commentid: integer("commentId").references(() => comments1.id),
+  commentId: integer("commentId").references(() => comments1.id),
 
   filename: varchar("filename"),
   filesize: integer("filesize"),
   url: varchar("url"),
   type: varchar("type"),
-  uploadedat: timestamp("uploadedAt", { mode: "date", withTimezone: true })
+  uploadedAt: timestamp("uploadedAt", { mode: "date", withTimezone: true })
     .notNull()
     .defaultNow(),
 });
@@ -187,7 +186,8 @@ export const fileGroupFiles1 = pgTable(
   },
   (t) => {
     return {
-      pk: primaryKey({ columns: [t.fileGroupId, t.fileId] }),
+      uniq: unique().on(t.fileGroupId, t.fileId),
+      // pk: primaryKey({ columns: [t.fileGroupId, t.fileId] }),
     };
   },
 );
@@ -238,6 +238,7 @@ export const siteDetails1 = pgTable("siteDetails1", {
     mode: "date",
     withTimezone: true,
   }),
+  schedule: varchar("schedule"),
 
   budget: numeric("budget"),
   budgetUnits: varchar("budgetUnits"),
@@ -255,6 +256,7 @@ export const siteDetails1 = pgTable("siteDetails1", {
 });
 
 export const siteMemberRole = pgEnum("siteMemberRole", [
+  "owner",
   "manager",
   "contractor",
   "supervisor",

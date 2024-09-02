@@ -92,7 +92,7 @@ export function ProjectInfoBar({ project }: { project: any }) {
   const displayNames = useMemo(() => {
     return new Intl.DisplayNames(["en"], { type: "region" });
   }, []);
-  const country = displayNames.of(project.countrycode);
+  const country = displayNames.of(project.countryCode);
 
   return (
     <Card>
@@ -104,7 +104,7 @@ export function ProjectInfoBar({ project }: { project: any }) {
           </li>
           <li className="inline-block border-r px-2">
             <span className="font-bold">Owner: </span>
-            {project.userid || "<unknown>"}
+            {project.userId || "<unknown>"}
           </li>
           <li className="inline-block border-r px-2">
             <span className="font-bold">Country: </span>
@@ -120,7 +120,7 @@ export function ProjectInfoBar({ project }: { project: any }) {
           </li>
           <li className="inline-block border-none px-2">
             <span className="font-bold">Created: </span>
-            {project.createdat.toDateString() || "<unknown>"}
+            {project.createdAt.toDateString() || "<unknown>"}
           </li>
         </ul>
       </CardHeader>

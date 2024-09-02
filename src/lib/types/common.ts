@@ -11,15 +11,15 @@ export type HaruFile = typeof Schemas.files1.$inferSelect & {
 // is this a good idea?
 export const nullHaruFile: HaruFile = {
   id: 0,
-  uploaderid: null,
-  projectid: null,
-  taskid: null,
-  commentid: null,
+  uploaderId: null,
+  projectId: null,
+  taskId: null,
+  commentId: null,
   filename: "",
   filesize: 0,
   url: null,
   type: "",
-  uploadedat: new Date(),
+  uploadedAt: new Date(),
   uploader: {
     id: 0,
     name: "",
