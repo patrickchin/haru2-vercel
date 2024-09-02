@@ -5,14 +5,12 @@ import {
   integer,
   timestamp,
   json,
-  char,
   date,
   boolean,
   unique,
   pgEnum,
   jsonb,
   numeric,
-  primaryKey,
 } from "drizzle-orm/pg-core";
 
 // pnpm drizzle-kit push
@@ -35,7 +33,7 @@ export const accounts1 = pgTable("accounts1", {
     mode: "date",
     withTimezone: true,
   }),
-  phone: varchar("phone").unique(),
+  phone: varchar("phone").unique("accounts1_phone_unique", { nulls: "distinct" }),
   phoneVerified: timestamp("phoneVerified", {
     mode: "date",
     withTimezone: true,
@@ -213,7 +211,7 @@ export const sites1 = pgTable("sites1", {
   id: serial("id").primaryKey(),
   title: varchar("title"),
   type: varchar("type"),
-  countryCode: char("countryCode"),
+  countryCode: varchar("countryCode"),
   createdAt: timestamp("createdAt", {
     mode: "date",
     withTimezone: true,
