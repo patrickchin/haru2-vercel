@@ -31,7 +31,7 @@ export async function getFile(fileId: number): Promise<DesignFile> {
   return await db
     .select(HaruFileColumns)
     .from(Schemas.files1)
-    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderid))
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderId))
     .where(eq(Schemas.files1.id, fileId))
     .limit(1)
     .then((r) => r[0]);
@@ -71,12 +71,12 @@ export async function getFilesForProject(projectId: number) {
   return await db
     .select(HaruTaskFileColumns)
     .from(Schemas.files1)
-    .leftJoin(Schemas.tasks1, eq(Schemas.tasks1.id, Schemas.files1.taskid))
-    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderid))
+    .leftJoin(Schemas.tasks1, eq(Schemas.tasks1.id, Schemas.files1.taskId))
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderId))
     .where(
       or(
-        eq(Schemas.files1.projectid, projectId),
-        eq(Schemas.tasks1.projectid, projectId),
+        eq(Schemas.files1.projectId, projectId),
+        eq(Schemas.tasks1.projectId, projectId),
       ),
     );
 }
@@ -84,7 +84,7 @@ export async function getFilesForProject(projectId: number) {
 export async function deleteAllFilesFromProject(projectId: number) {
   return await db
     .delete(Schemas.files1)
-    .where(eq(Schemas.files1.projectid, projectId))
+    .where(eq(Schemas.files1.projectId, projectId))
     .returning();
 }
 
@@ -101,18 +101,18 @@ export async function getFilesForTask(taskId: number) {
   return await db
     .select(HaruFileColumns)
     .from(Schemas.files1)
-    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderid))
-    .where(eq(Schemas.files1.taskid, taskId));
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderId))
+    .where(eq(Schemas.files1.taskId, taskId));
 }
 
 export async function getFilesForCommentSection(sectionId: number) {
   return db
     .select(HaruFileColumns)
     .from(Schemas.files1)
-    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderid))
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderId))
     .innerJoin(
       Schemas.comments1,
-      eq(Schemas.comments1.id, Schemas.files1.commentid),
+      eq(Schemas.comments1.id, Schemas.files1.uploaderId),
     )
     .innerJoin(
       Schemas.commentSections1,
@@ -125,7 +125,7 @@ export async function addReportFile(reportId: number) {
   return await db
     .select(HaruFileColumns)
     .from(Schemas.files1)
-    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderid))
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderId))
     .leftJoin(
       Schemas.siteReportFiles1,
       eq(Schemas.siteReportFiles1.fileId, Schemas.files1.id),
@@ -137,7 +137,7 @@ export async function getFilesForReport(reportId: number) {
   return await db
     .select(HaruFileColumns)
     .from(Schemas.files1)
-    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderid))
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderId))
     .leftJoin(
       Schemas.siteReportFiles1,
       eq(Schemas.siteReportFiles1.fileId, Schemas.files1.id),

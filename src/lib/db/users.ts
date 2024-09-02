@@ -112,19 +112,19 @@ export async function createUserIfNotExists({
 }
 
 export async function updateUserAvatar(
-  uploaderid: number,
+  uploaderId: number,
   values: { avatarUrl: string | null },
 ) {
   return await db.transaction(async (tx) => {
     const oldUser = await tx
       .select()
       .from(Schemas.users1)
-      .where(eq(Schemas.users1.id, uploaderid))
+      .where(eq(Schemas.users1.id, uploaderId))
       .then((r) => r[0]);
     const updatedUser = await tx
       .update(Schemas.users1)
       .set(values)
-      .where(eq(Schemas.users1.id, uploaderid))
+      .where(eq(Schemas.users1.id, uploaderId))
       .returning()
       .then((r) => r[0]);
     return {

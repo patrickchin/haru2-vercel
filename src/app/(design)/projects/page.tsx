@@ -14,7 +14,7 @@ function ProjectItem({ project }: { project: DesignProjectUser }) {
   const user = project.user;
   const title = project.title || "Untitled";
   const where =
-    (project.countrycode && displayNames.of(project.countrycode)) ||
+    (project.countryCode && displayNames.of(project.countryCode)) ||
     "Unknown Location";
   const type = project.type || "";
 
@@ -41,9 +41,9 @@ function ProjectItem({ project }: { project: DesignProjectUser }) {
         </p>
         <p className="mt-1 text-xs leading-5 text-gray-500">
           Submitted date{" "}
-          {project.createdat && (
-            <time dateTime={project.createdat}>
-              {new Date(project.createdat).toLocaleDateString()}{" "}
+          {project.createdAt && (
+            <time dateTime={project.createdAt.toISOString()}>
+              {project.createdAt.toLocaleDateString()}{" "}
             </time>
           )}
         </p>

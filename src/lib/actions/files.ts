@@ -12,7 +12,7 @@ function canViewProjectFiles(
   project?: DesignProject,
 ) {
   if (!project || !session?.user) return false;
-  const isOwner = project?.userid === session.user.idn;
+  const isOwner = project?.userId === session.user.idn;
   switch (session.user.role) {
     case "client":
       return isOwner;
@@ -30,7 +30,7 @@ function canEditProjectFiles(
   project?: DesignProject,
 ) {
   if (!project || !session?.user) return false;
-  const isOwner = project?.userid === session.user.idn;
+  const isOwner = project?.userId === session.user.idn;
   switch (session.user.role) {
     case "client":
       return isOwner;
@@ -62,28 +62,28 @@ export async function addFile(
   const session = await auth();
 
   // this is a bit more complicated than it should be
-  const taskid = "taskId" in args ? args.taskId : null;
-  let projectid = "projectId" in args ? args.projectId : null;
-  assert(taskid || projectid);
-  if (!projectid) {
-    if (!taskid) return;
-    const task = await db.getTask(taskid);
-    if (!task.projectid) return;
-    projectid = task.projectid;
+  const taskId = "taskId" in args ? args.taskId : null;
+  let projectId = "projectId" in args ? args.projectId : null;
+  assert(taskId || projectId);
+  if (!projectId) {
+    if (!taskId) return;
+    const task = await db.getTask(taskId);
+    if (!task.projectId) return;
+    projectId = task.projectId;
   }
-  const project = await db.getProject(projectid);
+  const project = await db.getProject(projectId);
   if (!canEditProjectFiles(session, project)) return;
 
   return db.addFile({
-    taskid,
-    projectid,
+    taskId,
+    projectId,
     type: args.type,
     filename: args.name,
     filesize: args.size,
     url: args.fileUrl,
-    // specid: specId,
-    uploaderid: Number(session?.user?.id),
-    // commentid: ?,
+    // specId: specId,
+    uploaderId: Number(session?.user?.id),
+    // commentId: ?,
   });
 }
 
@@ -92,8 +92,8 @@ export async function getTaskFiles(
 ): Promise<DesignFile[] | undefined> {
   const session = await auth();
   const task = await db.getTask(taskId);
-  if (!task.projectid) return;
-  const project = await db.getProject(task.projectid);
+  if (!task.projectId) return;
+  const project = await db.getProject(task.projectId);
   if (!canViewProjectFiles(session, project)) return;
 
   return db.getFilesForTask(taskId);
@@ -102,13 +102,13 @@ export async function getTaskFiles(
 export async function deleteFile(fileId: number) {
   const session = await auth();
   const file = await db.getFile(fileId);
-  if (!file.projectid) {
-    if (!file.taskid) return; // ?? then where does this file belong?
-    const task = await db.getTask(file.taskid);
-    if (!task.projectid) return;
-    file.projectid = task.projectid; // kinda hacky
+  if (!file.projectId) {
+    if (!file.taskId) return; // ?? then where does this file belong?
+    const task = await db.getTask(file.taskId);
+    if (!task.projectId) return;
+    file.projectId = task.projectId; // kinda hacky
   }
-  const project = await db.getProject(file.projectid);
+  const project = await db.getProject(file.projectId);
   if (!canViewProjectFiles(session, project)) return;
 
   const f = await db.deleteFile(fileId);
@@ -137,6 +137,6 @@ export async function addReportFile(args: {
     filename: args.name,
     filesize: args.size,
     url: args.fileUrl,
-    uploaderid: session.user.idn,
+    uploaderId: session.user.idn,
   });
 }

@@ -40,7 +40,7 @@ import ColumnSortHeader from "@/components/ui/column-sort";
 
 const columnLabels: { [key: string]: string } = {
   filesize: "Size",
-  uploadedat: "Upload Date",
+  uploadedAt: "Upload Date",
   task_title: "Task",
   actions: "Actions",
 };
@@ -84,13 +84,13 @@ const filesColumns: (
     enableSorting: true,
   },
   {
-    accessorKey: "uploadedat",
+    accessorKey: "uploadedAt",
     header: ({ column }) => (
       <ColumnSortHeader label="Upload Date" column={column} />
     ),
     cell: ({ row }) => {
       // TODO hover show full date
-      return <div>{getTimeAgo(row.getValue("uploadedat"))}</div>;
+      return <div>{getTimeAgo(row.getValue("uploadedAt"))}</div>;
     },
     size: 0,
     enableSorting: true,
@@ -102,15 +102,15 @@ const filesColumns: (
     cell: ({ row }) => {
       const file = row.original;
       const task = file.task;
-      const projectid = file.projectid ?? file.task?.projectid;
-      const commentid = file.commentid;
-      const commentHash = commentid ? `#comment-${commentid}` : "";
+      const projectId = file.projectId ?? file.task?.projectId;
+      const commentId = file.uploaderId;
+      const commentHash = commentId ? `#comment-${commentId}` : "";
       return (
         <Button size="sm" variant="link" className="h-8 p-0" disabled={!task}>
           {task ? (
             <>
               <Link
-                href={`/project/${projectid}/task/${task.specid}${commentHash}`}
+                href={`/project/${projectId}/task/${task.specId}${commentHash}`}
                 className="flex gap-1 items-center font-normal"
               >
                 {task.title}

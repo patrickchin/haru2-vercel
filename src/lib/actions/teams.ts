@@ -10,7 +10,7 @@ function canViewProjectTeams(
   project?: DesignProject,
 ) {
   if (!project || !session?.user) return false;
-  const isOwner = project?.userid === session.user.idn;
+  const isOwner = project?.userId === session.user.idn;
   switch (session.user.role) {
     case "client":
       return isOwner;
@@ -28,7 +28,7 @@ function canEditProjectTeams(
   project?: DesignProject,
 ) {
   if (!project || !session?.user) return false;
-  const isOwner = project?.userid === session.user.idn;
+  const isOwner = project?.userId === session.user.idn;
   switch (session.user.role) {
     case "client":
       return isOwner;
@@ -51,8 +51,8 @@ export async function getProjectTeams(projectId: number) {
 export async function getTeamMembersDetailed(teamId: number) {
   const session = await auth();
   const team = await db.getTeam(teamId);
-  if (!team.projectid) return;
-  const project = await db.getProject(team.projectid);
+  if (!team.projectId) return;
+  const project = await db.getProject(team.projectId);
   if (canViewProjectTeams(session, project))
     return db.getTeamMembersDetailed(teamId);
 }
@@ -60,16 +60,16 @@ export async function getTeamMembersDetailed(teamId: number) {
 export async function getTeamMembers(teamId: number) {
   const session = await auth();
   const team = await db.getTeam(teamId);
-  if (!team.projectid) return;
-  const project = await db.getProject(team.projectid);
+  if (!team.projectId) return;
+  const project = await db.getProject(team.projectId);
   if (canViewProjectTeams(session, project)) return db.getTeamMembers(teamId);
 }
 
 async function canEditProjectTeamsFromTeamId(teamId: number) {
   const session = await auth();
   const team = await db.getTeam(teamId);
-  if (!team.projectid) return;
-  const project = await db.getProject(team.projectid);
+  if (!team.projectId) return;
+  const project = await db.getProject(team.projectId);
   return canEditProjectTeams(session, project);
 }
 

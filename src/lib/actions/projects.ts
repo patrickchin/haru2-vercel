@@ -30,17 +30,17 @@ export async function submitProjectForm2(formData: FormData) {
     buildingType,
     buildingSubtype,
     country,
-    ...extrainfo
+    ...extraInfo
   } = parsed.data;
 
   const project = await db.createProject({
-    userid: userId,
+    userId: userId,
     title,
     description,
     type: buildingType,
     subtype: buildingSubtype,
-    countrycode: country,
-    extrainfo,
+    countryCode: country,
+    extraInfo,
   });
 
   Promise.all([
@@ -68,8 +68,8 @@ export async function submitProjectForm2(formData: FormData) {
     );
 
     const newFileRow = await db.addFile({
-      uploaderid: userId,
-      projectid: project.id,
+      uploaderId: userId,
+      projectId: project.id,
       filename: file.name,
       url: url,
       type: file.type,
@@ -86,7 +86,7 @@ export async function submitProjectForm2(formData: FormData) {
 
 function canViewProject(session?: Session | null, project?: DesignProject) {
   if (!project || !session?.user) return false;
-  const isOwner = project?.userid === session.user.idn;
+  const isOwner = project?.userId === session.user.idn;
   switch (session.user.role) {
     case "client":
       return isOwner;
@@ -101,7 +101,7 @@ function canViewProject(session?: Session | null, project?: DesignProject) {
 
 function canEditProject(session?: Session | null, project?: DesignProject) {
   if (!project || !session?.user) return false;
-  const isOwner = project?.userid === session.user.idn;
+  const isOwner = project?.userId === session.user.idn;
   switch (session.user.role) {
     case "client":
       return isOwner;

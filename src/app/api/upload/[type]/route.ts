@@ -20,8 +20,8 @@ async function getTaskFilePath(
 ) {
   if (!params.taskId) return;
   const task = await Actions.getTask(Number(params.taskId));
-  if (!task || !task.projectid || !task.specid) return;
-  return `project/${task.projectid}/task/${task.specid}/${filename}`;
+  if (!task || !task.projectId || !task.specId) return;
+  return `project/${task.projectId}/task/${task.specId}/${filename}`;
 }
 
 async function getProjectFilePath(
