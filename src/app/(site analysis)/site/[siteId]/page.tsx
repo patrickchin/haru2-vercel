@@ -190,9 +190,9 @@ export default async function Page({
         <div className="grid grid-cols-2 gap-4">
           <Card>
             <CardHeader className="font-semibold">
-              Schedule a Zoom meeting with the Team
+              Schedule a Zoom Meeting with the Team
             </CardHeader>
-            <CardContent className="flex justify-center">
+            <CardContent className="">
               <SiteCalendar />
             </CardContent>
           </Card>
