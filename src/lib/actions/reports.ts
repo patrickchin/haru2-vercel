@@ -2,23 +2,6 @@
 
 import * as db from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { revalidatePath } from "next/cache";
-
-export async function addUserSite() {
-  const session = await auth();
-  if (!session?.user) return;
-  if (isNaN(session.user.idn)) return;
-  const sites = db.addUserSite(session.user.idn);
-  revalidatePath("/sites");
-  return sites;
-}
-
-export async function getUserSites() {
-  const session = await auth();
-  if (!session?.user) return;
-  if (isNaN(session.user.idn)) return;
-  return db.getUserSites(session.user.idn);
-}
 
 export async function getSiteReports(siteId: number) {
   const session = await auth();
@@ -39,7 +22,6 @@ export async function addSiteReport(siteId: number) {
     reporterId: session.user.idn,
     siteId: siteId,
   });
-  // revalidatePath("/site/[[...slug]]", "page");
 }
 
 export async function deleteSiteReport(reportId: number) {

@@ -75,7 +75,7 @@ function TeamProgress({
         </CollapsibleTrigger>
         <CollapsibleContent className="p-6">
           <TaskTable
-            projectid={project.id}
+            projectId={project.id}
             data={tasks}
             showTypeColumn={false}
             showFilterToggles={false}

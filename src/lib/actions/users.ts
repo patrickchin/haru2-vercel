@@ -56,11 +56,11 @@ export async function signInFromLogin(
   data: LoginTypesPhone | LoginTypesEmail | LoginTypesPassword,
 ) {
   try {
-    return await signIn("credentials", {
+    return (await signIn("credentials", {
       ...data,
       redirectTo: "/",
       redirect: false,
-    }) as string;
+    })) as string;
   } catch (error: unknown) {
     if (error instanceof AuthError) {
       // is there any need to distinguish further?

@@ -25,7 +25,7 @@ export default function Page() {
               Hire our Site Analysis Professionals
             </span>
             <Button asChild className="w-fit font-bold text-base">
-              <Link href="/sites">
+              <Link href="/new-site">
                 Get Started <ArrowRightIcon className="ml-2" />
               </Link>
             </Button>

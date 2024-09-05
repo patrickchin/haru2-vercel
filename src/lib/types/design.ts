@@ -24,11 +24,11 @@ export type DesignProjectUser = Awaited<
 export type DesignTeam = Omit<typeof Schemas.teams1.$inferSelect, "lead"> & {
   lead: DesignUserBasic | null;
 };
-export type DesignTeamMember = typeof Schemas.teammembers1.$inferSelect;
-export type DesignTaskSpec = typeof Schemas.taskspecs1.$inferSelect;
+export type DesignTeamMember = typeof Schemas.teamMembers1.$inferSelect;
+export type DesignTaskSpec = typeof Schemas.taskSpecs1.$inferSelect;
 export type DesignTaskNew = Omit<
   typeof Schemas.tasks1.$inferInsert,
-  "id" | "specid" | "projectid"
+  "id" | "specId" | "projectId"
 >;
 export type DesignTask = typeof Schemas.tasks1.$inferSelect;
 export type DesignCommentSection = typeof Schemas.commentSections1.$inferSelect;

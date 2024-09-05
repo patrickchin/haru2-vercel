@@ -1,6 +1,6 @@
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
-import { isValidPhoneNumber } from "libphonenumber-js";
+import { isPossiblePhoneNumber, isValidPhoneNumber, parsePhoneNumber } from "libphonenumber-js";
 
 function allFilesSmall(list: FileList | undefined) {
   if (list === undefined) return true;
@@ -37,7 +37,7 @@ export type NewProjectFormType = UseFormReturn<NewProjectFormSchemaType>;
 
 export const phoneNumberZod = z
   .string()
-  .refine(isValidPhoneNumber, { message: "Invalid phone number" });
+  .refine(isPossiblePhoneNumber, { message: "Invalid phone number" });
 export const otpZod = z
   .string()
   .min(6, "Passcode must be 6 digits long")
@@ -71,11 +71,37 @@ export const LoginSchemaEmail = z.object({
 });
 export const LoginSchemaPassword = z.object({
   email: z.string().email("Invalid email address"),
-  password: z.string().min(7).max(100),
+  password: z.string(),
 });
 export type LoginTypesPhone = { phone: string; otp: string };
 export type LoginTypesEmail = { email: string; otp: string };
 export type LoginTypesPassword = { email: string; password: string };
+export const authorizeSchema = z
+  .object({
+    email: z.string().email("Invalid email address").optional(),
+    phone: phoneNumberZod.optional(),
+    // phone: z
+    //   .string()
+    //   .transform((p) => parsePhoneNumber(p))
+    //   .optional()
+    //   .refine((n) => !n || n.isValid(), { message: "Invalid phone number" }),
+    otp: z
+      .string()
+      .min(6)
+      .max(6)
+      .regex(/^\d+$/, "OTP must be 6 digits")
+      .optional(),
+    password: z.string().optional(),
+  })
+  .refine((schema) => !!schema.email !== !!schema.phone, {
+    message: "Needs to specify one of email or phone number",
+  })
+  .refine((schema) => !!schema.otp !== !!schema.password, {
+    message: "Needs to specify one of otp or password",
+  })
+  .refine((schema) => !!schema.email === !!schema.password, {
+    message: "Only email and password supported for now",
+  });
 
 const registerPhoneOtpSchema = z.object({
   name: z.string().trim().min(0, { message: "Name is required" }),
@@ -111,3 +137,26 @@ export const ManageTaskEditEstimatesSchema = z.object({
 export type ManageTaskEditEstimatesType = z.infer<
   typeof ManageTaskEditEstimatesSchema
 >;
+
+export const addSiteSchema = z.object({
+  title: z.string(),
+  type: z.string(),
+  countryCode: z.string().min(2).max(2),
+  address: z.string().optional(),
+  postcode: z.string().optional(),
+  description: z.string().optional(),
+});
+export type AddSiteType = z.infer<typeof addSiteSchema>;
+
+export const updateSiteMembersSchema = z.object({
+  managerName: z.string().optional(),
+  managerPhone: phoneNumberZod.optional(),
+  managerEmail: z.string().email().optional(),
+  contractorName: z.string().optional(),
+  contractorPhone: phoneNumberZod.optional(),
+  contractorEmail: z.string().email().optional(),
+  supervisorName: z.string().optional(),
+  supervisorPhone: phoneNumberZod.optional(),
+  supervisorEmail: z.string().email().optional(),
+});
+export type UpdateSiteMembersType = z.infer<typeof updateSiteMembersSchema>;

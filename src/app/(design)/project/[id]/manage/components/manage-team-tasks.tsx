@@ -217,14 +217,14 @@ function ManageTeamTasks({ team }: { team: DesignTeam }) {
     data: tasks,
     error: tasksError,
     mutate: tasksMutate,
-  } = useSWR(`/api/project/${team.projectid}/tasks/${team.type}`, () => {
-    if (team.projectid && team.type)
-      return Actions.getProjectTasksAllOfType(team.projectid, team.type);
+  } = useSWR(`/api/project/${team.projectId}/tasks/${team.type}`, () => {
+    if (team.projectId && team.type)
+      return Actions.getProjectTasksAllOfType(team.projectId, team.type);
   });
 
-  const projectId = team.projectid;
+  const projectId = team.projectId;
   if (!team.type) return null;
-  if (!team.projectid) return null;
+  if (!team.projectId) return null;
   if (!specs) return null;
   if (!tasks) return null;
   if (!projectId) return null;

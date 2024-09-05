@@ -21,12 +21,12 @@ export async function getProjectCommentSection(projectId: number) {
     const section = await tx
       .select()
       .from(Schemas.commentSections1)
-      .where(eq(Schemas.commentSections1.projectid, projectId))
+      .where(eq(Schemas.commentSections1.projectId, projectId))
       .then((r) => (r.length > 0 ? r[0] : null));
     if (section) return section;
     return await tx
       .insert(Schemas.commentSections1)
-      .values({ projectid: projectId })
+      .values({ projectId: projectId })
       .returning()
       .then((r) => r[0]);
   });
@@ -37,23 +37,23 @@ export async function getTaskCommentSection(taskId: number) {
     const section = await tx
       .select()
       .from(Schemas.commentSections1)
-      .where(eq(Schemas.commentSections1.taskid, taskId))
+      .where(eq(Schemas.commentSections1.taskId, taskId))
       .then((r) => (r.length > 0 ? r[0] : null));
     if (section) return section;
     return await tx
       .insert(Schemas.commentSections1)
-      .values({ taskid: taskId })
+      .values({ taskId: taskId })
       .returning()
       .then((r) => r[0]);
   });
 }
 
-export async function getComment(commentid: number) {
+export async function getComment(commentId: number) {
   return await db
     .select(haruCommentColumns)
     .from(Schemas.comments1)
-    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.comments1.userid))
-    .where(eq(Schemas.comments1.id, commentid))
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.comments1.userId))
+    .where(eq(Schemas.comments1.id, commentId))
     .limit(1)
     .then((r) => r[0]);
 }
@@ -68,7 +68,7 @@ export async function getCommentSectionComments(
       Schemas.commentSections1,
       eq(Schemas.commentSections1.id, Schemas.comments1.sectionId),
     )
-    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.comments1.userid))
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.comments1.userId))
     .where(eq(Schemas.commentSections1.id, sectionId))
     .orderBy(Schemas.comments1.id);
 }
@@ -78,8 +78,8 @@ export async function getProjectComments(projectId: number) {
   return [section, getCommentSectionComments(section.id)];
 }
 
-export async function getTaskComments(taskid: number) {
-  const section = await getTaskCommentSection(taskid);
+export async function getTaskComments(taskId: number) {
+  const section = await getTaskCommentSection(taskId);
   return [section, getCommentSectionComments(section.id)];
 }
 

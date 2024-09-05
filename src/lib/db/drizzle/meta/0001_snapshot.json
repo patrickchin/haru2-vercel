@@ -1,7 +1,331 @@
 {
+  "id": "e75556e4-80f6-4dad-89fb-f176d9919cea",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "6",
   "dialect": "postgresql",
   "tables": {
+    "public.accounts1": {
+      "name": "accounts1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "emailVerified": {
+          "name": "emailVerified",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phoneVerified": {
+          "name": "phoneVerified",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "role": {
+          "name": "role",
+          "type": "role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'client'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "accounts1_email_unique": {
+          "name": "accounts1_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        },
+        "accounts1_phone_unique": {
+          "name": "accounts1_phone_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "phone"
+          ]
+        }
+      }
+    },
+    "public.commentSections1": {
+      "name": "commentSections1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "projectId": {
+          "name": "projectId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "taskId": {
+          "name": "taskId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "commentSections1_projectId_projects1_id_fk": {
+          "name": "commentSections1_projectId_projects1_id_fk",
+          "tableFrom": "commentSections1",
+          "tableTo": "projects1",
+          "columnsFrom": [
+            "projectId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "commentSections1_taskId_tasks1_id_fk": {
+          "name": "commentSections1_taskId_tasks1_id_fk",
+          "tableFrom": "commentSections1",
+          "tableTo": "tasks1",
+          "columnsFrom": [
+            "taskId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.comments1": {
+      "name": "comments1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "sectionId": {
+          "name": "sectionId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "comment": {
+          "name": "comment",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "comments1_sectionId_commentSections1_id_fk": {
+          "name": "comments1_sectionId_commentSections1_id_fk",
+          "tableFrom": "comments1",
+          "tableTo": "commentSections1",
+          "columnsFrom": [
+            "sectionId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "comments1_userId_users1_id_fk": {
+          "name": "comments1_userId_users1_id_fk",
+          "tableFrom": "comments1",
+          "tableTo": "users1",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.contacts1": {
+      "name": "contacts1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "contactId": {
+          "name": "contactId",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "contacts1_id_users1_id_fk": {
+          "name": "contacts1_id_users1_id_fk",
+          "tableFrom": "contacts1",
+          "tableTo": "users1",
+          "columnsFrom": [
+            "id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "contacts1_contactId_users1_id_fk": {
+          "name": "contacts1_contactId_users1_id_fk",
+          "tableFrom": "contacts1",
+          "tableTo": "users1",
+          "columnsFrom": [
+            "contactId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.fileGroupFiles1": {
+      "name": "fileGroupFiles1",
+      "schema": "",
+      "columns": {
+        "fileGroupId": {
+          "name": "fileGroupId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fileId": {
+          "name": "fileId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "fileGroupFiles1_fileGroupId_fileGroups1_id_fk": {
+          "name": "fileGroupFiles1_fileGroupId_fileGroups1_id_fk",
+          "tableFrom": "fileGroupFiles1",
+          "tableTo": "fileGroups1",
+          "columnsFrom": [
+            "fileGroupId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "fileGroupFiles1_fileId_files1_id_fk": {
+          "name": "fileGroupFiles1_fileId_files1_id_fk",
+          "tableFrom": "fileGroupFiles1",
+          "tableTo": "files1",
+          "columnsFrom": [
+            "fileId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "fileGroupFiles1_fileGroupId_fileId_unique": {
+          "name": "fileGroupFiles1_fileGroupId_fileId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "fileGroupId",
+            "fileId"
+          ]
+        }
+      }
+    },
+    "public.fileGroups1": {
+      "name": "fileGroups1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "public.files1": {
       "name": "files1",
       "schema": "",
@@ -30,24 +354,42 @@
           "primaryKey": false,
           "notNull": false
         },
+        "commentId": {
+          "name": "commentId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
         "filename": {
           "name": "filename",
-          "type": "varchar(255)",
+          "type": "varchar",
           "primaryKey": false,
-          "notNull": true,
-          "default": "''"
+          "notNull": false
+        },
+        "filesize": {
+          "name": "filesize",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         },
         "url": {
           "name": "url",
-          "type": "varchar(255)",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
         "type": {
           "name": "type",
-          "type": "varchar(255)",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
+        },
+        "uploadedAt": {
+          "name": "uploadedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -55,43 +397,96 @@
         "files1_uploaderId_users1_id_fk": {
           "name": "files1_uploaderId_users1_id_fk",
           "tableFrom": "files1",
+          "tableTo": "users1",
           "columnsFrom": [
             "uploaderId"
           ],
-          "tableTo": "users1",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "files1_projectId_projects1_id_fk": {
           "name": "files1_projectId_projects1_id_fk",
           "tableFrom": "files1",
+          "tableTo": "projects1",
           "columnsFrom": [
             "projectId"
           ],
-          "tableTo": "projects1",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "files1_taskId_tasks1_id_fk": {
           "name": "files1_taskId_tasks1_id_fk",
           "tableFrom": "files1",
+          "tableTo": "tasks1",
           "columnsFrom": [
             "taskId"
           ],
-          "tableTo": "tasks1",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "files1_commentId_comments1_id_fk": {
+          "name": "files1_commentId_comments1_id_fk",
+          "tableFrom": "files1",
+          "tableTo": "comments1",
+          "columnsFrom": [
+            "commentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.otps1": {
+      "name": "otps1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "contactInfo": {
+          "name": "contactInfo",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "otp": {
+          "name": "otp",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expiresAt": {
+          "name": "expiresAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -113,37 +508,37 @@
         },
         "title": {
           "name": "title",
-          "type": "varchar(255)",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
         "description": {
           "name": "description",
-          "type": "text",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
         "type": {
           "name": "type",
-          "type": "varchar(64)",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
         "subtype": {
           "name": "subtype",
-          "type": "varchar(64)",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
         "countryCode": {
           "name": "countryCode",
-          "type": "char(2)",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
         "status": {
           "name": "status",
-          "type": "varchar(128)",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false,
           "default": "'pending'"
@@ -152,7 +547,7 @@
           "name": "info",
           "type": "json",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "createdAt": {
           "name": "createdAt",
@@ -167,22 +562,22 @@
         "projects1_userId_users1_id_fk": {
           "name": "projects1_userId_users1_id_fk",
           "tableFrom": "projects1",
+          "tableTo": "users1",
           "columnsFrom": [
             "userId"
           ],
-          "tableTo": "users1",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "public.taskcomments1": {
-      "name": "taskcomments1",
+    "public.siteDetails1": {
+      "name": "siteDetails1",
       "schema": "",
       "columns": {
         "id": {
@@ -191,14 +586,271 @@
           "primaryKey": true,
           "notNull": true
         },
-        "taskId": {
-          "name": "taskId",
+        "address": {
+          "name": "address",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "postcode": {
+          "name": "postcode",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "extraInfo": {
+          "name": "extraInfo",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "startDate": {
+          "name": "startDate",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "endDate": {
+          "name": "endDate",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nextReportDate": {
+          "name": "nextReportDate",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "schedule": {
+          "name": "schedule",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "budget": {
+          "name": "budget",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "budgetUnits": {
+          "name": "budgetUnits",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "managerName": {
+          "name": "managerName",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "managerPhone": {
+          "name": "managerPhone",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "managerEmail": {
+          "name": "managerEmail",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "contractorName": {
+          "name": "contractorName",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "contractorPhone": {
+          "name": "contractorPhone",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "contractorEmail": {
+          "name": "contractorEmail",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "supervisorName": {
+          "name": "supervisorName",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "supervisorPhone": {
+          "name": "supervisorPhone",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "supervisorEmail": {
+          "name": "supervisorEmail",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "siteDetails1_id_sites1_id_fk": {
+          "name": "siteDetails1_id_sites1_id_fk",
+          "tableFrom": "siteDetails1",
+          "tableTo": "sites1",
+          "columnsFrom": [
+            "id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.siteMembers1": {
+      "name": "siteMembers1",
+      "schema": "",
+      "columns": {
+        "siteId": {
+          "name": "siteId",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
-        "userId": {
-          "name": "userId",
+        "memberId": {
+          "name": "memberId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "role": {
+          "name": "role",
+          "type": "siteMemberRole",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'member'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "siteMembers1_siteId_sites1_id_fk": {
+          "name": "siteMembers1_siteId_sites1_id_fk",
+          "tableFrom": "siteMembers1",
+          "tableTo": "sites1",
+          "columnsFrom": [
+            "siteId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "siteMembers1_memberId_users1_id_fk": {
+          "name": "siteMembers1_memberId_users1_id_fk",
+          "tableFrom": "siteMembers1",
+          "tableTo": "users1",
+          "columnsFrom": [
+            "memberId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.siteReportFiles1": {
+      "name": "siteReportFiles1",
+      "schema": "",
+      "columns": {
+        "reportId": {
+          "name": "reportId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "filedId": {
+          "name": "filedId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "siteReportFiles1_reportId_siteReports1_id_fk": {
+          "name": "siteReportFiles1_reportId_siteReports1_id_fk",
+          "tableFrom": "siteReportFiles1",
+          "tableTo": "siteReports1",
+          "columnsFrom": [
+            "reportId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "siteReportFiles1_filedId_files1_id_fk": {
+          "name": "siteReportFiles1_filedId_files1_id_fk",
+          "tableFrom": "siteReportFiles1",
+          "tableTo": "files1",
+          "columnsFrom": [
+            "filedId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.siteReports1": {
+      "name": "siteReports1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "reporterId": {
+          "name": "reporterId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "siteId": {
+          "name": "siteId",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -210,42 +862,118 @@
           "notNull": false,
           "default": "now()"
         },
-        "comment": {
-          "name": "comment",
-          "type": "text",
+        "visitDate": {
+          "name": "visitDate",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "siteReports1_reporterId_users1_id_fk": {
+          "name": "siteReports1_reporterId_users1_id_fk",
+          "tableFrom": "siteReports1",
+          "tableTo": "users1",
+          "columnsFrom": [
+            "reporterId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "siteReports1_siteId_sites1_id_fk": {
+          "name": "siteReports1_siteId_sites1_id_fk",
+          "tableFrom": "siteReports1",
+          "tableTo": "sites1",
+          "columnsFrom": [
+            "siteId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.sites1": {
+      "name": "sites1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "countryCode": {
+          "name": "countryCode",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.taskSpecs1": {
+      "name": "taskSpecs1",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "taskcomments1_taskId_tasks1_id_fk": {
-          "name": "taskcomments1_taskId_tasks1_id_fk",
-          "tableFrom": "taskcomments1",
-          "columnsFrom": [
-            "taskId"
-          ],
-          "tableTo": "tasks1",
-          "columnsTo": [
-            "id"
-          ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
-        },
-        "taskcomments1_userId_users1_id_fk": {
-          "name": "taskcomments1_userId_users1_id_fk",
-          "tableFrom": "taskcomments1",
-          "columnsFrom": [
-            "userId"
-          ],
-          "tableTo": "users1",
-          "columnsTo": [
-            "id"
-          ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -273,19 +1001,19 @@
         },
         "lead": {
           "name": "lead",
-          "type": "varchar(255)",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
         "type": {
           "name": "type",
-          "type": "varchar(255)",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
         "status": {
           "name": "status",
-          "type": "varchar(255)",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false,
           "default": "'pending'"
@@ -308,15 +1036,33 @@
           "primaryKey": false,
           "notNull": false
         },
+        "duration": {
+          "name": "duration",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cost": {
+          "name": "cost",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "costUnits": {
+          "name": "costUnits",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
         "title": {
           "name": "title",
-          "type": "varchar(255)",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
         "description": {
           "name": "description",
-          "type": "text",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
@@ -330,38 +1076,96 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "tasks1_specId_taskspecs1_id_fk": {
-          "name": "tasks1_specId_taskspecs1_id_fk",
+        "tasks1_specId_taskSpecs1_id_fk": {
+          "name": "tasks1_specId_taskSpecs1_id_fk",
           "tableFrom": "tasks1",
+          "tableTo": "taskSpecs1",
           "columnsFrom": [
             "specId"
           ],
-          "tableTo": "taskspecs1",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "tasks1_projectId_projects1_id_fk": {
           "name": "tasks1_projectId_projects1_id_fk",
           "tableFrom": "tasks1",
+          "tableTo": "projects1",
           "columnsFrom": [
             "projectId"
           ],
-          "tableTo": "projects1",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "public.taskspecs1": {
-      "name": "taskspecs1",
+    "public.teamMembers1": {
+      "name": "teamMembers1",
+      "schema": "",
+      "columns": {
+        "teamId": {
+          "name": "teamId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "teamMembers1_teamId_teams1_id_fk": {
+          "name": "teamMembers1_teamId_teams1_id_fk",
+          "tableFrom": "teamMembers1",
+          "tableTo": "teams1",
+          "columnsFrom": [
+            "teamId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "teamMembers1_userId_users1_id_fk": {
+          "name": "teamMembers1_userId_users1_id_fk",
+          "tableFrom": "teamMembers1",
+          "tableTo": "users1",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "teamMembers1_teamId_userId_unique": {
+          "name": "teamMembers1_teamId_userId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "teamId",
+            "userId"
+          ]
+        }
+      }
+    },
+    "public.teams1": {
+      "name": "teams1",
       "schema": "",
       "columns": {
         "id": {
@@ -370,27 +1174,54 @@
           "primaryKey": true,
           "notNull": true
         },
+        "projectId": {
+          "name": "projectId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
         "type": {
           "name": "type",
-          "type": "varchar(255)",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
-        "title": {
-          "name": "title",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
+        "leadId": {
+          "name": "leadId",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "teams1_projectId_projects1_id_fk": {
+          "name": "teams1_projectId_projects1_id_fk",
+          "tableFrom": "teams1",
+          "tableTo": "projects1",
+          "columnsFrom": [
+            "projectId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "teams1_leadId_users1_id_fk": {
+          "name": "teams1_leadId_users1_id_fk",
+          "tableFrom": "teams1",
+          "tableTo": "users1",
+          "columnsFrom": [
+            "leadId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -406,75 +1237,64 @@
         },
         "name": {
           "name": "name",
-          "type": "varchar(255)",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": true
-        },
-        "email": {
-          "name": "email",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "password": {
-          "name": "password",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "phone": {
-          "name": "phone",
-          "type": "varchar(16)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "phone1": {
-          "name": "phone1",
-          "type": "varchar(32)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
         },
         "avatarUrl": {
           "name": "avatarUrl",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "avatarColor": {
-          "name": "avatarColor",
-          "type": "varchar(12)",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         }
       },
       "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "users1_email_unique": {
-          "name": "users1_email_unique",
-          "columns": [
-            "email"
+      "foreignKeys": {
+        "users1_id_accounts1_id_fk": {
+          "name": "users1_id_accounts1_id_fk",
+          "tableFrom": "users1",
+          "tableTo": "accounts1",
+          "columnsFrom": [
+            "id"
           ],
-          "nullsNotDistinct": false
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
-      }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
     }
   },
-  "enums": {},
+  "enums": {
+    "public.role": {
+      "name": "role",
+      "schema": "public",
+      "values": [
+        "client",
+        "designer",
+        "manager",
+        "admin"
+      ]
+    },
+    "public.siteMemberRole": {
+      "name": "siteMemberRole",
+      "schema": "public",
+      "values": [
+        "owner",
+        "manager",
+        "contractor",
+        "supervisor",
+        "member"
+      ]
+    }
+  },
   "schemas": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
-  },
-  "id": "79254b79-1212-43b4-a119-f506752ef18c",
-  "prevId": "00000000-0000-0000-0000-000000000000"
+    "tables": {}
+  }
 }

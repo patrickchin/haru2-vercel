@@ -167,12 +167,12 @@ async function TaskPage({
 export default function Page({
   params,
 }: {
-  params: { id: string; taskid: string };
+  params: { id: string; taskId: string };
 }) {
   const projectId: number = parseInt(params.id);
   if (Number.isNaN(projectId)) notFound();
 
-  const specId: number = parseInt(params.taskid);
+  const specId: number = parseInt(params.taskId);
   if (Number.isNaN(specId)) notFound();
 
   return (

@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
+/.pnpm-store
 
 # testing
 /coverage
@@ -42,4 +43,4 @@ certificates
 /blob-report/
 /playwright/.cache/
 
-/pgdata/
+pgdata

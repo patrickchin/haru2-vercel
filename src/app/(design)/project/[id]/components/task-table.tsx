@@ -58,9 +58,9 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
     accessorKey: "title",
     size: 6 * 64,
     header: () => <div className="text-start pl-6">Title</div>,
-    cell: ({ row, projectid }: any) => (
+    cell: ({ row, projectId }: any) => (
       <Link
-        href={`/project/${projectid}/task/${row.original.specid}`}
+        href={`/project/${projectId}/task/${row.original.specId}`}
         className="font-medium pl-6"
       >
         {row.getValue("title")}
@@ -111,10 +111,10 @@ const taskColumns: Tan.ColumnDef<DesignTask>[] = [
     accessorKey: "details",
     size: 64,
     header: () => <div className="text-center">Details</div>,
-    cell: ({ row, projectid }: any) => (
+    cell: ({ row, projectId }: any) => (
       <div className="text-center">
         <Button asChild variant="outline" className="h-8 w-8 p-0">
-          <Link href={`/project/${projectid}/task/${row.original.specid}`}>
+          <Link href={`/project/${projectId}/task/${row.original.specId}`}>
             <LucideChevronRight className="h-4 w-4" />
           </Link>
         </Button>
@@ -161,11 +161,11 @@ function TaskTableHeader({ table }: { table: Tan.Table<DesignTask> }) {
 }
 
 function TaskTableBody({
-  projectid,
+  projectId,
   table,
   columns,
 }: {
-  projectid: number;
+  projectId: number;
   table: Tan.Table<DesignTask>;
   columns: Tan.ColumnDef<DesignTask>[];
 }) {
@@ -200,7 +200,7 @@ function TaskTableBody({
             <TableCell key={cell.id} className="px-3 border-r last:border-r-0">
               {Tan.flexRender(cell.column.columnDef.cell, {
                 ...cell.getContext(),
-                projectid,
+                projectId,
               })}
             </TableCell>
           ))}
@@ -364,13 +364,13 @@ function TaskTableFooter({ table }: { table: Tan.Table<DesignTask> }) {
 }
 
 export default function TaskTable({
-  projectid,
+  projectId,
   data,
   showTypeColumn = true,
   pageSize = 5,
   showFilterToggles = true,
 }: {
-  projectid: number;
+  projectId: number;
   data: DesignTask[];
 
   showFilterToggles?: boolean;
@@ -417,7 +417,7 @@ export default function TaskTable({
         <Table>
           <TaskTableHeader table={table} />
           <TaskTableBody
-            projectid={projectid}
+            projectId={projectId}
             table={table}
             columns={taskColumns}
           />
