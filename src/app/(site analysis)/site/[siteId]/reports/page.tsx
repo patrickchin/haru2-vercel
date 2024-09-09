@@ -35,7 +35,21 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import BackButton from "@/components/back-button";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Textarea } from "@/components/ui/textarea";
+import { Action } from "@radix-ui/react-toast";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
 interface ReportsViewerProps {
   siteId: number;
@@ -351,7 +365,112 @@ function ReportTitle(params: ReportsViewerProps) {
   );
 }
 
-function ReportDocument() {
+function ReportDocument({
+  siteId,
+  selectedFile,
+  setSelectedFile,
+  selectedReport,
+  setSelectedReport,
+}: ReportsViewerProps) {
+
+  const {
+    data: reportSections,
+    error: reportSectionsError,
+    mutate: reportSectionsMutate,
+  } = useSWR(`/api/site/${siteId}/report/${selectedReport?.id}`, () => {
+    if (selectedReport)
+      return Actions.getSiteReportSections(selectedReport.id);
+  });
+
+  const formSchema = z.object({
+    title: z.string(),
+    content: z.string(),
+  });
+  type FormSchemaType = z.infer<typeof formSchema>;
+
+  const form = useForm<FormSchemaType>({
+    resolver: zodResolver(formSchema),
+  });
+
+  async function onSubmit(data: FormSchemaType) {
+    if (!selectedReport) return; // TODO error
+
+    const ret = await Actions.addSiteReportSection(selectedReport.id, data);
+
+    toast({
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">
+            data: {JSON.stringify(data, null, 2)} <br />
+            ret: {JSON.stringify(ret, null, 2)} <br />
+          </code>
+        </pre>
+      ),
+    });
+
+    reportSectionsMutate();
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      <ol className="flex flex-col gap-2">
+        {reportSections?.map((section) => {
+          return (
+            <li key={section.id}>
+              <Card>
+                <CardHeader>{section.title}</CardHeader>
+                <CardContent>{section.content}</CardContent>
+              </Card>
+            </li>
+          );
+        })}
+      </ol>
+
+      <Card className="p-6">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col gap-4"
+          >
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem className="">
+                  <FormLabel className="">Section Title</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="section title .. " />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem className="">
+                  <FormLabel className="">Section Details</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} placeholder="details" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex justify-end">
+              <Button type="submit">Add Section</Button>
+            </div>
+          </form>
+        </Form>
+      </Card>
+    </div>
+  );
+
+  
   const cnlabel = "font-bold text-end";
   const cnvalue = "";
   return (
@@ -376,6 +495,7 @@ function ReportDocument() {
       <div className={cnvalue}>a</div>
     </div>
   );
+
 }
 
 export default function Page({ params }: { params: { siteId: string } }) {
@@ -417,7 +537,7 @@ export default function Page({ params }: { params: { siteId: string } }) {
         </section>
 
         <section className="w-full max-w-7xl pl-60 pr-48 pt-8">
-          <ReportDocument />
+          <ReportDocument {...props} />
         </section>
       </main>
 
