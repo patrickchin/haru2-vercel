@@ -2,7 +2,7 @@ import "server-only";
 
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
-import { desc, eq, getTableColumns } from "drizzle-orm";
+import { and, desc, eq, getTableColumns } from "drizzle-orm";
 import { SiteReport, SiteReportNew } from "@/lib/types/site";
 import * as Schemas from "@/drizzle/schema";
 
@@ -15,6 +15,38 @@ const SiteReportColumns = {
     ...getTableColumns(Schemas.users1),
   },
 };
+
+export async function getUserSiteRole(siteId: number, userId: number) {
+  return db
+    .select({ role: Schemas.siteMembers1.role })
+    .from(Schemas.siteMembers1)
+    .where(
+      and(
+        eq(Schemas.siteMembers1.siteId, siteId),
+        eq(Schemas.siteMembers1.memberId, userId),
+      ),
+    )
+    .limit(1)
+    .then((r) => r[0]);
+}
+
+export async function getUserSiteRoleFromReport(reportId: number, userId: number) {
+  return db
+    .select({ role: Schemas.siteMembers1.role })
+    .from(Schemas.siteMembers1)
+    .leftJoin(
+      Schemas.siteReports1,
+      eq(Schemas.siteReports1.id, Schemas.siteMembers1.siteId),
+    )
+    .where(
+      and(
+        eq(Schemas.siteReports1.id, reportId),
+        eq(Schemas.siteMembers1.memberId, userId),
+      ),
+    )
+    .limit(1)
+    .then((r) => r && r.length ? r[0].role : null);
+}
 
 export async function getSiteReports(projectId: number): Promise<SiteReport[]> {
   return db
@@ -56,4 +88,24 @@ export async function deleteSiteReport(reportId: number): Promise<SiteReport> {
     .where(eq(Schemas.siteReports1.id, reportId))
     .returning()
     .then((r) => r[0]);
+}
+
+export async function getSiteReportSections(reportId: number) {
+  return db
+    .select()
+    .from(Schemas.siteReportSections1)
+    .where(eq(Schemas.siteReportSections1.reportId, reportId));
+}
+
+export async function addSiteReportSection(values: {
+  reportId: number;
+  title: string;
+  content: string;
+}) {
+  return db
+    .insert(Schemas.siteReportSections1)
+    .values(values)
+    .returning()
+    .then((r) => r[0]);
+    // .onConflictDoUpdate();
 }

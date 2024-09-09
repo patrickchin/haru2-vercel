@@ -288,13 +288,13 @@ export const siteReports1 = pgTable("siteReports1", {
 //   interactions: varchar("interactions"),
 // });
 
-// export const siteReportSections1 = pgTable("siteReportSections1", {
-//   id: serial("id").primaryKey(),
-//   reportId: integer("reportId").references(() => siteReports1.id),
-//   title: varchar("title"),
-//   content: varchar("content"),
-//   fileGroupId: integer("fileGroupId").references(() => fileGroups1.id),
-// });
+export const siteReportSections1 = pgTable("siteReportSections1", {
+  id: serial("id").primaryKey(),
+  reportId: integer("reportId").references(() => siteReports1.id),
+  title: varchar("title"),
+  content: varchar("content"),
+  fileGroupId: integer("fileGroupId").references(() => fileGroups1.id),
+});
 
 // TODO deprecate replace with fileGroups1
 export const siteReportFiles1 = pgTable("siteReportFiles1", {
