@@ -3,9 +3,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteDetails, SiteMember, SiteMemberRole } from "@/lib/types";
 import * as Actions from "@/lib/actions";
-import { LucideArrowRight } from "lucide-react";
+import {
+  LucideArrowRight,
+  LucideCheck,
+  LucideTrash,
+  LucideX,
+} from "lucide-react";
 
-import SiteCalendar from "./site-calendar";
+import SiteCalendarForm from "./site-calendar";
 
 import Footer from "@/components/footer";
 import Header from "@/components/header";
@@ -18,6 +23,7 @@ import {
   TableBody,
   TableCell,
   TableHead,
+  TableHeader,
   TableRow,
 } from "@/components/ui/table";
 
@@ -193,9 +199,53 @@ export default async function Page({
               Schedule a Zoom Meeting with the Team
             </CardHeader>
             <CardContent className="">
-              <SiteCalendar />
+              <SiteCalendarForm />
+
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Suggested Time</TableHead>
+                    <TableHead>Agreed/Pending</TableHead>
+                    <TableHead></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {Array(2)
+                    .fill(0)
+                    .map((x, i) => (
+                      <TableRow key={i}>
+                        <TableCell>{site.createdAt.toLocaleString()}</TableCell>
+                        <TableCell>Pending ...</TableCell>
+                        <TableCell className="flex gap-1">
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            className="w-8 h-8 p-1"
+                          >
+                            <LucideTrash className="w-3.5" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            className="w-8 h-8 p-1"
+                          >
+                            <LucideX className="w-3.5" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            className="w-8 h-8 p-1"
+                          >
+                            <LucideCheck className="w-3.5" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
+
           <Card>
             <CardHeader className="font-semibold">
               Supervision Progress and Milestones
