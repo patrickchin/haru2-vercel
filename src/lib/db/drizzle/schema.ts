@@ -281,12 +281,21 @@ export const siteReports1 = pgTable("siteReports1", {
   }).defaultNow(),
 });
 
-// export const siteReportDetails1 = pgTable("siteReportDetails1", {
-//   id: serial("id").primaryKey().references(() => siteReports1.id),
-//   activities: varchar("activities"),
-//   issues: varchar("issues"),
-//   interactions: varchar("interactions"),
-// });
+export const siteReportDetails1 = pgTable("siteReportDetails1", {
+  id: serial("id")
+    .primaryKey()
+    .references(() => siteReports1.id),
+
+  activity: varchar("activity"),
+
+  contractors: varchar("contractors"),
+  engineers: varchar("engineers"),
+  workers: varchar("workers"),
+  visitors: varchar("visitors"),
+
+  materials: varchar("materials"),
+  equiptment: varchar("equiptment"),
+});
 
 export const siteReportSections1 = pgTable("siteReportSections1", {
   id: serial("id").primaryKey(),
