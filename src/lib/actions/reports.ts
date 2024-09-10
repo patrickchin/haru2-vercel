@@ -15,6 +15,12 @@ export async function getSiteReport(reportId: number) {
   return db.getSiteReport(reportId);
 }
 
+export async function getSiteReportDetails(reportId: number) {
+  const session = await auth();
+  if (!session?.user) return;
+  return db.getSiteReportDetails(reportId);
+}
+
 export async function addSiteReport(siteId: number) {
   const session = await auth();
   if (!session?.user) return;
@@ -50,7 +56,7 @@ export async function getSiteReportSections(reportId: number) {
 
 export async function addSiteReportSection(
   reportId: number,
-  args : { title: string; content: string },
+  args: { title: string; content: string },
 ) {
   const session = await auth();
   if (!session?.user) return;

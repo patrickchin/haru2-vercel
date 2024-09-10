@@ -48,7 +48,7 @@ export async function getAllVisibleSites(userId: number): Promise<Site[]> {
     .where(eq(Schemas.siteMembers1.memberId, userId));
 }
 
-export async function getSite({
+export async function getSiteDetails({
   siteId,
   userId,
 }: {

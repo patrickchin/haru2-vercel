@@ -24,7 +24,11 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { HaruFile, nullHaruFile } from "@/lib/types";
-import { nullSiteReport, SiteReport } from "@/lib/types/site";
+import {
+  nullSiteReportDetails,
+  SiteDetails,
+  SiteReport,
+} from "@/lib/types/site";
 import { uploadReportFile } from "@/lib/utils/upload";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
@@ -48,11 +52,18 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Textarea } from "@/components/ui/textarea";
-import { Action } from "@radix-ui/react-toast";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@/components/ui/table";
 
 interface ReportsViewerProps {
   siteId: number;
+  siteDetails: SiteDetails | undefined;
   selectedFile: HaruFile | undefined;
   setSelectedFile: Dispatch<SetStateAction<HaruFile | undefined>>;
   selectedReport: SiteReport | undefined;
@@ -61,7 +72,6 @@ interface ReportsViewerProps {
 
 function ReportsList({
   siteId,
-  selectedFile,
   setSelectedFile,
   selectedReport,
   setSelectedReport,
@@ -81,7 +91,7 @@ function ReportsList({
     e.preventDefault();
     const optimisticData: SiteReport[] = (() => {
       const optimisticReport = {
-        ...nullSiteReport,
+        ...nullSiteReportDetails,
         siteId: siteId,
       };
       return reports ? [optimisticReport, ...reports] : [optimisticReport];
@@ -147,11 +157,9 @@ function ReportsList({
 }
 
 function FileSelector({
-  siteId,
   selectedFile,
   setSelectedFile,
   selectedReport,
-  setSelectedReport,
 }: ReportsViewerProps) {
   const {
     data: files,
@@ -299,13 +307,7 @@ function FileSelector({
   );
 }
 
-function FileDisplay({
-  siteId,
-  selectedFile,
-  setSelectedFile,
-  selectedReport,
-  setSelectedReport,
-}: ReportsViewerProps) {
+function FileDisplay({ selectedFile }: ReportsViewerProps) {
   return (
     <div
       className={cn(
@@ -367,20 +369,28 @@ function ReportTitle(params: ReportsViewerProps) {
 
 function ReportDocument({
   siteId,
-  selectedFile,
-  setSelectedFile,
+  siteDetails,
   selectedReport,
-  setSelectedReport,
 }: ReportsViewerProps) {
+  const {
+    data: reportDetails,
+    error: reportDetailsError,
+    mutate: reportDetailsMutate,
+  } = useSWR(`/api/site/${siteId}/report/${selectedReport?.id}/details`, () => {
+    if (selectedReport) return Actions.getSiteReportDetails(selectedReport.id);
+  });
 
   const {
     data: reportSections,
     error: reportSectionsError,
     mutate: reportSectionsMutate,
-  } = useSWR(`/api/site/${siteId}/report/${selectedReport?.id}`, () => {
-    if (selectedReport)
-      return Actions.getSiteReportSections(selectedReport.id);
-  });
+  } = useSWR(
+    `/api/site/${siteId}/report/${selectedReport?.id}/sections`,
+    () => {
+      if (selectedReport)
+        return Actions.getSiteReportSections(selectedReport.id);
+    },
+  );
 
   const formSchema = z.object({
     title: z.string(),
@@ -394,6 +404,8 @@ function ReportDocument({
 
   async function onSubmit(data: FormSchemaType) {
     if (!selectedReport) return; // TODO error
+    // form.clearErrors();
+    form.reset();
 
     const ret = await Actions.addSiteReportSection(selectedReport.id, data);
 
@@ -412,15 +424,82 @@ function ReportDocument({
     reportSectionsMutate();
   }
 
+  if (!selectedReport) return <p>Select a report</p>;
+
   return (
     <div className="flex flex-col gap-4">
+      <Card className="bg-cyan-50 border-2">
+        <CardHeader className="flex flex-row justify-between">
+          <div className="text-lg font-bold">
+            Current Construction Activites
+          </div>
+          <div className="space-x-2">
+            <span className="font-bold">Date of Visit:</span>
+            <span>
+              {selectedReport?.visitDate?.toDateString() ??
+                selectedReport?.createdAt?.toDateString() ??
+                "Unknown"}
+            </span>
+          </div>
+        </CardHeader>
+
+        <CardContent className="flex flex-col gap-4 p-4 pt-0">
+          {/* <CardContent className="grid grid-cols-4 gap-4 p-4 pt-0"> */}
+          {/* <CardContent className="flex p-4 pt-0"> */}
+
+          <div className="border p-4 bg-background space-y-2">
+            <h6>Site Activity</h6>
+            <p>Excavation</p>
+          </div>
+
+          <div className="border p-4 bg-background space-y-2">
+            <h6>Site Personel</h6>
+
+            <Table>
+              <TableBody>
+                <TableRow>
+                  <TableHead>Contractor</TableHead>
+                  <TableCell>{reportDetails?.contractors}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableHead>Engineers</TableHead>
+                  <TableCell>{reportDetails?.engineers}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableHead>Workers</TableHead>
+                  <TableCell>{reportDetails?.workers}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableHead>Visitors</TableHead>
+                  <TableCell>{reportDetails?.visitors}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+
+          <div className="border p-4 bg-background space-y-2">
+            <h6>Materials Status</h6>
+            <p>{reportDetails?.materials}</p>
+          </div>
+
+          <div className="border p-4 bg-background space-y-2">
+            <h6>Equiptment Status</h6>
+            <p>{reportDetails?.equiptment}</p>
+          </div>
+        </CardContent>
+      </Card>
+
       <ol className="flex flex-col gap-2">
         {reportSections?.map((section) => {
           return (
             <li key={section.id}>
               <Card>
-                <CardHeader>{section.title}</CardHeader>
-                <CardContent>{section.content}</CardContent>
+                <CardHeader className="p-4 pb-3 font-bold">
+                  {section.title}
+                </CardHeader>
+                <CardContent className="p-4 pt-0">
+                  {section.content}
+                </CardContent>
               </Card>
             </li>
           );
@@ -469,33 +548,6 @@ function ReportDocument({
       </Card>
     </div>
   );
-
-  
-  const cnlabel = "font-bold text-end";
-  const cnvalue = "";
-  return (
-    <div className="grid grid-cols-[15rem_1fr] w-full gap-4">
-      <div className={cnlabel}>Visit Conducted By</div>
-      <div className={cnvalue}>a</div>
-      <div className={cnlabel}>Site Address</div>
-      <div className={cnvalue}>a</div>
-      <div className={cnlabel}>Site Condition</div>
-      <div className={cnvalue}>a</div>
-      <div className={cnlabel}>Work in Progress</div>
-      <div className={cnvalue}>a</div>
-      <div className={cnlabel}>Observations</div>
-      <div className={cnvalue}>a</div>
-      <div className={cnlabel}>Additional Details</div>
-      <div className={cnvalue}>a</div>
-      <div className={cnlabel}>In Charge Signature</div>
-      <div className={cnvalue}>a</div>
-      <div className={cnlabel}>Engineer Signature</div>
-      <div className={cnvalue}>a</div>
-      <div className={cnlabel}>Visitor Signature</div>
-      <div className={cnvalue}>a</div>
-    </div>
-  );
-
 }
 
 export default function Page({ params }: { params: { siteId: string } }) {
@@ -504,8 +556,14 @@ export default function Page({ params }: { params: { siteId: string } }) {
   const [selectedReport, setSelectedReport] = useState<SiteReport>();
   const [selectedFile, setSelectedFile] = useState<HaruFile>();
 
+  const { data: siteDetails, mutate: mutateDetails } = useSWR(
+    `/api/site/${siteId}/details`, // api route doesn't really exist
+    () => Actions.getSiteDetails(siteId),
+  );
+
   const props: ReportsViewerProps = {
     siteId,
+    siteDetails,
     selectedFile,
     setSelectedFile,
     selectedReport,
@@ -520,7 +578,7 @@ export default function Page({ params }: { params: { siteId: string } }) {
         {/* <div className="w-full max-w-7xl pl-60 pr-48">
           <ReportTitle {...props} />
         </div> */}
-        <div className="flex gap-4 w-full max-w-7xl pr-48">
+        <div className="flex gap-4 w-full max-w-[100rem] pr-48">
           <div className="flex-none w-56">
             <BackButton variant="outline" className="gap-4 w-full">
               <LucideMoveLeft />
@@ -530,7 +588,7 @@ export default function Page({ params }: { params: { siteId: string } }) {
           <ReportTitle {...props} />
         </div>
         {/* <section className="grid grid-cols-[14rem_auto_11rem] gap-4 w-full max-w-7xl h-[36rem]"> */}
-        <section className="flex gap-4 w-full max-w-7xl h-[36rem]">
+        <section className="flex gap-4 w-full max-w-[100rem] h-[36rem]">
           <ReportsList {...props} />
           <FileDisplay {...props} />
           <FileSelector {...props} />

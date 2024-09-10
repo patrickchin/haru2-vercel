@@ -30,10 +30,10 @@ export async function getAllVisibleSites() {
   return db.getAllVisibleSites(session.user.idn);
 }
 
-export async function getSite(siteId: number) {
+export async function getSiteDetails(siteId: number) {
   const session = await auth();
   if (!session?.user) return;
-  return db.getSite({ siteId, userId: session.user.idn });
+  return db.getSiteDetails({ siteId, userId: session.user.idn });
 }
 
 export async function getSiteMembers(siteId: number) {
