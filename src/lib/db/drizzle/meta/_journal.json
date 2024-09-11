@@ -29,6 +29,13 @@
       "when": 1726006722078,
       "tag": "0003_goofy_champions",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1726076318547,
+      "tag": "0004_milky_joseph",
+      "breakpoints": true
     }
   ]
 }
