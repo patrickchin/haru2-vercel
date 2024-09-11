@@ -242,6 +242,9 @@ export const siteDetails1 = pgTable("siteDetails1", {
   budgetUnits: varchar("budgetUnits"),
 
   // until something better is figured out with maybe temporary accounts ?
+  ownerName: varchar("ownerName"),
+  ownerPhone: varchar("ownerPhone"),
+  ownerEmail: varchar("ownerEmail"),
   managerName: varchar("managerName"),
   managerPhone: varchar("managerPhone"),
   managerEmail: varchar("managerEmail"),
@@ -285,6 +288,29 @@ export const siteReportDetails1 = pgTable("siteReportDetails1", {
   id: serial("id")
     .primaryKey()
     .references(() => siteReports1.id),
+  address: varchar("address"),
+  arrivalTime: timestamp("arrivalTime", {
+    mode: "date",
+    withTimezone: true,
+  }).defaultNow(),
+  departTime: timestamp("departTime", {
+    mode: "date",
+    withTimezone: true,
+  }).defaultNow(),
+
+  // until something better is figured out with maybe temporary accounts ?
+  ownerName: varchar("ownerName"),
+  ownerPhone: varchar("ownerPhone"),
+  ownerEmail: varchar("ownerEmail"),
+  managerName: varchar("managerName"),
+  managerPhone: varchar("managerPhone"),
+  managerEmail: varchar("managerEmail"),
+  contractorName: varchar("contractorName"),
+  contractorPhone: varchar("contractorPhone"),
+  contractorEmail: varchar("contractorEmail"),
+  supervisorName: varchar("supervisorName"),
+  supervisorPhone: varchar("supervisorPhone"),
+  supervisorEmail: varchar("supervisorEmail"),
 
   activity: varchar("activity"),
 
@@ -295,6 +321,11 @@ export const siteReportDetails1 = pgTable("siteReportDetails1", {
 
   materials: varchar("materials"),
   equiptment: varchar("equiptment"),
+
+  budget: varchar("budget"),
+  spent: varchar("spent"),
+  timeline: varchar("timeline"),
+  completion: varchar("completion"),
 });
 
 export const siteReportSections1 = pgTable("siteReportSections1", {
