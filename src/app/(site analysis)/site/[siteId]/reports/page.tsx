@@ -24,11 +24,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { HaruFile, nullHaruFile } from "@/lib/types";
-import {
-  nullSiteReportDetails,
-  SiteDetails,
-  SiteReport,
-} from "@/lib/types/site";
+import { nullSiteReport, SiteDetails, SiteReport } from "@/lib/types/site";
 import { uploadReportFile } from "@/lib/utils/upload";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
@@ -91,9 +87,9 @@ function ReportsList({
   const addSiteReportOnSubmit = (e: FormEvent) => {
     e.preventDefault();
     const optimisticData: SiteReport[] = (() => {
-      const optimisticReport = {
-        ...nullSiteReportDetails,
-        siteId: siteId,
+      const optimisticReport: SiteReport = {
+        ...nullSiteReport,
+        siteId,
       };
       return reports ? [optimisticReport, ...reports] : [optimisticReport];
     })();
