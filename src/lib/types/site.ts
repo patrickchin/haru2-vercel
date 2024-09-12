@@ -1,5 +1,4 @@
 import * as Schemas from "@/drizzle/schema";
-import * as db from "@/lib/db";
 import { HaruUserBasic } from "./common";
 
 export type Site = typeof Schemas.sites1.$inferSelect;
@@ -17,6 +16,8 @@ export type SiteMember = typeof Schemas.siteMembers1.$inferSelect &
 export type SiteReport = typeof Schemas.siteReports1.$inferSelect & {
   reporter?: HaruUserBasic | null;
 };
+export type SiteReportDetails = SiteReport &
+  typeof Schemas.siteReportDetails1.$inferSelect;
 export type SiteReportNew = Omit<
   typeof Schemas.siteReports1.$inferInsert,
   "id" | "createdAt"

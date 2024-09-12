@@ -24,7 +24,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { HaruFile, nullHaruFile } from "@/lib/types";
-import { nullSiteReport, SiteReport } from "@/lib/types/site";
+import { nullSiteReport, SiteDetails, SiteReport } from "@/lib/types/site";
 import { uploadReportFile } from "@/lib/utils/upload";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
@@ -35,22 +35,43 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import BackButton from "@/components/back-button";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@/components/ui/table";
 
 interface ReportsViewerProps {
   siteId: number;
+  siteDetails: SiteDetails | undefined;
+  report: SiteReport | undefined;
+  setReport: Dispatch<SetStateAction<SiteReport | undefined>>;
+
   selectedFile: HaruFile | undefined;
   setSelectedFile: Dispatch<SetStateAction<HaruFile | undefined>>;
-  selectedReport: SiteReport | undefined;
-  setSelectedReport: Dispatch<SetStateAction<SiteReport | undefined>>;
 }
 
 function ReportsList({
   siteId,
-  selectedFile,
+  report,
+  setReport,
   setSelectedFile,
-  selectedReport,
-  setSelectedReport,
 }: ReportsViewerProps) {
   const {
     data: reports,
@@ -66,9 +87,9 @@ function ReportsList({
   const addSiteReportOnSubmit = (e: FormEvent) => {
     e.preventDefault();
     const optimisticData: SiteReport[] = (() => {
-      const optimisticReport = {
+      const optimisticReport: SiteReport = {
         ...nullSiteReport,
-        siteId: siteId,
+        siteId,
       };
       return reports ? [optimisticReport, ...reports] : [optimisticReport];
     })();
@@ -88,7 +109,7 @@ function ReportsList({
 
   const onSelectReport = (r: SiteReport) => {
     setSelectedFile((f?: HaruFile) => undefined);
-    setSelectedReport(r);
+    setReport(r);
   };
 
   const noreports = !reports || reports.length < 1;
@@ -111,7 +132,7 @@ function ReportsList({
               <Button
                 className={cn(
                   "h-full w-full p-3 flex items-center",
-                  selectedReport?.id === r.id ? "outline" : "",
+                  report?.id === r.id ? "outline" : "",
                 )}
                 variant="secondary"
                 // disabled={selectedReport?.id === r.id}
@@ -133,22 +154,20 @@ function ReportsList({
 }
 
 function FileSelector({
-  siteId,
+  report,
   selectedFile,
   setSelectedFile,
-  selectedReport,
-  setSelectedReport,
 }: ReportsViewerProps) {
   const {
     data: files,
     mutate,
     isLoading,
   } = useSWR<HaruFile[] | undefined>(
-    `/api/report/${selectedReport?.id}/files`, // api route doesn't really exist
+    `/api/report/${report?.id}/files`, // api route doesn't really exist
     async () => {
-      if (!selectedReport) return [];
+      if (!report) return [];
       // fetch("/api/v1/report/files/${id}")
-      const files = await Actions.getFilesForReport(selectedReport.id);
+      const files = await Actions.getFilesForReport(report.id);
       return files || [];
     },
   );
@@ -174,7 +193,7 @@ function FileSelector({
 
   async function onChangeUploadFile(e: ChangeEvent<HTMLInputElement>) {
     const targetFiles = e.currentTarget.files;
-    if (!selectedReport) return;
+    if (!report) return;
     if (!targetFiles || targetFiles.length <= 0) return;
     setIsUploading(true);
     try {
@@ -189,7 +208,7 @@ function FileSelector({
         })();
         mutate(
           async (cur: HaruFile[] | undefined) => {
-            const f = await uploadReportFile(selectedReport.id, file);
+            const f = await uploadReportFile(report.id, file);
             if (!f) return cur;
             if (!cur) return [f];
             return [...cur, f];
@@ -208,7 +227,7 @@ function FileSelector({
   return (
     <div className="flex-none flex flex-col gap-3">
       <div className="grid gap-2 w-44 px-1">
-        <Button className={cn("p-0", selectedReport ? "" : "hidden")}>
+        <Button className={cn("p-0", report ? "" : "hidden")}>
           <Label
             htmlFor="upload-report-file"
             className="flex w-full h-full cursor-pointer justify-center items-center"
@@ -285,13 +304,7 @@ function FileSelector({
   );
 }
 
-function FileDisplay({
-  siteId,
-  selectedFile,
-  setSelectedFile,
-  selectedReport,
-  setSelectedReport,
-}: ReportsViewerProps) {
+function FileDisplay({ selectedFile }: ReportsViewerProps) {
   return (
     <div
       className={cn(
@@ -330,7 +343,7 @@ function FileDisplay({
 function ReportTitle(params: ReportsViewerProps) {
   return (
     <div className="grow flex justify-between">
-      <h3>Site Report - {params.selectedReport?.createdAt?.toDateString()}</h3>
+      <h3>Site Report - {params.report?.createdAt?.toDateString()}</h3>
       <div className="flex gap-2">
         <Button variant="secondary" onClick={() => {}}>
           <Link href={`/site/${params.siteId}/questions`}>Add Questions</Link>
@@ -339,9 +352,8 @@ function ReportTitle(params: ReportsViewerProps) {
           // className="hidden"
           variant="destructive"
           onClick={() => {
-            params.selectedReport &&
-              Actions.deleteSiteReport(params.selectedReport.id);
-            params.setSelectedReport(() => undefined);
+            params.report && Actions.deleteSiteReport(params.report.id);
+            params.setReport(() => undefined);
           }}
         >
           Delete Report
@@ -351,29 +363,267 @@ function ReportTitle(params: ReportsViewerProps) {
   );
 }
 
-function ReportDocument() {
-  const cnlabel = "font-bold text-end";
-  const cnvalue = "";
+function ReportDocument({ siteId, siteDetails, report }: ReportsViewerProps) {
+  const {
+    data: reportDetails,
+    error: reportDetailsError,
+    mutate: reportDetailsMutate,
+  } = useSWR(`/api/site/${siteId}/report/${report?.id}/details`, () => {
+    if (report) return Actions.getSiteReportDetails(report.id);
+  });
+
+  const {
+    data: reportSections,
+    error: reportSectionsError,
+    mutate: reportSectionsMutate,
+  } = useSWR(`/api/site/${siteId}/report/${report?.id}/sections`, () => {
+    if (report) return Actions.getSiteReportSections(report.id);
+  });
+
+  const formSchema = z.object({
+    title: z.string(),
+    content: z.string(),
+  });
+  type FormSchemaType = z.infer<typeof formSchema>;
+
+  const form = useForm<FormSchemaType>({
+    resolver: zodResolver(formSchema),
+  });
+
+  async function onSubmit(data: FormSchemaType) {
+    if (!report) return; // TODO error
+    // form.clearErrors();
+    form.reset();
+
+    const ret = await Actions.addSiteReportSection(report.id, data);
+
+    toast({
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">
+            data: {JSON.stringify(data, null, 2)} <br />
+            ret: {JSON.stringify(ret, null, 2)} <br />
+          </code>
+        </pre>
+      ),
+    });
+
+    reportSectionsMutate();
+  }
+
+  if (!report) return <p>Select a report</p>;
+
   return (
-    <div className="grid grid-cols-[15rem_1fr] w-full gap-4">
-      <div className={cnlabel}>Visit Conducted By</div>
-      <div className={cnvalue}>a</div>
-      <div className={cnlabel}>Site Address</div>
-      <div className={cnvalue}>a</div>
-      <div className={cnlabel}>Site Condition</div>
-      <div className={cnvalue}>a</div>
-      <div className={cnlabel}>Work in Progress</div>
-      <div className={cnvalue}>a</div>
-      <div className={cnlabel}>Observations</div>
-      <div className={cnvalue}>a</div>
-      <div className={cnlabel}>Additional Details</div>
-      <div className={cnvalue}>a</div>
-      <div className={cnlabel}>In Charge Signature</div>
-      <div className={cnvalue}>a</div>
-      <div className={cnlabel}>Engineer Signature</div>
-      <div className={cnvalue}>a</div>
-      <div className={cnlabel}>Visitor Signature</div>
-      <div className={cnvalue}>a</div>
+    <div className="flex flex-col gap-4">
+      <Card className="border-2">
+        <CardHeader className="flex flex-row justify-between">
+          <div className="text-lg font-bold">Site Project Details</div>
+        </CardHeader>
+
+        <CardContent className="grid grid-cols-2 gap-4 p-4 pt-0">
+          <Table>
+            <TableBody>
+              <TableRow>
+                <TableHead>Project Id</TableHead>
+                <TableCell>{report?.siteId ?? "--"}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead>Report Id</TableHead>
+                <TableCell>{report?.id ?? "--"}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead>Site Address</TableHead>
+                <TableCell>{reportDetails?.address ?? "--"}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+          <Table>
+            <TableBody>
+              <TableRow>
+                <TableHead>Owner</TableHead>
+                <TableCell>{reportDetails?.ownerName ?? "--"}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead>Contractor</TableHead>
+                <TableCell>{siteDetails?.contractorName ?? "--"}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead>Supervisor</TableHead>
+                <TableCell>{reportDetails?.supervisorName ?? "--"}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead>Arrival Time</TableHead>
+                <TableCell>
+                  {reportDetails?.arrivalTime?.toLocaleTimeString() ?? "--"}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead>Departed Time</TableHead>
+                <TableCell>
+                  {reportDetails?.departTime?.toLocaleTimeString() ?? "--"}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-yellow-50 border-2">
+        <CardHeader className="flex flex-row justify-between">
+          <div className="text-lg font-bold">
+            Current Budget and Timeline Estimates
+          </div>
+        </CardHeader>
+
+        <CardContent className="grid grid-cols-2 gap-4 p-4 pt-0">
+          <Table>
+            <TableBody>
+              <TableRow>
+                <TableHead>Construction Budget</TableHead>
+                <TableCell>{reportDetails?.budget ?? "--"}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead>Budget Spent</TableHead>
+                <TableCell>{reportDetails?.spent ?? "--"}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+          <Table>
+            <TableBody>
+              <TableRow>
+                <TableHead>Construction Timeline</TableHead>
+                <TableCell>{reportDetails?.timeline ?? "--"}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead>Completion Date</TableHead>
+                <TableCell>{reportDetails?.completion ?? "--"}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-cyan-50 border-2">
+        <CardHeader className="flex flex-row justify-between">
+          <div className="text-lg font-bold">
+            Current Construction Activites
+          </div>
+          <div className="space-x-2">
+            <span className="font-bold">Date of Visit:</span>
+            <span>
+              {report?.visitDate?.toDateString() ??
+                report?.createdAt?.toDateString() ??
+                "Unknown"}
+            </span>
+          </div>
+        </CardHeader>
+
+        <CardContent className="flex flex-col gap-4 p-4 pt-0">
+          {/* <CardContent className="grid grid-cols-4 gap-4 p-4 pt-0"> */}
+          {/* <CardContent className="flex p-4 pt-0"> */}
+
+          <div className="basis-1/4 border p-4 bg-background space-y-2">
+            <h6>Site Activity</h6>
+            <p>{reportDetails?.activity ?? "--"}</p>
+          </div>
+
+          <div className="basis-1/4 border p-4 bg-background space-y-2">
+            <h6>Site Personel</h6>
+
+            <div>
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableHead>Contractor</TableHead>
+                    <TableCell>{reportDetails?.contractors ?? "--"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableHead>Engineers</TableHead>
+                    <TableCell>{reportDetails?.engineers ?? "--"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableHead>Workers</TableHead>
+                    <TableCell>{reportDetails?.workers ?? "--"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableHead>Visitors</TableHead>
+                    <TableCell>{reportDetails?.visitors ?? "--"}</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+
+          <div className="basis-1/4 border p-4 bg-background space-y-2">
+            <h6>Materials Status</h6>
+            <p>{reportDetails?.materials ?? "--"}</p>
+          </div>
+
+          <div className="basis-1/4 border p-4 bg-background space-y-2">
+            <h6>Equiptment Status</h6>
+            <p>{reportDetails?.equiptment ?? "--"}</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <ol className="flex flex-col gap-2">
+        {reportSections?.map((section) => {
+          return (
+            <li key={section.id}>
+              <Card>
+                <CardHeader className="p-4 pb-3 font-bold">
+                  {section.title}
+                </CardHeader>
+                <CardContent className="p-4 pt-0">
+                  {section.content}
+                </CardContent>
+              </Card>
+            </li>
+          );
+        })}
+      </ol>
+
+      <Card className="p-6">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col gap-4"
+          >
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem className="">
+                  <FormLabel className="">Section Title</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="section title .. " />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem className="">
+                  <FormLabel className="">Section Details</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} placeholder="details" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex justify-end">
+              <Button type="submit">Add Section</Button>
+            </div>
+          </form>
+        </Form>
+      </Card>
     </div>
   );
 }
@@ -381,15 +631,21 @@ function ReportDocument() {
 export default function Page({ params }: { params: { siteId: string } }) {
   const origSiteId = Number(params.siteId);
   const [siteId, setSiteId] = useState(origSiteId);
-  const [selectedReport, setSelectedReport] = useState<SiteReport>();
+  const [report, setReport] = useState<SiteReport>();
   const [selectedFile, setSelectedFile] = useState<HaruFile>();
+
+  const { data: siteDetails, mutate: mutateDetails } = useSWR(
+    `/api/site/${siteId}/details`, // api route doesn't really exist
+    () => Actions.getSiteDetails(siteId),
+  );
 
   const props: ReportsViewerProps = {
     siteId,
+    siteDetails,
+    report,
+    setReport,
     selectedFile,
     setSelectedFile,
-    selectedReport,
-    setSelectedReport,
   };
 
   return (
@@ -400,7 +656,7 @@ export default function Page({ params }: { params: { siteId: string } }) {
         {/* <div className="w-full max-w-7xl pl-60 pr-48">
           <ReportTitle {...props} />
         </div> */}
-        <div className="flex gap-4 w-full max-w-7xl pr-48">
+        <div className="flex gap-4 w-full max-w-[100rem] pr-48">
           <div className="flex-none w-56">
             <BackButton variant="outline" className="gap-4 w-full">
               <LucideMoveLeft />
@@ -410,14 +666,14 @@ export default function Page({ params }: { params: { siteId: string } }) {
           <ReportTitle {...props} />
         </div>
         {/* <section className="grid grid-cols-[14rem_auto_11rem] gap-4 w-full max-w-7xl h-[36rem]"> */}
-        <section className="flex gap-4 w-full max-w-7xl h-[36rem]">
+        <section className="flex gap-4 w-full max-w-[100rem] h-[36rem]">
           <ReportsList {...props} />
           <FileDisplay {...props} />
           <FileSelector {...props} />
         </section>
 
         <section className="w-full max-w-7xl pl-60 pr-48 pt-8">
-          <ReportDocument />
+          <ReportDocument {...props} />
         </section>
       </main>
 

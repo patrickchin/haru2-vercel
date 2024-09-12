@@ -159,7 +159,7 @@ export default async function Page({
 }) {
   const siteId = Number(params.siteId);
   const [site, members] = await Promise.all([
-    Actions.getSite(siteId),
+    Actions.getSiteDetails(siteId),
     Actions.getSiteMembers(siteId),
   ]);
 

@@ -242,6 +242,9 @@ export const siteDetails1 = pgTable("siteDetails1", {
   budgetUnits: varchar("budgetUnits"),
 
   // until something better is figured out with maybe temporary accounts ?
+  ownerName: varchar("ownerName"),
+  ownerPhone: varchar("ownerPhone"),
+  ownerEmail: varchar("ownerEmail"),
   managerName: varchar("managerName"),
   managerPhone: varchar("managerPhone"),
   managerEmail: varchar("managerEmail"),
@@ -281,20 +284,57 @@ export const siteReports1 = pgTable("siteReports1", {
   }).defaultNow(),
 });
 
-// export const siteReportDetails1 = pgTable("siteReportDetails1", {
-//   id: serial("id").primaryKey().references(() => siteReports1.id),
-//   activities: varchar("activities"),
-//   issues: varchar("issues"),
-//   interactions: varchar("interactions"),
-// });
+export const siteReportDetails1 = pgTable("siteReportDetails1", {
+  id: serial("id")
+    .primaryKey()
+    .references(() => siteReports1.id),
+  address: varchar("address"),
+  arrivalTime: timestamp("arrivalTime", {
+    mode: "date",
+    withTimezone: true,
+  }).defaultNow(),
+  departTime: timestamp("departTime", {
+    mode: "date",
+    withTimezone: true,
+  }).defaultNow(),
 
-// export const siteReportSections1 = pgTable("siteReportSections1", {
-//   id: serial("id").primaryKey(),
-//   reportId: integer("reportId").references(() => siteReports1.id),
-//   title: varchar("title"),
-//   content: varchar("content"),
-//   fileGroupId: integer("fileGroupId").references(() => fileGroups1.id),
-// });
+  // until something better is figured out with maybe temporary accounts ?
+  ownerName: varchar("ownerName"),
+  ownerPhone: varchar("ownerPhone"),
+  ownerEmail: varchar("ownerEmail"),
+  managerName: varchar("managerName"),
+  managerPhone: varchar("managerPhone"),
+  managerEmail: varchar("managerEmail"),
+  contractorName: varchar("contractorName"),
+  contractorPhone: varchar("contractorPhone"),
+  contractorEmail: varchar("contractorEmail"),
+  supervisorName: varchar("supervisorName"),
+  supervisorPhone: varchar("supervisorPhone"),
+  supervisorEmail: varchar("supervisorEmail"),
+
+  activity: varchar("activity"),
+
+  contractors: varchar("contractors"),
+  engineers: varchar("engineers"),
+  workers: varchar("workers"),
+  visitors: varchar("visitors"),
+
+  materials: varchar("materials"),
+  equiptment: varchar("equiptment"),
+
+  budget: varchar("budget"),
+  spent: varchar("spent"),
+  timeline: varchar("timeline"),
+  completion: varchar("completion"),
+});
+
+export const siteReportSections1 = pgTable("siteReportSections1", {
+  id: serial("id").primaryKey(),
+  reportId: integer("reportId").references(() => siteReports1.id),
+  title: varchar("title"),
+  content: varchar("content"),
+  fileGroupId: integer("fileGroupId").references(() => fileGroups1.id),
+});
 
 // TODO deprecate replace with fileGroups1
 export const siteReportFiles1 = pgTable("siteReportFiles1", {
