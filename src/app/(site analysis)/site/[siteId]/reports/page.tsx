@@ -429,12 +429,14 @@ function ReportDocument({ siteId, siteDetails, report }: ReportsViewerProps) {
                 <TableCell>{report?.siteId ?? "--"}</TableCell>
               </TableRow>
               <TableRow>
-                <TableHead>Report Id</TableHead>
-                <TableCell>{report?.id ?? "--"}</TableCell>
-              </TableRow>
-              <TableRow>
                 <TableHead>Site Address</TableHead>
                 <TableCell>{reportDetails?.address ?? "--"}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead>Visit Date</TableHead>
+                <TableCell>
+                  {reportDetails?.visitDate?.toDateString() ?? "--"}
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -451,18 +453,6 @@ function ReportDocument({ siteId, siteDetails, report }: ReportsViewerProps) {
               <TableRow>
                 <TableHead>Supervisor</TableHead>
                 <TableCell>{reportDetails?.supervisorName ?? "--"}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableHead>Arrival Time</TableHead>
-                <TableCell>
-                  {reportDetails?.arrivalTime?.toLocaleTimeString() ?? "--"}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableHead>Departed Time</TableHead>
-                <TableCell>
-                  {reportDetails?.departTime?.toLocaleTimeString() ?? "--"}
-                </TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -497,7 +487,7 @@ function ReportDocument({ siteId, siteDetails, report }: ReportsViewerProps) {
               </TableRow>
               <TableRow>
                 <TableHead>Completion Date</TableHead>
-                <TableCell>{reportDetails?.completion ?? "--"}</TableCell>
+                <TableCell>{reportDetails?.completion?.toDateString() ?? "--"}</TableCell>
               </TableRow>
             </TableBody>
           </Table>

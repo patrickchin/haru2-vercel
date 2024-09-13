@@ -30,3 +30,4 @@ export const nullSiteReport: SiteReport = {
   createdAt: null,
   visitDate: null,
 };
+export type SiteReportSection = typeof Schemas.siteReportSections1.$inferSelect;

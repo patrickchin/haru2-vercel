@@ -289,11 +289,14 @@ export const siteReportDetails1 = pgTable("siteReportDetails1", {
     .primaryKey()
     .references(() => siteReports1.id),
   address: varchar("address"),
-  arrivalTime: timestamp("arrivalTime", {
+
+  // unused
+  _arrivalTime: timestamp("arrivalTime", {
     mode: "date",
     withTimezone: true,
   }).defaultNow(),
-  departTime: timestamp("departTime", {
+  // unused
+  _departTime: timestamp("departTime", {
     mode: "date",
     withTimezone: true,
   }).defaultNow(),
@@ -325,7 +328,13 @@ export const siteReportDetails1 = pgTable("siteReportDetails1", {
   budget: varchar("budget"),
   spent: varchar("spent"),
   timeline: varchar("timeline"),
-  completion: varchar("completion"),
+  completion: timestamp("completionDate", {
+    mode: "date",
+    withTimezone: true,
+  }).defaultNow(),
+
+  // unused
+  _completion: varchar("completion"),
 });
 
 export const siteReportSections1 = pgTable("siteReportSections1", {

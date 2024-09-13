@@ -3,7 +3,12 @@ import "server-only";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { and, desc, eq, getTableColumns } from "drizzle-orm";
-import { SiteReport, SiteReportDetails, SiteReportNew } from "@/lib/types/site";
+import {
+  SiteReport,
+  SiteReportDetails,
+  SiteReportNew,
+  SiteReportSection,
+} from "@/lib/types/site";
 import * as Schemas from "@/drizzle/schema";
 
 const client = postgres(`${process.env.POSTGRES_URL!}`);
@@ -136,7 +141,9 @@ export async function deleteSiteReport(
   });
 }
 
-export async function getSiteReportSections(reportId: number) {
+export async function getSiteReportSections(
+  reportId: number,
+): Promise<SiteReportSection[]> {
   return db
     .select()
     .from(Schemas.siteReportSections1)
