@@ -2,6 +2,7 @@ import NextAuth, { User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcrypt-ts";
 import {
+  getUserAccount,
   getUserAccountByEmail,
   getUserAccountByPhone,
   verifyOtp,
@@ -26,14 +27,31 @@ export const {
   ...authConfig,
   // adapter: DrizzleAdapter(db),
   callbacks: {
-    async session({ token, session, newSession, trigger }) {
-      const user = await getUserAccountByEmail(session.user.email);
-      session.user.id = token?.sub || "invalid";
+    async jwt({ token, user, trigger, session }) {
       if (user) {
-        session.user.idn = user.id;
-        session.user.role = user.role ?? undefined;
-        session.user.image = user.avatarUrl;
+        token.sub = user.id;
+        token.idn = user.idn;
+        token.role = user.role;
+        token.picture = user.image;
       }
+
+      if (trigger === "update") {
+        const dbuser = await getUserAccount(token.idn as number);
+        if (dbuser) {
+          token.sub = dbuser.id.toString();
+          token.idn = dbuser.id;
+          token.role = dbuser.role;
+          token.picture = dbuser.avatarUrl;
+        }
+      }
+
+      return token;
+    },
+    async session({ token, session }) {
+      session.user.id = token.sub || "invalid";
+      session.user.idn = token.idn as number;
+      session.user.role = token.role as AccountRole;
+      session.user.image = token.picture;
       return session;
     },
   },

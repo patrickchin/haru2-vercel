@@ -32,12 +32,11 @@ function SettingsPage() {
       const updatedUser = await uploadAvatarFile(file);
       if (!updatedUser)
         setErrorMessage("Failed to update the avatar. Please try again.");
+      await updateSession({});
     } finally {
       e.target.value = "";
       setUpLoading(false);
     }
-    // TODO is there a better way to refresh session?
-    location.reload();
   }
 
   const handleOpenModal = () => {
