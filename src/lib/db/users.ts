@@ -88,6 +88,8 @@ export async function createUserIfNotExists({
   const phoneURI = phone ? parsePhoneNumber(phone).getURI() : undefined;
 
   return db.transaction(async (tx) => {
+
+    console.log(`createUserIfNotExists phone: ${phoneURI} , email: ${email}`);
     const newAccount = await tx
       .insert(Schemas.accounts1)
       .values({
@@ -98,6 +100,7 @@ export async function createUserIfNotExists({
       .returning()
       .then((r) => r[0]);
 
+    console.log(`createUserIfNotExists id: ${newAccount.id} , name: ${name}`);
     const newUser = await tx
       .insert(Schemas.users1)
       .values({
@@ -107,6 +110,7 @@ export async function createUserIfNotExists({
       .returning()
       .then((r) => r[0]);
 
+    console.log("createUserIfNotExists successful");
     return newUser;
   });
 }
