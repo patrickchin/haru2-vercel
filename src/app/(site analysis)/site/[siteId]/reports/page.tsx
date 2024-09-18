@@ -662,7 +662,7 @@ export default function Page({ params }: { params: { siteId: string } }) {
           <FileSelector {...props} />
         </section>
 
-        <section className="w-full max-w-7xl pl-60 pr-48 pt-8">
+        <section className="w-full max-w-4xl pt-8">
           <ReportDocument {...props} />
         </section>
       </main>
