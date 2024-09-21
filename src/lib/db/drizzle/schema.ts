@@ -282,6 +282,7 @@ export const siteReports1 = pgTable("siteReports1", {
     mode: "date",
     withTimezone: true,
   }).defaultNow(),
+  fileGroupId: integer("fileGroupId").references(() => fileGroups1.id),
 });
 
 export const siteReportDetails1 = pgTable("siteReportDetails1", {
