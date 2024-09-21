@@ -14,6 +14,18 @@ import { parsePhoneNumber } from "libphonenumber-js";
 const client = postgres(`${process.env.POSTGRES_URL!}`);
 const db = drizzle(client);
 
+export async function getUserAccount(userId: number) {
+  return db
+    .select({
+      ...getTableColumns(Schemas.users1),
+      ...getTableColumns(Schemas.accounts1),
+    })
+    .from(Schemas.accounts1)
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.accounts1.id))
+    .where(eq(Schemas.accounts1.id, userId))
+    .then((r) => r[0]);
+}
+
 export async function getUserAccountByEmail(email: string) {
   return db
     .select({
