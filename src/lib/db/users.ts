@@ -39,6 +39,14 @@ export async function getUserAccountByPhone(phone: string) {
     .then((r) => r[0]);
 }
 
+export async function getUser(userId: number) {
+  return await db
+    .select()
+    .from(Schemas.users1)
+    .where(eq(Schemas.users1.id, userId))
+    .then((r) => r.at(0));
+}
+
 export async function getUserByEmail(email: string) {
   return await db
     .select({
