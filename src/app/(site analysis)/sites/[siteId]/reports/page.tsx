@@ -91,7 +91,7 @@ function ReportsList({
     mutate: mutateReports,
     isLoading,
   } = useSWR(
-    `/api/site/${siteId}/reports`, // api route doesn't really exist
+    `/api/sites/${siteId}/reports`, // api route doesn't really exist
     () => {
       return Actions.getSiteReports(siteId);
     },
@@ -358,7 +358,7 @@ function ReportTitle(params: ReportsViewerProps) {
       <h3>Site Report - {params.report?.createdAt?.toDateString()}</h3>
       <div className="flex gap-2">
         <Button variant="secondary">
-          <Link href={`/site/${params.siteId}/questions`}>Add Questions</Link>
+          <Link href={`/sites/${params.siteId}/questions`}>Add Questions</Link>
         </Button>
         <Button
           // className="hidden"
@@ -484,7 +484,7 @@ function ReportDocument({ siteId, siteDetails, report }: ReportsViewerProps) {
     data: reportDetails,
     error: reportDetailsError,
     mutate: reportDetailsMutate,
-  } = useSWR(`/api/site/${siteId}/report/${report?.id}/details`, () => {
+  } = useSWR(`/api/sites/${siteId}/report/${report?.id}/details`, () => {
     if (report) return Actions.getSiteReportDetails(report.id);
   });
 
@@ -492,7 +492,7 @@ function ReportDocument({ siteId, siteDetails, report }: ReportsViewerProps) {
     data: reportSections,
     error: reportSectionsError,
     mutate: reportSectionsMutate,
-  } = useSWR(`/api/site/${siteId}/report/${report?.id}/sections`, () => {
+  } = useSWR(`/api/sites/${siteId}/report/${report?.id}/sections`, () => {
     if (report) return Actions.getSiteReportSections(report.id);
   });
 
@@ -736,7 +736,7 @@ export default function Page({ params }: { params: { siteId: string } }) {
   const [selectedFile, setSelectedFile] = useState<HaruFile>();
 
   const { data: siteDetails, mutate: mutateDetails } = useSWR(
-    `/api/site/${siteId}/details`, // api route doesn't really exist
+    `/api/sites/${siteId}/details`, // api route doesn't really exist
     () => Actions.getSiteDetails(siteId),
   );
 

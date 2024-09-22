@@ -183,7 +183,7 @@ export default async function Page({
             Site {siteId}: {site?.title}
           </h3>
           <Button variant={"default"} size={"lg"}>
-            <Link href={`/site/${siteId}/reports`}>
+            <Link href={`/sites/${siteId}/reports`}>
               Click Here to View Reports
             </Link>
             <LucideArrowRight />

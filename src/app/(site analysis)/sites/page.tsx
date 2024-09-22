@@ -23,7 +23,7 @@ async function SitesList() {
         return (
           <li key={i}>
             <Link
-              href={`/site/${site.id}`}
+              href={`/sites/${site.id}`}
               className="flex items-center gap-3 p-4 border hover:bg-accent"
             >
               <div className="grow flex flex-col">
