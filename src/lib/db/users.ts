@@ -4,9 +4,9 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import { eq, getTableColumns } from "drizzle-orm";
 import postgres from "postgres";
 import { genSaltSync, hashSync } from "bcrypt-ts";
-
-import * as Schemas from "@/drizzle/schema";
 import { parsePhoneNumber } from "libphonenumber-js";
+import * as Schemas from "@/drizzle/schema";
+import { HaruUserBasic } from "@/lib/types";
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
@@ -138,7 +138,7 @@ export async function createUserIfNotExists({
 export async function updateUserAvatar(
   uploaderId: number,
   values: { avatarUrl: string | null },
-) {
+): Promise<{ initial: HaruUserBasic; updated: HaruUserBasic }> {
   return await db.transaction(async (tx) => {
     const oldUser = await tx
       .select()
