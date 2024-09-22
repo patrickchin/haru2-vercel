@@ -10,6 +10,7 @@ import {
   SiteReportSection,
 } from "@/lib/types/site";
 import * as Schemas from "@/drizzle/schema";
+import { ensureFileGroup } from "./files";
 
 const client = postgres(`${process.env.POSTGRES_URL!}`);
 const db = drizzle(client);
@@ -26,30 +27,19 @@ const SiteReportDetailsColumns = {
   ...getTableColumns(Schemas.siteReportDetails1),
 };
 
-export async function getUserSiteRole(siteId: number, userId: number) {
-  return db
-    .select({ role: Schemas.siteMembers1.role })
-    .from(Schemas.siteMembers1)
-    .where(
-      and(
-        eq(Schemas.siteMembers1.siteId, siteId),
-        eq(Schemas.siteMembers1.memberId, userId),
-      ),
-    )
-    .limit(1)
-    .then((r) => r[0]);
-}
-
-export async function getUserSiteRoleFromReport(
-  reportId: number,
-  userId: number,
-) {
+export async function getReportRole({
+  reportId,
+  userId,
+}: {
+  reportId: number;
+  userId: number;
+}) {
   return db
     .select({ role: Schemas.siteMembers1.role })
     .from(Schemas.siteMembers1)
     .leftJoin(
       Schemas.siteReports1,
-      eq(Schemas.siteReports1.id, Schemas.siteMembers1.siteId),
+      eq(Schemas.siteReports1.siteId, Schemas.siteMembers1.siteId),
     )
     .where(
       and(
@@ -61,7 +51,7 @@ export async function getUserSiteRoleFromReport(
     .then((r) => (r && r.length ? r[0].role : null));
 }
 
-export async function getSiteReports(projectId: number): Promise<SiteReport[]> {
+export async function getSiteReports(siteId: number): Promise<SiteReport[]> {
   return db
     .select(SiteReportColumns)
     .from(Schemas.siteReports1)
@@ -69,7 +59,7 @@ export async function getSiteReports(projectId: number): Promise<SiteReport[]> {
       Schemas.users1,
       eq(Schemas.users1.id, Schemas.siteReports1.reporterId),
     )
-    .where(eq(Schemas.siteReports1.siteId, projectId))
+    .where(eq(Schemas.siteReports1.siteId, siteId))
     .orderBy(desc(Schemas.siteReports1.id));
 }
 
@@ -106,21 +96,36 @@ export async function getSiteReportDetails(
 }
 
 export async function addSiteReport(
-  siteReport: Omit<SiteReportNew, "id" | "createdAt">,
+  siteReport: SiteReportNew,
 ): Promise<SiteReportDetails> {
   return db.transaction(async (tx) => {
+    // const fileGroup = await tx
+    //   .insert(Schemas.fileGroups1)
+    //   .values({})
+    //   .returning()
+    //   .then((r) => r[0]);
+
     const report = await tx
       .insert(Schemas.siteReports1)
-      .values(siteReport)
+      .values({
+        ...siteReport,
+        // fileGroupId: fileGroup.id,
+      })
       .returning()
       .then((r) => r[0]);
+
     const details = await tx
       .insert(Schemas.siteReportDetails1)
       .values({ id: report.id })
       .returning()
       .then((r) => r[0]);
+
     return { ...report, ...details };
   });
+}
+
+export async function ensureSiteReportFileGroup(reportId: number) {
+  return ensureFileGroup(Schemas.siteReports1, reportId);
 }
 
 export async function deleteSiteReport(
@@ -141,6 +146,36 @@ export async function deleteSiteReport(
   });
 }
 
+// ============================================================================
+
+export async function getReportSectionRole({
+  sectionId,
+  userId,
+}: {
+  sectionId: number;
+  userId: number;
+}) {
+  return db
+    .select({ role: Schemas.siteMembers1.role })
+    .from(Schemas.siteMembers1)
+    .leftJoin(
+      Schemas.siteReports1,
+      eq(Schemas.siteReports1.siteId, Schemas.siteMembers1.siteId),
+    )
+    .leftJoin(
+      Schemas.siteReportSections1,
+      eq(Schemas.siteReportSections1.reportId, Schemas.siteReports1.id),
+    )
+    .where(
+      and(
+        eq(Schemas.siteReportSections1.id, sectionId),
+        eq(Schemas.siteMembers1.memberId, userId),
+      ),
+    )
+    .limit(1)
+    .then((r) => (r && r.length ? r[0].role : null));
+}
+
 export async function getSiteReportSections(
   reportId: number,
 ): Promise<SiteReportSection[]> {
@@ -150,15 +185,41 @@ export async function getSiteReportSections(
     .where(eq(Schemas.siteReportSections1.reportId, reportId));
 }
 
+export async function getSiteReportSection(
+  sectionId: number,
+): Promise<SiteReportSection> {
+  return db
+    .select()
+    .from(Schemas.siteReportSections1)
+    .where(eq(Schemas.siteReportSections1.id, sectionId))
+    .then((r) => r[0]);
+}
+
 export async function addSiteReportSection(values: {
   reportId: number;
   title: string;
   content: string;
 }) {
-  return db
-    .insert(Schemas.siteReportSections1)
-    .values(values)
-    .returning()
-    .then((r) => r[0]);
-  // .onConflictDoUpdate();
+  return db.transaction(async (tx) => {
+    const fileGroup = await tx
+      .insert(Schemas.fileGroups1)
+      .values({})
+      .returning()
+      .then((r) => r[0]);
+
+    const section = await tx
+      .insert(Schemas.siteReportSections1)
+      .values({
+        ...values,
+        fileGroupId: fileGroup.id,
+      })
+      .returning()
+      .then((r) => r[0]);
+
+    return section;
+  });
+}
+
+export async function ensureSiteReportSectionFileGroup(sectionId: number) {
+  return ensureFileGroup(Schemas.siteReportSections1, sectionId);
 }

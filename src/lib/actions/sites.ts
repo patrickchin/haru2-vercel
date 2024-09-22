@@ -82,7 +82,7 @@ export async function updateKeySiteUsers(
   const userId = session.user.idn;
   if (isNaN(userId)) return;
 
-  const role = await db.getMemberRole({ siteId, userId });
+  const role = await db.getSiteRole({ siteId, userId });
   if (!role) return;
   const allowedRoles = [
     "manager",

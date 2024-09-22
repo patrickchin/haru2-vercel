@@ -119,24 +119,3 @@ export async function deleteFile(fileId: number) {
   }
   return f;
 }
-
-export async function addReportFile(args: {
-  reportId: number;
-  type: string;
-  name: string;
-  size: number;
-  fileUrl: string;
-}) {
-  const session = await auth();
-  // if (!canEditProjectFiles(session, project)) return;
-  if (!session?.user) return; // TODO
-
-  return db.addFile({
-    reportId: args.reportId,
-    type: args.type,
-    filename: args.name,
-    filesize: args.size,
-    url: args.fileUrl,
-    uploaderId: session.user.idn,
-  });
-}
