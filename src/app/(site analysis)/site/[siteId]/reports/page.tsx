@@ -407,60 +407,67 @@ function ReportSection({ section }: { section: SiteReportSection }) {
 
   return (
     <Card>
-      <CardHeader className="p-4 pb-3 font-bold">{section.title}</CardHeader>
-      <CardContent className="p-4 pt-0">
-        <CardDescription>{section.content}</CardDescription>
-        <div className="w-full overflow-x-auto">
-          <ul className="inline-flex gap-2">
-            {data?.map((f) => {
-              if (f.url)
-                return (
-                  <li key={f.id} className="w-[100px]">
-                    <Image
-                      src={f.url}
-                      alt={f.filename || "unknown image"}
-                      width={100}
-                      height={100}
-                    />
-                  </li>
-                );
-            })}
-          </ul>
-        </div>
-        <Input
-          type="file"
-          id={`section-${section.id}-upload-file`}
-          className="hidden"
-          ref={uploadFileInputRef}
-          onChange={onChangeUploadFile}
-          disabled={isUploading}
-          multiple
-        />
-        <Button
-          asChild
-          type="button"
-          variant="secondary"
-          disabled={isUploading}
-        >
-          <Label
-            htmlFor={`section-${section.id}-upload-file`}
-            className={cn(
-              "gap-x-2",
-              isUploading ? "cursor-progress" : "cursor-pointer",
-            )}
-          >
-            {isUploading ? (
-              <>
-                Uploading
-                <LucideLoader2 className="animate-spin w-4" />
-              </>
-            ) : (
-              <>
-                Add Attachment <LucideUpload className="w-4" />
-              </>
-            )}
-          </Label>
-        </Button>
+      <CardHeader className="p-4 pb-3 font-bold text-lg">{section.title}</CardHeader>
+      <CardContent className="p-4 pt-0 space-y-4">
+        <CardDescription className="text-base">{section.content}</CardDescription>
+        {section.fileGroupId && (
+          <div>
+            <div className="w-full overflow-x-auto">
+              <ul className="inline-flex gap-2">
+                {data?.map((f) => {
+                  if (f.url)
+                    return (
+                      <li
+                        key={f.id}
+                        className="w-[100px] h-[100px] rounded border overflow-hidden p-1"
+                      >
+                        <Image
+                          src={f.url}
+                          alt={f.filename || "unknown image"}
+                          width={100}
+                          height={100}
+                        />
+                      </li>
+                    );
+                })}
+              </ul>
+            </div>
+            <Input
+              type="file"
+              id={`section-${section.id}-upload-file`}
+              className="hidden"
+              ref={uploadFileInputRef}
+              onChange={onChangeUploadFile}
+              disabled={isUploading}
+              multiple
+            />
+            <Button
+              asChild
+              type="button"
+              variant="secondary"
+              disabled={isUploading}
+            >
+              <Label
+                htmlFor={`section-${section.id}-upload-file`}
+                className={cn(
+                  "gap-x-2",
+                  isUploading ? "cursor-progress" : "cursor-pointer",
+                )}
+              >
+                {isUploading ? (
+                  <>
+                    Uploading
+                    <LucideLoader2 className="animate-spin w-4" />
+                  </>
+                ) : (
+                  <>
+                    Add Attachment <LucideUpload className="w-4" />
+                  </>
+                )}
+              </Label>
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

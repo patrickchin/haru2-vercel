@@ -10,7 +10,6 @@ import {
   SiteReportSection,
 } from "@/lib/types/site";
 import * as Schemas from "@/drizzle/schema";
-import { ensureFileGroup } from "./files";
 
 const client = postgres(`${process.env.POSTGRES_URL!}`);
 const db = drizzle(client);
@@ -99,17 +98,17 @@ export async function addSiteReport(
   siteReport: SiteReportNew,
 ): Promise<SiteReportDetails> {
   return db.transaction(async (tx) => {
-    // const fileGroup = await tx
-    //   .insert(Schemas.fileGroups1)
-    //   .values({})
-    //   .returning()
-    //   .then((r) => r[0]);
+    const fileGroup = await tx
+      .insert(Schemas.fileGroups1)
+      .values({})
+      .returning()
+      .then((r) => r[0]);
 
     const report = await tx
       .insert(Schemas.siteReports1)
       .values({
         ...siteReport,
-        // fileGroupId: fileGroup.id,
+        fileGroupId: fileGroup.id,
       })
       .returning()
       .then((r) => r[0]);
@@ -122,10 +121,6 @@ export async function addSiteReport(
 
     return { ...report, ...details };
   });
-}
-
-export async function ensureSiteReportFileGroup(reportId: number) {
-  return ensureFileGroup(Schemas.siteReports1, reportId);
 }
 
 export async function deleteSiteReport(
@@ -218,8 +213,4 @@ export async function addSiteReportSection(values: {
 
     return section;
   });
-}
-
-export async function ensureSiteReportSectionFileGroup(sectionId: number) {
-  return ensureFileGroup(Schemas.siteReportSections1, sectionId);
 }

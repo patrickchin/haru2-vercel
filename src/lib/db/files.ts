@@ -92,7 +92,9 @@ export async function updateFile(fileId: number, values: HaruFileNew) {
     .then((r) => r[0]);
 }
 
-export async function getFilesFromGroup(fileGroupId: number): Promise<HaruFile[]> {
+export async function getFilesFromGroup(
+  fileGroupId: number,
+): Promise<HaruFile[]> {
   return db
     .select(HaruFileColumns)
     .from(Schemas.files1)
@@ -103,32 +105,6 @@ export async function getFilesFromGroup(fileGroupId: number): Promise<HaruFile[]
     )
     .where(eq(Schemas.fileGroupFiles1.fileGroupId, fileGroupId));
 }
-
-// quite hacky
-export async function ensureFileGroup(
-  table: any & { id: any; fileGroupId: any },
-  id: number,
-) {
-    const row = await db.transaction(async (tx) => {
-      const fileGroup = await tx
-        .insert(Schemas.fileGroups1)
-        .values({})
-        .returning()
-        .then((r) => r[0]);
-      return await tx
-        .update(table)
-        .set({ fileGroupId: fileGroup.id })
-        .where(and(eq(table.id, id), isNull(table.fileGroupId)))
-        .returning()
-        .then((r) => r[0]);
-    });
-
-    if (!row?.fileGroupId)
-      throw new Error(`ensureFileFroup failed id ${id} table ${table}`);
-
-    return row;
-}
-
 
 export async function getFilesForProject(projectId: number) {
   return await db
