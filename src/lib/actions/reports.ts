@@ -73,8 +73,6 @@ export async function addSiteReportFile(reportId: number, fileInfo: HaruFileNew)
   const session = await auth();
   if (await isAllowed(session, allSiteMemberRoles, { reportId })) {
     let report = await db.getSiteReport(reportId);
-    if (!report.fileGroupId)
-      report = await db.ensureSiteReportFileGroup(reportId);
     if (report.fileGroupId) {
       return db.addFileToGroup(report.fileGroupId, {
         ...fileInfo,
@@ -119,8 +117,6 @@ export async function addSiteReportSectionFile(
   const session = await auth();
   if (await isAllowed(session, allSiteMemberRoles, { sectionId })) {
     let section = await db.getSiteReportSection(sectionId);
-    if (!section.fileGroupId)
-      section = await db.ensureSiteReportSectionFileGroup(sectionId);
     if (section.fileGroupId) {
       return db.addFileToGroup(section.fileGroupId, {
         ...fileInfo,
