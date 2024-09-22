@@ -15,7 +15,7 @@ export async function addSite(d: AddSiteType) {
 
   const site = await db.addUserSite(session.user.idn, parsed.data);
 
-  redirect(`/site/${site.id}`);
+  redirect(`/sites/${site.id}`);
 }
 
 export async function getMySites() {
@@ -96,7 +96,7 @@ export async function updateKeySiteUsers(
   try {
     console.log(`User ${userId} updating key site user information ${values}`);
     const ret = await db.updateKeySiteUsers(siteId, values);
-    revalidatePath(`/site/${siteId}`);
+    revalidatePath(`/sites/${siteId}`);
     return ret;
   } catch (e: any) {
     console.log(
