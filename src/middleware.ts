@@ -12,7 +12,6 @@ export default auth((req) => {
     "/login",
     "/register",
     "/register2",
-    "/new-project",
   ];
   const isPublic = publicPathnames.some((p) =>
     req.nextUrl.pathname === p,

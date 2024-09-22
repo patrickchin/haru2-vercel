@@ -7,34 +7,6 @@ function allFilesSmall(list: FileList | undefined) {
   return Array.from(list).every((f: File) => f.size < 4_500_000);
 }
 
-export const NewProjectFormSchema = z.object({
-  title: z.string().max(254),
-  country: z.string(),
-  buildingType: z.string(), // enum?
-  buildingSubtype: z.string().optional(), // enum?
-  description: z
-    .string()
-    .min(
-      1,
-      "Please add a project description, this can be edited after submition",
-    ),
-  files: z
-    .any()
-    .transform((f) => f as FileList)
-    .optional()
-    .refine(allFilesSmall, "Max file size 3.5MB"),
-
-  lifestyle: z.string().optional(),
-  future: z.string().optional(),
-  energy: z.string().optional(),
-  outdoors: z.string().optional(),
-  security: z.string().optional(),
-  maintenance: z.string().optional(),
-  special: z.string().optional(),
-});
-export type NewProjectFormSchemaType = z.infer<typeof NewProjectFormSchema>;
-export type NewProjectFormType = UseFormReturn<NewProjectFormSchemaType>;
-
 export const phoneNumberZod = z
   .string()
   .refine(isPossiblePhoneNumber, { message: "Invalid phone number" });
@@ -129,14 +101,6 @@ export const registerZodSchemas = {
   email: registerEmailOtpSchema,
   password: registerPasswordSchema,
 };
-
-export const ManageTaskEditEstimatesSchema = z.object({
-  duration: z.coerce.number(),
-  cost: z.coerce.number(),
-});
-export type ManageTaskEditEstimatesType = z.infer<
-  typeof ManageTaskEditEstimatesSchema
->;
 
 export const addSiteSchema = z.object({
   title: z.string(),

@@ -4,9 +4,6 @@ import {
   varchar,
   integer,
   timestamp,
-  json,
-  date,
-  boolean,
   unique,
   pgEnum,
   jsonb,
@@ -20,8 +17,8 @@ import {
 
 export const accountRoleEnum = pgEnum("role", [
   "client",
-  "designer",
   "manager",
+  "supervisor",
   "admin",
 ]);
 
@@ -59,109 +56,9 @@ export const contacts1 = pgTable("contacts1", {
   contactId: serial("contactId").references(() => users1.id),
 });
 
-export const projects1 = pgTable("projects1", {
-  id: serial("id").primaryKey(),
-  userId: integer("userId").references(() => users1.id),
-  title: varchar("title"),
-  description: varchar("description"),
-  type: varchar("type"),
-  subtype: varchar("subtype"),
-  countryCode: varchar("countryCode"),
-  status: varchar("status").default("pending"),
-  extraInfo: json("info"),
-  createdAt: timestamp("createdAt", {
-    withTimezone: true,
-    mode: "date",
-  }).defaultNow(),
-});
-
-export const teams1 = pgTable("teams1", {
-  id: serial("id").primaryKey(),
-  // name: varchar("name"),
-  projectId: integer("projectId").references(() => projects1.id),
-  type: varchar("type"), // legal, architectural, structural, mep
-  lead: integer("leadId").references(() => users1.id),
-});
-
-export const teamMembers1 = pgTable(
-  "teamMembers1",
-  {
-    teamId: integer("teamId").references(() => teams1.id),
-    userId: integer("userId").references(() => users1.id),
-  },
-  (t) => {
-    return {
-      uniq: unique().on(t.teamId, t.userId),
-      // pk: primaryKey({ columns: [t.teamId, t.userId] }),
-    };
-  },
-);
-
-export const taskSpecs1 = pgTable("taskSpecs1", {
-  id: serial("id").primaryKey(),
-  type: varchar("type"),
-  title: varchar("title"),
-  description: varchar("description"),
-  // default duration
-});
-
-export const tasks1 = pgTable("tasks1", {
-  id: serial("id").primaryKey(),
-  specId: integer("specId").references(() => taskSpecs1.id),
-  projectId: integer("projectId").references(() => projects1.id),
-  lead: varchar("lead"), // TODO deprecate replace with leadId
-  // leadId: integer("leadId").references(() => users1.id),
-  // owner: integer("ownerid").references(() => users1.id),
-  // members: integer("ownerid").references(() => users1.id),
-  type: varchar("type"),
-  status: varchar("status").default("pending"),
-  startDate: date("startDate", { mode: "date" }),
-  endDate: date("endDate", { mode: "date" }),
-  estimation: integer("estimation"), // TODO deprecate
-  duration: integer("duration"), // in days
-  cost: integer("cost"),
-  costUnits: varchar("costUnits"), // ISO 4217
-
-  title: varchar("title"),
-  description: varchar("description"),
-  enabled: boolean("enabled").default(true),
-  // updated: timestamp("updated", {
-  //   withTimezone: true,
-  //   mode: "date",
-  // }).defaultNow(),
-});
-
-// export const taskupdate1 = pgTable("taskupdate1", {
-// })
-
-export const commentSections1 = pgTable("commentSections1", {
-  id: serial("id").primaryKey(),
-  projectId: integer("projectId").references(() => projects1.id),
-  taskId: integer("taskId").references(() => tasks1.id),
-});
-
-export const comments1 = pgTable("comments1", {
-  id: serial("id").primaryKey(),
-  sectionId: integer("sectionId").references(() => commentSections1.id),
-  userId: integer("userId").references(() => users1.id),
-  createdAt: timestamp("createdAt", {
-    withTimezone: true,
-    mode: "date",
-  }).defaultNow(),
-  comment: varchar("comment"),
-});
-
 export const files1 = pgTable("files1", {
   id: serial("id").primaryKey(),
-
-  // TODO deprecate in favour of fileGroups1
   uploaderId: integer("uploaderId").references(() => users1.id),
-  // TODO deprecate in favour of fileGroups1
-  projectId: integer("projectId").references(() => projects1.id),
-  // TODO deprecate in favour of fileGroups1
-  taskId: integer("taskId").references(() => tasks1.id),
-  // TODO deprecate in favour of fileGroups1
-  commentId: integer("commentId").references(() => comments1.id),
 
   filename: varchar("filename"),
   filesize: integer("filesize"),
@@ -291,17 +188,6 @@ export const siteReportDetails1 = pgTable("siteReportDetails1", {
     .references(() => siteReports1.id),
   address: varchar("address"),
 
-  // unused
-  _arrivalTime: timestamp("arrivalTime", {
-    mode: "date",
-    withTimezone: true,
-  }).defaultNow(),
-  // unused
-  _departTime: timestamp("departTime", {
-    mode: "date",
-    withTimezone: true,
-  }).defaultNow(),
-
   // until something better is figured out with maybe temporary accounts ?
   ownerName: varchar("ownerName"),
   ownerPhone: varchar("ownerPhone"),
@@ -333,9 +219,6 @@ export const siteReportDetails1 = pgTable("siteReportDetails1", {
     mode: "date",
     withTimezone: true,
   }).defaultNow(),
-
-  // unused
-  _completion: varchar("completion"),
 });
 
 export const siteReportSections1 = pgTable("siteReportSections1", {
@@ -344,10 +227,4 @@ export const siteReportSections1 = pgTable("siteReportSections1", {
   title: varchar("title"),
   content: varchar("content"),
   fileGroupId: integer("fileGroupId").references(() => fileGroups1.id),
-});
-
-// TODO deprecate replace with fileGroups1
-export const siteReportFiles1 = pgTable("siteReportFiles1", {
-  reportId: integer("reportId").references(() => siteReports1.id),
-  fileId: integer("filedId").references(() => files1.id),
 });

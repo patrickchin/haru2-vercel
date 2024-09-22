@@ -1,5 +1,6 @@
 import * as Schemas from "@/drizzle/schema";
 
+export type AccountRole = (typeof Schemas.accountRoleEnum.enumValues)[number];
 export type HaruUserBasic = typeof Schemas.users1.$inferSelect;
 export type HaruUserDetailed = typeof Schemas.users1.$inferSelect & {
   email: string | null;
@@ -12,9 +13,6 @@ export type HaruFile = typeof Schemas.files1.$inferSelect & {
 export const nullHaruFile: HaruFile = {
   id: 0,
   uploaderId: null,
-  projectId: null,
-  taskId: null,
-  commentId: null,
   filename: "",
   filesize: 0,
   url: null,

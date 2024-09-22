@@ -1,1 +1,0 @@
-ALTER TABLE "siteReportDetails1" ADD COLUMN "completionDate" timestamp with time zone DEFAULT now();

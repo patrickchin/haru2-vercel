@@ -1,14 +1,14 @@
-import { DesignUserBasic } from "@/lib/types";
+import { HaruUserBasic } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { cn, getAvatarInitials } from "@/lib/utils";
 import { User } from "next-auth";
 import { useSession } from "next-auth/react";
 
-export function DesignUserAvatar({
+export function HaruUserAvatar({
   user,
   className,
 }: {
-  user?: DesignUserBasic;
+  user?: HaruUserBasic;
   className?: string;
 }) {
   // const userId: number = Math.floor(Math.random() * 1000);
@@ -40,7 +40,7 @@ export function UserAvatar({
   className?: string;
 }) {
   return (
-    <DesignUserAvatar
+    <HaruUserAvatar
       className={className}
       user={{
         id: Number(user?.id),
@@ -55,7 +55,7 @@ export function CurrentUserAvatar({ className }: { className?: string }) {
   const { data: session } = useSession();
   const user = session?.user;
   return (
-    <DesignUserAvatar
+    <HaruUserAvatar
       className={className}
       user={{
         id: Number(user?.id),

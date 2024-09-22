@@ -22,18 +22,10 @@ import { redirect } from "next/navigation";
 export async function getAllUsers() {
   const session = await auth();
   if (!session?.user) return;
-  switch (session.user.role) {
-    case "client":
-      break;
-    case "designer":
-      break;
-    case "manager":
-      break;
-    case "admin":
-      break;
+  if (session.user.role === 'admin') {
+    // TODO separate users by organisation
+    return db.getAllUsers();
   }
-  // TODO separate users by organisation
-  return db.getAllUsers();
 }
 
 export async function registerUser(data: RegisterSchemaType) {
