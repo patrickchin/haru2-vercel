@@ -1,4 +1,5 @@
 import * as Actions from "@/lib/actions";
+import { HaruFileNew } from "../types";
 
 async function doUpload(type: string, params: Record<string, any>, file: File) {
   const presignedResponse = await fetch(`/api/upload/${type}`, {
@@ -70,11 +71,28 @@ export async function uploadReportFile(reportId: number, file: File) {
     reportId,
   };
   const fileUrl = await doUpload("report", params, file);
-  const actionParams = {
+  const actionParams: HaruFileNew = {
     type: file.type,
-    name: file.name,
-    size: file.size,
-    fileUrl,
+    filename: file.name,
+    filesize: file.size,
+    url: fileUrl,
   };
-  return Actions.addReportFile({ ...actionParams, reportId });
+  return Actions.addSiteReportFile(reportId, actionParams);
+}
+
+// TODO can be merged into one function
+export async function uploadReportSectionFile(sectionId: number, file: File) {
+  const params = {
+    filename: file.name,
+    contentType: file.type,
+    sectionId,
+  };
+  const fileUrl = await doUpload("section", params, file);
+  const actionParams: HaruFileNew = {
+    type: file.type,
+    filename: file.name,
+    filesize: file.size,
+    url: fileUrl,
+  };
+  return Actions.addSiteReportSectionFile(sectionId, actionParams);
 }

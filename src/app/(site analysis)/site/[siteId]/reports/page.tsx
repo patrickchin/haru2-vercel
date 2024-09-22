@@ -5,6 +5,7 @@ import {
   Dispatch,
   FormEvent,
   SetStateAction,
+  useRef,
   useState,
 } from "react";
 import Image from "next/image";
@@ -15,7 +16,9 @@ import * as Actions from "@/lib/actions";
 import {
   LucideCamera,
   LucideFileText,
+  LucideLoader2,
   LucideMoveLeft,
+  LucideUpload,
   LucideVideo,
 } from "lucide-react";
 
@@ -24,8 +27,13 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { HaruFile, nullHaruFile } from "@/lib/types";
-import { nullSiteReport, SiteDetails, SiteReport } from "@/lib/types/site";
-import { uploadReportFile } from "@/lib/utils/upload";
+import {
+  nullSiteReport,
+  SiteDetails,
+  SiteReport,
+  SiteReportSection,
+} from "@/lib/types/site";
+import { uploadReportFile, uploadReportSectionFile } from "@/lib/utils/upload";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
 import Footer from "@/components/footer";
@@ -48,7 +56,12 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardDescription,
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -172,7 +185,6 @@ function FileSelector({
     },
   );
 
-  // const addReportFileBound = Actions.addReportFile.bind(null, selectedReport?.id);
   const [isUploading, setIsUploading] = useState(false);
 
   if (!selectedFile && files?.length) {
@@ -363,6 +375,97 @@ function ReportTitle(params: ReportsViewerProps) {
   );
 }
 
+function ReportSection({ section }: { section: SiteReportSection }) {
+  const { data, error, mutate } = useSWR(
+    `/api/sections/${section?.id}/files`,
+    () => {
+      return Actions.getSiteReportSectionFiles(section.id);
+    },
+  );
+
+  const uploadFileInputRef = useRef(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  async function onChangeUploadFile(e: ChangeEvent<HTMLInputElement>) {
+    const targetFiles = e.currentTarget.files;
+    if (!targetFiles || targetFiles.length <= 0) return;
+
+    setIsUploading(true);
+
+    try {
+      for (const file of Array.from(targetFiles)) {
+        const f = await uploadReportSectionFile(section.id, file);
+        mutate();
+      }
+      e.target.value = "";
+    } catch (e) {
+      toast({ description: `Error: ${e}` });
+    } finally {
+      setIsUploading(false);
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader className="p-4 pb-3 font-bold">{section.title}</CardHeader>
+      <CardContent className="p-4 pt-0">
+        <CardDescription>{section.content}</CardDescription>
+        <div className="w-full overflow-x-auto">
+          <ul className="inline-flex gap-2">
+            {data?.map((f) => {
+              if (f.url)
+                return (
+                  <li key={f.id} className="w-[100px]">
+                    <Image
+                      src={f.url}
+                      alt={f.filename || "unknown image"}
+                      width={100}
+                      height={100}
+                    />
+                  </li>
+                );
+            })}
+          </ul>
+        </div>
+        <Input
+          type="file"
+          id={`section-${section.id}-upload-file`}
+          className="hidden"
+          ref={uploadFileInputRef}
+          onChange={onChangeUploadFile}
+          disabled={isUploading}
+          multiple
+        />
+        <Button
+          asChild
+          type="button"
+          variant="secondary"
+          disabled={isUploading}
+        >
+          <Label
+            htmlFor={`section-${section.id}-upload-file`}
+            className={cn(
+              "gap-x-2",
+              isUploading ? "cursor-progress" : "cursor-pointer",
+            )}
+          >
+            {isUploading ? (
+              <>
+                Uploading
+                <LucideLoader2 className="animate-spin w-4" />
+              </>
+            ) : (
+              <>
+                Add Attachment <LucideUpload className="w-4" />
+              </>
+            )}
+          </Label>
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
 function ReportDocument({ siteId, siteDetails, report }: ReportsViewerProps) {
   const {
     data: reportDetails,
@@ -487,7 +590,9 @@ function ReportDocument({ siteId, siteDetails, report }: ReportsViewerProps) {
               </TableRow>
               <TableRow>
                 <TableHead>Completion Date</TableHead>
-                <TableCell>{reportDetails?.completion?.toDateString() ?? "--"}</TableCell>
+                <TableCell>
+                  {reportDetails?.completion?.toDateString() ?? "--"}
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -561,14 +666,7 @@ function ReportDocument({ siteId, siteDetails, report }: ReportsViewerProps) {
         {reportSections?.map((section) => {
           return (
             <li key={section.id}>
-              <Card>
-                <CardHeader className="p-4 pb-3 font-bold">
-                  {section.title}
-                </CardHeader>
-                <CardContent className="p-4 pt-0">
-                  {section.content}
-                </CardContent>
-              </Card>
+              <ReportSection section={section} />
             </li>
           );
         })}

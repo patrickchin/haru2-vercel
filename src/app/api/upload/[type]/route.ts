@@ -44,6 +44,16 @@ async function getReportFilePath(
   return `report/${report.id}/${filename}`;
 }
 
+async function getReportSectionFilePath(
+  params: Record<string, string>,
+  filename: string,
+) {
+  if (!params.sectionId) return;
+  const section = await Actions.getSiteReportSection(Number(params.sectionId));
+  if (!section) return;
+  return `section/${section.id}/${filename}`;
+}
+
 function addRandomUid(filename: string) {
   const uuid = randomUUID();
   return `${uuid}-${filename}`;
@@ -66,9 +76,11 @@ async function getPath(
     return getProjectFilePath(params, filename);
   } else if (type === "report") {
     return getReportFilePath(params, filename);
+  } else if (type === "section") {
+    return getReportSectionFilePath(params, filename);
   }
 
-  console.error("api/upload getPath unknown type:", type);
+  throw new Error(`api/upload getPath unknown type: ${type}`);
 }
 
 export async function POST(

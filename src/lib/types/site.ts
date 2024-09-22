@@ -9,7 +9,7 @@ export type SiteDetailsNew = Omit<
   "id"
 >;
 export type SiteMemberRole = typeof Schemas.siteMembers1.$inferSelect.role;
-export const siteMemberRoles = Schemas.siteMemberRole.enumValues;
+export const allSiteMemberRoles = Schemas.siteMemberRole.enumValues;
 export type SiteMember = typeof Schemas.siteMembers1.$inferSelect &
   HaruUserBasic;
 
@@ -20,7 +20,7 @@ export type SiteReportDetails = SiteReport &
   typeof Schemas.siteReportDetails1.$inferSelect;
 export type SiteReportNew = Omit<
   typeof Schemas.siteReports1.$inferInsert,
-  "id" | "createdAt"
+  "id" | "createdAt" | "fileGroupId"
 >;
 export const nullSiteReport: SiteReport = {
   id: 0,
@@ -29,5 +29,6 @@ export const nullSiteReport: SiteReport = {
   reporter: null,
   createdAt: null,
   visitDate: null,
+  fileGroupId: null,
 };
 export type SiteReportSection = typeof Schemas.siteReportSections1.$inferSelect;

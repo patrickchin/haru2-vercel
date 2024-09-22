@@ -151,7 +151,7 @@ export async function addUserToSite({
     .then((r) => r[0]);
 }
 
-export async function getMemberRole({
+export async function getSiteRole({
   siteId,
   userId,
 }: {
@@ -159,7 +159,7 @@ export async function getMemberRole({
   userId: number;
 }) {
   return db
-    .select()
+    .select({ role: Schemas.siteMembers1.role })
     .from(Schemas.siteMembers1)
     .where(
       and(
@@ -168,7 +168,7 @@ export async function getMemberRole({
       ),
     )
     .limit(1)
-    .then((r) => (r.length ? r[0].role : null));
+    .then((r) => (r && r.length ? r[0].role : null));
 }
 
 export async function updateKeySiteUsers(
