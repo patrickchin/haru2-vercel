@@ -357,7 +357,7 @@ function ReportTitle(params: ReportsViewerProps) {
     <div className="grow flex justify-between">
       <h3>Site Report - {params.report?.createdAt?.toDateString()}</h3>
       <div className="flex gap-2">
-        <Button variant="secondary" onClick={() => {}}>
+        <Button variant="secondary">
           <Link href={`/site/${params.siteId}/questions`}>Add Questions</Link>
         </Button>
         <Button
@@ -376,7 +376,7 @@ function ReportTitle(params: ReportsViewerProps) {
 }
 
 function ReportSection({ section }: { section: SiteReportSection }) {
-  const { data, error, mutate } = useSWR(
+  const { data, error, mutate } = useSWR<HaruFile[] | undefined>(
     `/api/sections/${section?.id}/files`,
     () => {
       return Actions.getSiteReportSectionFiles(section.id);
@@ -407,29 +407,35 @@ function ReportSection({ section }: { section: SiteReportSection }) {
 
   return (
     <Card>
-      <CardHeader className="p-4 pb-3 font-bold text-lg">{section.title}</CardHeader>
+      <CardHeader className="p-4 pb-3 font-bold text-lg">
+        {section.title}
+      </CardHeader>
       <CardContent className="p-4 pt-0 space-y-4">
-        <CardDescription className="text-base">{section.content}</CardDescription>
+        <CardDescription className="text-base">
+          {section.content}
+        </CardDescription>
         {section.fileGroupId && (
-          <div>
-            <div className="w-full overflow-x-auto">
+          <div className="space-y-3">
+            <div className="w-full overflow-x-auto border-2 p-2">
               <ul className="inline-flex gap-2">
-                {data?.map((f) => {
-                  if (f.url)
-                    return (
-                      <li
-                        key={f.id}
-                        className="w-[100px] h-[100px] rounded border overflow-hidden p-1"
-                      >
-                        <Image
-                          src={f.url}
-                          alt={f.filename || "unknown image"}
-                          width={100}
-                          height={100}
-                        />
-                      </li>
-                    );
-                })}
+                {data?.map((f: HaruFile) => (
+                  <li
+                    key={f.id}
+                    className="w-[150px] h-[100px] rounded border-2 border-black overflow-hidden p-1 relative hover:brightness-50"
+                  >
+                    <Link href={f.url || ""} target="_blank">
+                      <Image
+                        src={f.url || ""}
+                        alt={f.filename || "unknown image"}
+                        // width={100}
+                        // height={100}
+                        fill={true}
+                        objectFit="cover"
+                        objectPosition="center"
+                      />
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
             <Input
