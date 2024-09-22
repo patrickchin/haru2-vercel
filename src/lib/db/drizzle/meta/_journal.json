@@ -43,6 +43,13 @@
       "when": 1726384311078,
       "tag": "0005_high_ultimatum",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1727020834551,
+      "tag": "0006_even_klaw",
+      "breakpoints": true
     }
   ]
 }
