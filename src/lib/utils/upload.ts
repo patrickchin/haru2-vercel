@@ -29,32 +29,6 @@ async function doUpload(type: string, params: Record<string, any>, file: File) {
   return fileUrl;
 }
 
-export async function uploadFile(
-  args: ({ taskId: number } | { projectId: number }) & { file: File },
-) {
-  const taskId = "taskId" in args ? args.taskId : null;
-  const projectId = "projectId" in args ? args.projectId : null;
-  const params = {
-    filename: args.file.name,
-    contentType: args.file.type,
-    ...(taskId !== null ? { taskId } : { projectId }),
-  };
-  const fileUrl = await doUpload(
-    taskId !== null ? "task" : "project",
-    params,
-    args.file,
-  );
-
-  const actionParams = {
-    type: args.file.type,
-    name: args.file.name,
-    size: args.file.size,
-    fileUrl,
-  };
-  if (taskId) return Actions.addFile({ ...actionParams, taskId });
-  if (projectId) return Actions.addFile({ ...actionParams, projectId });
-}
-
 export async function uploadAvatarFile(file: File) {
   const params = {
     filename: file.name,
