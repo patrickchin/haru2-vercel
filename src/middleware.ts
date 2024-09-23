@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
 import { authConfig } from "@/lib/auth.config";
+import { notFound } from "next/navigation";
 
 const auth = NextAuth(authConfig).auth;
 
@@ -30,6 +31,20 @@ export default auth((req) => {
       req.nextUrl.pathname = "/";
       return Response.redirect(req.nextUrl);
     }
+
+    /* role isn't correctly set!
+    // TODO maybe match the full path?
+    if (
+      req.nextUrl.pathname.endsWith("/edit") ||
+      req.nextUrl.pathname.endsWith("/new")
+    ) {
+      console.log("my current role is ", req.auth.user);
+      if (req.auth.user?.role !== "admin") {
+        req.nextUrl.pathname = "/_error";
+        return Response.redirect(req.nextUrl, 307);
+      }
+    }
+    */
   }
 });
 
