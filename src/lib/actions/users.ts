@@ -22,7 +22,7 @@ import { redirect } from "next/navigation";
 export async function getAllUsers() {
   const session = await auth();
   if (!session?.user) return;
-  if (session.user.role === 'admin') {
+  if (session.user.role === "admin") {
     // TODO separate users by organisation
     return db.getAllUsers();
   }

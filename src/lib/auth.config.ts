@@ -10,5 +10,5 @@ export const authConfig = {
   ],
   session: {
     strategy: "jwt",
-  }
+  },
 } satisfies NextAuthConfig;

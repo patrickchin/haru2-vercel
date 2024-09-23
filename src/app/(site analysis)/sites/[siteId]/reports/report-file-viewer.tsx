@@ -12,15 +12,13 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip";
-
-import { Card, CardContent } from "@/components/ui/card"
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel"
+} from "@/components/ui/carousel";
 
 export function FileSelector({
   fileList,
@@ -129,9 +127,6 @@ function FileDisplayOne({ file }: { file?: HaruFile }) {
         ))}
     </div>
   );
-      
-
-  
 }
 
 export function FileDisplay({

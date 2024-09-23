@@ -5,7 +5,6 @@ import { authConfig } from "@/lib/auth.config";
 const auth = NextAuth(authConfig).auth;
 
 export default auth((req) => {
-
   const publicPathnames: string[] = [
     "/",
     "/favicon.ico",
@@ -13,9 +12,7 @@ export default auth((req) => {
     "/register",
     "/register2",
   ];
-  const isPublic = publicPathnames.some((p) =>
-    req.nextUrl.pathname === p,
-  );
+  const isPublic = publicPathnames.some((p) => req.nextUrl.pathname === p);
 
   if (!req.auth && !isPublic) {
     // TODO redirect to original url after logging in

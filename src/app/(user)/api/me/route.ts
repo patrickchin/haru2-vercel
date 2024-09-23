@@ -12,4 +12,3 @@ export const GET = auth(async function GET(req: NextAuthRequest) {
   const account = await db.getUserAccount(user.idn);
   return NextResponse.json(account);
 });
-
