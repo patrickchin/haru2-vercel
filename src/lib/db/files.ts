@@ -68,3 +68,40 @@ export async function getFilesFromGroup(
     )
     .where(eq(Schemas.fileGroupFiles1.fileGroupId, fileGroupId));
 }
+
+export async function getFilesForReport(reportId: number): Promise<HaruFile[]> {
+  return db
+    .select(HaruFileColumns)
+    .from(Schemas.files1)
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderId))
+    .innerJoin(
+      Schemas.fileGroupFiles1,
+      eq(Schemas.fileGroupFiles1.fileId, Schemas.files1.id),
+    )
+    .innerJoin(
+      Schemas.siteReports1,
+      eq(Schemas.siteReports1.fileGroupId, Schemas.fileGroupFiles1.fileGroupId),
+    )
+    .where(eq(Schemas.siteReports1.id, reportId));
+}
+
+export async function getFilesForReportSection(
+  sectionId: number,
+): Promise<HaruFile[]> {
+  return db
+    .select(HaruFileColumns)
+    .from(Schemas.files1)
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderId))
+    .innerJoin(
+      Schemas.fileGroupFiles1,
+      eq(Schemas.fileGroupFiles1.fileId, Schemas.files1.id),
+    )
+    .innerJoin(
+      Schemas.siteReportSections1,
+      eq(
+        Schemas.siteReportSections1.fileGroupId,
+        Schemas.fileGroupFiles1.fileGroupId,
+      ),
+    )
+    .where(eq(Schemas.siteReportSections1.id, sectionId));
+}

@@ -178,15 +178,15 @@ export default async function Page({
 
       {/* <main className="grow flex flex-col px-16 py-8 gap-4"> */}
       <main className="grow flex flex-col gap-4 max-w-6xl w-full px-16 py-8">
-        <div className="flex justify-between pb-3">
+        <div className="flex items-center justify-between pb-3">
           <h3>
             Site {siteId}: {site?.title}
           </h3>
-          <Button variant={"default"} size={"lg"}>
-            <Link href={`/sites/${siteId}/reports`}>
+          <Button variant={"default"} size={"lg"} asChild>
+            <Link href={`/sites/${siteId}/reports`} className="flex items-center gap-2">
               Click Here to View Reports
+              <LucideArrowRight />
             </Link>
-            <LucideArrowRight />
           </Button>
         </div>
 
