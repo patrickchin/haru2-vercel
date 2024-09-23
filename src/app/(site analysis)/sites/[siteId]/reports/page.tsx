@@ -1,5 +1,3 @@
-import Header from "@/components/header";
-import Footer from "@/components/footer";
 import * as Actions from "@/lib/actions";
 import {
   ReportDocumentNull,
@@ -8,6 +6,7 @@ import {
 } from "./report-document";
 import { redirect } from "next/navigation";
 import { ReportFileDisplay } from "./report-file-viewer";
+import { DefaultLayout } from "@/components/page-layouts";
 
 export default async function Page({ params }: { params: { siteId: string } }) {
   const siteId = Number(params.siteId);
@@ -20,24 +19,18 @@ export default async function Page({ params }: { params: { siteId: string } }) {
   const props: ReportsViewerProps = { siteId, reportId: NaN, fileId: NaN };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
+    <DefaultLayout>
+      <section className="">
+        <ReportTitleBar {...props} />
+      </section>
 
-      <main className="grow flex flex-col items-center md:px-16 py-8 gap-4">
-        <section className="w-full max-w-5xl pb-3">
-          <ReportTitleBar {...props} />
-        </section>
+      <section className="">
+        <ReportFileDisplay {...props} />
+      </section>
 
-        <section className="w-full max-w-5xl">
-          <ReportFileDisplay {...props} />
-        </section>
-
-        <section className="w-full max-w-5xl">
-          <ReportDocumentNull />
-        </section>
-      </main>
-
-      <Footer />
-    </div>
+      <section className="">
+        <ReportDocumentNull />
+      </section>
+    </DefaultLayout>
   );
 }

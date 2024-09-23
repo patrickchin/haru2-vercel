@@ -11,13 +11,10 @@ import {
 } from "lucide-react";
 
 import SiteCalendarForm from "./site-calendar";
-
-import Footer from "@/components/footer";
-import Header from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import EditSiteMembersButtonPopup from "./site-members-add";
+import { DefaultLayout } from "@/components/page-layouts";
 import {
   Table,
   TableBody,
@@ -26,6 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import EditSiteMembersButtonPopup from "./site-members-add";
 
 export interface SiteDetailsProps {
   site: SiteDetails;
@@ -173,130 +171,126 @@ export default async function Page({
       : undefined;
 
   return (
-    <div className="flex flex-col min-h-screen items-center">
-      <Header />
+    <DefaultLayout>
+      <div className="flex items-center justify-between pb-3">
+        <h3>
+          Site {siteId}: {site?.title}
+        </h3>
+        <Button variant={"default"} size={"lg"} asChild>
+          <Link
+            href={`/sites/${siteId}/reports`}
+            className="flex items-center gap-2"
+          >
+            Click Here to View Reports
+            <LucideArrowRight />
+          </Link>
+        </Button>
+      </div>
 
-      {/* <main className="grow flex flex-col px-16 py-8 gap-4"> */}
-      <main className="grow flex flex-col gap-4 max-w-6xl w-full px-16 py-8">
-        <div className="flex items-center justify-between pb-3">
-          <h3>
-            Site {siteId}: {site?.title}
-          </h3>
-          <Button variant={"default"} size={"lg"} asChild>
-            <Link href={`/sites/${siteId}/reports`} className="flex items-center gap-2">
-              Click Here to View Reports
-              <LucideArrowRight />
-            </Link>
-          </Button>
-        </div>
+      <SiteInfoBar site={site} members={members} />
+      <SiteMembersBar site={site} members={members} />
 
-        <SiteInfoBar site={site} members={members} />
-        <SiteMembersBar site={site} members={members} />
+      <div className="grid grid-cols-2 gap-4">
+        <Card>
+          <CardHeader className="font-semibold">
+            Schedule a Zoom Meeting with the Team
+          </CardHeader>
+          <CardContent className="">
+            <SiteCalendarForm />
 
-        <div className="grid grid-cols-2 gap-4">
-          <Card>
-            <CardHeader className="font-semibold">
-              Schedule a Zoom Meeting with the Team
-            </CardHeader>
-            <CardContent className="">
-              <SiteCalendarForm />
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Suggested Time</TableHead>
+                  <TableHead>Agreed/Pending</TableHead>
+                  <TableHead></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {Array(2)
+                  .fill(0)
+                  .map((x, i) => (
+                    <TableRow key={i}>
+                      <TableCell>{site.createdAt.toLocaleString()}</TableCell>
+                      <TableCell>Pending ...</TableCell>
+                      <TableCell className="flex gap-1">
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          className="w-8 h-8 p-1"
+                        >
+                          <LucideTrash className="w-3.5" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          className="w-8 h-8 p-1"
+                        >
+                          <LucideX className="w-3.5" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          className="w-8 h-8 p-1"
+                        >
+                          <LucideCheck className="w-3.5" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
 
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Suggested Time</TableHead>
-                    <TableHead>Agreed/Pending</TableHead>
-                    <TableHead></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {Array(2)
-                    .fill(0)
-                    .map((x, i) => (
-                      <TableRow key={i}>
-                        <TableCell>{site.createdAt.toLocaleString()}</TableCell>
-                        <TableCell>Pending ...</TableCell>
-                        <TableCell className="flex gap-1">
-                          <Button
-                            size="icon"
-                            variant="outline"
-                            className="w-8 h-8 p-1"
-                          >
-                            <LucideTrash className="w-3.5" />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="outline"
-                            className="w-8 h-8 p-1"
-                          >
-                            <LucideX className="w-3.5" />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="outline"
-                            className="w-8 h-8 p-1"
-                          >
-                            <LucideCheck className="w-3.5" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+        <Card>
+          <CardHeader className="font-semibold">
+            Supervision Progress and Milestones
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            <Progress value={progressPct} />
 
-          <Card>
-            <CardHeader className="font-semibold">
-              Supervision Progress and Milestones
-            </CardHeader>
-            <CardContent className="flex flex-col gap-3">
-              <Progress value={progressPct} />
+            <Table>
+              <TableBody>
+                <TableRow>
+                  <TableHead className="font-medium">Creation</TableHead>
+                  <TableCell>{site.createdAt.toDateString()}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableHead className="font-medium">Start</TableHead>
+                  <TableCell>
+                    {site.startDate?.toDateString() ??
+                      "Site supervision has not yet started"}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableHead className="font-medium">End</TableHead>
+                  <TableCell>
+                    {site.endDate?.toDateString() ??
+                      "End date has not yet been agreed upon"}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableHead className="font-medium">Next</TableHead>
+                  <TableCell>
+                    {site.nextReportDate?.toDateString() ??
+                      "Next report date has not been set"}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableHead className="font-medium">Schedule</TableHead>
+                  <TableCell>
+                    {site.schedule ??
+                      "A report schedule has not yet been agreed on"}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
 
-              <Table>
-                <TableBody>
-                  <TableRow>
-                    <TableHead className="font-medium">Creation</TableHead>
-                    <TableCell>{site.createdAt.toDateString()}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableHead className="font-medium">Start</TableHead>
-                    <TableCell>
-                      {site.startDate?.toDateString() ??
-                        "Site supervision has not yet started"}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableHead className="font-medium">End</TableHead>
-                    <TableCell>
-                      {site.endDate?.toDateString() ??
-                        "End date has not yet been agreed upon"}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableHead className="font-medium">Next</TableHead>
-                    <TableCell>
-                      {site.nextReportDate?.toDateString() ??
-                        "Next report date has not been set"}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableHead className="font-medium">Schedule</TableHead>
-                    <TableCell>
-                      {site.schedule ??
-                        "A report schedule has not yet been agreed on"}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </div>
-
-        <SiteDescription site={site} members={members} />
-      </main>
-
-      <Footer />
-    </div>
+      <SiteDescription site={site} members={members} />
+    </DefaultLayout>
   );
 }

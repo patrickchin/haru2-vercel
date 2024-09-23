@@ -4,7 +4,7 @@ import { ChangeEvent, useState } from "react";
 import { useSession } from "next-auth/react";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { CenteredLayout } from "@/components/page-layouts";
+import { DefaultLayout } from "@/components/page-layouts";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -129,11 +129,9 @@ function SettingsPage() {
 
 export default function Page() {
   return (
-    <CenteredLayout>
-      <section className="grow flex flex-col gap-12">
-        <h3>Settings</h3>
-        <SettingsPage />
-      </section>
-    </CenteredLayout>
+    <DefaultLayout>
+      <h3>Settings</h3>
+      <SettingsPage />
+    </DefaultLayout>
   );
 }

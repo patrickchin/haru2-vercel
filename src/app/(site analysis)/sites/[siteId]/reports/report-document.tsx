@@ -67,7 +67,7 @@ export async function ReportListPopup({
                   : "",
               )}
             >
-              {`Site Report #${r.id} - ${r.createdAt?.toDateString()}`}
+              {`Site Report #${r.id} - ${r.createdAt?.toDateString() || "unknown date"}`}
             </Link>
           </Button>
         </li>
@@ -299,14 +299,6 @@ export async function ReportDocumentDisplay({
         <CardHeader className="flex flex-row justify-between">
           <div className="text-lg font-bold">
             Current Construction Activites
-          </div>
-          <div className="space-x-2">
-            <span className="font-bold">Date of Visit:</span>
-            <span>
-              {report?.visitDate?.toDateString() ??
-                report?.createdAt?.toDateString() ??
-                "Unknown"}
-            </span>
           </div>
         </CardHeader>
 
