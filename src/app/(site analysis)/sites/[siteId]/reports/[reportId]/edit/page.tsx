@@ -60,12 +60,12 @@ function UpdateSiteReportForm({
           <FormField
             key={c.name}
             control={form.control}
-            name={c.name as any}
+            name={c.name as never /* hacks, what is even happening here */}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{c.name}</FormLabel>
                 <FormControl>
-                  <Textarea disabled={c.name === "id"} {...field} />
+                  <Textarea {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -131,12 +131,12 @@ function UpdateSiteReportDetailsForm({
           <FormField
             key={c.name}
             control={form.control}
-            name={c.name as any}
+            name={c.name as never}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{c.name}</FormLabel>
                 <FormControl>
-                  <Textarea disabled={c.name === "id"} {...field} />
+                  <Textarea {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
