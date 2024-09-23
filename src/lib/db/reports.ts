@@ -6,7 +6,9 @@ import { and, desc, eq, getTableColumns } from "drizzle-orm";
 import {
   SiteMemberRole,
   SiteReport,
+  SiteReportBoth,
   SiteReportDetails,
+  SiteReportDetailsNew,
   SiteReportNew,
   SiteReportSection,
 } from "@/lib/types/site";
@@ -78,7 +80,7 @@ export async function getSiteReport(reportId: number): Promise<SiteReport> {
 
 export async function getSiteReportDetails(
   reportId: number,
-): Promise<SiteReportDetails> {
+): Promise<SiteReportBoth> {
   return db
     .select(SiteReportDetailsColumns)
     .from(Schemas.siteReports1)
@@ -97,7 +99,7 @@ export async function getSiteReportDetails(
 
 export async function addSiteReport(
   siteReport: SiteReportNew,
-): Promise<SiteReportDetails> {
+): Promise<SiteReportBoth> {
   return db.transaction(async (tx) => {
     const fileGroup = await tx
       .insert(Schemas.fileGroups1)
@@ -124,9 +126,33 @@ export async function addSiteReport(
   });
 }
 
+export async function updateSiteReport(
+  reportId: number,
+  values: SiteReportNew,
+): Promise<SiteReport> {
+  return db
+    .update(Schemas.siteReports1)
+    .set(values)
+    .where(eq(Schemas.siteReports1.id, reportId))
+    .returning()
+    .then((r) => r[0]);
+}
+
+export async function updateSiteReportDetails(
+  reportId: number,
+  values: SiteReportDetailsNew,
+): Promise<SiteReportDetails> {
+  return db
+    .update(Schemas.siteReportDetails1)
+    .set(values)
+    .where(eq(Schemas.siteReportDetails1.id, reportId))
+    .returning()
+    .then((r) => r[0]);
+}
+
 export async function deleteSiteReport(
   reportId: number,
-): Promise<SiteReportDetails> {
+): Promise<SiteReportBoth> {
   return db.transaction(async (tx) => {
     const report = await tx
       .delete(Schemas.siteReports1)

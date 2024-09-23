@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import {
   SiteDetails,
   SiteReport,
-  SiteReportDetails,
+  SiteReportBoth,
   SiteReportSection,
 } from "@/lib/types/site";
 import {
@@ -131,9 +131,7 @@ export async function ReportTitleBarDisplay({
                 </Link>
               </Button>
               <Button asChild>
-                <Link href={`/sites/${site.id}/reports/${report.id}/edit`}>
-                  New Report
-                </Link>
+                <Link href={`/sites/${site.id}/reports/new`}>New Report</Link>
               </Button>
             </div>
           )}
@@ -205,7 +203,7 @@ export async function ReportDocumentDisplay({
   sections,
 }: {
   site?: SiteDetails;
-  report?: SiteReportDetails;
+  report?: SiteReportBoth;
   sections?: SiteReportSection[];
 }) {
   return (
