@@ -3,7 +3,12 @@
 import * as db from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { HaruFileNew } from "@/lib/types/common";
-import { allSiteMemberRoles, SiteMemberRole } from "@/lib/types/site";
+import {
+  allSiteMemberRoles,
+  SiteMemberRole,
+  SiteReportDetailsNew,
+  SiteReportNew,
+} from "@/lib/types/site";
 import { Session } from "next-auth";
 
 async function isAllowed(
@@ -55,6 +60,26 @@ export async function addSiteReport(siteId: number) {
       reporterId: session?.user?.idn,
       siteId: siteId,
     });
+  }
+}
+
+export async function updateSiteReport(
+  reportId: number,
+  values: SiteReportNew,
+) {
+  const session = await auth();
+  if (await isAllowed(session, allSiteMemberRoles, { reportId })) {
+    return await db.updateSiteReport(reportId, values);
+  }
+}
+
+export async function updateSiteReportDetails(
+  reportId: number,
+  values: SiteReportDetailsNew,
+) {
+  const session = await auth();
+  if (await isAllowed(session, allSiteMemberRoles, { reportId })) {
+    return await db.updateSiteReportDetails(reportId, values);
   }
 }
 
