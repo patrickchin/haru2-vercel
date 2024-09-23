@@ -4,6 +4,7 @@ import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { and, desc, eq, getTableColumns } from "drizzle-orm";
 import {
+  SiteMemberRole,
   SiteReport,
   SiteReportDetails,
   SiteReportNew,
@@ -32,7 +33,7 @@ export async function getReportRole({
 }: {
   reportId: number;
   userId: number;
-}) {
+}): Promise<SiteMemberRole> {
   return db
     .select({ role: Schemas.siteMembers1.role })
     .from(Schemas.siteMembers1)

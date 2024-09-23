@@ -9,9 +9,13 @@ import { Session } from "next-auth";
 async function isAllowed(
   session: Session | null,
   allowedRoles: SiteMemberRole[],
-   { siteId, reportId, sectionId } : { siteId?: number, reportId?: number, sectionId?: number },
+  {
+    siteId,
+    reportId,
+    sectionId,
+  }: { siteId?: number; reportId?: number; sectionId?: number },
 ) {
-  if (!session?.user) return false; 
+  if (!session?.user) return false;
   const userId = session.user.idn;
   let role: SiteMemberRole = null;
   if (siteId) {
@@ -28,7 +32,7 @@ async function isAllowed(
 
 export async function getSiteReports(siteId: number) {
   const session = await auth();
-  if (await isAllowed(session, allSiteMemberRoles, { siteId })) 
+  if (await isAllowed(session, allSiteMemberRoles, { siteId }))
     return db.getSiteReports(siteId);
 }
 
@@ -69,7 +73,10 @@ export async function getFilesForReport(reportId: number) {
   }
 }
 
-export async function addSiteReportFile(reportId: number, fileInfo: HaruFileNew) {
+export async function addSiteReportFile(
+  reportId: number,
+  fileInfo: HaruFileNew,
+) {
   const session = await auth();
   if (await isAllowed(session, allSiteMemberRoles, { reportId })) {
     let report = await db.getSiteReport(reportId);
@@ -88,7 +95,6 @@ export async function getSiteReportSections(reportId: number) {
   const session = await auth();
   if (await isAllowed(session, allSiteMemberRoles, { reportId }))
     return db.getSiteReportSections(reportId);
-  console.log("not allowed");
 }
 
 export async function getSiteReportSection(sectionId: number) {
@@ -128,8 +134,6 @@ export async function addSiteReportSectionFile(
 
 export async function getSiteReportSectionFiles(sectionId: number) {
   const session = await auth();
-  if (await isAllowed(session, allSiteMemberRoles, { sectionId })) {
-    let section = await db.getSiteReportSection(sectionId);
-    if (section.fileGroupId) return db.getFilesFromGroup(section.fileGroupId);
-  }
+  if (await isAllowed(session, allSiteMemberRoles, { sectionId }))
+    return db.getFilesForReportSection(sectionId);
 }
