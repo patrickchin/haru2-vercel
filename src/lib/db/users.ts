@@ -108,7 +108,6 @@ export async function createUserIfNotExists({
   const phoneURI = phone ? parsePhoneNumber(phone).getURI() : undefined;
 
   return db.transaction(async (tx) => {
-
     console.log(`createUserIfNotExists phone: ${phoneURI} , email: ${email}`);
     const newAccount = await tx
       .insert(Schemas.accounts1)
