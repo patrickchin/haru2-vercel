@@ -1,6 +1,10 @@
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
-import { isPossiblePhoneNumber, isValidPhoneNumber, parsePhoneNumber } from "libphonenumber-js";
+import {
+  isPossiblePhoneNumber,
+  isValidPhoneNumber,
+  parsePhoneNumber,
+} from "libphonenumber-js";
 
 function allFilesSmall(list: FileList | undefined) {
   if (list === undefined) return true;
@@ -52,11 +56,6 @@ export const authorizeSchema = z
   .object({
     email: z.string().email("Invalid email address").optional(),
     phone: phoneNumberZod.optional(),
-    // phone: z
-    //   .string()
-    //   .transform((p) => parsePhoneNumber(p))
-    //   .optional()
-    //   .refine((n) => !n || n.isValid(), { message: "Invalid phone number" }),
     otp: z
       .string()
       .min(6)
@@ -65,14 +64,17 @@ export const authorizeSchema = z
       .optional(),
     password: z.string().optional(),
   })
+  .refine((schema) => !schema.phone, {
+    message: "Mobile OTP has been temporarily disabled",
+  })
+  // .refine((schema) => !!schema.email === !!schema.password, {
+  //   message: "Only email and password supported for now",
+  // })
   .refine((schema) => !!schema.email !== !!schema.phone, {
     message: "Needs to specify one of email or phone number",
   })
   .refine((schema) => !!schema.otp !== !!schema.password, {
     message: "Needs to specify one of otp or password",
-  })
-  .refine((schema) => !!schema.email === !!schema.password, {
-    message: "Only email and password supported for now",
   });
 
 const registerPhoneOtpSchema = z.object({
