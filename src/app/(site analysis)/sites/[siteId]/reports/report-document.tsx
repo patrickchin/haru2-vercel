@@ -57,10 +57,15 @@ export async function ReportListPopup({
     <ol>
       {reports.map((r) => (
         <li key={r.id}>
-          <Button variant="outline" asChild>
+          <Button variant="link" asChild>
             <Link
               href={`/sites/${site.id}/reports/${r.id}`}
-              className="w-full h-full"
+              className={cn(
+                "text-xl",
+                report && report.id === r.id
+                  ? "pointer-events-none opacity-50"
+                  : "",
+              )}
             >
               {`Site Report #${r.id} - ${r.createdAt?.toDateString()}`}
             </Link>
@@ -109,7 +114,7 @@ export async function ReportTitleBarDisplay({
               <LucideChevronDown />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="p-4 border backdrop-blur-xl" align="start">
+          <PopoverContent className="px-8 py-6 w-fit" align="start">
             <ReportListPopup site={site} report={report} />
           </PopoverContent>
         </Popover>

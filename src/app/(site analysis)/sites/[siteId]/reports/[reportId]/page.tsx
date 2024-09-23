@@ -30,9 +30,9 @@ export default async function Page({
 
       <main className="grow flex flex-col items-center md:px-16 py-8 gap-4">
         <section className="w-full max-w-5xl pb-3">
-          <Suspense fallback={<ReportTitleBarDisplay />}>
+          {/* <Suspense fallback={<ReportTitleBarDisplay />}> */}
             <ReportTitleBar {...props} />
-          </Suspense>
+          {/* </Suspense> */}
         </section>
 
         <section className="w-full max-w-5xl">
