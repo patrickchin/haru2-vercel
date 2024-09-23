@@ -21,7 +21,7 @@ async function isAllowed(
   } else if (sectionId) {
     role = await db.getReportSectionRole({ sectionId, userId });
   } else {
-    throw new Error("report.ts isAllowed error");
+    return false;
   }
   return allowedRoles.includes(role);
 }

@@ -430,8 +430,7 @@ function ReportSection({ section }: { section: SiteReportSection }) {
                         // width={100}
                         // height={100}
                         fill={true}
-                        objectFit="cover"
-                        objectPosition="center"
+                        className="object-cover"
                       />
                     </Link>
                   </li>
