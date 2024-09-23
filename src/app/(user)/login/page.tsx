@@ -43,7 +43,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { Button } from "@/components/ui/button";
-import { SimpleLayout } from "@/components/page-layouts";
+import { GradientLayout } from "@/components/page-layouts";
 import {
   Form,
   FormControl,
@@ -429,10 +429,10 @@ function LoginCard() {
 
 export default function Login() {
   return (
-    <SimpleLayout>
+    <GradientLayout>
       <div className="w-screen max-w-md rounded-2xl shadow-xl overflow-hidden">
         <LoginCard />
       </div>
-    </SimpleLayout>
+    </GradientLayout>
   );
 }

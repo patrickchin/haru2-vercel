@@ -1,4 +1,4 @@
-import { CenteredLayout } from "@/components/page-layouts";
+import { DefaultLayout } from "@/components/page-layouts";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
@@ -118,42 +118,40 @@ const services = [
 
 export default function Page() {
   return (
-    <CenteredLayout>
+    <DefaultLayout className="max-w-7xl">
       <h2>Site Analysis Services</h2>
-      <section className="w-full">
-        <ul className="w-full grid grid-cols-3 gap-4">
-          {services.map((s, i) => {
-            const id = s.name.replaceAll(" ", "-").toLowerCase();
-            return (
-              <li
-                key={i}
-                className="flex flex-col p-4 border rounded rounded-lg space-y-3 bg-background shadow"
+      <ul className="w-full grid grid-cols-3 gap-4">
+        {services.map((s, i) => {
+          const id = s.name.replaceAll(" ", "-").toLowerCase();
+          return (
+            <li
+              key={i}
+              className="flex flex-col p-4 border rounded rounded-lg space-y-3 bg-background shadow"
+            >
+              <Label
+                htmlFor={id}
+                className="flex justify-between items-center cursor-pointer"
               >
-                <Label
-                  htmlFor={id}
-                  className="flex justify-between items-center cursor-pointer"
-                >
-                  <h5>{s.name}</h5>
-                  <Switch id={id} defaultChecked={true} />
-                </Label>
-                <Separator />
-                <ul className="grow pl-5">
-                  {s.description.map((d, j) => (
-                    <li
-                      key={`${i}-${j}`}
-                      className="list-disc text-balanced text-sm"
-                    >
-                      {d}
-                    </li>
-                  ))}
-                </ul>
-                <Separator />
-                <div>Price per Month: {s.price}</div>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
-    </CenteredLayout>
+                <h5>{s.name}</h5>
+                <Switch id={id} defaultChecked={true} />
+              </Label>
+              <Separator />
+              <ul className="grow pl-5">
+                {s.description.map((d, j) => (
+                  <li
+                    key={`${i}-${j}`}
+                    className="list-disc text-balanced text-sm"
+                  >
+                    {d}
+                  </li>
+                ))}
+              </ul>
+              <Separator />
+              <div>Price per Month: {s.price}</div>
+            </li>
+          );
+        })}
+      </ul>
+    </DefaultLayout>
   );
 }

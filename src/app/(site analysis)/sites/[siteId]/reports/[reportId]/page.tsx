@@ -1,15 +1,12 @@
-import Header from "@/components/header";
-import Footer from "@/components/footer";
 import { Suspense } from "react";
+import { DefaultLayout } from "@/components/page-layouts";
 import {
   ReportDocument,
   ReportDocumentNull,
   ReportsViewerProps,
   ReportTitleBar,
-  ReportTitleBarDisplay,
 } from "../report-document";
 import { FileDisplay, ReportFileDisplay } from "../report-file-viewer";
-
 
 export default async function Page({
   params,
@@ -25,30 +22,24 @@ export default async function Page({
   const props: ReportsViewerProps = { siteId, reportId, fileId };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
+    <DefaultLayout>
+      <section className="">
+        {/* <Suspense fallback={<ReportTitleBarDisplay />}> */}
+        <ReportTitleBar {...props} />
+        {/* </Suspense> */}
+      </section>
 
-      <main className="grow flex flex-col items-center md:px-16 py-8 gap-4">
-        <section className="w-full max-w-5xl pb-3">
-          {/* <Suspense fallback={<ReportTitleBarDisplay />}> */}
-            <ReportTitleBar {...props} />
-          {/* </Suspense> */}
-        </section>
+      <section className="">
+        <Suspense fallback={<FileDisplay />}>
+          <ReportFileDisplay {...props} />
+        </Suspense>
+      </section>
 
-        <section className="w-full max-w-5xl">
-          <Suspense fallback={<FileDisplay />}>
-            <ReportFileDisplay {...props} />
-          </Suspense>
-        </section>
-
-        <section className="w-full max-w-5xl">
-          <Suspense fallback={<ReportDocumentNull />}>
-            <ReportDocument {...props} />
-          </Suspense>
-        </section>
-      </main>
-
-      <Footer />
-    </div>
+      <section className="">
+        <Suspense fallback={<ReportDocumentNull />}>
+          <ReportDocument {...props} />
+        </Suspense>
+      </section>
+    </DefaultLayout>
   );
 }
