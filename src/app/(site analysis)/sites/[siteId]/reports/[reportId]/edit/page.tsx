@@ -23,6 +23,8 @@ import * as Schemas from "@/drizzle/schema";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { Textarea } from "@/components/ui/textarea";
 import { getTableConfig } from "drizzle-orm/pg-core";
+import { useSession } from "next-auth/react";
+import { notFound } from "next/navigation";
 
 function UpdateSiteReportForm({
   siteId,
@@ -169,12 +171,17 @@ export default function Page({
 }: {
   params: { siteId: string; reportId: string };
 }) {
-  const siteId = Number(params.siteId);
-  const reportId = Number(params.reportId);
-  return (
-    <DefaultLayout>
-      <UpdateSiteReportForm siteId={siteId} reportId={reportId} />
-      <UpdateSiteReportDetailsForm siteId={siteId} reportId={reportId} />
-    </DefaultLayout>
-  );
+  const { data: session } = useSession();
+  if (session?.user?.role === "admin") {
+    const siteId = Number(params.siteId);
+    const reportId = Number(params.reportId);
+    return (
+      <DefaultLayout>
+        <UpdateSiteReportForm siteId={siteId} reportId={reportId} />
+        <UpdateSiteReportDetailsForm siteId={siteId} reportId={reportId} />
+      </DefaultLayout>
+    );
+  }
+  // This should be authorized in middleware so we should never get here
+  notFound();
 }
