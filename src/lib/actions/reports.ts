@@ -11,6 +11,9 @@ import {
 } from "@/lib/types/site";
 import { Session } from "next-auth";
 
+const viewingRoles: SiteMemberRole[] = allSiteMemberRoles;
+const editingRoles: SiteMemberRole[] = ["supervisor"];
+
 async function isAllowed(
   session: Session | null,
   allowedRoles: SiteMemberRole[],
@@ -21,6 +24,8 @@ async function isAllowed(
   }: { siteId?: number; reportId?: number; sectionId?: number },
 ) {
   if (!session?.user) return false;
+  if (session.user.role === "admin") return true;
+
   const userId = session.user.idn;
   let role: SiteMemberRole = null;
   if (siteId) {
@@ -37,25 +42,25 @@ async function isAllowed(
 
 export async function getSiteReports(siteId: number) {
   const session = await auth();
-  if (await isAllowed(session, allSiteMemberRoles, { siteId }))
+  if (await isAllowed(session, viewingRoles, { siteId }))
     return db.getSiteReports(siteId);
 }
 
 export async function getSiteReport(reportId: number) {
   const session = await auth();
-  if (await isAllowed(session, allSiteMemberRoles, { reportId }))
+  if (await isAllowed(session, viewingRoles, { reportId }))
     return db.getSiteReport(reportId);
 }
 
 export async function getSiteReportDetails(reportId: number) {
   const session = await auth();
-  if (await isAllowed(session, allSiteMemberRoles, { reportId }))
+  if (await isAllowed(session, viewingRoles, { reportId }))
     return db.getSiteReportDetails(reportId);
 }
 
 export async function addSiteReport(siteId: number) {
   const session = await auth();
-  if (await isAllowed(session, allSiteMemberRoles, { siteId })) {
+  if (await isAllowed(session, editingRoles, { siteId })) {
     return await db.addSiteReport({
       reporterId: session?.user?.idn,
       siteId: siteId,
@@ -68,7 +73,7 @@ export async function updateSiteReport(
   values: SiteReportNew,
 ) {
   const session = await auth();
-  if (await isAllowed(session, allSiteMemberRoles, { reportId })) {
+  if (await isAllowed(session, editingRoles, { reportId })) {
     return await db.updateSiteReport(reportId, values);
   }
 }
@@ -78,14 +83,14 @@ export async function updateSiteReportDetails(
   values: SiteReportDetailsNew,
 ) {
   const session = await auth();
-  if (await isAllowed(session, allSiteMemberRoles, { reportId })) {
+  if (await isAllowed(session, editingRoles, { reportId })) {
     return await db.updateSiteReportDetails(reportId, values);
   }
 }
 
 export async function deleteSiteReport(siteId: number) {
   const session = await auth();
-  if (await isAllowed(session, allSiteMemberRoles, { siteId })) {
+  if (await isAllowed(session, [], { siteId })) {
     return await db.deleteSiteReport(siteId);
   }
 }
@@ -103,7 +108,7 @@ export async function addSiteReportFile(
   fileInfo: HaruFileNew,
 ) {
   const session = await auth();
-  if (await isAllowed(session, allSiteMemberRoles, { reportId })) {
+  if (await isAllowed(session, editingRoles, { reportId })) {
     let report = await db.getSiteReport(reportId);
     if (report.fileGroupId) {
       return db.addFileToGroup(report.fileGroupId, {
@@ -118,13 +123,13 @@ export async function addSiteReportFile(
 
 export async function getSiteReportSections(reportId: number) {
   const session = await auth();
-  if (await isAllowed(session, allSiteMemberRoles, { reportId }))
+  if (await isAllowed(session, viewingRoles, { reportId }))
     return db.getSiteReportSections(reportId);
 }
 
 export async function getSiteReportSection(sectionId: number) {
   const session = await auth();
-  if (await isAllowed(session, allSiteMemberRoles, { sectionId }))
+  if (await isAllowed(session, viewingRoles, { sectionId }))
     return db.getSiteReportSection(sectionId);
 }
 
@@ -133,7 +138,7 @@ export async function addSiteReportSection(
   args: { title: string; content: string },
 ) {
   const session = await auth();
-  if (await isAllowed(session, allSiteMemberRoles, { reportId })) {
+  if (await isAllowed(session, editingRoles, { reportId })) {
     return db.addSiteReportSection({
       ...args,
       reportId,
@@ -146,7 +151,7 @@ export async function addSiteReportSectionFile(
   fileInfo: HaruFileNew,
 ) {
   const session = await auth();
-  if (await isAllowed(session, allSiteMemberRoles, { sectionId })) {
+  if (await isAllowed(session, editingRoles, { sectionId })) {
     let section = await db.getSiteReportSection(sectionId);
     if (section.fileGroupId) {
       return db.addFileToGroup(section.fileGroupId, {
@@ -159,6 +164,6 @@ export async function addSiteReportSectionFile(
 
 export async function getSiteReportSectionFiles(sectionId: number) {
   const session = await auth();
-  if (await isAllowed(session, allSiteMemberRoles, { sectionId }))
+  if (await isAllowed(session, editingRoles, { sectionId }))
     return db.getFilesForReportSection(sectionId);
 }
