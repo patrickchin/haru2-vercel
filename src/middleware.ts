@@ -32,11 +32,13 @@ export default auth((req) => {
       return Response.redirect(req.nextUrl);
     }
 
+    /*
     // TODO maybe match the full path?
     if (
       req.nextUrl.pathname.endsWith("/edit") ||
       req.nextUrl.pathname.endsWith("/new")
     ) {
+      // role doesn't seem to exist here???
       console.log("my current role is ", req.auth.user);
       if (
         req.auth.user?.role !== "admin" &&
@@ -47,6 +49,7 @@ export default auth((req) => {
         return Response.redirect(req.nextUrl);
       }
     }
+    */
   }
 });
 
