@@ -32,19 +32,21 @@ export default auth((req) => {
       return Response.redirect(req.nextUrl);
     }
 
-    /* role isn't correctly set!
     // TODO maybe match the full path?
     if (
       req.nextUrl.pathname.endsWith("/edit") ||
       req.nextUrl.pathname.endsWith("/new")
     ) {
       console.log("my current role is ", req.auth.user);
-      if (req.auth.user?.role !== "admin") {
+      if (
+        req.auth.user?.role !== "admin" &&
+        req.auth.user?.role !== "supervisor"
+      ) {
+        // TODO what about a 401?
         req.nextUrl.pathname = "/_error";
-        return Response.redirect(req.nextUrl, 307);
+        return Response.redirect(req.nextUrl);
       }
     }
-    */
   }
 });
 
