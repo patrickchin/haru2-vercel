@@ -48,6 +48,7 @@ export async function getSiteReports(siteId: number) {
 
 export async function getSiteReport(reportId: number) {
   const session = await auth();
+  if (isNaN(reportId)) return;
   if (await isAllowed(session, viewingRoles, { reportId }))
     return db.getSiteReport(reportId);
 }
