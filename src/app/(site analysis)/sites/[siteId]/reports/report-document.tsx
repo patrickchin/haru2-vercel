@@ -120,16 +120,17 @@ export async function ReportTitleBarDisplay({
         </Popover>
 
         {site &&
-          report &&
           session &&
           session.user &&
           ["supervisor", "admin"].includes(session.user.role as string) && (
             <div className="flex gap-2">
-              <Button variant="secondary" asChild>
-                <Link href={`/sites/${site.id}/reports/${report.id}/edit`}>
-                  Edit Report
-                </Link>
-              </Button>
+              {report && (
+                <Button variant="secondary" asChild>
+                  <Link href={`/sites/${site.id}/reports/${report.id}/edit`}>
+                    Edit Report
+                  </Link>
+                </Button>
+              )}
               <Button asChild>
                 <Link href={`/sites/${site.id}/reports/new`}>New Report</Link>
               </Button>
