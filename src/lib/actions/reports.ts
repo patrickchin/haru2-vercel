@@ -8,6 +8,7 @@ import {
   SiteMemberRole,
   SiteReportDetailsNew,
   SiteReportNew,
+  SiteReportSectionNew,
 } from "@/lib/types/site";
 import { Session } from "next-auth";
 
@@ -63,7 +64,7 @@ export async function addSiteReport(siteId: number) {
   const session = await auth();
   if (await isAllowed(session, editingRoles, { siteId })) {
     return await db.addSiteReport({
-      reporterId: session?.user?.idn,
+      reporterId: session?.user?.idn ?? null,
       siteId: siteId,
     });
   }
@@ -149,7 +150,7 @@ export async function addSiteReportSection(
 
 export async function updateSiteReportSection(
   sectionId: number,
-  args: { title: string; content: string },
+  args: SiteReportSectionNew,
 ) {
   const session = await auth();
   if (await isAllowed(session, editingRoles, { sectionId })) {
