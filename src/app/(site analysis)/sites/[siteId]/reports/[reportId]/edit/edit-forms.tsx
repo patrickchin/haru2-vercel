@@ -4,9 +4,19 @@ import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import useSWR from "swr";
+import { createInsertSchema } from "drizzle-zod";
+import { getTableConfig } from "drizzle-orm/pg-core";
+import {
+  SiteReportDetails,
+  SiteReportDetailsNew,
+} from "@/lib/types";
 import * as Actions from "@/lib/actions";
+import * as Schemas from "@/drizzle/schema";
 
 import { LucideLoader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
@@ -15,12 +25,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-
-import * as Schemas from "@/drizzle/schema";
-import { createInsertSchema } from "drizzle-zod";
-import { Textarea } from "@/components/ui/textarea";
-import { getTableConfig } from "drizzle-orm/pg-core";
 
 export function UpdateSiteReportForm({
   siteId,
@@ -29,6 +33,14 @@ export function UpdateSiteReportForm({
   siteId: number;
   reportId: number;
 }) {
+  const { data: details, mutate } = useSWR<SiteReportDetails | undefined>(
+    `/api/reports/${reportId}/details`, // api route doesn't really exist
+    async () => {
+      const details = await Actions.getSiteReportDetails(reportId);
+      return details;
+    },
+  );
+
   const omitColumns = { id: true, createdAt: true, fileGroupId: true };
 
   const reportFormSchema = createInsertSchema(Schemas.siteReports1).omit(
@@ -38,6 +50,7 @@ export function UpdateSiteReportForm({
 
   const form = useForm<ReportFormType>({
     resolver: zodResolver(reportFormSchema),
+    defaultValues: { ...details },
   });
 
   let { columns: reportColumns } = getTableConfig(Schemas.siteReports1);
@@ -48,7 +61,7 @@ export function UpdateSiteReportForm({
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((data) => {
+        onSubmit={form.handleSubmit((data: any) => {
           console.log(data);
           Actions.updateSiteReport(reportId, data);
         })}
@@ -98,6 +111,14 @@ export function UpdateSiteReportDetailsForm({
   siteId: number;
   reportId: number;
 }) {
+  const { data: details, mutate } = useSWR<SiteReportDetails | undefined>(
+    `/api/reports/${reportId}/details`, // api route doesn't really exist
+    async () => {
+      const details = await Actions.getSiteReportDetails(reportId);
+      return details;
+    },
+  );
+
   // const omitColumns = { id: true, createdAt: true, fileGroupId: true };
   const omitColumns = { id: true };
 
@@ -109,6 +130,7 @@ export function UpdateSiteReportDetailsForm({
 
   const form = useForm<DetailFormType>({
     resolver: zodResolver(detailFormSchema),
+    defaultValues: { ...details },
   });
 
   let { columns: reportColumns } = getTableConfig(Schemas.siteReportDetails1);
@@ -121,7 +143,10 @@ export function UpdateSiteReportDetailsForm({
       <form
         onSubmit={form.handleSubmit((data) => {
           console.log(data);
-          Actions.updateSiteReportDetails(reportId, data);
+          Actions.updateSiteReportDetails(
+            reportId,
+            data as SiteReportDetailsNew,
+          );
         })}
         className="grid grid-cols-3 gap-4"
       >
@@ -134,7 +159,13 @@ export function UpdateSiteReportDetailsForm({
               <FormItem>
                 <FormLabel>{c.name}</FormLabel>
                 <FormControl>
-                  <Textarea {...field} />
+                  <Textarea
+                    {...field}
+                    defaultValue={
+                      details &&
+                      (details[c.name as keyof typeof details] as string)
+                    }
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
