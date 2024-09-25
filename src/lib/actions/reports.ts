@@ -147,6 +147,16 @@ export async function addSiteReportSection(
   }
 }
 
+export async function updateSiteReportSection(
+  sectionId: number,
+  args: { title: string; content: string },
+) {
+  const session = await auth();
+  if (await isAllowed(session, editingRoles, { sectionId })) {
+    return db.updateSiteReportSection(sectionId, args);
+  }
+}
+
 export async function addSiteReportSectionFile(
   sectionId: number,
   fileInfo: HaruFileNew,

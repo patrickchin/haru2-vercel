@@ -11,6 +11,7 @@ import {
   SiteReportDetailsNew,
   SiteReportNew,
   SiteReportSection,
+  SiteReportSectionNew,
 } from "@/lib/types/site";
 import * as Schemas from "@/drizzle/schema";
 
@@ -240,4 +241,16 @@ export async function addSiteReportSection(values: {
 
     return section;
   });
+}
+
+export async function updateSiteReportSection(
+  sectionId: number,
+  values: SiteReportSectionNew,
+): Promise<SiteReportSection> {
+  return db
+    .update(Schemas.siteReportSections1)
+    .set(values)
+    .where(eq(Schemas.siteReportSections1.id, sectionId))
+    .returning()
+    .then((r) => r[0]);
 }
