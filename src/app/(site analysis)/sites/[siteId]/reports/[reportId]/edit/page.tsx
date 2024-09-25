@@ -7,6 +7,8 @@ import {
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { UpdateSiteReportFiles } from "./edit-upload";
+import { UpdateSiteReportSections } from "./edit-sections";
 
 export default async function Page({
   params,
@@ -23,12 +25,14 @@ export default async function Page({
     return (
       <DefaultLayout>
         <Button asChild>
-        <Link href={`/sites/${siteId}/reports/${reportId}`}>
-          Back To Report
-        </Link>
+          <Link href={`/sites/${siteId}/reports/${reportId}`}>
+            Back To Report
+          </Link>
         </Button>
+        <UpdateSiteReportFiles siteId={siteId} reportId={reportId} />
         <UpdateSiteReportForm siteId={siteId} reportId={reportId} />
         <UpdateSiteReportDetailsForm siteId={siteId} reportId={reportId} />
+        <UpdateSiteReportSections siteId={siteId} reportId={reportId} />
       </DefaultLayout>
     );
   } else {
