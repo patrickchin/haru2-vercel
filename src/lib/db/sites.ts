@@ -3,7 +3,7 @@ import "server-only";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { and, eq, getTableColumns } from "drizzle-orm";
-import { Site, SiteDetails, SiteMember } from "@/lib/types/site";
+import { Site, SiteDetails, SiteMeeting, SiteMeetingNew, SiteMember } from "@/lib/types/site";
 import * as Schemas from "@/drizzle/schema";
 
 const client = postgres(`${process.env.POSTGRES_URL!}`);
@@ -92,6 +92,44 @@ export async function getSiteMembers(siteId: number): Promise<SiteMember[]> {
       eq(Schemas.users1.id, Schemas.siteMembers1.memberId),
     )
     .where(eq(Schemas.siteMembers1.siteId, siteId));
+}
+
+export async function getSiteMeetings(siteId: number): Promise<SiteMeeting[]> {
+  return await db
+    .select()
+    .from(Schemas.siteMeetings1)
+    .where(eq(Schemas.siteMeetings1.siteId, siteId));
+}
+
+export async function getSiteMeeting(meetingId: number): Promise<SiteMeeting> {
+  return await db
+    .select()
+    .from(Schemas.siteMeetings1)
+    .where(eq(Schemas.siteMeetings1.id, meetingId))
+    .then((r) => r[0]);
+}
+
+export async function addSiteMeeting(
+  siteId: number,
+  values: SiteMeetingNew,
+): Promise<SiteMeeting> {
+  return await db
+    .insert(Schemas.siteMeetings1)
+    .values({ ...values, siteId })
+    .returning()
+    .then((r) => r[0]);
+}
+
+export async function updateSiteMeeting(
+  meetingId: number,
+  values: SiteMeetingNew,
+): Promise<SiteMeeting> {
+  return await db
+    .update(Schemas.siteMeetings1)
+    .set({ ...values })
+    .where(eq(Schemas.siteMeetings1.id, meetingId))
+    .returning()
+    .then((r) => r[0]);
 }
 
 export async function addUserSite(

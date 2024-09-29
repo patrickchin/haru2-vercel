@@ -3,14 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteDetails, SiteMember, SiteMemberRole } from "@/lib/types";
 import * as Actions from "@/lib/actions";
-import {
-  LucideArrowRight,
-  LucideCheck,
-  LucideTrash,
-  LucideX,
-} from "lucide-react";
+import { LucideArrowRight } from "lucide-react";
 
-import SiteCalendarForm from "./site-calendar";
+import SiteMeetings from "./site-meetings";
+import EditSiteMembersButtonPopup from "./site-members-add";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -20,10 +17,8 @@ import {
   TableBody,
   TableCell,
   TableHead,
-  TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import EditSiteMembersButtonPopup from "./site-members-add";
 
 export interface SiteDetailsProps {
   site: SiteDetails;
@@ -53,19 +48,19 @@ function SiteInfoBar({ site, members }: SiteDetailsProps) {
   return (
     <Card className="flex flex-col gap-4 px-6">
       <ul className="inline-flex">
-        <li className="hover:bg-accent py-4 px-8 space-x-1">
+        <li className="hover:bg-accent py-4 px-4 space-x-1">
           <span className="font-semibold">Project Id: </span>
           <span className="">{site.id}</span>
         </li>
-        <li className="hover:bg-accent py-4 px-8 space-x-1">
+        <li className="hover:bg-accent py-4 px-4 space-x-1">
           <span className="font-semibold">Country: </span>
           <span className="">{country || "Unknown"}</span>
         </li>
-        <li className="hover:bg-accent py-4 px-8 space-x-1">
+        <li className="hover:bg-accent py-4 px-4 space-x-1">
           <span className="font-semibold">Type: </span>
           <span className="">{site.type || "Unknown"}</span>
         </li>
-        <li className="hover:bg-accent py-4 px-8 space-x-1">
+        <li className="hover:bg-accent py-4 px-4 space-x-1">
           <span className="font-semibold">Created: </span>
           <span className="">{site.createdAt.toDateString()}</span>
         </li>
@@ -190,106 +185,59 @@ export default async function Page({
       <SiteInfoBar site={site} members={members} />
       <SiteMembersBar site={site} members={members} />
 
-      <div className="grid grid-cols-2 gap-4">
-        <Card>
-          <CardHeader className="font-semibold">
-            Schedule a Zoom Meeting with the Team
-          </CardHeader>
-          <CardContent className="">
-            <SiteCalendarForm />
+      <Card>
+        <CardHeader className="font-semibold">
+          Supervision Progress and Milestones
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          <Progress value={progressPct} />
+          <Table>
+            <TableBody>
+              <TableRow>
+                <TableHead className="font-medium">Creation Date</TableHead>
+                <TableCell>{site.createdAt.toDateString()}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead className="font-medium">Start Date</TableHead>
+                <TableCell>
+                  {site.startDate?.toDateString() ??
+                    "Site supervision has not yet started"}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead className="font-medium">End Date</TableHead>
+                <TableCell>
+                  {site.endDate?.toDateString() ??
+                    "End date has not yet been agreed upon"}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead className="font-medium">Next Report Date</TableHead>
+                <TableCell>
+                  {site.nextReportDate?.toDateString() ??
+                    "Next report date has not been set"}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead className="font-medium">Supervision Schedule</TableHead>
+                <TableCell>
+                  {site.schedule ??
+                    "A report schedule has not yet been agreed on"}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Suggested Time</TableHead>
-                  <TableHead>Agreed/Pending</TableHead>
-                  <TableHead></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {Array(2)
-                  .fill(0)
-                  .map((x, i) => (
-                    <TableRow key={i}>
-                      <TableCell>{site.createdAt.toLocaleString()}</TableCell>
-                      <TableCell>Pending ...</TableCell>
-                      <TableCell className="flex gap-1">
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          className="w-8 h-8 p-1"
-                        >
-                          <LucideTrash className="w-3.5" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          className="w-8 h-8 p-1"
-                        >
-                          <LucideX className="w-3.5" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          className="w-8 h-8 p-1"
-                        >
-                          <LucideCheck className="w-3.5" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="font-semibold">
-            Supervision Progress and Milestones
-          </CardHeader>
-          <CardContent className="flex flex-col gap-3">
-            <Progress value={progressPct} />
-
-            <Table>
-              <TableBody>
-                <TableRow>
-                  <TableHead className="font-medium">Creation</TableHead>
-                  <TableCell>{site.createdAt.toDateString()}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableHead className="font-medium">Start</TableHead>
-                  <TableCell>
-                    {site.startDate?.toDateString() ??
-                      "Site supervision has not yet started"}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableHead className="font-medium">End</TableHead>
-                  <TableCell>
-                    {site.endDate?.toDateString() ??
-                      "End date has not yet been agreed upon"}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableHead className="font-medium">Next</TableHead>
-                  <TableCell>
-                    {site.nextReportDate?.toDateString() ??
-                      "Next report date has not been set"}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableHead className="font-medium">Schedule</TableHead>
-                  <TableCell>
-                    {site.schedule ??
-                      "A report schedule has not yet been agreed on"}
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      </div>
-
+      <Card>
+        <CardHeader className="font-semibold">
+          Schedule a Zoom Meeting with the Team
+        </CardHeader>
+        <CardContent className="space-y-8">
+          <SiteMeetings siteId={site.id} />
+        </CardContent>
+      </Card>
       <SiteDescription site={site} members={members} />
     </DefaultLayout>
   );
