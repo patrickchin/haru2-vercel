@@ -8,6 +8,7 @@ import {
   pgEnum,
   jsonb,
   numeric,
+  interval,
 } from "drizzle-orm/pg-core";
 
 // pnpm drizzle-kit push
@@ -165,6 +166,22 @@ export const siteMembers1 = pgTable("siteMembers1", {
   siteId: integer("siteId").references(() => sites1.id),
   memberId: integer("memberId").references(() => users1.id),
   role: siteMemberRole("role").default("member"),
+});
+
+export const siteMeetingStatus = pgEnum("siteMeetingStatus", [
+  "pending",
+  "confirmed",
+  "cancelled",
+]);
+
+export const siteMeetings1 = pgTable("siteMeetings1", {
+  id: serial("id").primaryKey(),
+  siteId: integer("siteId").references(() => sites1.id),
+  status: siteMeetingStatus("status").default("pending"),
+  date: timestamp("date", { mode: "date", withTimezone: true }),
+  duration: interval("duration"),
+  notes: varchar("notes"),
+  url: varchar("url"),
 });
 
 export const siteReports1 = pgTable("siteReports1", {
