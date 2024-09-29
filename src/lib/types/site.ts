@@ -16,6 +16,6 @@ export const allSiteMemberRoles = Schemas.siteMemberRole.enumValues;
 export type SiteNew = Omit<typeof Schemas.sites1.$inferInsert, "id">;
 export type SiteReportNew = Omit<typeof Schemas.siteReports1.$inferInsert, "id" | "createdAt" | "fileGroupId">;
 export type SiteDetailsNew = Omit<typeof Schemas.siteDetails1.$inferInsert, "id">;
-export type SiteMeetingNew = Omit<typeof Schemas.siteMeetings1.$inferInsert, "id" | "siteId">;
+export type SiteMeetingNew = Omit<typeof Schemas.siteMeetings1.$inferInsert, "id" | "siteId" | "userId">;
 export type SiteReportDetailsNew = Omit<typeof Schemas.siteReportDetails1.$inferInsert, "id">;
 export type SiteReportSectionNew = Omit<typeof Schemas.siteReportSections1.$inferInsert, "id" | "reportId" | "fileGroupId">;

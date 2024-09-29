@@ -98,7 +98,8 @@ export async function getSiteMeetings(siteId: number): Promise<SiteMeeting[]> {
   return await db
     .select()
     .from(Schemas.siteMeetings1)
-    .where(eq(Schemas.siteMeetings1.siteId, siteId));
+    .where(eq(Schemas.siteMeetings1.siteId, siteId))
+    .orderBy(Schemas.siteMeetings1.date);
 }
 
 export async function getSiteMeeting(meetingId: number): Promise<SiteMeeting> {
@@ -110,12 +111,12 @@ export async function getSiteMeeting(meetingId: number): Promise<SiteMeeting> {
 }
 
 export async function addSiteMeeting(
-  siteId: number,
+  { siteId, userId }: { siteId: number; userId?: number },
   values: SiteMeetingNew,
 ): Promise<SiteMeeting> {
   return await db
     .insert(Schemas.siteMeetings1)
-    .values({ ...values, siteId })
+    .values({ ...values, siteId, userId })
     .returning()
     .then((r) => r[0]);
 }
@@ -129,6 +130,15 @@ export async function updateSiteMeeting(
     .set({ ...values })
     .where(eq(Schemas.siteMeetings1.id, meetingId))
     .returning()
+    .then((r) => r[0]);
+}
+
+export async function deleteSiteMeeting(
+  meetingId: number,
+): Promise<SiteMeeting> {
+  return await db
+    .delete(Schemas.siteMeetings1)
+    .where(eq(Schemas.siteMeetings1.id, meetingId))
     .then((r) => r[0]);
 }
 

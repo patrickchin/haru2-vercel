@@ -63,7 +63,7 @@ export async function getSiteMeeting(meetingId: number) {
 export async function addSiteMeeting(siteId: number, values: SiteMeetingNew) {
   const session = await auth();
   if (await siteActionAllowed(session, editingRoles, { siteId }))
-    return db.addSiteMeeting(siteId, values);
+    return db.addSiteMeeting({ siteId, userId: session?.user?.idn }, values);
 }
 
 export async function updateSiteMeeting(
@@ -73,6 +73,12 @@ export async function updateSiteMeeting(
   const session = await auth();
   if (await siteActionAllowed(session, editingRoles, { meetingId }))
     return db.updateSiteMeeting(meetingId, values);
+}
+
+export async function deleteSiteMeeting(meetingId: number) {
+  const session = await auth();
+  if (await siteActionAllowed(session, editingRoles, { meetingId }))
+    return db.deleteSiteMeeting(meetingId);
 }
 
 export async function addUserToSite({
