@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import useSWR from "swr";
 import { format } from "date-fns";
 import {
   LucideCalendar,
@@ -11,8 +11,11 @@ import {
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { cn } from "@/lib/utils";
 import { createInsertSchema } from "drizzle-zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { SiteMeeting } from "@/lib/types";
 import * as Schemas from "@/drizzle/schema";
 import * as Actions from "@/lib/actions";
 
@@ -47,13 +50,20 @@ const formSchema = createInsertSchema(Schemas.siteMeetings1).omit({
   siteId: true,
 });
 
-function SiteCalendarForm({ siteId }: { siteId: number }) {
+function SiteCalendarForm({
+  siteId,
+  mutated,
+}: {
+  siteId: number;
+  mutated: () => void;
+}) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    Actions.addSiteMeeting(siteId, data);
+  async function onSubmit(data: z.infer<typeof formSchema>) {
+    await Actions.addSiteMeeting(siteId, data);
+    mutated();
     toast({
       title: "You submitted the following values:",
       description: (
@@ -104,7 +114,7 @@ function SiteCalendarForm({ siteId }: { siteId: number }) {
                     onSelect={field.onChange}
                     disabled={(date) =>
                       date < new Date(dateNow.getTime() - 24 * 60 * 60_000) ||
-                      date > new Date(dateNow.getTime() + 32 * 24 * 60 * 60_000)
+                      date > new Date(dateNow.getTime() + 62 * 24 * 60 * 60_000)
                     }
                     initialFocus
                   />
@@ -144,37 +154,112 @@ function SiteCalendarForm({ siteId }: { siteId: number }) {
 }
 
 export default function SiteMeetings({ siteId }: { siteId: number }) {
+  const {
+    data: meetings,
+    mutate: mutateMeetings,
+    isLoading,
+    isValidating,
+  } = useSWR<SiteMeeting[] | undefined>(
+    `/api/sites/${siteId}/meetings`, // api route doesn't really exist
+    async () => {
+      return Actions.getSiteMeetings(siteId);
+    },
+  );
+
+  const [isUpdating, setIsUpdating] = useState(false);
+
   return (
     <>
-      <SiteCalendarForm siteId={siteId} />
+      <SiteCalendarForm siteId={siteId} mutated={() => mutateMeetings()} />
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Suggested Time</TableHead>
-            <TableHead>Agreed/Pending</TableHead>
-            <TableHead></TableHead>
+            <TableHead>Date</TableHead>
+            <TableHead>Time/Notes</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="w-0"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {Array(2)
-            .fill(0)
-            .map((x, i) => (
-              <TableRow key={i}>
-                <TableCell>slkjfsd</TableCell>
-                <TableCell>Pending ...</TableCell>
+          {isLoading ? (
+            <TableRow>
+              <TableCell colSpan={4} className="p-8">
+                Loading ...
+              </TableCell>
+            </TableRow>
+          ) : meetings && meetings.length > 0 ? (
+            meetings.map((m) => (
+              <TableRow key={m.id}>
+                <TableCell>{m.date?.toDateString()}</TableCell>
+                <TableCell>{m.notes}</TableCell>
+                <TableCell className="capitalize">{m.status}</TableCell>
                 <TableCell className="flex gap-1">
-                  <Button size="icon" variant="outline" className="w-8 h-8 p-1">
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className="w-8 h-8 p-1"
+                    disabled={isValidating || isUpdating}
+                    onClick={async () => {
+                      try {
+                        setIsUpdating(true);
+                        await Actions.deleteSiteMeeting(m.id);
+                        mutateMeetings();
+                      } finally {
+                        setIsUpdating(false);
+                      }
+                    }}
+                  >
                     <LucideTrash className="w-3.5" />
                   </Button>
-                  <Button size="icon" variant="outline" className="w-8 h-8 p-1">
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className="w-8 h-8 p-1"
+                    disabled={isValidating || isUpdating}
+                    onClick={async () => {
+                      try {
+                        setIsUpdating(true);
+                        await Actions.updateSiteMeeting(m.id, {
+                          status:
+                            m.status === "confirmed" ? "cancelled" : "rejected",
+                        });
+                        mutateMeetings();
+                      } finally {
+                        setIsUpdating(false);
+                      }
+                    }}
+                  >
                     <LucideX className="w-3.5" />
                   </Button>
-                  <Button size="icon" variant="outline" className="w-8 h-8 p-1">
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className="w-8 h-8 p-1"
+                    disabled={isValidating || isUpdating}
+                    onClick={async () => {
+                      try {
+                        setIsUpdating(true);
+                        await Actions.updateSiteMeeting(m.id, {
+                          status: "confirmed",
+                        });
+                        mutateMeetings();
+                      } finally {
+                        setIsUpdating(false);
+                      }
+                    }}
+                  >
                     <LucideCheck className="w-3.5" />
                   </Button>
                 </TableCell>
               </TableRow>
-            ))}
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={4} className="p-8">
+                No scheduled meetings
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </>
