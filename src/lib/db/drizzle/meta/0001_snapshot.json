@@ -1,5 +1,5 @@
 {
-  "id": "35ef623c-9929-4a99-b276-e02a1f8889c6",
+  "id": "025951da-9c00-4deb-a746-07d18833f07b",
   "prevId": "35f62f5b-1396-43e1-80ac-33945a9bae9a",
   "version": "6",
   "dialect": "postgresql",
@@ -495,6 +495,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
         "status": {
           "name": "status",
           "type": "siteMeetingStatus",
@@ -536,6 +542,19 @@
           "tableTo": "sites1",
           "columnsFrom": [
             "siteId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "siteMeetings1_userId_users1_id_fk": {
+          "name": "siteMeetings1_userId_users1_id_fk",
+          "tableFrom": "siteMeetings1",
+          "tableTo": "users1",
+          "columnsFrom": [
+            "userId"
           ],
           "columnsTo": [
             "id"
@@ -1034,6 +1053,7 @@
       "schema": "public",
       "values": [
         "pending",
+        "rejected",
         "confirmed",
         "cancelled"
       ]
