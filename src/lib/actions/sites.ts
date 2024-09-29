@@ -5,6 +5,12 @@ import { auth } from "@/lib/auth";
 import { addSiteSchema, AddSiteType } from "@/lib/forms";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import {
+  editingRoles,
+  siteActionAllowed,
+  viewingRoles,
+} from "@/lib/permissions";
+import { SiteMeetingNew } from "@/lib/types";
 
 export async function addSite(d: AddSiteType) {
   const session = await auth();
@@ -40,6 +46,33 @@ export async function getSiteMembers(siteId: number) {
   const session = await auth();
   if (!session?.user) return;
   return db.getSiteMembers(siteId);
+}
+
+export async function getSiteMeetings(siteId: number) {
+  const session = await auth();
+  if (await siteActionAllowed(session, viewingRoles, { siteId }))
+    return db.getSiteMeetings(siteId);
+}
+
+export async function getSiteMeeting(meetingId: number) {
+  const session = await auth();
+  if (await siteActionAllowed(session, viewingRoles, { meetingId }))
+    return db.getSiteMeeting(meetingId);
+}
+
+export async function addSiteMeeting(siteId: number, values: SiteMeetingNew) {
+  const session = await auth();
+  if (await siteActionAllowed(session, editingRoles, { siteId }))
+    return db.addSiteMeeting(siteId, values);
+}
+
+export async function updateSiteMeeting(
+  meetingId: number,
+  values: SiteMeetingNew,
+) {
+  const session = await auth();
+  if (await siteActionAllowed(session, editingRoles, { meetingId }))
+    return db.updateSiteMeeting(meetingId, values);
 }
 
 export async function addUserToSite({

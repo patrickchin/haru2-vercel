@@ -54,6 +54,30 @@ export async function getReportRole({
     .then((r) => (r && r.length ? r[0].role : null));
 }
 
+export async function getMeetingRole({
+  meetingId,
+  userId,
+}: {
+  meetingId: number;
+  userId: number;
+}): Promise<SiteMemberRole> {
+  return db
+    .select({ role: Schemas.siteMembers1.role })
+    .from(Schemas.siteMembers1)
+    .leftJoin(
+      Schemas.siteReports1,
+      eq(Schemas.siteReports1.siteId, Schemas.siteMembers1.siteId),
+    )
+    .where(
+      and(
+        eq(Schemas.siteMeetings1.id, meetingId),
+        eq(Schemas.siteMembers1.memberId, userId),
+      ),
+    )
+    .limit(1)
+    .then((r) => (r && r.length ? r[0].role : null));
+}
+
 export async function getSiteReports(siteId: number): Promise<SiteReport[]> {
   return db
     .select(SiteReportColumns)
