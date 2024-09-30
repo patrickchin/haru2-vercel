@@ -171,27 +171,23 @@ export async function ReportSection({
           {section.content}
         </CardDescription>
         {section.fileGroupId && (
-          <div className="w-full overflow-x-auto border-2 p-2">
-            <ul className="inline-flex gap-2">
-              {data?.map((f: HaruFile) => (
-                <li
-                  key={f.id}
-                  className="w-[150px] h-[100px] rounded border-2 border-black overflow-hidden p-1 relative hover:brightness-50"
-                >
-                  <Link href={f.url || ""} target="_blank">
-                    <Image
-                      src={f.url || ""}
-                      alt={f.filename || "unknown image"}
-                      // width={100}
-                      // height={100}
-                      fill={true}
-                      className="object-cover"
-                    />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <ul className="bg-muted p-3">
+            {data?.map((f: HaruFile) => (
+              <li
+                key={f.id}
+                className="inline-block w-[120px] h-[90px] m-1 border rounded overflow-hidden relative hover:opacity-50"
+              >
+                <Link href={f.url || ""} target="_blank">
+                  <Image
+                    src={f.url || ""}
+                    alt={f.filename || "unknown image"}
+                    fill={true}
+                    className="object-cover w-full h-full"
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
         )}
       </CardContent>
     </Card>
