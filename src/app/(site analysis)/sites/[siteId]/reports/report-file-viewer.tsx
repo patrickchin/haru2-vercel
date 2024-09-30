@@ -102,7 +102,7 @@ export function FileSelector({
 
 function FileDisplayOne({ file }: { file?: HaruFile }) {
   return (
-    <div className="flex items-center justify-center p-6 relative h-[30rem]">
+    <div className="flex items-center justify-center relative h-[30rem]">
       {file &&
         file.url &&
         file.url.length > 0 &&
@@ -115,7 +115,7 @@ function FileDisplayOne({ file }: { file?: HaruFile }) {
             className="object-contain"
           />
         ) : file.type?.startsWith("video/") ? (
-          <video controls className="max-w-full max-h-full">
+          <video controls className="max-w-full max-h-full w-full h-full">
             <source src={file.url} type={file.type} />
           </video>
         ) : (
@@ -139,7 +139,7 @@ export function FileDisplay({
   return (
     <div
       className={cn(
-        "grow flex items-center justify-center relative px-16",
+        "grow flex items-center justify-center relative",
         // "overflow-y-scroll",
         "border-4 border-black rounded",
         "bg-gradient-to-r from-cyan-100 to-blue-100",
@@ -150,9 +150,7 @@ export function FileDisplay({
           <CarouselContent>
             {fileList?.map((f) => (
               <CarouselItem key={f.id}>
-                <div className="p-1">
-                  <FileDisplayOne file={f} />
-                </div>
+                <FileDisplayOne file={f} />
               </CarouselItem>
             ))}
           </CarouselContent>
