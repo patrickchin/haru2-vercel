@@ -20,6 +20,10 @@ export async function addSite(d: AddSiteType) {
   if (!parsed.success) return;
 
   const site = await db.addUserSite(session.user.idn, parsed.data);
+  const membership = await db.addUserToSite({
+    siteId: site.id,
+    userId: session.user.idn,
+  });
 
   redirect(`/sites/${site.id}`);
 }
@@ -71,14 +75,34 @@ export async function updateSiteMeeting(
   values: SiteMeetingNew,
 ) {
   const session = await auth();
-  if (await siteActionAllowed(session, editingRoles, { meetingId }))
+  if (await siteActionAllowed(session, editingRoles, { meetingId })) {
     return db.updateSiteMeeting(meetingId, values);
+  }
+}
+
+export async function updateSiteMeetingReturnAllMeetings(
+  meetingId: number,
+  values: SiteMeetingNew,
+) {
+  const session = await auth();
+  if (await siteActionAllowed(session, editingRoles, { meetingId })) {
+    const meeting = await db.updateSiteMeeting(meetingId, values);
+    return meeting.siteId ? db.getSiteMeetings(meeting.siteId) : [meeting];
+  }
 }
 
 export async function deleteSiteMeeting(meetingId: number) {
   const session = await auth();
   if (await siteActionAllowed(session, editingRoles, { meetingId }))
     return db.deleteSiteMeeting(meetingId);
+}
+
+export async function deleteSiteMeetingReturnAllMeetings(meetingId: number) {
+  const session = await auth();
+  if (await siteActionAllowed(session, editingRoles, { meetingId })) {
+    const meeting = await db.deleteSiteMeeting(meetingId);
+    return meeting.siteId ? db.getSiteMeetings(meeting.siteId) : [meeting];
+  }
 }
 
 export async function addUserToSite({

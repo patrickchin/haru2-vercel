@@ -1,7 +1,18 @@
 "use client";
 
+import { useCallback, useState } from "react";
+import { useSession } from "next-auth/react";
 import useSWR from "swr";
 import { format } from "date-fns";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { createInsertSchema } from "drizzle-zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { cn } from "@/lib/utils";
+import { SiteMeeting, SiteMeetingNew } from "@/lib/types";
+import * as Schemas from "@/drizzle/schema";
+import * as Actions from "@/lib/actions";
+
 import {
   LucideCalendar,
   LucideCheck,
@@ -9,17 +20,6 @@ import {
   LucideTrash,
   LucideX,
 } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { createInsertSchema } from "drizzle-zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { cn } from "@/lib/utils";
-import { useState } from "react";
-import { SiteMeeting } from "@/lib/types";
-import * as Schemas from "@/drizzle/schema";
-import * as Actions from "@/lib/actions";
-
-import { toast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -44,6 +44,7 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
+import { SiteDetailsProps } from "./page";
 
 const formSchema = createInsertSchema(Schemas.siteMeetings1).omit({
   id: true,
@@ -64,14 +65,6 @@ function SiteCalendarForm({
   async function onSubmit(data: z.infer<typeof formSchema>) {
     await Actions.addSiteMeeting(siteId, data);
     mutated();
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
   }
 
   const dateNow = new Date();
@@ -153,24 +146,50 @@ function SiteCalendarForm({
   );
 }
 
-export default function SiteMeetings({ siteId }: { siteId: number }) {
+export default function SiteMeetings({ site, members }: SiteDetailsProps) {
+  const { data: session } = useSession();
+
   const {
     data: meetings,
     mutate: mutateMeetings,
     isLoading,
     isValidating,
   } = useSWR<SiteMeeting[] | undefined>(
-    `/api/sites/${siteId}/meetings`, // api route doesn't really exist
+    `/api/sites/${site.id}/meetings`, // api route doesn't really exist
     async () => {
-      return Actions.getSiteMeetings(siteId);
+      return Actions.getSiteMeetings(site.id);
     },
   );
 
+  const role = members?.find((m) => m.id === session?.user?.idn)?.role;
+
   const [isUpdating, setIsUpdating] = useState(false);
+  const updateMeeting = useCallback(
+    async (
+      meetingId: number,
+      updateValues: SiteMeetingNew,
+      del: boolean = false,
+    ) => {
+      try {
+        setIsUpdating(true);
+        await mutateMeetings(() => {
+          return del
+            ? Actions.deleteSiteMeetingReturnAllMeetings(meetingId)
+            : Actions.updateSiteMeetingReturnAllMeetings(
+                meetingId,
+                updateValues,
+              );
+        });
+      } finally {
+        setIsUpdating(false);
+      }
+    },
+    [meetings],
+  );
 
   return (
     <>
-      <SiteCalendarForm siteId={siteId} mutated={() => mutateMeetings()} />
+      <SiteCalendarForm siteId={site.id} mutated={() => mutateMeetings()} />
       <Table>
         <TableHeader>
           <TableRow>
@@ -190,66 +209,52 @@ export default function SiteMeetings({ siteId }: { siteId: number }) {
           ) : meetings && meetings.length > 0 ? (
             meetings.map((m) => (
               <TableRow key={m.id}>
-                <TableCell>{m.date?.toDateString()}</TableCell>
-                <TableCell>{m.notes}</TableCell>
+                <TableCell>{m.date?.toDateString() ?? "Unspecified"}</TableCell>
+                <TableCell>{m.notes ?? "Unspecified"}</TableCell>
                 <TableCell className="capitalize">{m.status}</TableCell>
                 <TableCell className="flex gap-1">
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    className="w-8 h-8 p-1"
-                    disabled={isValidating || isUpdating}
-                    onClick={async () => {
-                      try {
-                        setIsUpdating(true);
-                        await Actions.deleteSiteMeeting(m.id);
-                        mutateMeetings();
-                      } finally {
-                        setIsUpdating(false);
-                      }
-                    }}
-                  >
-                    <LucideTrash className="w-3.5" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    className="w-8 h-8 p-1"
-                    disabled={isValidating || isUpdating}
-                    onClick={async () => {
-                      try {
-                        setIsUpdating(true);
-                        await Actions.updateSiteMeeting(m.id, {
-                          status:
-                            m.status === "confirmed" ? "cancelled" : "rejected",
-                        });
-                        mutateMeetings();
-                      } finally {
-                        setIsUpdating(false);
-                      }
-                    }}
-                  >
-                    <LucideX className="w-3.5" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    className="w-8 h-8 p-1"
-                    disabled={isValidating || isUpdating}
-                    onClick={async () => {
-                      try {
-                        setIsUpdating(true);
-                        await Actions.updateSiteMeeting(m.id, {
-                          status: "confirmed",
-                        });
-                        mutateMeetings();
-                      } finally {
-                        setIsUpdating(false);
-                      }
-                    }}
-                  >
-                    <LucideCheck className="w-3.5" />
-                  </Button>
+                  {role === "owner" && (
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      className="w-8 h-8 p-1"
+                      disabled={isValidating || isUpdating}
+                      onClick={() => updateMeeting(m.id, {}, true)}
+                    >
+                      <LucideTrash className="w-3.5" />
+                    </Button>
+                  )}
+                  {role === "supervisor" && (
+                    <>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className="w-8 h-8 p-1"
+                        disabled={isValidating || isUpdating}
+                        onClick={() =>
+                          updateMeeting(m.id, {
+                            status:
+                              m.status === "confirmed"
+                                ? "cancelled"
+                                : "rejected",
+                          })
+                        }
+                      >
+                        <LucideX className="w-3.5" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className="w-8 h-8 p-1"
+                        disabled={isValidating || isUpdating}
+                        onClick={() =>
+                          updateMeeting(m.id, { status: "confirmed" })
+                        }
+                      >
+                        <LucideCheck className="w-3.5" />
+                      </Button>
+                    </>
+                  )}
                 </TableCell>
               </TableRow>
             ))

@@ -219,7 +219,9 @@ export default async function Page({
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableHead className="font-medium">Supervision Schedule</TableHead>
+                <TableHead className="font-medium">
+                  Supervision Schedule
+                </TableHead>
                 <TableCell>
                   {site.schedule ??
                     "A report schedule has not yet been agreed on"}
@@ -235,7 +237,7 @@ export default async function Page({
           Schedule a Zoom Meeting with the Team
         </CardHeader>
         <CardContent className="space-y-8">
-          <SiteMeetings siteId={site.id} />
+          <SiteMeetings site={site} members={members} />
         </CardContent>
       </Card>
       <SiteDescription site={site} members={members} />
