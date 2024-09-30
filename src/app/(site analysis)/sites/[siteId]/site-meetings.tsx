@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import useSWR from "swr";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
@@ -16,6 +17,7 @@ import * as Actions from "@/lib/actions";
 import {
   LucideCalendar,
   LucideCheck,
+  LucideExternalLink,
   LucidePlus,
   LucideTrash,
   LucideX,
@@ -137,7 +139,8 @@ function SiteCalendarForm({
         />
 
         <div className="flex items-end">
-          <Button type="submit">
+          <Button type="submit" className="gap-2">
+            Add a Meeting Time
             <LucidePlus className="w-4" />
           </Button>
         </div>
@@ -189,6 +192,11 @@ export default function SiteMeetings({ site, members }: SiteDetailsProps) {
 
   return (
     <>
+      <p>
+        Suggest a few meeting times and dates. We will confirm the time both
+        here and via email. <br />
+        The zoom link will be emailed out and shown below prior to the meeting.
+      </p>
       <SiteCalendarForm siteId={site.id} mutated={() => mutateMeetings()} />
       <Table>
         <TableHeader>
@@ -196,6 +204,7 @@ export default function SiteMeetings({ site, members }: SiteDetailsProps) {
             <TableHead>Date</TableHead>
             <TableHead>Time/Notes</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Zoom Link</TableHead>
             <TableHead className="w-0"></TableHead>
           </TableRow>
         </TableHeader>
@@ -212,6 +221,20 @@ export default function SiteMeetings({ site, members }: SiteDetailsProps) {
                 <TableCell>{m.date?.toDateString() ?? "Unspecified"}</TableCell>
                 <TableCell>{m.notes ?? "Unspecified"}</TableCell>
                 <TableCell className="capitalize">{m.status}</TableCell>
+                <TableCell>
+                  {m.url ? (
+                    <Link
+                      href={m.url ?? "#"}
+                      target="_blank"
+                      className="flex items-center gap-2"
+                    >
+                      Meeting Link{" "}
+                      <LucideExternalLink className="w-3.5 h-3.5" />
+                    </Link>
+                  ) : (
+                    "Not created"
+                  )}
+                </TableCell>
                 <TableCell className="flex gap-1">
                   {role === "owner" && (
                     <Button
