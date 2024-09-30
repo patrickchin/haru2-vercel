@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 
 import SiteMeetings from "./site-meetings";
-import EditSiteMembersButtonPopup from "./site-members-add";
+import EditSiteMembersButtonPopup from "./site-key-members";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -25,6 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { GoodBox, InfoBox } from "@/components/info-box";
+import SiteMembers from "./site-members";
 
 export interface SiteDetailsProps {
   site: SiteDetails;
@@ -351,7 +352,10 @@ export default async function Page({
 
       <SiteMembersTable site={site} members={members} />
 
+      <SiteMembers site={site} members={members} />
+
       <SiteDescription site={site} members={members} />
+
     </DefaultLayout>
   );
 }
