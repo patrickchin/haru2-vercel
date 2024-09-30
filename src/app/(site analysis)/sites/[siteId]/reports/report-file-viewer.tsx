@@ -100,9 +100,9 @@ export function FileSelector({
   );
 }
 
-function FileDisplayOne({ file }: { file?: HaruFile }) {
+export function FileDisplayOne({ file }: { file?: HaruFile }) {
   return (
-    <div className="flex items-center justify-center relative h-[30rem]">
+    <div className="flex items-center justify-center relative h-full">
       {file &&
         file.url &&
         file.url.length > 0 &&
@@ -146,19 +146,19 @@ export function FileDisplay({
       )}
     >
       {fileList && fileList.length > 0 ? (
-        <Carousel className="w-full h-full">
+        <Carousel className="w-full h-full group">
           <CarouselContent>
             {fileList?.map((f) => (
-              <CarouselItem key={f.id}>
+              <CarouselItem key={f.id} className="h-[30rem]">
                 <FileDisplayOne file={f} />
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
+          <CarouselPrevious className="invisible group-hover:visible left-4" />
+          <CarouselNext className="invisible group-hover:visible right-4" />
         </Carousel>
       ) : (
-        <div className="flex m-1 h-[30rem] items-center justify-center align-middle">
+        <div className="flex h-[30rem] items-center justify-center align-middle">
           This report has no overview files
         </div>
       )}

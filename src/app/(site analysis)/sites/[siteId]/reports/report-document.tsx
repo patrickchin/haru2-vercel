@@ -32,6 +32,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { FileDisplayOne } from "./report-file-viewer";
 
 export interface ReportsViewerProps {
   siteId: number;
@@ -160,7 +169,7 @@ export async function ReportSection({
 }: {
   section: SiteReportSection;
 }) {
-  const data = await Actions.getSiteReportSectionFiles(section.id);
+  const files = await Actions.getSiteReportSectionFiles(section.id);
   return (
     <Card>
       <CardHeader className="p-4 pb-3 font-bold text-lg">
@@ -172,19 +181,43 @@ export async function ReportSection({
         </CardDescription>
         {section.fileGroupId && (
           <ul className="bg-muted p-3">
-            {data?.map((f: HaruFile) => (
+            {files?.map((f: HaruFile, i) => (
               <li
                 key={f.id}
                 className="inline-block w-[120px] h-[90px] m-1 border rounded overflow-hidden relative hover:opacity-50"
               >
-                <Link href={f.url || ""} target="_blank">
-                  <Image
-                    src={f.url || ""}
-                    alt={f.filename || "unknown image"}
-                    fill={true}
-                    className="object-cover w-full h-full"
-                  />
-                </Link>
+                <Dialog>
+                  <DialogTrigger>
+                    <Image
+                      src={f.url || ""}
+                      alt={f.filename || "unknown image"}
+                      fill={true}
+                      className="object-cover w-full h-full"
+                    />
+                  </DialogTrigger>
+                  <DialogContent
+                    key="file-viewer-dialog-content"
+                    className={cn(
+                      "w-11/12 h-[92%] max-w-none p-0 border-4 border-black",
+                      "bg-gradient-to-r from-cyan-100 to-blue-100",
+                    )}
+                  >
+                    <Carousel
+                      className="w-full h-full"
+                      opts={{ startIndex: i }}
+                    >
+                      <CarouselContent className="h-full">
+                        {files?.map((f) => (
+                          <CarouselItem key={f.id}>
+                            <FileDisplayOne file={f} />
+                          </CarouselItem>
+                        ))}
+                      </CarouselContent>
+                      <CarouselPrevious className="left-4" />
+                      <CarouselNext className="right-4" />
+                    </Carousel>
+                  </DialogContent>
+                </Dialog>
               </li>
             ))}
           </ul>
