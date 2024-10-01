@@ -1,18 +1,11 @@
 import "server-only";
 
-import { drizzle } from "drizzle-orm/postgres-js";
+import { db } from "./_db";
 import { eq, getTableColumns } from "drizzle-orm";
-import postgres from "postgres";
 import { genSaltSync, hashSync } from "bcrypt-ts";
 import { parsePhoneNumber } from "libphonenumber-js";
 import * as Schemas from "@/drizzle/schema";
 import { HaruUserBasic } from "@/lib/types";
-
-// Optionally, if not using email/pass login, you can
-// use the Drizzle adapter for Auth.js / NextAuth
-// https://authjs.dev/reference/adapter/drizzle
-const client = postgres(`${process.env.POSTGRES_URL!}`);
-const db = drizzle(client);
 
 export async function getUserAccount(userId: number) {
   return db

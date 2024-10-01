@@ -1,7 +1,6 @@
 import "server-only";
 
-import postgres from "postgres";
-import { drizzle } from "drizzle-orm/postgres-js";
+import { db } from "./_db";
 import { and, eq, getTableColumns } from "drizzle-orm";
 import {
   Site,
@@ -11,9 +10,6 @@ import {
   SiteMember,
 } from "@/lib/types/site";
 import * as Schemas from "@/drizzle/schema";
-
-const client = postgres(`${process.env.POSTGRES_URL!}`);
-const db = drizzle(client);
 
 // get all the sites that userId is the owner of
 export async function getMySites(userId: number): Promise<Site[]> {

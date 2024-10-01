@@ -7,10 +7,7 @@ import { z } from "zod";
 import useSWR from "swr";
 import { createInsertSchema } from "drizzle-zod";
 import { getTableConfig } from "drizzle-orm/pg-core";
-import {
-  SiteReportDetails,
-  SiteReportDetailsNew,
-} from "@/lib/types";
+import { SiteReportDetails, SiteReportDetailsNew } from "@/lib/types";
 import * as Actions from "@/lib/actions";
 import * as Schemas from "@/drizzle/schema";
 

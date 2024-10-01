@@ -1,17 +1,9 @@
 import "server-only";
 
-import { drizzle } from "drizzle-orm/postgres-js";
-import { eq, or, getTableColumns, isNull, and } from "drizzle-orm";
-import postgres from "postgres";
-
-import * as Schemas from "@/drizzle/schema";
+import { db } from "./_db";
+import { eq, getTableColumns } from "drizzle-orm";
 import { HaruFile, HaruFileNew } from "@/lib/types";
-
-// Optionally, if not using email/pass login, you can
-// use the Drizzle adapter for Auth.js / NextAuth
-// https://authjs.dev/reference/adapter/drizzle
-const client = postgres(`${process.env.POSTGRES_URL!}`);
-const db = drizzle(client);
+import * as Schemas from "@/drizzle/schema";
 
 const HaruFileColumns = {
   ...getTableColumns(Schemas.files1),
