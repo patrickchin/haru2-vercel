@@ -1,7 +1,6 @@
 import "server-only";
 
-import postgres from "postgres";
-import { drizzle } from "drizzle-orm/postgres-js";
+import { db } from "./_db";
 import { and, desc, eq, getTableColumns } from "drizzle-orm";
 import {
   SiteMemberRole,
@@ -14,9 +13,6 @@ import {
   SiteReportSectionNew,
 } from "@/lib/types/site";
 import * as Schemas from "@/drizzle/schema";
-
-const client = postgres(`${process.env.POSTGRES_URL!}`);
-const db = drizzle(client);
 
 const SiteReportColumns = {
   ...getTableColumns(Schemas.siteReports1),
