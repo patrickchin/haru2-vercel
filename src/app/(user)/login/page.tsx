@@ -130,8 +130,9 @@ function PhoneLogin() {
   const onSubmit = async (data: LoginTypesPhone) => {
     form.clearErrors();
     const ret = await signInFromLogin(data);
-    if (typeof ret === "string") {
-      location.reload();
+    if (typeof ret === "boolean" && ret === true) {
+      router.push(ret);
+    } else if (typeof ret === "string") {
       router.push(ret);
     } else if (typeof ret === typeof CredentialsSigninError) {
       form.setError("root", {
@@ -139,6 +140,8 @@ function PhoneLogin() {
       });
     } else if (typeof ret === typeof UnknownError) {
       form.setError("root", { message: "Failed to login. Unknown Error" });
+    } else if (typeof ret === "boolean" && ret === false) {
+      form.setError("root", { message: "Failed to login. Unknown Error 3" });
     }
   };
 
