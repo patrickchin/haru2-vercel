@@ -6,7 +6,8 @@ import {
   ReportsViewerProps,
   ReportTitleBar,
 } from "../report-document";
-import { FileDisplay, ReportFileDisplay } from "../report-file-viewer";
+import { ReportFileDisplay } from "../report-file-viewer";
+import { FileDisplay } from "@/components/file-display";
 
 export default async function Page({
   params,
