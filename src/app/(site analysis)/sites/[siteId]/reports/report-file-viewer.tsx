@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import { HaruFile } from "@/lib/types";
 import * as Actions from "@/lib/actions";
 
+import { FileDisplay } from "@/components/file-display";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { LucideCamera, LucideVideo, LucideFileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -100,36 +100,7 @@ export function FileSelector({
   );
 }
 
-export function FileDisplayOne({ file }: { file?: HaruFile }) {
-  return (
-    <div className="flex items-center justify-center relative h-full">
-      {file &&
-        file.url &&
-        file.url.length > 0 &&
-        file.type &&
-        (file.type?.startsWith("image/") ? (
-          <Image
-            src={file.url}
-            alt={file.filename || "<Untitled>"}
-            fill={true}
-            className="object-contain"
-          />
-        ) : file.type?.startsWith("video/") ? (
-          <video controls className="max-w-full max-h-full w-full h-full">
-            <source src={file.url} type={file.type} />
-          </video>
-        ) : (
-          <div className="relative w-full h-full overflow-auto p-6">
-            <pre className="absolute text-begin overflow-hidden">
-              {JSON.stringify(file, undefined, 4)}
-            </pre>
-          </div>
-        ))}
-    </div>
-  );
-}
-
-export function FileDisplay({
+export function FileDisplayCarousel({
   fileList,
   file,
 }: {
@@ -150,7 +121,7 @@ export function FileDisplay({
           <CarouselContent>
             {fileList?.map((f) => (
               <CarouselItem key={f.id} className="h-[30rem]">
-                <FileDisplayOne file={f} />
+                <FileDisplay file={f} />
               </CarouselItem>
             ))}
           </CarouselContent>
@@ -177,8 +148,8 @@ export async function ReportFileDisplay({
   reportId?: number;
   fileId?: number;
 }) {
-  if (!reportId) return <FileDisplay />;
+  if (!reportId) return <FileDisplayCarousel />;
   const fileList = await Actions.getFilesForReport(reportId);
   const file = fileList?.find((f) => f.id === fileId);
-  return <FileDisplay fileList={fileList} file={file} />;
+  return <FileDisplayCarousel fileList={fileList} file={file} />;
 }

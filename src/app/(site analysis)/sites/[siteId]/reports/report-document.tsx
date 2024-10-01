@@ -7,6 +7,7 @@ import { HaruFile } from "@/lib/types";
 import * as Actions from "@/lib/actions";
 
 import { LucideChevronDown, LucideMoveLeft } from "lucide-react";
+import { FileDisplay } from "@/components/file-display";
 import { Button } from "@/components/ui/button";
 import {
   SiteDetails,
@@ -35,12 +36,12 @@ import {
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
   Carousel,
+  CarouselApi,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { FileDisplayOne } from "./report-file-viewer";
 
 export interface ReportsViewerProps {
   siteId: number;
@@ -209,7 +210,7 @@ export async function ReportSection({
                       <CarouselContent className="h-full">
                         {files?.map((f) => (
                           <CarouselItem key={f.id}>
-                            <FileDisplayOne file={f} />
+                            <FileDisplay file={f} />
                           </CarouselItem>
                         ))}
                       </CarouselContent>

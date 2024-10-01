@@ -187,7 +187,7 @@ export default function SiteMeetings({ site, members }: SiteDetailsProps) {
         setIsUpdating(false);
       }
     },
-    [meetings],
+    [mutateMeetings],
   );
 
   return (
