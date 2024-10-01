@@ -1,39 +1,15 @@
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
-import { isPossiblePhoneNumber, isValidPhoneNumber, parsePhoneNumber } from "libphonenumber-js";
+import {
+  isPossiblePhoneNumber,
+  isValidPhoneNumber,
+  parsePhoneNumber,
+} from "libphonenumber-js";
 
 function allFilesSmall(list: FileList | undefined) {
   if (list === undefined) return true;
   return Array.from(list).every((f: File) => f.size < 4_500_000);
 }
-
-export const NewProjectFormSchema = z.object({
-  title: z.string().max(254),
-  country: z.string(),
-  buildingType: z.string(), // enum?
-  buildingSubtype: z.string().optional(), // enum?
-  description: z
-    .string()
-    .min(
-      1,
-      "Please add a project description, this can be edited after submition",
-    ),
-  files: z
-    .any()
-    .transform((f) => f as FileList)
-    .optional()
-    .refine(allFilesSmall, "Max file size 3.5MB"),
-
-  lifestyle: z.string().optional(),
-  future: z.string().optional(),
-  energy: z.string().optional(),
-  outdoors: z.string().optional(),
-  security: z.string().optional(),
-  maintenance: z.string().optional(),
-  special: z.string().optional(),
-});
-export type NewProjectFormSchemaType = z.infer<typeof NewProjectFormSchema>;
-export type NewProjectFormType = UseFormReturn<NewProjectFormSchemaType>;
 
 export const phoneNumberZod = z
   .string()
@@ -80,11 +56,6 @@ export const authorizeSchema = z
   .object({
     email: z.string().email("Invalid email address").optional(),
     phone: phoneNumberZod.optional(),
-    // phone: z
-    //   .string()
-    //   .transform((p) => parsePhoneNumber(p))
-    //   .optional()
-    //   .refine((n) => !n || n.isValid(), { message: "Invalid phone number" }),
     otp: z
       .string()
       .min(6)
@@ -93,14 +64,17 @@ export const authorizeSchema = z
       .optional(),
     password: z.string().optional(),
   })
+  .refine((schema) => !schema.phone, {
+    message: "Mobile OTP has been temporarily disabled",
+  })
+  // .refine((schema) => !!schema.email === !!schema.password, {
+  //   message: "Only email and password supported for now",
+  // })
   .refine((schema) => !!schema.email !== !!schema.phone, {
     message: "Needs to specify one of email or phone number",
   })
   .refine((schema) => !!schema.otp !== !!schema.password, {
     message: "Needs to specify one of otp or password",
-  })
-  .refine((schema) => !!schema.email === !!schema.password, {
-    message: "Only email and password supported for now",
   });
 
 const registerPhoneOtpSchema = z.object({
@@ -129,14 +103,6 @@ export const registerZodSchemas = {
   email: registerEmailOtpSchema,
   password: registerPasswordSchema,
 };
-
-export const ManageTaskEditEstimatesSchema = z.object({
-  duration: z.coerce.number(),
-  cost: z.coerce.number(),
-});
-export type ManageTaskEditEstimatesType = z.infer<
-  typeof ManageTaskEditEstimatesSchema
->;
 
 export const addSiteSchema = z.object({
   title: z.string(),

@@ -12,7 +12,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { LucideLoader2, LucideTrash2 } from "lucide-react";
 import CustomTooltip from "./ui/tooltip-custom";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 function TextTrigger({ disabled }: { disabled?: boolean }) {
   return (

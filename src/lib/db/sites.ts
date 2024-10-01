@@ -3,7 +3,13 @@ import "server-only";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { and, eq, getTableColumns } from "drizzle-orm";
-import { Site, SiteDetails, SiteMember } from "@/lib/types/site";
+import {
+  Site,
+  SiteDetails,
+  SiteMeeting,
+  SiteMeetingNew,
+  SiteMember,
+} from "@/lib/types/site";
 import * as Schemas from "@/drizzle/schema";
 
 const client = postgres(`${process.env.POSTGRES_URL!}`);
@@ -94,6 +100,54 @@ export async function getSiteMembers(siteId: number): Promise<SiteMember[]> {
     .where(eq(Schemas.siteMembers1.siteId, siteId));
 }
 
+export async function getSiteMeetings(siteId: number): Promise<SiteMeeting[]> {
+  return await db
+    .select()
+    .from(Schemas.siteMeetings1)
+    .where(eq(Schemas.siteMeetings1.siteId, siteId))
+    .orderBy(Schemas.siteMeetings1.date);
+}
+
+export async function getSiteMeeting(meetingId: number): Promise<SiteMeeting> {
+  return await db
+    .select()
+    .from(Schemas.siteMeetings1)
+    .where(eq(Schemas.siteMeetings1.id, meetingId))
+    .then((r) => r[0]);
+}
+
+export async function addSiteMeeting(
+  { siteId, userId }: { siteId: number; userId?: number },
+  values: SiteMeetingNew,
+): Promise<SiteMeeting> {
+  return await db
+    .insert(Schemas.siteMeetings1)
+    .values({ ...values, siteId, userId })
+    .returning()
+    .then((r) => r[0]);
+}
+
+export async function updateSiteMeeting(
+  meetingId: number,
+  values: SiteMeetingNew,
+): Promise<SiteMeeting> {
+  return await db
+    .update(Schemas.siteMeetings1)
+    .set({ ...values })
+    .where(eq(Schemas.siteMeetings1.id, meetingId))
+    .returning()
+    .then((r) => r[0]);
+}
+
+export async function deleteSiteMeeting(
+  meetingId: number,
+): Promise<SiteMeeting> {
+  return await db
+    .delete(Schemas.siteMeetings1)
+    .where(eq(Schemas.siteMeetings1.id, meetingId))
+    .then((r) => r[0]);
+}
+
 export async function addUserSite(
   ownerId: number,
   args: {
@@ -151,7 +205,7 @@ export async function addUserToSite({
     .then((r) => r[0]);
 }
 
-export async function getMemberRole({
+export async function getSiteRole({
   siteId,
   userId,
 }: {
@@ -159,7 +213,7 @@ export async function getMemberRole({
   userId: number;
 }) {
   return db
-    .select()
+    .select({ role: Schemas.siteMembers1.role })
     .from(Schemas.siteMembers1)
     .where(
       and(
@@ -168,7 +222,7 @@ export async function getMemberRole({
       ),
     )
     .limit(1)
-    .then((r) => (r.length ? r[0].role : null));
+    .then((r) => (r && r.length ? r[0].role : null));
 }
 
 export async function updateKeySiteUsers(

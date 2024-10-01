@@ -1,21 +1,11 @@
 import "server-only";
 
 import { drizzle } from "drizzle-orm/postgres-js";
-import {
-  and,
-  eq,
-  or,
-  desc,
-  asc,
-  isNotNull,
-  getTableColumns,
-} from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import postgres from "postgres";
 import { genSaltSync, hashSync, compareSync } from "bcrypt-ts";
 
 import * as Schemas from "@/drizzle/schema";
-import assert from "assert";
-import { defaultTeams } from "@/lib/types";
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth

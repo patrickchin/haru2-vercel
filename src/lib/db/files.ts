@@ -1,11 +1,11 @@
 import "server-only";
 
 import { drizzle } from "drizzle-orm/postgres-js";
-import { eq, or, getTableColumns } from "drizzle-orm";
+import { eq, or, getTableColumns, isNull, and } from "drizzle-orm";
 import postgres from "postgres";
 
 import * as Schemas from "@/drizzle/schema";
-import { DesignFile, DesignFileNew } from "@/lib/types";
+import { HaruFile, HaruFileNew } from "@/lib/types";
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
@@ -20,14 +20,7 @@ const HaruFileColumns = {
   },
 };
 
-const HaruTaskFileColumns = {
-  ...HaruFileColumns,
-  task: {
-    ...getTableColumns(Schemas.tasks1),
-  },
-};
-
-export async function getFile(fileId: number): Promise<DesignFile> {
+export async function getFile(fileId: number): Promise<HaruFile> {
   return await db
     .select(HaruFileColumns)
     .from(Schemas.files1)
@@ -37,58 +30,23 @@ export async function getFile(fileId: number): Promise<DesignFile> {
     .then((r) => r[0]);
 }
 
-export async function deleteFile(fileId: number): Promise<DesignFile> {
-  const origf = await getFile(fileId);
-  const delf = await db
-    .delete(Schemas.files1)
-    .where(eq(Schemas.files1.id, fileId))
-    .returning()
-    .then((r) => r[0]);
-  return origf; // because this adds extra stuff
-}
-
-export async function addFile(values: DesignFileNew & { reportId?: number }) {
-  const f = await db.transaction(async (tx) => {
+export async function addFileToGroup(groupId: number, values: HaruFileNew) {
+  const newFile = await db.transaction(async (tx) => {
     const f = await tx
       .insert(Schemas.files1)
       .values(values)
       .returning()
       .then((r) => r[0]);
-
-    if (values.reportId) {
-      await tx.insert(Schemas.siteReportFiles1).values({
-        reportId: values.reportId,
-        fileId: f.id,
-      });
-    }
-
+    // should fail if groupId doesn't exist
+    const x = await tx
+      .insert(Schemas.fileGroupFiles1)
+      .values({ fileGroupId: groupId, fileId: f.id });
     return f;
   });
-  return getFile(f.id);
+  return getFile(newFile.id);
 }
 
-export async function getFilesForProject(projectId: number) {
-  return await db
-    .select(HaruTaskFileColumns)
-    .from(Schemas.files1)
-    .leftJoin(Schemas.tasks1, eq(Schemas.tasks1.id, Schemas.files1.taskId))
-    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderId))
-    .where(
-      or(
-        eq(Schemas.files1.projectId, projectId),
-        eq(Schemas.tasks1.projectId, projectId),
-      ),
-    );
-}
-
-export async function deleteAllFilesFromProject(projectId: number) {
-  return await db
-    .delete(Schemas.files1)
-    .where(eq(Schemas.files1.projectId, projectId))
-    .returning();
-}
-
-export async function updateFile(fileId: number, values: DesignFileNew) {
+export async function updateFile(fileId: number, values: HaruFileNew) {
   return await db
     .update(Schemas.files1)
     .set(values)
@@ -97,50 +55,53 @@ export async function updateFile(fileId: number, values: DesignFileNew) {
     .then((r) => r[0]);
 }
 
-export async function getFilesForTask(taskId: number) {
-  return await db
+export async function getFilesFromGroup(
+  fileGroupId: number,
+): Promise<HaruFile[]> {
+  return db
     .select(HaruFileColumns)
     .from(Schemas.files1)
     .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderId))
-    .where(eq(Schemas.files1.taskId, taskId));
+    .leftJoin(
+      Schemas.fileGroupFiles1,
+      eq(Schemas.fileGroupFiles1.fileId, Schemas.files1.id),
+    )
+    .where(eq(Schemas.fileGroupFiles1.fileGroupId, fileGroupId));
 }
 
-export async function getFilesForCommentSection(sectionId: number) {
+export async function getFilesForReport(reportId: number): Promise<HaruFile[]> {
   return db
     .select(HaruFileColumns)
     .from(Schemas.files1)
     .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderId))
     .innerJoin(
-      Schemas.comments1,
-      eq(Schemas.comments1.id, Schemas.files1.uploaderId),
+      Schemas.fileGroupFiles1,
+      eq(Schemas.fileGroupFiles1.fileId, Schemas.files1.id),
     )
     .innerJoin(
-      Schemas.commentSections1,
-      eq(Schemas.commentSections1.id, Schemas.comments1.sectionId),
+      Schemas.siteReports1,
+      eq(Schemas.siteReports1.fileGroupId, Schemas.fileGroupFiles1.fileGroupId),
     )
-    .where(eq(Schemas.commentSections1.id, sectionId));
+    .where(eq(Schemas.siteReports1.id, reportId));
 }
 
-export async function addReportFile(reportId: number) {
-  return await db
+export async function getFilesForReportSection(
+  sectionId: number,
+): Promise<HaruFile[]> {
+  return db
     .select(HaruFileColumns)
     .from(Schemas.files1)
     .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderId))
-    .leftJoin(
-      Schemas.siteReportFiles1,
-      eq(Schemas.siteReportFiles1.fileId, Schemas.files1.id),
+    .innerJoin(
+      Schemas.fileGroupFiles1,
+      eq(Schemas.fileGroupFiles1.fileId, Schemas.files1.id),
     )
-    .where(eq(Schemas.siteReportFiles1.reportId, reportId));
-}
-
-export async function getFilesForReport(reportId: number) {
-  return await db
-    .select(HaruFileColumns)
-    .from(Schemas.files1)
-    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.files1.uploaderId))
-    .leftJoin(
-      Schemas.siteReportFiles1,
-      eq(Schemas.siteReportFiles1.fileId, Schemas.files1.id),
+    .innerJoin(
+      Schemas.siteReportSections1,
+      eq(
+        Schemas.siteReportSections1.fileGroupId,
+        Schemas.fileGroupFiles1.fileGroupId,
+      ),
     )
-    .where(eq(Schemas.siteReportFiles1.reportId, reportId));
+    .where(eq(Schemas.siteReportSections1.id, sectionId));
 }

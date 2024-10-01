@@ -15,10 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { UserAvatar } from "./user-avatar";
 
-
-const navigation = [
-  { name: "My Projects", href: "/sites" },
-];
+const navigation = [{ name: "My Projects", href: "/sites" }];
 
 export function MainNav() {
   const { status } = useSession();

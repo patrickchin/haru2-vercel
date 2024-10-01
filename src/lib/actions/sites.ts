@@ -5,6 +5,12 @@ import { auth } from "@/lib/auth";
 import { addSiteSchema, AddSiteType } from "@/lib/forms";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import {
+  editingRoles,
+  siteActionAllowed,
+  viewingRoles,
+} from "@/lib/permissions";
+import { SiteMeetingNew } from "@/lib/types";
 
 export async function addSite(d: AddSiteType) {
   const session = await auth();
@@ -14,8 +20,12 @@ export async function addSite(d: AddSiteType) {
   if (!parsed.success) return;
 
   const site = await db.addUserSite(session.user.idn, parsed.data);
+  const membership = await db.addUserToSite({
+    siteId: site.id,
+    userId: session.user.idn,
+  });
 
-  redirect(`/site/${site.id}`);
+  redirect(`/sites/${site.id}`);
 }
 
 export async function getMySites() {
@@ -40,6 +50,59 @@ export async function getSiteMembers(siteId: number) {
   const session = await auth();
   if (!session?.user) return;
   return db.getSiteMembers(siteId);
+}
+
+export async function getSiteMeetings(siteId: number) {
+  const session = await auth();
+  if (await siteActionAllowed(session, viewingRoles, { siteId }))
+    return db.getSiteMeetings(siteId);
+}
+
+export async function getSiteMeeting(meetingId: number) {
+  const session = await auth();
+  if (await siteActionAllowed(session, viewingRoles, { meetingId }))
+    return db.getSiteMeeting(meetingId);
+}
+
+export async function addSiteMeeting(siteId: number, values: SiteMeetingNew) {
+  const session = await auth();
+  if (await siteActionAllowed(session, editingRoles, { siteId }))
+    return db.addSiteMeeting({ siteId, userId: session?.user?.idn }, values);
+}
+
+export async function updateSiteMeeting(
+  meetingId: number,
+  values: SiteMeetingNew,
+) {
+  const session = await auth();
+  if (await siteActionAllowed(session, editingRoles, { meetingId })) {
+    return db.updateSiteMeeting(meetingId, values);
+  }
+}
+
+export async function updateSiteMeetingReturnAllMeetings(
+  meetingId: number,
+  values: SiteMeetingNew,
+) {
+  const session = await auth();
+  if (await siteActionAllowed(session, editingRoles, { meetingId })) {
+    const meeting = await db.updateSiteMeeting(meetingId, values);
+    return meeting.siteId ? db.getSiteMeetings(meeting.siteId) : [meeting];
+  }
+}
+
+export async function deleteSiteMeeting(meetingId: number) {
+  const session = await auth();
+  if (await siteActionAllowed(session, editingRoles, { meetingId }))
+    return db.deleteSiteMeeting(meetingId);
+}
+
+export async function deleteSiteMeetingReturnAllMeetings(meetingId: number) {
+  const session = await auth();
+  if (await siteActionAllowed(session, editingRoles, { meetingId })) {
+    const meeting = await db.deleteSiteMeeting(meetingId);
+    return meeting.siteId ? db.getSiteMeetings(meeting.siteId) : [meeting];
+  }
 }
 
 export async function addUserToSite({
@@ -82,7 +145,7 @@ export async function updateKeySiteUsers(
   const userId = session.user.idn;
   if (isNaN(userId)) return;
 
-  const role = await db.getMemberRole({ siteId, userId });
+  const role = await db.getSiteRole({ siteId, userId });
   if (!role) return;
   const allowedRoles = [
     "manager",
@@ -96,7 +159,7 @@ export async function updateKeySiteUsers(
   try {
     console.log(`User ${userId} updating key site user information ${values}`);
     const ret = await db.updateKeySiteUsers(siteId, values);
-    revalidatePath(`/site/${siteId}`);
+    revalidatePath(`/sites/${siteId}`);
     return ret;
   } catch (e: any) {
     console.log(

@@ -2,11 +2,12 @@
 
 import { useMemo } from "react";
 import { cn } from "@/lib/utils";
-import { useForm, UseFormReturn } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addSiteSchema, AddSiteType } from "@/lib/forms";
 import * as Actions from "@/lib/actions";
 
+import { LucideLoader2 } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -17,10 +18,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { CenteredLayout } from "@/components/page-layouts";
+import { DefaultLayout } from "@/components/page-layouts";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { LucideLoader2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -80,7 +80,7 @@ function NewSiteForm() {
         //   e.preventDefault();
         //   console.log(e);
         // }}
-        className="grid grid-cols-2 gap-6"
+        className="grid grid-cols-2 gap-6 w-full"
       >
         <FormField
           control={form.control}
@@ -201,8 +201,8 @@ function NewSiteForm() {
 
 export default function Page() {
   return (
-    <CenteredLayout>
+    <DefaultLayout className="items-center max-w-3xl">
       <NewSiteForm />
-    </CenteredLayout>
+    </DefaultLayout>
   );
 }

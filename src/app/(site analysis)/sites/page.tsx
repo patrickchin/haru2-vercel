@@ -1,10 +1,9 @@
 import Link from "next/link";
 import * as Actions from "@/lib/actions";
 
-import { Button } from "@/components/ui/button";
-import Footer from "@/components/footer";
-import Header from "@/components/header";
 import { LucideArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { DefaultLayout } from "@/components/page-layouts";
 
 function EmptySitesList() {
   return <p>You currently do not have any sites registered with us</p>;
@@ -23,7 +22,7 @@ async function SitesList() {
         return (
           <li key={i}>
             <Link
-              href={`/site/${site.id}`}
+              href={`/sites/${site.id}`}
               className="flex items-center gap-3 p-4 border hover:bg-accent"
             >
               <div className="grow flex flex-col">
@@ -45,16 +44,14 @@ async function SitesList() {
 
 export default async function Page() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="grow flex flex-col items-center px-16 py-8 gap-8">
+    <DefaultLayout>
+      <div className="flex flex-col items-center gap-6">
         <h2>My Site Supervision Projects</h2>
         <Button asChild>
           <Link href="/new-site">Register New Construction Site</Link>
         </Button>
         <SitesList />
-      </main>
-      <Footer />
-    </div>
+      </div>
+    </DefaultLayout>
   );
 }

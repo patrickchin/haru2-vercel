@@ -4,15 +4,27 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import { eq, getTableColumns } from "drizzle-orm";
 import postgres from "postgres";
 import { genSaltSync, hashSync } from "bcrypt-ts";
-
-import * as Schemas from "@/drizzle/schema";
 import { parsePhoneNumber } from "libphonenumber-js";
+import * as Schemas from "@/drizzle/schema";
+import { HaruUserBasic } from "@/lib/types";
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
 // https://authjs.dev/reference/adapter/drizzle
 const client = postgres(`${process.env.POSTGRES_URL!}`);
 const db = drizzle(client);
+
+export async function getUserAccount(userId: number) {
+  return db
+    .select({
+      ...getTableColumns(Schemas.users1),
+      ...getTableColumns(Schemas.accounts1),
+    })
+    .from(Schemas.accounts1)
+    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.accounts1.id))
+    .where(eq(Schemas.accounts1.id, userId))
+    .then((r) => r[0]);
+}
 
 export async function getUserAccountByEmail(email: string) {
   return db
@@ -37,6 +49,14 @@ export async function getUserAccountByPhone(phone: string) {
     .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.accounts1.id))
     .where(eq(Schemas.accounts1.phone, phoneURI))
     .then((r) => r[0]);
+}
+
+export async function getUser(userId: number) {
+  return await db
+    .select()
+    .from(Schemas.users1)
+    .where(eq(Schemas.users1.id, userId))
+    .then((r) => r.at(0));
 }
 
 export async function getUserByEmail(email: string) {
@@ -88,6 +108,7 @@ export async function createUserIfNotExists({
   const phoneURI = phone ? parsePhoneNumber(phone).getURI() : undefined;
 
   return db.transaction(async (tx) => {
+    console.log(`createUserIfNotExists phone: ${phoneURI} , email: ${email}`);
     const newAccount = await tx
       .insert(Schemas.accounts1)
       .values({
@@ -98,6 +119,7 @@ export async function createUserIfNotExists({
       .returning()
       .then((r) => r[0]);
 
+    console.log(`createUserIfNotExists id: ${newAccount.id} , name: ${name}`);
     const newUser = await tx
       .insert(Schemas.users1)
       .values({
@@ -107,6 +129,7 @@ export async function createUserIfNotExists({
       .returning()
       .then((r) => r[0]);
 
+    console.log("createUserIfNotExists successful");
     return newUser;
   });
 }
@@ -114,7 +137,7 @@ export async function createUserIfNotExists({
 export async function updateUserAvatar(
   uploaderId: number,
   values: { avatarUrl: string | null },
-) {
+): Promise<{ initial: HaruUserBasic; updated: HaruUserBasic }> {
   return await db.transaction(async (tx) => {
     const oldUser = await tx
       .select()

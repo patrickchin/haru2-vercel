@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { registerUser } from "@/lib/actions";
-import { SimpleLayout } from "@/components/page-layouts";
+import { GradientLayout } from "@/components/page-layouts";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -34,7 +34,7 @@ export default function Page() {
   };
 
   return (
-    <SimpleLayout>
+    <GradientLayout>
       <div className="w-screen max-w-md rounded-2xl shadow-xl overflow-hidden">
         <div className="flex flex-col py-6 space-y-3 bg-background text-center border-b border-border">
           <h3>Create an Account</h3>
@@ -87,7 +87,11 @@ export default function Page() {
                     <span className="font-bold text-red-400 ml-1">*</span>
                   </FormLabel>
                   <FormControl className="w-full">
-                    <Input type="email" placeholder="harpapro@email.com" {...field} />
+                    <Input
+                      type="email"
+                      placeholder="harpapro@email.com"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -154,6 +158,6 @@ export default function Page() {
           </form>
         </Form>
       </div>
-    </SimpleLayout>
+    </GradientLayout>
   );
 }

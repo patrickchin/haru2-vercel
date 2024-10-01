@@ -14,26 +14,6 @@ function getAvatarPath(session: Session, filename: string) {
   return `user/${userId}/${filename}`;
 }
 
-async function getTaskFilePath(
-  params: Record<string, string>,
-  filename: string,
-) {
-  if (!params.taskId) return;
-  const task = await Actions.getTask(Number(params.taskId));
-  if (!task || !task.projectId || !task.specId) return;
-  return `project/${task.projectId}/task/${task.specId}/${filename}`;
-}
-
-async function getProjectFilePath(
-  params: Record<string, string>,
-  filename: string,
-) {
-  if (!params.projectId) return;
-  const project = await Actions.getProject(Number(params.projectId));
-  if (!project) return;
-  return `project/${project.id}/${filename}`;
-}
-
 async function getReportFilePath(
   params: Record<string, string>,
   filename: string,
@@ -42,6 +22,16 @@ async function getReportFilePath(
   const report = await Actions.getSiteReport(Number(params.reportId));
   if (!report) return;
   return `report/${report.id}/${filename}`;
+}
+
+async function getReportSectionFilePath(
+  params: Record<string, string>,
+  filename: string,
+) {
+  if (!params.sectionId) return;
+  const section = await Actions.getSiteReportSection(Number(params.sectionId));
+  if (!section) return;
+  return `section/${section.id}/${filename}`;
 }
 
 function addRandomUid(filename: string) {
@@ -60,15 +50,13 @@ async function getPath(
 
   if (type === "avatar") {
     return getAvatarPath(session, filename);
-  } else if (type === "task") {
-    return getTaskFilePath(params, filename);
-  } else if (type === "project") {
-    return getProjectFilePath(params, filename);
   } else if (type === "report") {
     return getReportFilePath(params, filename);
+  } else if (type === "section") {
+    return getReportSectionFilePath(params, filename);
   }
 
-  console.error("api/upload getPath unknown type:", type);
+  throw new Error(`api/upload getPath unknown type: ${type}`);
 }
 
 export async function POST(

@@ -19,7 +19,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { Button } from "@/components/ui/button";
-import { SimpleLayout } from "@/components/page-layouts";
+import { GradientLayout } from "@/components/page-layouts";
 import { registerZodSchemas } from "@/lib/forms";
 import {
   Form,
@@ -355,8 +355,8 @@ function RegisterCard() {
 }
 export default function Register() {
   return (
-    <SimpleLayout>
+    <GradientLayout>
       <RegisterCard />
-    </SimpleLayout>
+    </GradientLayout>
   );
 }
