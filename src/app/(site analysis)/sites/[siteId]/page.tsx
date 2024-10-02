@@ -2,9 +2,12 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteDetails, SiteMember, SiteMemberRole } from "@/lib/types";
-import { cn } from "@/lib/utils";
 import * as Actions from "@/lib/actions";
-import { LucideAlertTriangle, LucideArrowRight, LucideCheck } from "lucide-react";
+import {
+  LucideAlertTriangle,
+  LucideArrowRight,
+  LucideCheck,
+} from "lucide-react";
 
 import SiteMeetings from "./site-meetings";
 import EditSiteMembersButtonPopup from "./site-members-add";
@@ -277,32 +280,24 @@ function SiteProgress({ site }: { site: SiteDetails }) {
             <TableRow>
               <TableHead className="font-medium">Start Date</TableHead>
               <TableCell>
-                {site.startDate?.toDateString() ??
-                  "Unknown"}
+                {site.startDate?.toDateString() ?? "Unknown"}
               </TableCell>
             </TableRow>
             <TableRow>
               <TableHead className="font-medium">End Date</TableHead>
-              <TableCell>
-                {site.endDate?.toDateString() ??
-                  "Unknown"}
-              </TableCell>
+              <TableCell>{site.endDate?.toDateString() ?? "Unknown"}</TableCell>
             </TableRow>
             <TableRow>
               <TableHead className="font-medium">Next Report Date</TableHead>
               <TableCell>
-                {site.nextReportDate?.toDateString() ??
-                  "Unknown"}
+                {site.nextReportDate?.toDateString() ?? "Unknown"}
               </TableCell>
             </TableRow>
             <TableRow>
               <TableHead className="font-medium">
                 Supervision Schedule
               </TableHead>
-              <TableCell>
-                {site.schedule ??
-                  "Unknown"}
-              </TableCell>
+              <TableCell>{site.schedule ?? "Unknown"}</TableCell>
             </TableRow>
           </TableBody>
         </Table>

@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { UpdateSiteReportFiles } from "./edit-upload";
 import { UpdateSiteReportSections } from "./edit-sections";
+import * as Actions from "@/lib/actions";
 
 export default async function Page({
   params,
@@ -18,8 +19,8 @@ export default async function Page({
   const siteId = Number(params.siteId);
   const reportId = Number(params.reportId);
 
-  const session = await auth();
-  if (session?.user?.role === "admin" || session?.user?.role === "supervisor") {
+  const memberRole = await Actions.getSiteRole(siteId);
+  if (memberRole && ["supervisor", "owner", "manager"].includes(memberRole)) {
     const siteId = Number(params.siteId);
     const reportId = Number(params.reportId);
     return (

@@ -94,6 +94,7 @@ export async function ReportTitleBarDisplay({
   site?: SiteDetails;
   report?: SiteReport;
 }) {
+  const memberRole = site ? await Actions.getSiteRole(site.id) : "";
   return (
     <div className="grow flex flex-row gap-3">
       <div>
@@ -131,7 +132,8 @@ export async function ReportTitleBarDisplay({
         {site &&
           session &&
           session.user &&
-          ["supervisor", "admin"].includes(session.user.role as string) && (
+          memberRole &&
+          ["supervisor", "owner", "manager"].includes(memberRole) && (
             <div className="flex gap-2">
               {report && (
                 <Button variant="secondary" asChild>

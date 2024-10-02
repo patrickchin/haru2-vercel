@@ -8,6 +8,7 @@ import {
   SiteMeeting,
   SiteMeetingNew,
   SiteMember,
+  SiteMemberRole,
   SiteNoticeNew,
 } from "@/lib/types/site";
 import * as Schemas from "@/drizzle/schema";
@@ -215,13 +216,15 @@ export async function addUserSite(
 export async function addUserToSite({
   siteId,
   userId,
+  role,
 }: {
   siteId: number;
   userId: number;
+  role: SiteMemberRole;
 }) {
   return await db
     .insert(Schemas.siteMembers1)
-    .values({ siteId, memberId: userId })
+    .values({ siteId, memberId: userId, role })
     .returning()
     .then((r) => r[0]);
 }

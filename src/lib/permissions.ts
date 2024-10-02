@@ -3,7 +3,11 @@ import { Session } from "next-auth";
 import { allSiteMemberRoles, SiteMemberRole } from "@/lib/types";
 
 export const viewingRoles: SiteMemberRole[] = allSiteMemberRoles;
-export const editingRoles: SiteMemberRole[] = ["supervisor"];
+export const editingRoles: SiteMemberRole[] = [
+  "supervisor",
+  "owner",
+  "manager",
+];
 
 export async function siteActionAllowed(
   session: Session | null,

@@ -10,7 +10,7 @@ import {
   siteActionAllowed,
   viewingRoles,
 } from "@/lib/permissions";
-import { SiteMeetingNew } from "@/lib/types";
+import { SiteMeetingNew, SiteMemberRole } from "@/lib/types";
 
 export async function addSite(d: AddSiteType) {
   const session = await auth();
@@ -23,6 +23,7 @@ export async function addSite(d: AddSiteType) {
   const membership = await db.addUserToSite({
     siteId: site.id,
     userId: session.user.idn,
+    role: "owner",
   });
 
   redirect(`/sites/${site.id}`);
@@ -50,6 +51,12 @@ export async function getSiteMembers(siteId: number) {
   const session = await auth();
   if (!session?.user) return;
   return db.getSiteMembers(siteId);
+}
+
+export async function getSiteRole(siteId: number) {
+  const session = await auth();
+  if (!session?.user) return;
+  return db.getSiteRole({ siteId, userId: session.user.idn });
 }
 
 export async function getSiteMeetings(siteId: number) {
@@ -115,21 +122,24 @@ export async function deleteSiteMeetingReturnAllMeetings(meetingId: number) {
 export async function addUserToSite({
   siteId,
   userId,
+  role,
 }: {
   siteId: number;
   userId: number;
+  role: SiteMemberRole;
 }) {
   const session = await auth();
-  if (!session?.user) return;
-  if (isNaN(session.user.idn)) return;
-  try {
-    return db.addUserToSite({
-      siteId,
-      userId,
-    });
-  } catch (e: any) {
-    console.log(`Failed to add user ${userId} to site ${siteId} error: ${e}`);
-    return;
+  if (await siteActionAllowed(session, editingRoles, { siteId })) {
+    try {
+      return db.addUserToSite({
+        siteId,
+        userId,
+        role: "member",
+      });
+    } catch (e: any) {
+      console.log(`Failed to add user ${userId} to site ${siteId} error: ${e}`);
+      return;
+    }
   }
 }
 
