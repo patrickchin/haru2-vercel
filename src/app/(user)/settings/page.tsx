@@ -237,7 +237,7 @@ function SettingsPage() {
                 <TableCell>{user?.id}</TableCell>
               </TableRow>
               <TableRow>
-                <TableHead>User Creation Date</TableHead>
+                <TableHead>Signup Date</TableHead>
                 <TableCell>
                   <time dateTime={user?.createdAt}>
                     {new Date(user?.createdAt).toLocaleString()}
