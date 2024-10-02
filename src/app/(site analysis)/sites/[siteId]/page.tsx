@@ -212,7 +212,7 @@ async function SiteComplaints({ site }: { site: SiteDetails }) {
             <TableBody>
               {unresolved.map((c) => (
                 <TableRow className="" key={`notice-${c.id}`}>
-                  <TableCell className="" width={1}>
+                  <TableCell className="align-top" width={1}>
                     <LucideAlertTriangle className="text-destructive" />
                   </TableCell>
                   <TableCell className={c.resolved ? "line-through" : ""}>
