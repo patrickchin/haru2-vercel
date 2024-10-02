@@ -65,7 +65,7 @@ function ChangePassword() {
             <FormItem>
               <FormLabel>Current Password</FormLabel>
               <FormControl>
-                <Input onChange={field.onChange} name={field.name} />
+                <Input {...field} type="password" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -79,7 +79,7 @@ function ChangePassword() {
             <FormItem>
               <FormLabel>New Password</FormLabel>
               <FormControl>
-                <Input onChange={field.onChange} name={field.name} />
+                <Input {...field} type="password" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -93,7 +93,7 @@ function ChangePassword() {
             <FormItem>
               <FormLabel>Confirm New Password</FormLabel>
               <FormControl>
-                <Input onChange={field.onChange} name={field.name} />
+                <Input {...field} type="password" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -266,7 +266,7 @@ function SettingsPage() {
           <CardTitle>Change Password</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center">
-          {false && <ChangePassword />}
+          <ChangePassword />
         </CardContent>
       </Card>
     </>
