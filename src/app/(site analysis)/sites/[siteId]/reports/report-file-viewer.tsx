@@ -117,7 +117,7 @@ export function FileDisplayCarousel({
       )}
     >
       {fileList && fileList.length > 0 ? (
-        <Carousel className="w-full h-full group">
+        <Carousel className="w-full h-full group" opts={{ watchDrag: false }}>
           <CarouselContent>
             {fileList?.map((f) => (
               <CarouselItem key={f.id} className="h-[30rem]">
