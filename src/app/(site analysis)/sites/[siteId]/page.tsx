@@ -17,6 +17,7 @@ import {
   TableBody,
   TableCell,
   TableHead,
+  TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { InfoBox } from "@/components/info-box";
@@ -31,7 +32,7 @@ function SiteDescription({ site, members }: SiteDetailsProps) {
     site.description ??
     "There is currently no description for this site project";
   return (
-    <Card>
+    <Card id="description">
       <CardHeader className="font-semibold">Description</CardHeader>
       <CardContent>{desc}</CardContent>
     </Card>
@@ -144,6 +145,56 @@ function SiteMembersBar({ site, members }: SiteDetailsProps) {
   );
 }
 
+function SiteMembersTable({ site, members }: SiteDetailsProps) {
+  const owner = members?.find((m) => m.role === "owner");
+
+  return (
+    <Card id="members">
+      <CardHeader className="font-semibold">
+        Key Project Member Details
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead></TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Phone</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableHead className="font-medium">Owner</TableHead>
+              <TableCell>{site.ownerName}</TableCell>
+              <TableCell>{site.ownerEmail}</TableCell>
+              <TableCell>{site.ownerPhone}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableHead className="font-medium">Manager</TableHead>
+              <TableCell>{site.managerName}</TableCell>
+              <TableCell>{site.managerEmail}</TableCell>
+              <TableCell>{site.managerPhone}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableHead className="font-medium">Contractor</TableHead>
+              <TableCell>{site.contractorName}</TableCell>
+              <TableCell>{site.contractorEmail}</TableCell>
+              <TableCell>{site.contractorPhone}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableHead className="font-medium">Supervisor</TableHead>
+              <TableCell>{site.supervisorName}</TableCell>
+              <TableCell>{site.supervisorEmail}</TableCell>
+              <TableCell>{site.supervisorPhone}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default async function Page({
   params,
   searchParams,
@@ -186,7 +237,7 @@ export default async function Page({
       <SiteInfoBar site={site} members={members} />
       <SiteMembersBar site={site} members={members} />
 
-      <Card>
+      <Card id="progress">
         <CardHeader className="font-semibold">
           Supervision Progress and Milestones
         </CardHeader>
@@ -197,7 +248,9 @@ export default async function Page({
               update the site supervision schedule dates here.
             </InfoBox>
           )}
-          <Progress value={progressPct} />
+          <Progress value={progressPct} indicatorClassName="bg-blue-400">
+            lksdjflaksjfaklsjdflkasjdf slkdf jlaksdjf laskd f
+            </Progress>
           <Table>
             <TableBody>
               <TableRow>
@@ -239,7 +292,7 @@ export default async function Page({
         </CardContent>
       </Card>
 
-      <Card>
+      <Card id="meetings">
         <CardHeader className="font-semibold">
           Schedule a Zoom Meeting with the Team
         </CardHeader>
@@ -247,6 +300,9 @@ export default async function Page({
           <SiteMeetings site={site} members={members} />
         </CardContent>
       </Card>
+
+      <SiteMembersTable site={site} members={members} />
+
       <SiteDescription site={site} members={members} />
     </DefaultLayout>
   );
