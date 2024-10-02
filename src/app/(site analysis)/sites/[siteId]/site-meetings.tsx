@@ -18,6 +18,7 @@ import {
   LucideCalendar,
   LucideCheck,
   LucideExternalLink,
+  LucideMessageCircleWarning,
   LucidePlus,
   LucideTrash,
   LucideX,
@@ -48,9 +49,9 @@ import {
 } from "@/components/ui/table";
 import { SiteDetailsProps } from "./page";
 
-const formSchema = createInsertSchema(Schemas.siteMeetings1).omit({
-  id: true,
-  siteId: true,
+const formSchema = z.object({
+  date: z.date(),
+  notes: z.string(),
 });
 
 function SiteCalendarForm({
@@ -192,11 +193,14 @@ export default function SiteMeetings({ site, members }: SiteDetailsProps) {
 
   return (
     <>
-      <p>
-        Suggest a few meeting times and dates. We will confirm the time both
-        here and via email. <br />
-        The zoom link will be emailed out and shown below prior to the meeting.
-      </p>
+      <div className="flex gap-3 bg-yellow-50 border-2 p-4 rounded border-yellow-200">
+        <LucideMessageCircleWarning className="inline-block align-baseline h-8 w-8" />
+        <p>
+          Suggest a few meeting times and dates and we will confirm the time
+          both here and via email. The zoom link will be emailed out and shown
+          below prior to the meeting.
+        </p>
+      </div>
       <SiteCalendarForm siteId={site.id} mutated={() => mutateMeetings()} />
       <Table>
         <TableHeader>
@@ -220,17 +224,30 @@ export default function SiteMeetings({ site, members }: SiteDetailsProps) {
               <TableRow key={m.id}>
                 <TableCell>{m.date?.toDateString() ?? "Unspecified"}</TableCell>
                 <TableCell>{m.notes ?? "Unspecified"}</TableCell>
-                <TableCell className="capitalize">{m.status}</TableCell>
+                <TableCell
+                  className={cn(
+                    "capitalize",
+                    m.status === "pending" && "bg-none",
+                    m.status === "rejected" && "bg-red-100",
+                    m.status === "cancelled" && "bg-red-100",
+                    m.status === "confirmed" && "bg-green-100",
+                    // m.status === "completed" && "bg-blue-100",
+                  )}
+                >
+                  {m.status}
+                </TableCell>
                 <TableCell>
                   {m.url ? (
-                    <Link
-                      href={m.url ?? "#"}
-                      target="_blank"
-                      className="flex items-center gap-2"
-                    >
-                      Meeting Link{" "}
-                      <LucideExternalLink className="w-3.5 h-3.5" />
-                    </Link>
+                    <Button variant="link" asChild className="p-0 h-auto">
+                      <Link
+                        href={m.url ?? "#"}
+                        target="_blank"
+                        className="flex items-center gap-2"
+                      >
+                        Meeting Link{" "}
+                        <LucideExternalLink className="w-3.5 h-3.5" />
+                      </Link>
+                    </Button>
                   ) : (
                     "Not created"
                   )}
@@ -244,7 +261,10 @@ export default function SiteMeetings({ site, members }: SiteDetailsProps) {
                       disabled={isValidating || isUpdating}
                       onClick={() => updateMeeting(m.id, {}, true)}
                     >
-                      <LucideTrash className="w-3.5" />
+                      <LucideTrash
+                        className="w-3.5 text-red-400"
+                        strokeWidth={2.5}
+                      />
                     </Button>
                   )}
                   {role === "supervisor" && (
