@@ -193,7 +193,8 @@ export async function ReportSection({
                     <Image
                       src={f.url || ""}
                       alt={f.filename || "unknown image"}
-                      fill={true}
+                      width={120}
+                      height={90}
                       className="object-cover w-full h-full"
                     />
                   </DialogTrigger>
