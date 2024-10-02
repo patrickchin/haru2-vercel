@@ -47,8 +47,10 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-import { SiteDetailsProps } from "./page";
 import { InfoBox } from "@/components/info-box";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+
+import { SiteDetailsProps } from "./page";
 
 const formSchema = z.object({
   date: z.date(),
@@ -193,123 +195,130 @@ export default function SiteMeetings({ site, members }: SiteDetailsProps) {
   );
 
   return (
-    <>
-      {!site.startDate && (
-        <InfoBox>
-          Suggest a few meeting times and dates and we will confirm the time
-          both here and via email. The zoom link will be emailed out and shown
-          below prior to the meeting.
-        </InfoBox>
-      )}
-      <SiteCalendarForm siteId={site.id} mutated={() => mutateMeetings()} />
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Date</TableHead>
-            <TableHead>Time/Notes</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Zoom Link</TableHead>
-            <TableHead className="w-0"></TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {isLoading ? (
+    <Card id="meetings">
+      <CardHeader className="font-semibold">
+        Schedule a Zoom Meeting with the Team
+      </CardHeader>
+      <CardContent className="space-y-8">
+        {!site.startDate && (
+          <InfoBox>
+            Suggest a few meeting times and dates and we will confirm the time
+            both here and via email. The zoom link will be emailed out and shown
+            below prior to the meeting.
+          </InfoBox>
+        )}
+        <SiteCalendarForm siteId={site.id} mutated={() => mutateMeetings()} />
+        <Table>
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={5} className="p-8">
-                Loading ...
-              </TableCell>
+              <TableHead>Date</TableHead>
+              <TableHead>Time/Notes</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Zoom Link</TableHead>
+              <TableHead className="w-0"></TableHead>
             </TableRow>
-          ) : meetings && meetings.length > 0 ? (
-            meetings.map((m) => (
-              <TableRow key={m.id}>
-                <TableCell>{m.date?.toDateString() ?? "Unspecified"}</TableCell>
-                <TableCell>{m.notes ?? "Unspecified"}</TableCell>
-                <TableCell
-                  className={cn(
-                    "capitalize",
-                    m.status === "pending" && "bg-none",
-                    m.status === "rejected" && "bg-red-100",
-                    m.status === "cancelled" && "bg-red-100",
-                    m.status === "confirmed" && "bg-green-100",
-                    // m.status === "completed" && "bg-blue-100",
-                  )}
-                >
-                  {m.status}
-                </TableCell>
-                <TableCell>
-                  {m.url ? (
-                    <Button variant="link" asChild className="p-0 h-auto">
-                      <Link
-                        href={m.url ?? "#"}
-                        target="_blank"
-                        className="flex items-center gap-2"
-                      >
-                        Meeting Link{" "}
-                        <LucideExternalLink className="w-3.5 h-3.5" />
-                      </Link>
-                    </Button>
-                  ) : (
-                    "Not created"
-                  )}
-                </TableCell>
-                <TableCell className="flex gap-1">
-                  {role === "owner" && (
-                    <Button
-                      size="icon"
-                      variant="outline"
-                      className="w-8 h-8 p-1"
-                      disabled={isValidating || isUpdating}
-                      onClick={() => updateMeeting(m.id, {}, true)}
-                    >
-                      <LucideTrash
-                        className="w-3.5 text-red-400"
-                        strokeWidth={2.5}
-                      />
-                    </Button>
-                  )}
-                  {role === "supervisor" && (
-                    <>
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        className="w-8 h-8 p-1"
-                        disabled={isValidating || isUpdating}
-                        onClick={() =>
-                          updateMeeting(m.id, {
-                            status:
-                              m.status === "confirmed"
-                                ? "cancelled"
-                                : "rejected",
-                          })
-                        }
-                      >
-                        <LucideX className="w-3.5" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        className="w-8 h-8 p-1"
-                        disabled={isValidating || isUpdating}
-                        onClick={() =>
-                          updateMeeting(m.id, { status: "confirmed" })
-                        }
-                      >
-                        <LucideCheck className="w-3.5" />
-                      </Button>
-                    </>
-                  )}
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={5} className="p-8">
+                  Loading ...
                 </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={5} className="p-8">
-                No scheduled meetings
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </>
+            ) : meetings && meetings.length > 0 ? (
+              meetings.map((m) => (
+                <TableRow key={m.id}>
+                  <TableCell>
+                    {m.date?.toDateString() ?? "Unspecified"}
+                  </TableCell>
+                  <TableCell>{m.notes ?? "Unspecified"}</TableCell>
+                  <TableCell
+                    className={cn(
+                      "capitalize",
+                      m.status === "pending" && "bg-none",
+                      m.status === "rejected" && "bg-red-100",
+                      m.status === "cancelled" && "bg-red-100",
+                      m.status === "confirmed" && "bg-green-100",
+                      // m.status === "completed" && "bg-blue-100",
+                    )}
+                  >
+                    {m.status}
+                  </TableCell>
+                  <TableCell>
+                    {m.url ? (
+                      <Button variant="link" asChild className="p-0 h-auto">
+                        <Link
+                          href={m.url ?? "#"}
+                          target="_blank"
+                          className="flex items-center gap-2"
+                        >
+                          Meeting Link{" "}
+                          <LucideExternalLink className="w-3.5 h-3.5" />
+                        </Link>
+                      </Button>
+                    ) : (
+                      "Not created"
+                    )}
+                  </TableCell>
+                  <TableCell className="flex gap-1">
+                    {role === "owner" && (
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className="w-8 h-8 p-1"
+                        disabled={isValidating || isUpdating}
+                        onClick={() => updateMeeting(m.id, {}, true)}
+                      >
+                        <LucideTrash
+                          className="w-3.5 text-red-400"
+                          strokeWidth={2.5}
+                        />
+                      </Button>
+                    )}
+                    {role === "supervisor" && (
+                      <>
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          className="w-8 h-8 p-1"
+                          disabled={isValidating || isUpdating}
+                          onClick={() =>
+                            updateMeeting(m.id, {
+                              status:
+                                m.status === "confirmed"
+                                  ? "cancelled"
+                                  : "rejected",
+                            })
+                          }
+                        >
+                          <LucideX className="w-3.5" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          className="w-8 h-8 p-1"
+                          disabled={isValidating || isUpdating}
+                          onClick={() =>
+                            updateMeeting(m.id, { status: "confirmed" })
+                          }
+                        >
+                          <LucideCheck className="w-3.5" />
+                        </Button>
+                      </>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5} className="p-8">
+                  No scheduled meetings
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   );
 }

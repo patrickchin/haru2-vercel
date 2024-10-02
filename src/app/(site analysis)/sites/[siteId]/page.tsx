@@ -21,7 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { InfoBox } from "@/components/info-box";
+import { GoodBox, InfoBox } from "@/components/info-box";
 
 export interface SiteDetailsProps {
   site: SiteDetails;
@@ -198,28 +198,111 @@ function SiteMembersTable({ site, members }: SiteDetailsProps) {
 
 async function SiteComplaints({ site }: { site: SiteDetails }) {
   const complaints = await Actions.getSiteNotices(site.id);
+  const resolved = complaints?.filter((c) => c.resolved);
+  const unresolved = complaints?.filter((c) => !c.resolved);
   return (
     <Card id="meetings">
       <CardHeader className="font-semibold">
         Current Unresolved Issues
       </CardHeader>
       <CardContent>
+        {unresolved && unresolved.length > 0 ? (
+          <Table>
+            <TableBody>
+              {unresolved.map((c) => (
+                <TableRow className="">
+                  <TableCell className="" width={1}>
+                    <LucideAlertTriangle className="text-destructive" />
+                  </TableCell>
+                  <TableCell className={c.resolved ? "line-through" : ""}>
+                    {c.description}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        ) : (
+          <>
+            <GoodBox>Currently there are no unresolved issues!</GoodBox>
+          </>
+        )}
+        {resolved && resolved.length > 0 && (
+          <Table>
+            <TableBody>
+              {resolved?.map((c) => (
+                <TableRow className={"opacity-60"}>
+                  <TableCell className="" width={1}>
+                    <LucideCheck className="text-green-600" />
+                  </TableCell>
+                  <TableCell className={c.resolved ? "line-through" : ""}>
+                    {c.description}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function SiteProgress({ site }: { site: SiteDetails }) {
+  const progressPct =
+    site.startDate && site.endDate
+      ? (100 * (new Date().getTime() - site.startDate.getTime())) /
+        (site.endDate.getTime() - site.startDate.getTime())
+      : undefined;
+
+  return (
+    <Card id="progress">
+      <CardHeader className="font-semibold">
+        Supervision Progress and Milestones
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3">
+        {!site.startDate && (
+          <InfoBox>
+            After scheduling a meeting with us in the section below, we will
+            update the site supervision schedule dates here.
+          </InfoBox>
+        )}
+        <Progress value={progressPct} indicatorClassName="bg-blue-400" />
         <Table>
           <TableBody>
-            {complaints?.map((c) => (
-              <TableRow className={cn(c.resolved ? "opacity-60" : "")}>
-                <TableCell className="" width={1}>
-                  {c.resolved ? (
-                    <LucideCheck className="text-green-600" />
-                  ) : (
-                    <LucideAlertTriangle className="text-destructive" />
-                  )}
-                </TableCell>
-                <TableCell className={c.resolved ? "line-through" : ""}>
-                  {c.description}
-                </TableCell>
-              </TableRow>
-            ))}
+            <TableRow>
+              <TableHead className="font-medium">Creation Date</TableHead>
+              <TableCell>{site.createdAt.toDateString()}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableHead className="font-medium">Start Date</TableHead>
+              <TableCell>
+                {site.startDate?.toDateString() ??
+                  "Unknown"}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableHead className="font-medium">End Date</TableHead>
+              <TableCell>
+                {site.endDate?.toDateString() ??
+                  "Unknown"}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableHead className="font-medium">Next Report Date</TableHead>
+              <TableCell>
+                {site.nextReportDate?.toDateString() ??
+                  "Unknown"}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableHead className="font-medium">
+                Supervision Schedule
+              </TableHead>
+              <TableCell>
+                {site.schedule ??
+                  "Unknown"}
+              </TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </CardContent>
@@ -243,12 +326,6 @@ export default async function Page({
   // TODO custom site not found page
   if (!site) notFound();
 
-  const progressPct =
-    site.startDate && site.endDate
-      ? (100 * (new Date().getTime() - site.startDate.getTime())) /
-        (site.endDate.getTime() - site.startDate.getTime())
-      : undefined;
-
   return (
     <DefaultLayout>
       <div className="flex items-center justify-between pb-3">
@@ -269,70 +346,12 @@ export default async function Page({
       <SiteInfoBar site={site} members={members} />
       <SiteMembersBar site={site} members={members} />
 
-      <SiteComplaints  site={site} />
+      <div className="grid gap-4 grid-cols-2">
+        <SiteProgress site={site} />
+        <SiteComplaints site={site} />
+      </div>
 
-
-      <Card id="progress">
-        <CardHeader className="font-semibold">
-          Supervision Progress and Milestones
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          {!site.startDate && (
-            <InfoBox>
-              After scheduling a meeting with us in the section below, we will
-              update the site supervision schedule dates here.
-            </InfoBox>
-          )}
-          <Progress value={progressPct} indicatorClassName="bg-blue-400" />
-          <Table>
-            <TableBody>
-              <TableRow>
-                <TableHead className="font-medium">Creation Date</TableHead>
-                <TableCell>{site.createdAt.toDateString()}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableHead className="font-medium">Start Date</TableHead>
-                <TableCell>
-                  {site.startDate?.toDateString() ??
-                    "Site supervision has not yet started"}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableHead className="font-medium">End Date</TableHead>
-                <TableCell>
-                  {site.endDate?.toDateString() ??
-                    "End date has not yet been agreed upon"}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableHead className="font-medium">Next Report Date</TableHead>
-                <TableCell>
-                  {site.nextReportDate?.toDateString() ??
-                    "Next report date has not been set"}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableHead className="font-medium">
-                  Supervision Schedule
-                </TableHead>
-                <TableCell>
-                  {site.schedule ??
-                    "A report schedule has not yet been agreed on"}
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      <Card id="meetings">
-        <CardHeader className="font-semibold">
-          Schedule a Zoom Meeting with the Team
-        </CardHeader>
-        <CardContent className="space-y-8">
-          <SiteMeetings site={site} members={members} />
-        </CardContent>
-      </Card>
+      <SiteMeetings site={site} members={members} />
 
       <SiteMembersTable site={site} members={members} />
 
