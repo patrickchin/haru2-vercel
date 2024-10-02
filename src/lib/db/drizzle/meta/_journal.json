@@ -15,6 +15,13 @@
       "when": 1727627388512,
       "tag": "0001_kind_rachel_grey",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1727856188855,
+      "tag": "0002_loose_hellcat",
+      "breakpoints": true
     }
   ]
 }
