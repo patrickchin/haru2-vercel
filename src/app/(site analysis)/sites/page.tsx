@@ -46,7 +46,7 @@ export default async function Page() {
   return (
     <DefaultLayout>
       <div className="flex flex-col items-center gap-6">
-        <h2>My Site Supervision Projects</h2>
+        <h1 className="text-3xl font-semibold">My Site Supervision Projects</h1>
         <Button asChild>
           <Link href="/new-site">Register New Construction Site</Link>
         </Button>

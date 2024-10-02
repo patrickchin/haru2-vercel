@@ -129,7 +129,7 @@ function SettingsPage() {
 export default function Page() {
   return (
     <DefaultLayout>
-      <h3>Settings</h3>
+      <h1>Settings</h1>
       <SettingsPage />
     </DefaultLayout>
   );

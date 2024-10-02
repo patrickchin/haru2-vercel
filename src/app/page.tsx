@@ -15,7 +15,7 @@ export default function Page() {
         </div>
 
         <div className="flex flex-col gap-16 max-w-7xl">
-          <h1 className="flex text-center text-6xl">
+          <h1 className="flex text-center text-6xl font-extrabold">
             Your Construction Projects, <br />
             Seamlessly Supervised
           </h1>

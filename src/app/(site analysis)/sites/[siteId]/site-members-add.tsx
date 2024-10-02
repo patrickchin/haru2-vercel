@@ -36,7 +36,7 @@ function SiteMemberFields({
 }: SiteDetailsProps & { form: any; prefix: string }) {
   return (
     <div className="flex flex-col">
-      <h6 className="capitalize">{prefix}</h6>
+      <h3 className="capitalize text-base font-semibold">{prefix}</h3>
 
       <div className="grid grid-cols-3 gap-3">
         <FormField

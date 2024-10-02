@@ -36,7 +36,6 @@ import {
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
   Carousel,
-  CarouselApi,
   CarouselContent,
   CarouselItem,
   CarouselNext,
@@ -116,11 +115,11 @@ export async function ReportTitleBarDisplay({
               variant="outline"
               className="items-center justify-between gap-4 border-2 p-4"
             >
-              <h3 className="justify-start">
+              <h1 className="text-2xl font-semibold justify-start">
                 {report
                   ? `Site Report #${report.id} - ${report.createdAt?.toDateString()}`
                   : "Click here to select a report"}
-              </h3>
+              </h1>
               <LucideChevronDown />
             </Button>
           </PopoverTrigger>
@@ -336,12 +335,12 @@ export async function ReportDocumentDisplay({
           {/* <CardContent className="flex p-4 pt-0"> */}
 
           <div className="basis-1/4 border p-4 bg-background space-y-2">
-            <h6>Site Activity</h6>
+            <h2 className="text-base font-semibold">Site Activity</h2>
             <p>{report?.activity ?? "--"}</p>
           </div>
 
           <div className="basis-1/4 border p-4 bg-background space-y-2">
-            <h6>Site Personel</h6>
+            <h2 className="text-base font-semibold">Site Personel</h2>
 
             <div>
               <Table>
@@ -368,12 +367,12 @@ export async function ReportDocumentDisplay({
           </div>
 
           <div className="basis-1/4 border p-4 bg-background space-y-2">
-            <h6>Materials Status</h6>
+            <h2 className="text-base font-semibold">Materials Status</h2>
             <p>{report?.materials ?? "--"}</p>
           </div>
 
           <div className="basis-1/4 border p-4 bg-background space-y-2">
-            <h6>Equiptment Status</h6>
+            <h2 className="text-base font-semibold">Equiptment Status</h2>
             <p>{report?.equiptment ?? "--"}</p>
           </div>
         </CardContent>

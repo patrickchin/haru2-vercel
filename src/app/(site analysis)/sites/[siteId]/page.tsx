@@ -168,9 +168,9 @@ export default async function Page({
   return (
     <DefaultLayout>
       <div className="flex items-center justify-between pb-3">
-        <h3>
+        <h1 className="text-2xl font-semibold">
           Site {siteId}: {site?.title}
-        </h3>
+        </h1>
         <Button variant={"default"} size={"lg"} asChild>
           <Link
             href={`/sites/${siteId}/reports`}

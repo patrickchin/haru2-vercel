@@ -37,7 +37,7 @@ export default function Page() {
     <GradientLayout>
       <div className="w-screen max-w-md rounded-2xl shadow-xl overflow-hidden">
         <div className="flex flex-col py-6 space-y-3 bg-background text-center border-b border-border">
-          <h3>Create an Account</h3>
+          <h1 className="text-2xl font-semibold">Create an Account</h1>
           <p>Create an account with your email and password</p>
         </div>
 

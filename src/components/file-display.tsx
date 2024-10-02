@@ -1,8 +1,7 @@
 import { HaruFile } from "@/lib/types";
 import Image from "next/image";
 
-
-export function FileDisplay({ file }: { file?: HaruFile; }) {
+export function FileDisplay({ file }: { file?: HaruFile }) {
   return (
     <div className="flex items-center justify-center relative h-full">
       {file &&
@@ -14,7 +13,8 @@ export function FileDisplay({ file }: { file?: HaruFile; }) {
             src={file.url}
             alt={file.filename || "<Untitled>"}
             fill={true}
-            className="object-contain" />
+            className="object-contain"
+          />
         ) : file.type?.startsWith("video/") ? (
           <video controls className="max-w-full max-h-full w-full h-full">
             <source src={file.url} type={file.type} />

@@ -119,7 +119,7 @@ const services = [
 export default function Page() {
   return (
     <DefaultLayout className="max-w-7xl">
-      <h2>Site Analysis Services</h2>
+      <h1 className="text-3xl font-semibold">Site Analysis Services</h1>
       <ul className="w-full grid grid-cols-3 gap-4">
         {services.map((s, i) => {
           const id = s.name.replaceAll(" ", "-").toLowerCase();
@@ -132,7 +132,7 @@ export default function Page() {
                 htmlFor={id}
                 className="flex justify-between items-center cursor-pointer"
               >
-                <h5>{s.name}</h5>
+                <h3 className="text-lg font-semibold">{s.name}</h3>
                 <Switch id={id} defaultChecked={true} />
               </Label>
               <Separator />
