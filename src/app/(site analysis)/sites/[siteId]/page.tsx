@@ -213,7 +213,7 @@ export default async function Page({
 
   const progressPct =
     site.startDate && site.endDate
-      ? (new Date().getTime() - site.startDate.getTime()) /
+      ? (100 * (new Date().getTime() - site.startDate.getTime())) /
         (site.endDate.getTime() - site.startDate.getTime())
       : undefined;
 
@@ -248,9 +248,7 @@ export default async function Page({
               update the site supervision schedule dates here.
             </InfoBox>
           )}
-          <Progress value={progressPct} indicatorClassName="bg-blue-400">
-            lksdjflaksjfaklsjdflkasjdf slkdf jlaksdjf laskd f
-            </Progress>
+          <Progress value={progressPct} indicatorClassName="bg-blue-400" />
           <Table>
             <TableBody>
               <TableRow>
