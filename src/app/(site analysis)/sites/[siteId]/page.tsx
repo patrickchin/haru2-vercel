@@ -200,6 +200,7 @@ async function SiteComplaints({ site }: { site: SiteDetails }) {
   const complaints = await Actions.getSiteNotices(site.id);
   const resolved = complaints?.filter((c) => c.resolved);
   const unresolved = complaints?.filter((c) => !c.resolved);
+
   return (
     <Card id="meetings">
       <CardHeader className="font-semibold">
@@ -210,7 +211,7 @@ async function SiteComplaints({ site }: { site: SiteDetails }) {
           <Table>
             <TableBody>
               {unresolved.map((c) => (
-                <TableRow className="">
+                <TableRow className="" key={`notice-${c.id}`}>
                   <TableCell className="" width={1}>
                     <LucideAlertTriangle className="text-destructive" />
                   </TableCell>
@@ -230,7 +231,7 @@ async function SiteComplaints({ site }: { site: SiteDetails }) {
           <Table>
             <TableBody>
               {resolved?.map((c) => (
-                <TableRow className={"opacity-60"}>
+                <TableRow className={"opacity-60"} key={`notice-${c.id}`}>
                   <TableCell className="" width={1}>
                     <LucideCheck className="text-green-600" />
                   </TableCell>
