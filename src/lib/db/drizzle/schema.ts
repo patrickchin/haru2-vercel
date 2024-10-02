@@ -9,6 +9,7 @@ import {
   jsonb,
   numeric,
   interval,
+  boolean,
 } from "drizzle-orm/pg-core";
 
 // pnpm drizzle-kit push
@@ -184,6 +185,17 @@ export const siteMeetings1 = pgTable("siteMeetings1", {
   duration: interval("duration"),
   notes: varchar("notes"),
   url: varchar("url"),
+});
+
+export const siteNotices1 = pgTable("siteNotices1", {
+  id: serial("id").primaryKey(),
+  siteId: integer("siteId").references(() => sites1.id),
+  resolved: boolean("resolved"),
+  description: varchar("description"),
+  createdAt: timestamp("createdAt", {
+    mode: "date",
+    withTimezone: true,
+  }).defaultNow(),
 });
 
 export const siteReports1 = pgTable("siteReports1", {

@@ -2,8 +2,9 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteDetails, SiteMember, SiteMemberRole } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import * as Actions from "@/lib/actions";
-import { LucideArrowRight } from "lucide-react";
+import { LucideAlertTriangle, LucideArrowRight, LucideCheck } from "lucide-react";
 
 import SiteMeetings from "./site-meetings";
 import EditSiteMembersButtonPopup from "./site-members-add";
@@ -195,6 +196,37 @@ function SiteMembersTable({ site, members }: SiteDetailsProps) {
   );
 }
 
+async function SiteComplaints({ site }: { site: SiteDetails }) {
+  const complaints = await Actions.getSiteNotices(site.id);
+  return (
+    <Card id="meetings">
+      <CardHeader className="font-semibold">
+        Current Unresolved Issues
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableBody>
+            {complaints?.map((c) => (
+              <TableRow className={cn(c.resolved ? "opacity-60" : "")}>
+                <TableCell className="" width={1}>
+                  {c.resolved ? (
+                    <LucideCheck className="text-green-600" />
+                  ) : (
+                    <LucideAlertTriangle className="text-destructive" />
+                  )}
+                </TableCell>
+                <TableCell className={c.resolved ? "line-through" : ""}>
+                  {c.description}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default async function Page({
   params,
   searchParams,
@@ -236,6 +268,9 @@ export default async function Page({
 
       <SiteInfoBar site={site} members={members} />
       <SiteMembersBar site={site} members={members} />
+
+      <SiteComplaints  site={site} />
+
 
       <Card id="progress">
         <CardHeader className="font-semibold">

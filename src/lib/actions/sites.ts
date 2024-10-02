@@ -81,6 +81,12 @@ export async function updateSiteMeeting(
   }
 }
 
+export async function getSiteNotices(siteId: number) {
+  const session = await auth();
+  if (await siteActionAllowed(session, viewingRoles, { siteId }))
+    return db.getSiteNotices(siteId);
+}
+
 export async function updateSiteMeetingReturnAllMeetings(
   meetingId: number,
   values: SiteMeetingNew,

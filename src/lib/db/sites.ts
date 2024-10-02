@@ -8,6 +8,7 @@ import {
   SiteMeeting,
   SiteMeetingNew,
   SiteMember,
+  SiteNoticeNew,
 } from "@/lib/types/site";
 import * as Schemas from "@/drizzle/schema";
 
@@ -142,6 +143,30 @@ export async function deleteSiteMeeting(
     .delete(Schemas.siteMeetings1)
     .where(eq(Schemas.siteMeetings1.id, meetingId))
     .then((r) => r[0]);
+}
+
+export async function getSiteNotices(siteId: number) {
+  return await db
+    .select()
+    .from(Schemas.siteNotices1)
+    .where(eq(Schemas.siteNotices1.siteId, siteId));
+}
+
+export async function addSiteNotice(siteId: number, description: string) {
+  return await db
+    .insert(Schemas.siteNotices1)
+    .values({ siteId, description })
+    .returning()
+    .then((n) => n[0]);
+}
+
+export async function updateSiteNotice(siteId: number, values: SiteNoticeNew) {
+  return await db
+    .update(Schemas.siteNotices1)
+    .set(values)
+    .where(eq(Schemas.siteNotices1.siteId, siteId))
+    .returning()
+    .then((n) => n[0]);
 }
 
 export async function addUserSite(
