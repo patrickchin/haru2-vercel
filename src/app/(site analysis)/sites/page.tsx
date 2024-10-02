@@ -10,7 +10,7 @@ function EmptySitesList() {
 }
 
 async function SitesList() {
-  const sites = await Actions.getMySites();
+  const sites = await Actions.getAllVisibleSites();
 
   if (!sites || sites.length <= 0) {
     return <EmptySitesList />;
