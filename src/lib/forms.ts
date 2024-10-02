@@ -104,6 +104,13 @@ export const registerZodSchemas = {
   password: registerPasswordSchema,
 };
 
+export const changePasswordSchema = z.object({
+  password: z.string(),
+  passwordConfirm: z.string(),
+  newPassword: z.string(),
+});
+export type ChangePasswordType = z.infer<typeof changePasswordSchema>;
+
 export const addSiteSchema = z.object({
   title: z.string(),
   type: z.string(),
