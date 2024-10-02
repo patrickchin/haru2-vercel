@@ -142,7 +142,7 @@ function SiteCalendarForm({
 
         <div className="flex items-end">
           <Button type="submit" className="gap-2">
-            Add a Meeting Time
+            Add Meeting Time
             <LucidePlus className="w-4" />
           </Button>
         </div>

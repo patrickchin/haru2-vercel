@@ -66,7 +66,7 @@ export async function getSiteMeeting(meetingId: number) {
 
 export async function addSiteMeeting(siteId: number, values: SiteMeetingNew) {
   const session = await auth();
-  if (await siteActionAllowed(session, editingRoles, { siteId }))
+  if (await siteActionAllowed(session, viewingRoles, { siteId }))
     return db.addSiteMeeting({ siteId, userId: session?.user?.idn }, values);
 }
 
@@ -75,7 +75,8 @@ export async function updateSiteMeeting(
   values: SiteMeetingNew,
 ) {
   const session = await auth();
-  if (await siteActionAllowed(session, editingRoles, { meetingId })) {
+  // TODO only editingRoles should be allowed to confirm
+  if (await siteActionAllowed(session, viewingRoles, { meetingId })) {
     return db.updateSiteMeeting(meetingId, values);
   }
 }
