@@ -56,7 +56,7 @@ function ChangePassword() {
         onSubmit={form.handleSubmit((d) => {
           // TODO
         })}
-        className="w-full max-w-lg space-y-4"
+        className="w-full max-w-md space-y-4"
       >
         <FormField
           control={form.control}
@@ -127,7 +127,7 @@ function SettingsPage() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const fetcher = (arg: string) => fetch(arg).then((res) => res.json());
-  const { data: user } = useSWR<HaruUserAccount>(`/api/me`, fetcher);
+  const { data: user } = useSWR(`/api/me`, fetcher);
 
   async function onChangeAvatar(e: ChangeEvent<HTMLInputElement>) {
     const targetFiles = e.currentTarget.files;
@@ -239,8 +239,8 @@ function SettingsPage() {
               <TableRow>
                 <TableHead>User Creation Date</TableHead>
                 <TableCell>
-                  <time dateTime={user?.createdAt.toString()}>
-                    {user?.createdAt.toString()}
+                  <time dateTime={user?.createdAt}>
+                    {new Date(user?.createdAt).toLocaleString()}
                   </time>
                 </TableCell>
               </TableRow>
