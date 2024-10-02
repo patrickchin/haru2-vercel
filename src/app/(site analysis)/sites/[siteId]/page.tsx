@@ -347,7 +347,7 @@ export default async function Page({
       <SiteInfoBar site={site} members={members} />
       <SiteMembersBar site={site} members={members} />
 
-      <div className="grid gap-4 grid-cols-2">
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
         <SiteProgress site={site} />
         <SiteComplaints site={site} />
       </div>
