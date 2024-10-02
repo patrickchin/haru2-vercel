@@ -48,6 +48,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { SiteDetailsProps } from "./page";
+import { InfoBox } from "@/components/info-box";
 
 const formSchema = z.object({
   date: z.date(),
@@ -193,14 +194,13 @@ export default function SiteMeetings({ site, members }: SiteDetailsProps) {
 
   return (
     <>
-      <div className="flex gap-3 bg-yellow-50 border-2 p-4 rounded border-yellow-200">
-        <LucideMessageCircleWarning className="inline-block align-baseline h-8 w-8" />
-        <p>
+      {!site.startDate && (
+        <InfoBox>
           Suggest a few meeting times and dates and we will confirm the time
           both here and via email. The zoom link will be emailed out and shown
           below prior to the meeting.
-        </p>
-      </div>
+        </InfoBox>
+      )}
       <SiteCalendarForm siteId={site.id} mutated={() => mutateMeetings()} />
       <Table>
         <TableHeader>
@@ -215,7 +215,7 @@ export default function SiteMeetings({ site, members }: SiteDetailsProps) {
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={4} className="p-8">
+              <TableCell colSpan={5} className="p-8">
                 Loading ...
               </TableCell>
             </TableRow>
@@ -303,7 +303,7 @@ export default function SiteMeetings({ site, members }: SiteDetailsProps) {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={4} className="p-8">
+              <TableCell colSpan={5} className="p-8">
                 No scheduled meetings
               </TableCell>
             </TableRow>

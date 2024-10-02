@@ -19,6 +19,7 @@ import {
   TableHead,
   TableRow,
 } from "@/components/ui/table";
+import { InfoBox } from "@/components/info-box";
 
 export interface SiteDetailsProps {
   site: SiteDetails;
@@ -31,7 +32,7 @@ function SiteDescription({ site, members }: SiteDetailsProps) {
     "There is currently no description for this site project";
   return (
     <Card>
-      <CardHeader>Description</CardHeader>
+      <CardHeader className="font-semibold">Description</CardHeader>
       <CardContent>{desc}</CardContent>
     </Card>
   );
@@ -190,6 +191,12 @@ export default async function Page({
           Supervision Progress and Milestones
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
+          {!site.startDate && (
+            <InfoBox>
+              After scheduling a meeting with us in the section below, we will
+              update the site supervision schedule dates here.
+            </InfoBox>
+          )}
           <Progress value={progressPct} />
           <Table>
             <TableBody>
