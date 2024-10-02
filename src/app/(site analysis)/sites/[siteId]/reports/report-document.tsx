@@ -198,12 +198,15 @@ export async function ReportSection({
                   <DialogContent
                     key="file-viewer-dialog-content"
                     className={cn(
-                      "w-11/12 h-[92%] max-w-none p-0 border-4 border-black",
-                      "bg-gradient-to-r from-cyan-100 to-blue-100",
+                      "p-4 bg-transparent max-w-none max-h-none",
+                      false ? "w-dvw h-dvh" : "w-11/12 h-[92%]",
+                      true ? "border-none" : "border-4 border-black",
+                      "bg-zinc-800",
+                      // "bg-gradient-to-r from-cyan-100 to-blue-100",
                     )}
                   >
                     <Carousel
-                      className="w-full h-full"
+                      // className="w-full h-full"
                       opts={{ startIndex: i }}
                     >
                       <CarouselContent className="h-full">
