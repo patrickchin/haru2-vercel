@@ -32,6 +32,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.9.0
         version: 3.9.0(react-hook-form@7.52.2(react@18.3.1))
+      '@photo-sphere-viewer/core':
+        specifier: ^5.10.1
+        version: 5.10.1
       '@radix-ui/react-accordion':
         specifier: ^1.2.0
         version: 1.2.0(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -206,6 +209,9 @@ importers:
       react-phone-number-input:
         specifier: ^3.4.5
         version: 3.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-photo-sphere-viewer:
+        specifier: ^6.0.0
+        version: 6.0.0(@photo-sphere-viewer/core@5.10.1)(postcss@8.4.41)(prop-types@15.8.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-resizable-panels:
         specifier: ^2.1.0
         version: 2.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1213,6 +1219,9 @@ packages:
 
   '@panva/hkdf@1.2.1':
     resolution: {integrity: sha512-6oclG6Y3PiDFcoyk8srjLfVKyMfVCKJ27JwNPViuXziFpmdz+MZnZN/aKY0JGXgYuO/VghU0jcOAZgWXZ1Dmrw==}
+
+  '@photo-sphere-viewer/core@5.10.1':
+    resolution: {integrity: sha512-xdvPbfQqLl8tggqNDMcczbQGNQHbA4N9u3RCuzYzhrN2PBE2ihL5TsH85smkH4GcRrJKypSzwXF7rDrQhcs7aQ==}
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -3007,6 +3016,9 @@ packages:
   event-emitter@0.3.5:
     resolution: {integrity: sha512-D9rRn9y7kLPnJ+hMq7S/nhvoKwwvVJahBi2BPmx3bvbsEdK3W9ii8cBSGjP+72/LnM4n6fo3+dkCX5FeTQruXA==}
 
+  eventemitter3@5.0.1:
+    resolution: {integrity: sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==}
+
   ext@1.7.0:
     resolution: {integrity: sha512-6hxeJYaL110a9b5TEJSj0gojyHQAmA2ch5Os+ySCiA1QGdS697XWY1pzsrSjqA9LDEEgdB/KypIlR59RcLuHYw==}
 
@@ -4027,6 +4039,15 @@ packages:
       react: '>=16.8'
       react-dom: '>=16.8'
 
+  react-photo-sphere-viewer@6.0.0:
+    resolution: {integrity: sha512-AazuvzUtymCIr49lHY4s+TA0SdEjf26e4Qw2w4zHtk3jQ39YOxAih5xClZ2tLEcOXGlrSfztOUCAt2y+7Uj1mA==}
+    engines: {node: '>=8', npm: '>=5'}
+    peerDependencies:
+      '@photo-sphere-viewer/core': '>=5.7.1'
+      prop-types: ^15.5.4
+      react: '>=16.0.0'
+      react-dom: '>=16.0.0'
+
   react-promise-suspense@0.3.4:
     resolution: {integrity: sha512-I42jl7L3Ze6kZaq+7zXWSunBa3b1on5yfvUW6Eo/3fFOj6dZ5Bqmcd264nJbTK/gn1HjjILAjSwnZbV4RpSaNQ==}
 
@@ -4384,6 +4405,9 @@ packages:
 
   three@0.163.0:
     resolution: {integrity: sha512-HlMgCb2TF/dTLRtknBnjUTsR8FsDqBY43itYop2+Zg822I+Kd0Ua2vs8CvfBVefXkBdNDrLMoRTGCIIpfCuDew==}
+
+  three@0.168.0:
+    resolution: {integrity: sha512-6m6jXtDwMJEK/GGMbAOTSAmxNdzKvvBzgd7q8bE/7Tr6m7PaBh5kKLrN7faWtlglXbzj7sVba48Idwx+NRsZXw==}
 
   timers-ext@0.1.8:
     resolution: {integrity: sha512-wFH7+SEAcKfJpfLPkrgMPvvwnEtj8W4IurvEyrKsDleXnKLCDw71w8jltvfLa8Rm4qQxxT4jmDBYbJG/z7qoww==}
@@ -5639,6 +5663,10 @@ snapshots:
   '@one-ini/wasm@0.1.1': {}
 
   '@panva/hkdf@1.2.1': {}
+
+  '@photo-sphere-viewer/core@5.10.1':
+    dependencies:
+      three: 0.168.0
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -7863,6 +7891,8 @@ snapshots:
       d: 1.0.2
       es5-ext: 0.10.64
 
+  eventemitter3@5.0.1: {}
+
   ext@1.7.0:
     dependencies:
       type: 2.7.3
@@ -8854,6 +8884,17 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
+  react-photo-sphere-viewer@6.0.0(@photo-sphere-viewer/core@5.10.1)(postcss@8.4.41)(prop-types@15.8.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      '@photo-sphere-viewer/core': 5.10.1
+      autoprefixer: 10.4.20(postcss@8.4.41)
+      eventemitter3: 5.0.1
+      prop-types: 15.8.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    transitivePeerDependencies:
+      - postcss
+
   react-promise-suspense@0.3.4:
     dependencies:
       fast-deep-equal: 2.0.1
@@ -9281,6 +9322,8 @@ snapshots:
       three: 0.163.0
 
   three@0.163.0: {}
+
+  three@0.168.0: {}
 
   timers-ext@0.1.8:
     dependencies:
