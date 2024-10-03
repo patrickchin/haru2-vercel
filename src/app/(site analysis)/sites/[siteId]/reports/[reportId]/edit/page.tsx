@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { UpdateSiteReportFiles } from "./edit-upload";
 import { UpdateSiteReportSections } from "./edit-sections";
+import { EditReportDocument } from "./edit-report-document";
 import * as Actions from "@/lib/actions";
 
 export default async function Page({
@@ -25,15 +26,9 @@ export default async function Page({
     const reportId = Number(params.reportId);
     return (
       <DefaultLayout>
-        <Button asChild>
-          <Link href={`/sites/${siteId}/reports/${reportId}`}>
-            Back To Report
-          </Link>
-        </Button>
-        <UpdateSiteReportFiles siteId={siteId} reportId={reportId} />
-        <UpdateSiteReportForm siteId={siteId} reportId={reportId} />
-        <UpdateSiteReportDetailsForm siteId={siteId} reportId={reportId} />
-        <UpdateSiteReportSections siteId={siteId} reportId={reportId} />
+        <EditReportDocument
+        // Report
+        />
       </DefaultLayout>
     );
   } else {
