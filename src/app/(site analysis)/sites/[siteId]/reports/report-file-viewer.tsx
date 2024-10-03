@@ -120,8 +120,8 @@ export function FileDisplayCarousel({
         <Carousel className="w-full h-full group" opts={{ watchDrag: false }}>
           <CarouselContent>
             {fileList?.map((f) => (
-              <CarouselItem key={f.id} className="h-[30rem]">
-                <FileDisplay file={f} className="h-full" />
+              <CarouselItem key={f.id} className="h-[40rem]">
+                <FileDisplay file={f} allow3d={true} className="h-full" />
               </CarouselItem>
             ))}
           </CarouselContent>
