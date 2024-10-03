@@ -6,8 +6,6 @@ import Image from "next/image";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { LucideMove3D } from "lucide-react";
-
-// const Pannellum: any = require("pannellum-react");
 import { ReactPhotoSphereViewer } from "react-photo-sphere-viewer";
 
 export function FileDisplay({
@@ -29,7 +27,6 @@ export function FileDisplay({
         (file.type?.startsWith("image/") ? (
           <>
             {view360 ? (
-              // <Pannellum.Pannellum height="100%" image={file.url} autoLoad />
               <ReactPhotoSphereViewer
                 src={file.url}
                 height={"100vh"}
