@@ -189,33 +189,34 @@ export async function ReportSection({
                 className="inline-block w-[120px] h-[90px] m-1 border rounded overflow-hidden relative hover:opacity-50"
               >
                 <Dialog>
-                  <DialogTrigger>
+                  <DialogTrigger asChild>
                     <Image
                       src={f.url || ""}
                       alt={f.filename || "unknown image"}
-                      width={120}
-                      height={90}
-                      className="object-cover w-full h-full"
+                      width={200}
+                      height={150}
+                      className="object-cover absolute w-full h-full"
                     />
                   </DialogTrigger>
                   <DialogContent
                     key="file-viewer-dialog-content"
                     className={cn(
-                      "p-4 bg-transparent max-w-none max-h-none",
-                      false ? "w-dvw h-dvh" : "w-11/12 h-[92%]",
-                      true ? "border-none" : "border-4 border-black",
-                      "bg-zinc-800",
-                      // "bg-gradient-to-r from-cyan-100 to-blue-100",
+                      "p-0 bg-transparent max-w-none max-h-none rounded overflow-hidden",
+                      "w-[95svw] rounded border-none bg-background",
                     )}
                   >
                     <Carousel
-                      // className="w-full h-full"
+                      className="w-full h-full"
                       opts={{ startIndex: i }}
                     >
-                      <CarouselContent className="h-full">
+                      <CarouselContent>
                         {files?.map((f) => (
-                          <CarouselItem key={f.id}>
-                            <FileDisplay file={f} />
+                          <CarouselItem
+                            key={f.id}
+                            className="flex flex-col h-[95svh]"
+                          >
+                            {/* TODO why can't i put things here?!?!??!!? */}
+                            <FileDisplay file={f} className="grow" />
                           </CarouselItem>
                         ))}
                       </CarouselContent>

@@ -121,7 +121,7 @@ export function FileDisplayCarousel({
           <CarouselContent>
             {fileList?.map((f) => (
               <CarouselItem key={f.id} className="h-[30rem]">
-                <FileDisplay file={f} />
+                <FileDisplay file={f} className="h-full" />
               </CarouselItem>
             ))}
           </CarouselContent>

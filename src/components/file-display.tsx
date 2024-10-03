@@ -1,9 +1,16 @@
 import { HaruFile } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 
-export function FileDisplay({ file }: { file?: HaruFile }) {
+export function FileDisplay({
+  file,
+  className,
+}: {
+  file?: HaruFile;
+  className?: string;
+}) {
   return (
-    <div className="flex items-center justify-center relative h-full">
+    <div className={cn("flex items-center justify-center relative", className)}>
       {file &&
         file.url &&
         file.url.length > 0 &&
@@ -13,7 +20,7 @@ export function FileDisplay({ file }: { file?: HaruFile }) {
             src={file.url}
             alt={file.filename || "<Untitled>"}
             fill={true}
-            className="object-contain"
+            className="object-scale-down w-full h-full"
           />
         ) : file.type?.startsWith("video/") ? (
           <video controls className="max-w-full max-h-full w-full h-full">
