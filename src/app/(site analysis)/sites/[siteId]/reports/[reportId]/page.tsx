@@ -24,13 +24,13 @@ export default async function Page({
 
   return (
     <DefaultLayout className="max-w-none">
-      <section className="w-full max-w-7xl mx-auto">
+      <section className="w-full max-w-5xl mx-auto">
         {/* <Suspense fallback={<ReportTitleBarDisplay />}> */}
         <ReportTitleBar {...props} />
         {/* </Suspense> */}
       </section>
 
-      <section className="w-full max-w-7xl mx-auto">
+      <section className="w-full mx-auto">
         <Suspense fallback={<FileDisplay />}>
           <ReportFileDisplay {...props} />
         </Suspense>
