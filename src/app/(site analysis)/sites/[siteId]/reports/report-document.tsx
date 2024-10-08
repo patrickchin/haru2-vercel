@@ -202,7 +202,7 @@ export async function ReportSection({
                     key="file-viewer-dialog-content"
                     className={cn(
                       "p-0 bg-transparent max-w-none max-h-none rounded overflow-hidden",
-                      "w-[95svw] rounded border-none bg-background",
+                      "w-[100dvw] rounded border-none bg-zinc-800",
                     )}
                   >
                     <Carousel
@@ -213,7 +213,7 @@ export async function ReportSection({
                         {files?.map((f) => (
                           <CarouselItem
                             key={f.id}
-                            className="flex flex-col h-[95svh]"
+                            className="flex flex-col h-[100dvh]"
                           >
                             {/* TODO why can't i put things here?!?!??!!? */}
                             <FileDisplay file={f} className="grow" />
