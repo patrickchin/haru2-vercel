@@ -1,11 +1,11 @@
 "use client";
 
+import { ReactNode, useState } from "react";
 import { HaruFile } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { ReactNode, useState } from "react";
 import { Button } from "./ui/button";
-import { LucideMove3D } from "lucide-react";
+import { LucideRotate3D } from "lucide-react";
 import { ReactPhotoSphereViewer } from "react-photo-sphere-viewer";
 
 export function FileDisplay({
@@ -68,7 +68,7 @@ export function FileDisplay({
             size="icon"
             onClick={() => setView360((a) => !a)}
           >
-            <LucideMove3D className="w-4 h-4" />
+            <LucideRotate3D className="w-4 h-4" />
           </Button>
         )}
       </div>
