@@ -10,7 +10,8 @@ import {
   LucideCamera,
   LucideVideo,
   LucideFileText,
-  LucideExpand,
+  LucideMaximize2,
+  LucideMinimize2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -149,7 +150,11 @@ export function FileDisplayCarousel({
                       size="icon"
                       onClick={() => setLargeView((w) => !w)}
                     >
-                      <LucideExpand className="w-4 h-4" />
+                      {largeView ? (
+                        <LucideMinimize2 className="w-4 h-4 rotate-90" />
+                      ) : (
+                        <LucideMaximize2 className="w-4 h-4 rotate-90" />
+                      )}
                     </Button>
                   </FileDisplay>
                 </CarouselItem>
