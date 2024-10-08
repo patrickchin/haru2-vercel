@@ -1,8 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { HaruFile } from "@/lib/types";
-import * as Actions from "@/lib/actions";
 
 import { FileDisplay } from "@/components/file-display";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -27,8 +27,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { useState } from "react";
-import { set } from "date-fns";
 
 export function FileSelector({
   fileList,
