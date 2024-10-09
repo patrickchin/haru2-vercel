@@ -7,7 +7,7 @@ import {
   SiteReportDetails,
   SiteReportSection,
 } from "@/lib/types/site";
-import useSWR from "swr";
+import useSWR, { KeyedMutator } from "swr";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,11 +21,17 @@ import { Form, FormField, FormItem } from "@/components/ui/form";
 import { FormControl, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { notFound } from "next/navigation";
 
 const reportFormSchema = createInsertSchema(Schemas.siteReportDetails1);
 type ReportFormType = z.infer<typeof reportFormSchema>;
-
-export function EditReportEstimates({ report }: { report?: SiteReportAll }) {
+function EditReportEstimates({
+  report,
+  mutate,
+}: {
+  report: SiteReportAll;
+  mutate: KeyedMutator<SiteReportAll | undefined>;
+}) {
   const form = useForm<ReportFormType>({
     resolver: zodResolver(reportFormSchema),
     defaultValues: { ...report },
@@ -43,9 +49,9 @@ export function EditReportEstimates({ report }: { report?: SiteReportAll }) {
         <Form {...form}>
           <form
             className="w-full"
-            onSubmit={form.handleSubmit((data: ReportFormType) => {
-              console.log(data);
-              if (report) Actions.updateSiteReportDetails(report.id, data);
+            onSubmit={form.handleSubmit(async (data: ReportFormType) => {
+              await Actions.updateSiteReportDetails(report.id, data);
+              mutate(); // TODO update from return value above
             })}
           >
             <div className="grid grid-cols-2 gap-6 w-full">
@@ -57,7 +63,8 @@ export function EditReportEstimates({ report }: { report?: SiteReportAll }) {
                     <FormLabel>Construction Budget</FormLabel>
                     <FormControl>
                       <Input
-                        name={field.name}
+                        {...field}
+                        value={field.value ?? undefined}
                         className="w-full"
                         placeholder="eg. $2,000,000.00"
                       />
@@ -73,7 +80,8 @@ export function EditReportEstimates({ report }: { report?: SiteReportAll }) {
                     <FormLabel>Construction Timeline</FormLabel>
                     <FormControl>
                       <Input
-                        name={field.name}
+                        {...field}
+                        value={field.value ?? undefined}
                         className=""
                         placeholder="eg. 215 days"
                       />
@@ -89,7 +97,8 @@ export function EditReportEstimates({ report }: { report?: SiteReportAll }) {
                     <FormLabel>Budget Spent</FormLabel>
                     <FormControl>
                       <Input
-                        name={field.name}
+                        {...field}
+                        value={field.value ?? undefined}
                         className=""
                         placeholder="eg. $200,000.00"
                       />
@@ -106,8 +115,9 @@ export function EditReportEstimates({ report }: { report?: SiteReportAll }) {
                     <FormLabel>Completion Date</FormLabel>
                     <FormControl>
                       <Input
-                        name={field.name}
-                        className=""
+                        {...field}
+                        value={field.value?.toISOString() ?? undefined}
+                        // type="date" // TODO see site-meetings
                         placeholder="eg. 02/02/2029"
                       />
                     </FormControl>
@@ -123,7 +133,13 @@ export function EditReportEstimates({ report }: { report?: SiteReportAll }) {
   );
 }
 
-export function EditReportDetails({ report }: { report?: SiteReportAll }) {
+function EditReportDetails({
+  report,
+  mutate,
+}: {
+  report: SiteReportAll;
+  mutate: KeyedMutator<SiteReportAll | undefined>;
+}) {
   const form = useForm<ReportFormType>({
     resolver: zodResolver(reportFormSchema),
     defaultValues: { ...report },
@@ -139,9 +155,9 @@ export function EditReportDetails({ report }: { report?: SiteReportAll }) {
         <Form {...form}>
           <form
             className="w-full"
-            onSubmit={form.handleSubmit((data: ReportFormType) => {
-              console.log(data);
-              if (report) Actions.updateSiteReportDetails(report.id, data);
+            onSubmit={form.handleSubmit(async (data: ReportFormType) => {
+              await Actions.updateSiteReportDetails(report.id, data);
+              mutate(); // TODO update from return value above
             })}
           >
             <div className="basis-1/4 border p-4 bg-background space-y-2">
@@ -153,7 +169,8 @@ export function EditReportDetails({ report }: { report?: SiteReportAll }) {
                   <FormItem>
                     <FormControl>
                       <Input
-                        name={field.name}
+                        {...field}
+                        value={field.value ?? undefined}
                         className="w-full"
                         placeholder="eg. Excavation"
                       />
@@ -175,7 +192,8 @@ export function EditReportDetails({ report }: { report?: SiteReportAll }) {
                       <FormLabel>Contractors</FormLabel>
                       <FormControl>
                         <Input
-                          name={field.name}
+                          {...field}
+                          value={field.value ?? undefined}
                           className=""
                           placeholder="eg. John Doe"
                         />
@@ -191,7 +209,8 @@ export function EditReportDetails({ report }: { report?: SiteReportAll }) {
                       <FormLabel>Engineers</FormLabel>
                       <FormControl>
                         <Input
-                          name={field.name}
+                          {...field}
+                          value={field.value ?? undefined}
                           className=""
                           placeholder="eg. John Doe"
                         />
@@ -208,7 +227,8 @@ export function EditReportDetails({ report }: { report?: SiteReportAll }) {
                       <FormLabel>Workers</FormLabel>
                       <FormControl>
                         <Input
-                          name={field.name}
+                          {...field}
+                          value={field.value ?? undefined}
                           className=""
                           placeholder="eg. John Doe"
                         />
@@ -224,7 +244,8 @@ export function EditReportDetails({ report }: { report?: SiteReportAll }) {
                       <FormLabel>Visitors</FormLabel>
                       <FormControl>
                         <Input
-                          name={field.name}
+                          {...field}
+                          value={field.value ?? undefined}
                           className=""
                           placeholder="eg. John Doe"
                         />
@@ -244,7 +265,8 @@ export function EditReportDetails({ report }: { report?: SiteReportAll }) {
                   <FormItem className="mt-2">
                     <FormControl>
                       <Textarea
-                        name={field.name}
+                        {...field}
+                        value={field.value ?? undefined}
                         className=""
                         placeholder="Type here"
                       />
@@ -263,7 +285,8 @@ export function EditReportDetails({ report }: { report?: SiteReportAll }) {
                   <FormItem className="mt-2">
                     <FormControl>
                       <Textarea
-                        name={field.name}
+                        {...field}
+                        value={field.value ?? undefined}
                         className=""
                         placeholder="Type here"
                       />
@@ -280,26 +303,28 @@ export function EditReportDetails({ report }: { report?: SiteReportAll }) {
   );
 }
 
-interface EditReportDocumentProps {
-  siteId?: number;
-  reportId: number;
-  sections?: string[];
-}
 export function EditReportDocument({
   siteId,
   reportId,
   sections,
-}: EditReportDocumentProps) {
+}: {
+  siteId?: number;
+  reportId: number;
+  sections?: string[];
+}) {
 
-  const { data: report, mutate } = useSWR(
+  const { data: report, mutate, isLoading } = useSWR(
     `/api/reports/${reportId}/details`, // api route doesn't really exist
     async () => Actions.getSiteReportDetails(reportId),
   );
 
+  if (isLoading) return <p>loading...</p>;
+  if (!report) notFound();
+
   return (
     <div className={"flex flex-col gap-4"}>
-      <EditReportEstimates report={report} />
-      <EditReportDetails report={report} />
+      <EditReportEstimates report={report} mutate={mutate} />
+      <EditReportDetails report={report} mutate={mutate} />
     </div>
   );
 }
