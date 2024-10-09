@@ -10,6 +10,7 @@ import {
   numeric,
   interval,
   boolean,
+  primaryKey,
 } from "drizzle-orm/pg-core";
 
 // pnpm drizzle-kit push
@@ -163,11 +164,19 @@ export const siteMemberRole = pgEnum("siteMemberRole", [
   "member",
 ]);
 
-export const siteMembers1 = pgTable("siteMembers1", {
-  siteId: integer("siteId").references(() => sites1.id),
-  memberId: integer("memberId").references(() => users1.id),
-  role: siteMemberRole("role").default("member"),
-});
+export const siteMembers1 = pgTable(
+  "siteMembers1",
+  {
+    siteId: integer("siteId").references(() => sites1.id),
+    memberId: integer("memberId").references(() => users1.id),
+    role: siteMemberRole("role").default("member"),
+  },
+  (t) => {
+    return {
+      pk: primaryKey({ columns: [t.siteId, t.memberId] }),
+    };
+  },
+);
 
 export const siteMeetingStatus = pgEnum("siteMeetingStatus", [
   "pending",
