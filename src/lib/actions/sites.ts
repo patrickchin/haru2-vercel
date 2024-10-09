@@ -20,7 +20,7 @@ export async function addSite(d: AddSiteType) {
   if (!parsed.success) return;
 
   const site = await db.addUserSite(session.user.idn, parsed.data);
-  const membership = await db.addUserToSite({
+  const membership = await db.addSiteMember({
     siteId: site.id,
     userId: session.user.idn,
     role: "owner",
@@ -118,8 +118,22 @@ export async function deleteSiteMeetingReturnAllMeetings(meetingId: number) {
     return meeting.siteId ? db.getSiteMeetings(meeting.siteId) : [meeting];
   }
 }
+export async function addSiteMemberByEmail({
+  siteId,
+  email,
+}: {
+  siteId: number;
+  email: string;
+}) {
+  const session = await auth();
+  if (await siteActionAllowed(session, editingRoles, { siteId })) {
+    const user = await db.getUserByEmail(email);
+    if (!user) return;
+    return db.addSiteMember({ siteId, userId: user.id, role: "member" });
+  }
+}
 
-export async function addUserToSite({
+export async function updateSiteMemberRole({
   siteId,
   userId,
   role,
@@ -130,16 +144,21 @@ export async function addUserToSite({
 }) {
   const session = await auth();
   if (await siteActionAllowed(session, editingRoles, { siteId })) {
-    try {
-      return db.addUserToSite({
-        siteId,
-        userId,
-        role: "member",
-      });
-    } catch (e: any) {
-      console.log(`Failed to add user ${userId} to site ${siteId} error: ${e}`);
-      return;
-    }
+    return db.updateSiteMemberRole({ siteId, userId, role });
+  }
+}
+
+export async function removeSiteMember({
+  siteId,
+  userId,
+}: {
+  siteId: number;
+  userId: number;
+}) {
+  const session = await auth();
+  if ((await siteActionAllowed(session, editingRoles, { siteId })) || true) {
+    const n = await db.countSiteMembers(siteId);
+    if (n > 1) return db.removeSiteMember({ siteId, userId });
   }
 }
 
