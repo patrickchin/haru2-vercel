@@ -60,7 +60,7 @@ export async function EditReportDocument({
   });
 
   return (
-    <div className={"flex flex-col gap-4 brightness-95"}>
+    <div className={"flex flex-col gap-4"}>
       <Card className="bg-yellow-50 border-2">
         <CardHeader className="flex flex-row justify-between">
           <div className="text-lg font-bold">
