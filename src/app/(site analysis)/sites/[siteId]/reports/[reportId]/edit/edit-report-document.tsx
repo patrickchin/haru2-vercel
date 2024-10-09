@@ -21,35 +21,36 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 export const currentActivitesSchema = z.object({
-  activity: z.string(),
-  contractors: z.string(),
-  engineers: z.string(),
-  workers: z.string(),
-  visitors: z.string(),
-  materialsUsed: z.string(),
-  equipmentsUsed: z.string(),
+  activity: z.string().min(1, "Activity is required"),
+  contractors: z.string().min(1, "Contractor names are required"),
+  engineers: z.string().min(1, "Engineer names are required"),
+  workers: z.string().min(1, "Worker names are required"),
+  visitors: z.string().optional(),
+  materialsUsed: z.string().min(1, "Materials used are required"),
+  equipmentsUsed: z.string().min(1, "Equipment used is required"),
 });
 export type CurrentActivitiesType = z.infer<typeof currentActivitesSchema>;
 
 export const estimatedBudgetAndTimelineSchema = z.object({
-  estimatedBudget: z.string(),
-  constructionTimeline: z.string(),
-  budgetSpent: z.string(),
-  completionDate: z.string(),
+  estimatedBudget: z.string().min(1, "Budget is required"),
+  constructionTimeline: z.string().min(1, "Timeline is required"),
+  budgetSpent: z.string().min(1, "Budget spent is required"),
+  completionDate: z.string().min(1, "Completion date is required"),
 });
 export type EstimatedBudgetAndTimelineType = z.infer<
   typeof estimatedBudgetAndTimelineSchema
 >;
 
+interface EditReportDocumentProps {
+  siteId?: number;
+  reportId?: number;
+  sections?: string[];
+}
 export async function EditReportDocument({
-  site,
-  report,
+  siteId,
+  reportId,
   sections,
-}: {
-  site?: SiteDetails;
-  report?: SiteReportBoth;
-  sections?: SiteReportSection[];
-}) {
+}: EditReportDocumentProps) {
   const estimatedBudgetAndTimelineForm =
     useForm<EstimatedBudgetAndTimelineType>({
       resolver: zodResolver(estimatedBudgetAndTimelineSchema),
@@ -59,12 +60,7 @@ export async function EditReportDocument({
   });
 
   return (
-    <div
-      className={cn(
-        "flex flex-col gap-4",
-        site && report ? "" : "brightness-95",
-      )}
-    >
+    <div className={"flex flex-col gap-4 brightness-95"}>
       <Card className="bg-yellow-50 border-2">
         <CardHeader className="flex flex-row justify-between">
           <div className="text-lg font-bold">

@@ -19,11 +19,8 @@ export default async function Page({
 }) {
   const siteId = Number(params.siteId);
   const reportId = Number(params.reportId);
-
   const memberRole = await Actions.getSiteRole(siteId);
   if (memberRole && ["supervisor", "owner", "manager"].includes(memberRole)) {
-    const siteId = Number(params.siteId);
-    const reportId = Number(params.reportId);
     return (
       <DefaultLayout>
         <EditReportDocument
