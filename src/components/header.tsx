@@ -1,8 +1,9 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
+import { getSession, signOut, useSession } from "next-auth/react";
 import { User } from "next-auth";
 
 import { LucideConstruction, LucideSettings, LucideLogOut } from "lucide-react";
@@ -17,12 +18,11 @@ import { UserAvatar } from "./user-avatar";
 
 const navigation = [{ name: "My Projects", href: "/sites" }];
 
-export function MainNav() {
-  const { status } = useSession();
+export function MainNav({ user }: { user?: User }) {
   const pathname = usePathname();
   const firstPath = "/" + pathname.split("/", 2)[1]; // make sure length > 1 ?
 
-  if (status !== "authenticated") return null;
+  if (!user) return null;
 
   return (
     <div className="flex items-center mx-6">
@@ -91,14 +91,12 @@ function LoginSignup() {
   );
 }
 
-export function LoginOrUserSettings() {
-  const { data: session, status } = useSession();
-  if (status === "authenticated") return <UserNav user={session?.user} />;
-  if (status === "loading") return <UserNav />;
-  return <LoginSignup />;
-}
-
 export default function Header() {
+  const { data: session, status } = useSession();
+  useEffect(() => {
+    getSession(); // Ensure session is updated on mount
+  }, []);
+
   return (
     <div className="border-b bg-background w-full">
       <div className="flex h-16 items-center px-8 mx-auto max-w-6xl">
@@ -107,10 +105,14 @@ export default function Header() {
           <span className="hidden font-bold sm:inline-block">HarpaPro</span>
         </Link>
 
-        <MainNav />
+        <MainNav user={session?.user} />
 
         <div className="ml-auto flex items-center space-x-4">
-          <LoginOrUserSettings />
+          {status === "authenticated" ? (
+            <UserNav user={session?.user} />
+          ) : (
+            <LoginSignup />
+          )}
         </div>
       </div>
     </div>
