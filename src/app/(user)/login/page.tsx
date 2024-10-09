@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LucideLoader2 } from "lucide-react";
@@ -130,18 +130,12 @@ function PhoneLogin() {
   const onSubmit = async (data: LoginTypesPhone) => {
     form.clearErrors();
     const ret = await signInFromLogin(data);
-    if (typeof ret === "boolean" && ret === true) {
-      router.push(ret);
-    } else if (typeof ret === "string") {
-      router.push(ret);
-    } else if (typeof ret === typeof CredentialsSigninError) {
+    if (typeof ret === typeof CredentialsSigninError) {
       form.setError("root", {
         message: "Failed to login.\nPlease check your passcode and try again.",
       });
     } else if (typeof ret === typeof UnknownError) {
       form.setError("root", { message: "Failed to login. Unknown Error" });
-    } else if (typeof ret === "boolean" && ret === false) {
-      form.setError("root", { message: "Failed to login. Unknown Error 3" });
     }
   };
 
@@ -247,10 +241,7 @@ function EmailLogin() {
   const onSubmit = async (data: LoginTypesEmail) => {
     form.clearErrors();
     const ret = await signInFromLogin(data);
-    if (typeof ret === "string") {
-      location.reload();
-      router.push(ret);
-    } else if (typeof ret === typeof CredentialsSigninError) {
+    if (typeof ret === typeof CredentialsSigninError) {
       form.setError("root", {
         message: "Failed to login.\nPlease check your passcode and try again.",
       });
@@ -335,10 +326,7 @@ function PasswordLogin() {
   const onSubmit = async (data: LoginTypesPassword) => {
     form.clearErrors();
     const ret = await signInFromLogin(data);
-    if (typeof ret === "string") {
-      location.reload();
-      router.push(ret);
-    } else if (typeof ret === typeof CredentialsSigninError) {
+    if (typeof ret === typeof CredentialsSigninError) {
       form.setError("root", {
         message:
           "Failed to login.\nPlease check your credentials and try again.",
@@ -376,7 +364,11 @@ function PasswordLogin() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" {...field} />
+                <Input
+                  onChange={field.onChange}
+                  name={field.name}
+                  type="password"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
