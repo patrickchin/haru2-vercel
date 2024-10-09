@@ -5,7 +5,7 @@ import { and, desc, eq, getTableColumns } from "drizzle-orm";
 import {
   SiteMemberRole,
   SiteReport,
-  SiteReportBoth,
+  SiteReportAll,
   SiteReportDetails,
   SiteReportDetailsNew,
   SiteReportNew,
@@ -101,7 +101,7 @@ export async function getSiteReport(reportId: number): Promise<SiteReport> {
 
 export async function getSiteReportDetails(
   reportId: number,
-): Promise<SiteReportBoth> {
+): Promise<SiteReportAll> {
   return db
     .select(SiteReportDetailsColumns)
     .from(Schemas.siteReports1)
@@ -120,7 +120,7 @@ export async function getSiteReportDetails(
 
 export async function addSiteReport(
   siteReport: SiteReportNew,
-): Promise<SiteReportBoth> {
+): Promise<SiteReportAll> {
   return db.transaction(async (tx) => {
     const fileGroup = await tx
       .insert(Schemas.fileGroups1)
@@ -173,7 +173,7 @@ export async function updateSiteReportDetails(
 
 export async function deleteSiteReport(
   reportId: number,
-): Promise<SiteReportBoth> {
+): Promise<SiteReportAll> {
   return db.transaction(async (tx) => {
     const report = await tx
       .delete(Schemas.siteReports1)
