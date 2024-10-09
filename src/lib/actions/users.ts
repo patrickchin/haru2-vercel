@@ -1,8 +1,9 @@
 "use server";
 
 import * as db from "@/lib/db";
-import { signIn } from "@/lib/auth";
-import { auth } from "@/lib/auth";
+import { signIn, auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { isRedirectError } from "next/dist/client/components/redirect";
 import { deleteFileFromS3 } from "@/lib/s3";
 import {
   LoginTypesEmail,
@@ -17,7 +18,6 @@ import {
   InvalidInputError,
   UnknownError,
 } from "@/lib/errors";
-import { redirect } from "next/navigation";
 
 export async function getAllUsers() {
   const session = await auth();
@@ -48,13 +48,15 @@ export async function signInFromLogin(
   data: LoginTypesPhone | LoginTypesEmail | LoginTypesPassword,
 ) {
   try {
-    return (await signIn("credentials", {
+    await signIn("credentials", {
       ...data,
-      redirectTo: "/",
-      redirect: false,
-    })) as string;
+      redirectTo: "/sites",
+      redirect: true,
+    });
   } catch (error: unknown) {
-    if (error instanceof AuthError) {
+    if (isRedirectError(error)) {
+      throw error;
+    } else if (error instanceof AuthError) {
       // is there any need to distinguish further?
       // e.g. CredentialsSignin error
       return CredentialsSigninError;
