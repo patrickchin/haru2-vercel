@@ -18,12 +18,7 @@ import { LucideLoader2, LucideTrash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function UploadAndManageFiles({ reportId }: { reportId: number }) {
-  const dummyFiles: any = [
-    { id: 1, filename: "report-summary.pdf" },
-    { id: 2, filename: "construction-plan.jpg" },
-  ];
-
-  const { data: files = dummyFiles, mutate } = useSWR<HaruFile[]>(
+  const { data: files, mutate } = useSWR<HaruFile[]>(
     `/api/report/${reportId}/files`,
     async () => {
       const files = await Actions.getFilesForReport(reportId);
@@ -91,7 +86,7 @@ export function UploadAndManageFiles({ reportId }: { reportId: number }) {
       </div>
 
       <ul className="space-y-3">
-        {dummyFiles?.map((file) => (
+        {files?.map((file) => (
           <li
             key={file.id}
             className="flex justify-between items-center bg-gray-100 p-4 rounded-lg shadow"
