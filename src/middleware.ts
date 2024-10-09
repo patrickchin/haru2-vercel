@@ -23,14 +23,16 @@ export default auth((req) => {
   }
 
   if (req.auth) {
+    /*
     if (
       req.nextUrl.pathname.startsWith("/login") ||
       req.nextUrl.pathname.startsWith("/register")
     ) {
       // is this expected behaviour?
-      req.nextUrl.pathname = "/";
+      req.nextUrl.pathname = "/sites";
       return Response.redirect(req.nextUrl);
     }
+    */
 
     /*
     // TODO maybe match the full path?
