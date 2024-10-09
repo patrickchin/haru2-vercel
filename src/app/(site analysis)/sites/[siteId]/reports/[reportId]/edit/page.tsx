@@ -7,7 +7,7 @@ import {
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { UpdateSiteReportFiles } from "./edit-upload";
+import { UploadAndManageFiles } from "./edit-upload";
 import { UpdateSiteReportSections } from "./edit-sections";
 import { EditReportDocument } from "./edit-report-document";
 import * as Actions from "@/lib/actions";
@@ -23,9 +23,8 @@ export default async function Page({
   if (memberRole && ["supervisor", "owner", "manager"].includes(memberRole)) {
     return (
       <DefaultLayout>
-        <EditReportDocument
-        // Report
-        />
+        <UploadAndManageFiles reportId={reportId} />
+        <EditReportDocument reportId={reportId} />
       </DefaultLayout>
     );
   } else {
