@@ -1,9 +1,10 @@
 import "server-only";
 
 import { db } from "./_db";
-import { and, eq, getTableColumns } from "drizzle-orm";
+import { and, desc, eq, getTableColumns } from "drizzle-orm";
 import {
   Site,
+  SiteAndExtra,
   SiteDetails,
   SiteMeeting,
   SiteMeetingNew,
@@ -35,12 +36,20 @@ export async function getMySites(userId: number): Promise<Site[]> {
 }
 
 // get all the sites that userId is a member of
-export async function getAllVisibleSites(userId: number): Promise<Site[]> {
+export async function getAllVisibleSites(
+  userId: number,
+): Promise<SiteAndExtra[]> {
   return await db
-    .select({
+    .selectDistinctOn([Schemas.sites1.id], {
       ...getTableColumns(Schemas.sites1),
+      myRole: Schemas.siteMembers1.role,
+      lastReportDate: Schemas.siteReports1.createdAt,
     })
     .from(Schemas.sites1)
+    .innerJoin(
+      Schemas.siteReports1,
+      eq(Schemas.siteReports1.siteId, Schemas.sites1.id),
+    )
     .leftJoin(
       Schemas.siteMembers1,
       eq(Schemas.siteMembers1.siteId, Schemas.sites1.id),
@@ -49,7 +58,8 @@ export async function getAllVisibleSites(userId: number): Promise<Site[]> {
       Schemas.users1,
       eq(Schemas.users1.id, Schemas.siteMembers1.memberId),
     )
-    .where(eq(Schemas.siteMembers1.memberId, userId));
+    .where(eq(Schemas.siteMembers1.memberId, userId))
+    .orderBy(desc(Schemas.sites1.id));
 }
 
 export async function getSiteDetails({
