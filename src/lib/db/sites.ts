@@ -1,7 +1,7 @@
 import "server-only";
 
 import { db } from "./_db";
-import { and, desc, eq, getTableColumns } from "drizzle-orm";
+import { and, count, desc, eq, getTableColumns } from "drizzle-orm";
 import {
   Site,
   SiteAndExtra,
@@ -223,7 +223,7 @@ export async function addUserSite(
   });
 }
 
-export async function addUserToSite({
+export async function addSiteMember({
   siteId,
   userId,
   role,
@@ -235,6 +235,55 @@ export async function addUserToSite({
   return await db
     .insert(Schemas.siteMembers1)
     .values({ siteId, memberId: userId, role })
+    .returning()
+    .then((r) => r[0]);
+}
+
+export async function countSiteMembers(siteId: number) {
+  return await db
+    .select({ count: count() })
+    .from(Schemas.siteMembers1)
+    .where(eq(Schemas.siteMembers1.siteId, siteId))
+    .then((r) => r[0].count);
+}
+
+export async function updateSiteMemberRole({
+  siteId,
+  userId,
+  role,
+}: {
+  siteId: number;
+  userId: number;
+  role: SiteMemberRole;
+}) {
+  return await db
+    .update(Schemas.siteMembers1)
+    .set({ role })
+    .where(
+      and(
+        eq(Schemas.siteMembers1.siteId, siteId),
+        eq(Schemas.siteMembers1.memberId, userId),
+      ),
+    )
+    .returning()
+    .then((r) => r[0]);
+}
+
+export async function removeSiteMember({
+  siteId,
+  userId,
+}: {
+  siteId: number;
+  userId: number;
+}) {
+  return await db
+    .delete(Schemas.siteMembers1)
+    .where(
+      and(
+        eq(Schemas.siteMembers1.siteId, siteId),
+        eq(Schemas.siteMembers1.memberId, userId),
+      ),
+    )
     .returning()
     .then((r) => r[0]);
 }
