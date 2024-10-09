@@ -23,8 +23,14 @@ export default async function Page({
   if (memberRole && ["supervisor", "owner", "manager"].includes(memberRole)) {
     return (
       <DefaultLayout>
+        <Button asChild>
+          <Link href={`/sites/${siteId}/reports/${reportId}`}>
+            Back To Report
+          </Link>
+        </Button>
         <UploadAndManageFiles reportId={reportId} />
         <EditReportDocument reportId={reportId} />
+        <UpdateSiteReportSections siteId={siteId} reportId={reportId} />
       </DefaultLayout>
     );
   } else {
