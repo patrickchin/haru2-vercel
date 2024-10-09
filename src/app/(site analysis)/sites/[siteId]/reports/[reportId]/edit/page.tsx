@@ -7,27 +7,27 @@ import {
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { UpdateSiteReportFiles } from "./edit-upload";
+import { UploadAndManageFiles } from "./edit-upload";
 import { UpdateSiteReportSections } from "./edit-sections";
 import { EditReportDocument } from "./edit-report-document";
 
-export default async function Page({
-  params,
-}: {
-  params: { siteId: string; reportId: string };
-}) {
+interface EditReportPageProps {
+  params: {
+    siteId?: number;
+    reportId?: number;
+  };
+}
+
+export default async function Page({ params }: EditReportPageProps) {
   const siteId = Number(params.siteId);
   const reportId = Number(params.reportId);
 
   const session = await auth();
   if (session?.user?.role === "admin" || session?.user?.role === "supervisor") {
-    const siteId = Number(params.siteId);
-    const reportId = Number(params.reportId);
     return (
       <DefaultLayout>
-        <EditReportDocument
-        // Report
-        />
+        <UploadAndManageFiles reportId={reportId ?? 11} />
+        <EditReportDocument siteId={siteId} reportId={reportId} sections={[]} />
       </DefaultLayout>
     );
   } else {
