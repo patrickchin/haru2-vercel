@@ -10,7 +10,7 @@ export type SiteMeeting = typeof Schemas.siteMeetings1.$inferSelect;
 export type SiteNotice = typeof Schemas.siteNotices1.$inferSelect;
 export type SiteReport = typeof Schemas.siteReports1.$inferSelect & { reporter?: HaruUserBasic | null; };
 export type SiteReportDetails = typeof Schemas.siteReportDetails1.$inferSelect;
-export type SiteReportBoth = SiteReport & SiteReportDetails;
+export type SiteReportAll = SiteReport & SiteReportDetails;
 export type SiteReportSection = typeof Schemas.siteReportSections1.$inferSelect;
 
 export const allSiteMemberRoles = Schemas.siteMemberRole.enumValues;
