@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import {
   SiteDetails,
   SiteReport,
-  SiteReportBoth,
+  SiteReportAll,
   SiteReportSection,
 } from "@/lib/types/site";
 import {
@@ -240,7 +240,7 @@ export async function ReportDocumentDisplay({
   sections,
 }: {
   site?: SiteDetails;
-  report?: SiteReportBoth;
+  report?: SiteReportAll;
   sections?: SiteReportSection[];
 }) {
   return (
