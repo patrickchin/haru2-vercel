@@ -14,7 +14,7 @@ import {
   editingRoles,
   siteActionAllowed,
   viewingRoles,
-} from "@/lib/permissions";
+} from "@/lib/permissions-server";
 
 export async function getSiteReports(siteId: number) {
   const session = await auth();

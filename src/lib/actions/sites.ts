@@ -9,7 +9,7 @@ import {
   editingRoles,
   siteActionAllowed,
   viewingRoles,
-} from "@/lib/permissions";
+} from "@/lib/permissions-server";
 import { SiteMeetingNew, SiteMemberRole } from "@/lib/types";
 
 export async function addSite(d: AddSiteType) {
