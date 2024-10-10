@@ -30,8 +30,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { rm } from "fs";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { editingRoles } from "@/lib/permissions";
 
 function SiteSearchAddMember({
   siteId,
@@ -116,18 +117,18 @@ function SiteMemberSelectRole({
       onValueChange={async (r) => {
         try {
           setIsUpdating(true);
-          await Actions.updateSiteMemberRole({
+          const ret = await Actions.updateSiteMemberRole({
             siteId,
             userId: member.id,
             role: r as SiteMemberRole,
           });
-          await mutate();
+          if (ret) await mutate();
         } finally {
           setIsUpdating(false);
         }
       }}
     >
-      <SelectTrigger className="w-[180px] capitalize">
+      <SelectTrigger className="w-48 capitalize">
         <SelectValue placeholder={member.role} />
         {isUpdating && <LucideLoader2 className="animate-spin h-4" />}
       </SelectTrigger>
@@ -167,13 +168,17 @@ export default function SiteMembers({
     { fallbackData: origMembers },
   );
   const [isRemoving, setIsRemoving] = useState(false);
+  const { data: session } = useSession();
+  const myRole = members?.find((m) => m.id === session?.user?.idn)?.role;
 
   return (
     <Card>
       <CardHeader className="font-semibold">Project Members</CardHeader>
       <CardContent className="space-y-8">
-        <SiteSearchAddMember siteId={site.id} mutate={mutateMembers} />
-        <ul className="border rounded">
+        {myRole && editingRoles.includes(myRole) && (
+          <SiteSearchAddMember siteId={site.id} mutate={mutateMembers} />
+        )}
+        <ul className="border rounded overflow-hidden">
           {members?.map((m) => {
             return (
               <li
@@ -182,41 +187,46 @@ export default function SiteMembers({
               >
                 <div className="flex gap-3 items-center">
                   <HaruUserAvatar user={m} className="w-8 h-8" />
-                  <p>{m.name} </p>
+                  <p>{m.name}</p>
                 </div>
-                <div className="flex gap-3 items-center">
-                  <SiteMemberSelectRole
-                    siteId={site.id}
-                    member={m}
-                    mutate={mutateMembers}
-                    disabled={isRemoving}
-                  />
-
-                  <Button
-                    disabled={m.role === "owner" || isRemoving}
-                    variant="outline"
-                    className="flex gap-2"
-                    onClick={async () => {
-                      try {
-                        setIsRemoving(true);
-                        await Actions.removeSiteMember({
-                          siteId: site.id,
-                          userId: m.id,
-                        });
-                        await mutateMembers();
-                      } finally {
-                        setIsRemoving(false);
-                      }
-                    }}
-                  >
-                    Remove Member
-                    {isRemoving ? (
-                      <LucideLoader2 className={cn("animate-spin w-4 h-4")} />
-                    ) : (
-                      <LucideTrash className="w-3.5 h-3.5" />
-                    )}
-                  </Button>
-                </div>
+                {myRole && editingRoles.includes(myRole) ? (
+                  <div className="flex gap-3 items-center">
+                    <SiteMemberSelectRole
+                      siteId={site.id}
+                      member={m}
+                      mutate={mutateMembers}
+                      disabled={isRemoving}
+                    />
+                    <Button
+                      disabled={m.role === "owner" || isRemoving}
+                      variant="outline"
+                      className="flex gap-2"
+                      onClick={async () => {
+                        try {
+                          setIsRemoving(true);
+                          await Actions.removeSiteMember({
+                            siteId: site.id,
+                            userId: m.id,
+                          });
+                          await mutateMembers();
+                        } finally {
+                          setIsRemoving(false);
+                        }
+                      }}
+                    >
+                      Remove Member
+                      {isRemoving ? (
+                        <LucideLoader2 className={cn("animate-spin w-4 h-4")} />
+                      ) : (
+                        <LucideTrash className="w-3.5 h-3.5" />
+                      )}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex gap-3 items-center">
+                    <p className="capitalize">{m.role}</p>
+                  </div>
+                )}
               </li>
             );
           })}
