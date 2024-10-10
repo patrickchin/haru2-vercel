@@ -2,7 +2,7 @@
 
 import useSWR, { KeyedMutator } from "swr";
 import { SiteDetailsProps } from "./page";
-import { SiteMember } from "@/lib/types";
+import { allSiteMemberRoles, SiteMember, SiteMemberRole } from "@/lib/types";
 import * as Actions from "@/lib/actions";
 
 import { z } from "zod";
@@ -10,11 +10,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { LucideLoader2, LucidePlus, LucideTrash } from "lucide-react";
 import { HaruUserAvatar } from "@/components/user-avatar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -23,7 +23,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { rm } from "fs";
+import { useState } from "react";
 
 function SiteSearchAddMember({
   siteId,
@@ -89,6 +97,61 @@ function SiteSearchAddMember({
   );
 }
 
+function SiteMemberSelectRole({
+  siteId,
+  member,
+  mutate,
+  disabled,
+}: {
+  siteId: number;
+  member: SiteMember;
+  mutate: KeyedMutator<SiteMember[] | undefined>;
+  disabled: boolean;
+}) {
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  return (
+    <Select
+      disabled={member.role === "owner" || isUpdating || disabled}
+      onValueChange={async (r) => {
+        try {
+          setIsUpdating(true);
+          await Actions.updateSiteMemberRole({
+            siteId,
+            userId: member.id,
+            role: r as SiteMemberRole,
+          });
+          await mutate();
+        } finally {
+          setIsUpdating(false);
+        }
+      }}
+    >
+      <SelectTrigger className="w-[180px] capitalize">
+        <SelectValue placeholder={member.role} />
+        {isUpdating && <LucideLoader2 className="animate-spin h-4" />}
+      </SelectTrigger>
+      <SelectContent>
+        {allSiteMemberRoles.map((r) => {
+          return (
+            r !== "owner" && (
+              <SelectItem
+                key={r}
+                value={r}
+                className="capitalize"
+                disabled={r === member.role}
+              >
+                {r}
+              </SelectItem>
+            )
+          );
+        })}
+      </SelectContent>
+    </Select>
+  );
+}
+
+
 export default function SiteMembers({
   site,
   members: origMembers,
@@ -103,6 +166,7 @@ export default function SiteMembers({
     async () => Actions.getSiteMembers(site.id),
     { fallbackData: origMembers },
   );
+  const [isRemoving, setIsRemoving] = useState(false);
 
   return (
     <Card>
@@ -116,26 +180,43 @@ export default function SiteMembers({
                 key={m.id}
                 className="flex p-4 border rounded bg-muted justify-between"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex gap-3 items-center">
                   <HaruUserAvatar user={m} className="w-8 h-8" />
                   <p>{m.name} </p>
-                  <p className="capitalize font-semibold">{m.role}</p>
                 </div>
-                <Button
-                  disabled={m.role === "owner"}
-                  variant="outline"
-                  className="flex gap-2"
-                  onClick={async () => {
-                    await Actions.removeSiteMember({
-                      siteId: site.id,
-                      userId: m.id,
-                    });
-                    mutateMembers();
-                  }}
-                >
-                  Remove Member
-                  <LucideTrash className="w-3.5 h-3.5" />
-                </Button>
+                <div className="flex gap-3 items-center">
+                  <SiteMemberSelectRole
+                    siteId={site.id}
+                    member={m}
+                    mutate={mutateMembers}
+                    disabled={isRemoving}
+                  />
+
+                  <Button
+                    disabled={m.role === "owner" || isRemoving}
+                    variant="outline"
+                    className="flex gap-2"
+                    onClick={async () => {
+                      try {
+                        setIsRemoving(true);
+                        await Actions.removeSiteMember({
+                          siteId: site.id,
+                          userId: m.id,
+                        });
+                        await mutateMembers();
+                      } finally {
+                        setIsRemoving(false);
+                      }
+                    }}
+                  >
+                    Remove Member
+                    {isRemoving ? (
+                      <LucideLoader2 className={cn("animate-spin w-4 h-4")} />
+                    ) : (
+                      <LucideTrash className="w-3.5 h-3.5" />
+                    )}
+                  </Button>
+                </div>
               </li>
             );
           })}
