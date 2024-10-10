@@ -173,12 +173,12 @@ export default function SiteMembers({
       <CardHeader className="font-semibold">Project Members</CardHeader>
       <CardContent className="space-y-8">
         <SiteSearchAddMember siteId={site.id} mutate={mutateMembers} />
-        <ul>
+        <ul className="border rounded">
           {members?.map((m) => {
             return (
               <li
                 key={m.id}
-                className="flex p-4 border rounded bg-muted justify-between"
+                className="flex p-4 bg-background justify-between [&:not(:last-child)]:border-b"
               >
                 <div className="flex gap-3 items-center">
                   <HaruUserAvatar user={m} className="w-8 h-8" />
