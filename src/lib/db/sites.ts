@@ -1,7 +1,7 @@
 import "server-only";
 
 import { db } from "./_db";
-import { and, count, desc, eq, getTableColumns } from "drizzle-orm";
+import { and, count, desc, eq, getTableColumns, ne } from "drizzle-orm";
 import {
   Site,
   SiteAndExtra,
@@ -282,6 +282,7 @@ export async function removeSiteMember({
       and(
         eq(Schemas.siteMembers1.siteId, siteId),
         eq(Schemas.siteMembers1.memberId, userId),
+        ne(Schemas.siteMembers1.role, "owner"),
       ),
     )
     .returning()
