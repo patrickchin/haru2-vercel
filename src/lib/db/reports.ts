@@ -225,7 +225,8 @@ export async function getSiteReportSections(
   return db
     .select()
     .from(Schemas.siteReportSections1)
-    .where(eq(Schemas.siteReportSections1.reportId, reportId));
+    .where(eq(Schemas.siteReportSections1.reportId, reportId))
+    .orderBy(Schemas.siteReportSections1.id);
 }
 
 export async function getSiteReportSection(
