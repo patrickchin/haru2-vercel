@@ -169,7 +169,12 @@ function PhoneLogin() {
               <FormLabel>One-Time Passcode</FormLabel>
               <div className="flex items-center gap-3">
                 <FormControl>
-                  <InputOTP maxLength={6} pattern="^[0-9]+$" {...field}>
+                  <InputOTP
+                    maxLength={6}
+                    pattern="^[0-9]+$"
+                    onChange={field.onChange}
+                    name={field.name}
+                  >
                     <InputOTPGroup className="bg-background">
                       <InputOTPSlot index={0} />
                       <InputOTPSlot index={1} />
@@ -280,7 +285,12 @@ function EmailLogin() {
               <FormLabel>One-Time Passcode</FormLabel>
               <div className="flex items-center gap-3">
                 <FormControl>
-                  <InputOTP maxLength={6} pattern="^[0-9]+$" {...field}>
+                  <InputOTP
+                    maxLength={6}
+                    pattern="^[0-9]+$"
+                    onChange={field.onChange}
+                    name={field.name}
+                  >
                     <InputOTPGroup className="bg-background">
                       <InputOTPSlot index={0} />
                       <InputOTPSlot index={1} />
@@ -365,9 +375,9 @@ function PasswordLogin() {
               <FormLabel>Password</FormLabel>
               <FormControl>
                 <Input
+                  type="password"
                   onChange={field.onChange}
                   name={field.name}
-                  type="password"
                 />
               </FormControl>
               <FormMessage />

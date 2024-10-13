@@ -56,7 +56,11 @@ export default function Page() {
                     <span className="font-bold text-red-400 ml-1">*</span>
                   </FormLabel>
                   <FormControl className="w-full">
-                    <Input placeholder="Anthony Abu" {...field} />
+                    <Input
+                      placeholder="Anthony Abu"
+                      onChange={field.onChange}
+                      name={field.name}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -70,7 +74,11 @@ export default function Page() {
                 <FormItem className="flex flex-col items-start">
                   <FormLabel className="text-left">Phone Number</FormLabel>
                   <FormControl className="w-full">
-                    <PhoneInput placeholder="+234-803-4444 4444" {...field} />
+                    <PhoneInput
+                      placeholder="+234-803-4444 4444"
+                      onChange={field.onChange}
+                      name={field.name}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -90,7 +98,8 @@ export default function Page() {
                     <Input
                       type="email"
                       placeholder="harpapro@email.com"
-                      {...field}
+                      onChange={field.onChange}
+                      name={field.name}
                     />
                   </FormControl>
                   <FormMessage />
@@ -108,7 +117,11 @@ export default function Page() {
                     <span className="font-bold text-red-400 ml-1">*</span>
                   </FormLabel>
                   <FormControl className="w-full">
-                    <Input type="password" {...field} />
+                    <Input
+                      type="password"
+                      onChange={field.onChange}
+                      name={field.name}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -125,7 +138,11 @@ export default function Page() {
                     <span className="font-bold text-red-400 ml-1">*</span>
                   </FormLabel>
                   <FormControl className="w-full">
-                    <Input type="password" {...field} />
+                    <Input
+                      type="password"
+                      onChange={field.onChange}
+                      name={field.name}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
