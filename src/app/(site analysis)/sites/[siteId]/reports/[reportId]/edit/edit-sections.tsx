@@ -208,6 +208,15 @@ export function UpdateSiteReportSections({
 
   return (
     <div>
+      {sections?.map((s) => (
+        <UpdateSiteReportSection
+          siteId={siteId}
+          reportId={reportId}
+          section={s}
+          sectionsMutate={mutate}
+          key={`UpdateSiteReportSection-${s.id}`}
+        />
+      ))}
       <div>
         <Button
           onClick={() => {
@@ -221,15 +230,6 @@ export function UpdateSiteReportSections({
           Add Section
         </Button>
       </div>
-      {sections?.map((s) => (
-        <UpdateSiteReportSection
-          siteId={siteId}
-          reportId={reportId}
-          section={s}
-          sectionsMutate={mutate}
-          key={`UpdateSiteReportSection-${s.id}`}
-        />
-      ))}
     </div>
   );
 }
