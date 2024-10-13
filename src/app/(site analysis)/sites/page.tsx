@@ -10,9 +10,10 @@ function EmptySitesList() {
   return <p>You currently do not have any sites registered with us</p>;
 }
 
-async function SiteItem({ site }: { site: SiteAndExtra }) {
+async function SiteItem({ site }: { site?: SiteAndExtra }) {
   // const members = await Actions.getSiteMembers(site.id);
   // const reports = await Actions.getSiteReports(site.id);
+  if (!site) return <div>Invalid Site Project</div>;
   return (
     <Link
       href={`/sites/${site.id}`}
