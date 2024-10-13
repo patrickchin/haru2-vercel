@@ -12,7 +12,7 @@ function EmptySitesList() {
 
 async function SiteItem({ site }: { site: SiteAndExtra }) {
   // const members = await Actions.getSiteMembers(site.id);
-  const lastReport = await Actions.getSiteReports(site.id);
+  // const reports = await Actions.getSiteReports(site.id);
   return (
     <Link
       href={`/sites/${site.id}`}
