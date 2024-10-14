@@ -45,10 +45,10 @@ function EditReportEstimates({
         </h2>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-4 p-4 pt-0">
+      <CardContent className="p-4 pt-0">
         <Form {...form}>
           <form
-            className="w-full"
+            className=""
             onSubmit={form.handleSubmit(async (data: ReportFormType) => {
               await Actions.updateSiteReportDetails(report.id, data);
               mutate(); // TODO update from return value above
@@ -160,141 +160,153 @@ function EditReportDetails({
               mutate(); // TODO update from return value above
             })}
           >
-            <div className="basis-1/4 border p-4 bg-background space-y-2">
-              <h3>Site Activity</h3>
-              <FormField
-                control={form.control}
-                name="activity"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        value={field.value ?? undefined}
-                        className="w-full"
-                        placeholder="eg. Excavation"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="basis-1/4 border p-4 bg-background space-y-2 mt-4">
-              <h3>Site Personel</h3>
+            {/* <div className="grid grid-cols-2 gap-3"> */}
+            <div className="flex flex-col gap-3">
+              <div>
+                <div className="rounded border p-4 bg-background space-y-2">
+                  <h3>Site Activities</h3>
+                  <FormField
+                    control={form.control}
+                    name="activity"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Textarea
+                            {...field}
+                            value={field.value ?? undefined}
+                            className="min-h-10 h-40"
+                            placeholder="eg. Excavation"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
 
               <div>
-                <FormField
-                  control={form.control}
-                  name="contractors"
-                  render={({ field }) => (
-                    <FormItem className="mt-2">
-                      <FormLabel>Contractors</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          value={field.value ?? undefined}
-                          className=""
-                          placeholder="eg. John Doe"
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="engineers"
-                  render={({ field }) => (
-                    <FormItem className="mt-2">
-                      <FormLabel>Engineers</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          value={field.value ?? undefined}
-                          className=""
-                          placeholder="eg. John Doe"
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+                <div className="rounded border p-4 bg-background space-y-2">
+                  <h3>Site Personel</h3>
 
-                <FormField
-                  control={form.control}
-                  name="workers"
-                  render={({ field }) => (
-                    <FormItem className="mt-2">
-                      <FormLabel>Workers</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          value={field.value ?? undefined}
-                          className=""
-                          placeholder="eg. John Doe"
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="visitors"
-                  render={({ field }) => (
-                    <FormItem className="mt-2">
-                      <FormLabel>Visitors</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          value={field.value ?? undefined}
-                          className=""
-                          placeholder="eg. John Doe"
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="contractors"
+                      render={({ field }) => (
+                        <FormItem className="mt-2">
+                          <FormLabel>Contractors</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              {...field}
+                              value={field.value ?? undefined}
+                              className="min-h-10 h-10"
+                              placeholder="eg. John Doe"
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="engineers"
+                      render={({ field }) => (
+                        <FormItem className="mt-2">
+                          <FormLabel>Engineers</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              {...field}
+                              value={field.value ?? undefined}
+                              className="min-h-10 h-10"
+                              placeholder="eg. John Doe"
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="workers"
+                      render={({ field }) => (
+                        <FormItem className="mt-2">
+                          <FormLabel>Workers</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              {...field}
+                              value={field.value ?? undefined}
+                              className="min-h-10 h-24"
+                              placeholder="eg. John Doe"
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="visitors"
+                      render={({ field }) => (
+                        <FormItem className="mt-2">
+                          <FormLabel>Visitors</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              {...field}
+                              value={field.value ?? undefined}
+                              className="min-h-10 h-10"
+                              placeholder="eg. John Doe"
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div className="rounded border p-4 bg-background space-y-2">
+                  <h3>Materials Used</h3>
+                  <FormField
+                    control={form.control}
+                    name="materials"
+                    render={({ field }) => (
+                      <FormItem className="mt-2">
+                        <FormControl>
+                          <Textarea
+                            {...field}
+                            value={field.value ?? undefined}
+                            className="min-h-40 h-40"
+                            placeholder="Type here"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="rounded border p-4 bg-background space-y-2">
+                  <h3>Equiptment Used</h3>
+                  <FormField
+                    control={form.control}
+                    name="equiptment"
+                    render={({ field }) => (
+                      <FormItem className="mt-2">
+                        <FormControl>
+                          <Textarea
+                            {...field}
+                            value={field.value ?? undefined}
+                            className="min-h-40 h-40"
+                            placeholder="Type here"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="basis-1/4 border p-4 bg-background space-y-2  mt-4">
-              <h3>Materials Used</h3>
-              <FormField
-                control={form.control}
-                name="materials"
-                render={({ field }) => (
-                  <FormItem className="mt-2">
-                    <FormControl>
-                      <Textarea
-                        {...field}
-                        value={field.value ?? undefined}
-                        className=""
-                        placeholder="Type here"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="basis-1/4 border p-4 bg-background space-y-2  mt-4">
-              <h3>Equiptment Used</h3>
-              <FormField
-                control={form.control}
-                name="equiptment"
-                render={({ field }) => (
-                  <FormItem className="mt-2">
-                    <FormControl>
-                      <Textarea
-                        {...field}
-                        value={field.value ?? undefined}
-                        className=""
-                        placeholder="Type here"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
             <Button className="w-full mt-6">Save</Button>
           </form>
         </Form>
