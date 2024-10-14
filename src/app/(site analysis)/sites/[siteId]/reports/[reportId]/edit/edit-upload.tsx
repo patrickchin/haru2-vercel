@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { LucideLoader2, LucideTrash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export function UploadAndManageFiles({ reportId }: { reportId: number }) {
   const { data: files, mutate } = useSWR<HaruFile[]>(
@@ -60,66 +61,70 @@ export function UploadAndManageFiles({ reportId }: { reportId: number }) {
   }
 
   return (
-    <div className="space-y-6">
+    <Card className="bg-background border-2">
+      <CardHeader className="flex flex-row justify-between">
+        <h2 className="text-lg font-bold">Report Overview Files</h2>
+      </CardHeader>
       {/* File Upload Section */}
-      <div className="w-full">
-        <Button asChild>
-          <label
-            htmlFor="upload-report-file"
-            className="w-full bg-black text-white py-3 px-4 rounded-lg text-center flex items-center justify-center"
-          >
-            {isUploading ? (
-              <LucideLoader2 className="animate-spin h-5 w-5" />
-            ) : (
-              "Upload Files"
-            )}
-          </label>
-        </Button>
-        <Input
-          type="file"
-          id="upload-report-file"
-          className="hidden"
-          onChange={handleFileUpload}
-          disabled={isUploading}
-          multiple
-        />
-      </div>
+      <CardContent className="flex flex-col gap-4 p-4 pt-0">
+        <div>
+          <Button asChild>
+            <label
+              htmlFor="upload-report-file"
+              className="rounded hover:cursor-pointer"
+            >
+              Upload Files
+              {isUploading && (
+                <LucideLoader2 className="animate-spin h-5 w-5" />
+              )}
+            </label>
+          </Button>
+          <Input
+            type="file"
+            id="upload-report-file"
+            className="hidden"
+            onChange={handleFileUpload}
+            disabled={isUploading}
+            multiple
+          />
+        </div>
 
-      <ul className="space-y-3">
-        {files?.map((file) => (
-          <li
-            key={file.id}
-            className="flex justify-between items-center bg-gray-100 p-4 rounded-lg shadow"
-          >
-            <span className="font-medium text-gray-800">{file.filename}</span>
-            <Dialog>
-              <DialogTrigger asChild>
-                <button className="text-gray-500 hover:text-red-500">
-                  <LucideTrash2 className="h-5 w-5" />
-                </button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogTitle>Delete File</DialogTitle>
-                <DialogDescription>
-                  Are you sure you want to delete{" "}
-                  <strong>{file.filename}</strong>?
-                </DialogDescription>
-                <div className="flex space-x-4 mt-4">
-                  <Button
-                    onClick={() => handleFileDelete(file)}
-                    className="bg-red-500 text-white"
-                  >
-                    Confirm
-                  </Button>
-                  <DialogClose asChild>
-                    <Button className="bg-gray-500 text-white">Cancel</Button>
-                  </DialogClose>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </li>
-        ))}
-      </ul>
-    </div>
+        <ul className="space-y-3">
+          {files?.map((file) => (
+            <li
+              key={file.id}
+              className="flex justify-between items-center bg-gray-100 p-4 rounded-lg shadow"
+            >
+              <span className="font-medium text-gray-800">{file.filename}</span>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="text-gray-500 hover:text-red-500">
+                    <LucideTrash2 className="h-5 w-5" />
+                  </button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogTitle>Delete File</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to delete{" "}
+                    <strong>{file.filename}</strong>?
+                  </DialogDescription>
+                  <div className="flex space-x-4 mt-4">
+                    <Button
+                      onClick={() => handleFileDelete(file)}
+                      className="bg-red-500 text-white"
+                    >
+                      Confirm
+                    </Button>
+                    <DialogClose asChild>
+                      <Button className="bg-gray-500 text-white">Cancel</Button>
+                    </DialogClose>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </li>
+          ))}
+        </ul>
+      </CardContent>
+    </Card>
   );
 }
