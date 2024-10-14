@@ -337,50 +337,92 @@ export async function ReportDocumentDisplay({
           </div>
         </CardHeader>
 
-        <CardContent className="flex flex-col gap-4 p-4 pt-0">
-          {/* <CardContent className="grid grid-cols-4 gap-4 p-4 pt-0"> */}
-          {/* <CardContent className="flex p-4 pt-0"> */}
+        {/* <CardContent className="flex flex-col gap-3 p-4 pt-0"> */}
+        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 pt-0">
+          {/* <CardContent className="flex p-3 pt-0"> */}
 
-          <div className="basis-1/4 border p-4 bg-background space-y-2">
-            <h2 className="text-base font-semibold">Site Activity</h2>
-            <p>{report?.activity ?? "--"}</p>
-          </div>
+          <div className="flex flex-col gap-3">
+            <div className="p-3 bg-background space-y-2 rounded border">
+              <h2 className="text-base font-semibold">Site Activity</h2>
 
-          <div className="basis-1/4 border p-4 bg-background space-y-2">
-            <h2 className="text-base font-semibold">Site Personel</h2>
-
-            <div>
               <Table>
                 <TableBody>
                   <TableRow>
-                    <TableHead>Contractor</TableHead>
-                    <TableCell>{report?.contractors ?? "--"}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableHead>Engineers</TableHead>
-                    <TableCell>{report?.engineers ?? "--"}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableHead>Workers</TableHead>
-                    <TableCell>{report?.workers ?? "--"}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableHead>Visitors</TableHead>
-                    <TableCell>{report?.visitors ?? "--"}</TableCell>
+                    <TableCell className="whitespace-pre-line">
+                      <p>{report?.activity ?? "--"}</p>
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
             </div>
+
+            <div className="flex justify-between items-center p-3 bg-background rounded border">
+              <h2 className="text-base font-semibold">Materials Status</h2>
+              <Button size="sm" variant="outline">
+                Open
+              </Button>
+              <ol className="hidden">
+                {report?.materials?.split("\n").map((eq, i) => {
+                  return (
+                    <li key={i} className="hover:bg-accent">
+                      {eq}
+                    </li>
+                  );
+                })}
+              </ol>
+            </div>
+
+            <div className="flex justify-between items-center p-3 bg-background rounded border">
+              <h2 className="text-base font-semibold">Equipment Status</h2>
+              <Button size="sm" variant="outline">
+                Open
+              </Button>
+              <ol className="hidden">
+                {report?.equiptment?.split("\n").map((eq, i) => {
+                  return (
+                    <li key={i} className="hover:bg-accent">
+                      {eq}
+                    </li>
+                  );
+                })}
+              </ol>
+            </div>
           </div>
 
-          <div className="basis-1/4 border p-4 bg-background space-y-2">
-            <h2 className="text-base font-semibold">Materials Status</h2>
-            <p>{report?.materials ?? "--"}</p>
-          </div>
-
-          <div className="basis-1/4 border p-4 bg-background space-y-2">
-            <h2 className="text-base font-semibold">Equiptment Status</h2>
-            <p>{report?.equiptment ?? "--"}</p>
+          <div>
+            <div className="rounded border p-3 bg-background space-y-2">
+              <h2 className="text-base font-semibold">Site Personel</h2>
+              <div>
+                <Table>
+                  <TableBody>
+                    <TableRow>
+                      <TableHead>Contractor</TableHead>
+                      <TableCell className="whitespace-pre-line">
+                        {report?.contractors ?? "--"}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableHead>Engineers</TableHead>
+                      <TableCell className="whitespace-pre-line">
+                        {report?.engineers ?? "--"}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableHead>Workers</TableHead>
+                      <TableCell className="whitespace-pre-line">
+                        {report?.workers ?? "--"}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableHead>Visitors</TableHead>
+                      <TableCell className="whitespace-pre-line">
+                        {report?.visitors ?? "--"}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
