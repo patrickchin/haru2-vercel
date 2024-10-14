@@ -1,22 +1,23 @@
 "use client";
 import { useState, ChangeEvent } from "react";
 import useSWR from "swr";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-  DialogClose,
-} from "@radix-ui/react-dialog";
 import { HaruFile } from "@/lib/types";
 import { uploadReportFile } from "@/lib/utils/upload";
+
+import { LucideLoader2, LucideTrash2 } from "lucide-react";
 import * as Actions from "@/lib/actions";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-import { LucideLoader2, LucideTrash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export function UploadAndManageFiles({ reportId }: { reportId: number }) {
   const { data: files, mutate } = useSWR<HaruFile[]>(
