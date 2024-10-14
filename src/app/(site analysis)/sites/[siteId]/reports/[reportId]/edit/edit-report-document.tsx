@@ -40,9 +40,9 @@ function EditReportEstimates({
   return (
     <Card className="bg-yellow-50 border-2">
       <CardHeader className="flex flex-row justify-between">
-        <div className="text-lg font-bold">
+        <h2 className="text-lg font-bold">
           Current Budget and Timeline Estimates
-        </div>
+        </h2>
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4 p-4 pt-0">
@@ -148,7 +148,7 @@ function EditReportDetails({
   return (
     <Card className="bg-cyan-50 border-2">
       <CardHeader className="flex flex-row justify-between">
-        <div className="text-lg font-bold">Current Construction Activites</div>
+        <h2 className="text-lg font-bold">Current Construction Activites</h2>
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4 p-4 pt-0">
@@ -161,7 +161,7 @@ function EditReportDetails({
             })}
           >
             <div className="basis-1/4 border p-4 bg-background space-y-2">
-              <h6>Site Activity</h6>
+              <h3>Site Activity</h3>
               <FormField
                 control={form.control}
                 name="activity"
@@ -181,7 +181,7 @@ function EditReportDetails({
             </div>
 
             <div className="basis-1/4 border p-4 bg-background space-y-2 mt-4">
-              <h6>Site Personel</h6>
+              <h3>Site Personel</h3>
 
               <div>
                 <FormField
@@ -257,7 +257,7 @@ function EditReportDetails({
             </div>
 
             <div className="basis-1/4 border p-4 bg-background space-y-2  mt-4">
-              <h6>Materials Used</h6>
+              <h3>Materials Used</h3>
               <FormField
                 control={form.control}
                 name="materials"
@@ -277,7 +277,7 @@ function EditReportDetails({
             </div>
 
             <div className="basis-1/4 border p-4 bg-background space-y-2  mt-4">
-              <h6>Equiptment Used</h6>
+              <h3>Equiptment Used</h3>
               <FormField
                 control={form.control}
                 name="equiptment"
@@ -322,9 +322,9 @@ export function EditReportDocument({
   if (!report) notFound();
 
   return (
-    <div className={"flex flex-col gap-4"}>
+    <>
       <EditReportEstimates report={report} mutate={mutate} />
       <EditReportDetails report={report} mutate={mutate} />
-    </div>
+    </>
   );
 }
