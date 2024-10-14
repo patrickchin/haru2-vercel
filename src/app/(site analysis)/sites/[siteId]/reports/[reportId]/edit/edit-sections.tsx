@@ -114,10 +114,7 @@ function UpdateSiteReportSection({
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Section {section.id}</CardTitle>
-      </CardHeader>
-      <CardContent>
+      <CardContent className="p-6">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit((data) => {
@@ -207,7 +204,7 @@ export function UpdateSiteReportSections({
   );
 
   return (
-    <div>
+    <div className="flex flex-col gap-4">
       {sections?.map((s) => (
         <UpdateSiteReportSection
           siteId={siteId}
