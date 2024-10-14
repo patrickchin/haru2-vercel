@@ -93,14 +93,17 @@ export function UploadAndManageFiles({ reportId }: { reportId: number }) {
           {files?.map((file) => (
             <li
               key={file.id}
-              className="flex justify-between items-center bg-gray-100 p-4 rounded-lg shadow"
+              className="flex justify-between items-center bg-accent px-6 py-2 rounded"
             >
               <span className="font-medium text-gray-800">{file.filename}</span>
               <Dialog>
                 <DialogTrigger asChild>
-                  <button className="text-gray-500 hover:text-red-500">
-                    <LucideTrash2 className="h-5 w-5" />
-                  </button>
+                  <Button
+                    variant="ghost"
+                    className="text-gray-500 hover:text-red-500"
+                  >
+                    <LucideTrash2 className="h-4 w-4" />
+                  </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogTitle>Delete File</DialogTitle>
