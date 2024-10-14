@@ -358,34 +358,48 @@ export async function ReportDocumentDisplay({
 
             <div className="flex justify-between items-center p-3 bg-background rounded border">
               <h2 className="text-base font-semibold">Materials Status</h2>
-              <Button size="sm" variant="outline">
-                Open
-              </Button>
-              <ol className="hidden">
-                {report?.materials?.split("\n").map((eq, i) => {
-                  return (
-                    <li key={i} className="hover:bg-accent">
-                      {eq}
-                    </li>
-                  );
-                })}
-              </ol>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button size="sm" variant="outline">
+                    Open
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="min-h-96">
+                  <h2 className="text-base font-semibold">Materials Status</h2>
+                  <ol>
+                    {report?.materials?.split("\n").map((eq, i) => {
+                      return (
+                        <li key={i} className="hover:bg-accent">
+                          {eq}
+                        </li>
+                      );
+                    })}
+                  </ol>
+                </DialogContent>
+              </Dialog>
             </div>
 
             <div className="flex justify-between items-center p-3 bg-background rounded border">
               <h2 className="text-base font-semibold">Equipment Status</h2>
-              <Button size="sm" variant="outline">
-                Open
-              </Button>
-              <ol className="hidden">
-                {report?.equiptment?.split("\n").map((eq, i) => {
-                  return (
-                    <li key={i} className="hover:bg-accent">
-                      {eq}
-                    </li>
-                  );
-                })}
-              </ol>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button size="sm" variant="outline">
+                    Open
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="min-h-96">
+                  <h2 className="text-base font-semibold">Equipment Status</h2>
+                  <ol>
+                    {report?.equiptment?.split("\n").map((eq, i) => {
+                      return (
+                        <li key={i} className="hover:bg-accent">
+                          {eq}
+                        </li>
+                      );
+                    })}
+                  </ol>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
 
