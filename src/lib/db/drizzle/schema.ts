@@ -70,6 +70,8 @@ export const files1 = pgTable("files1", {
   uploadedAt: timestamp("uploadedAt", { mode: "date", withTimezone: true })
     .notNull()
     .defaultNow(),
+
+  deletedAt: timestamp("deletedAt", { mode: "date", withTimezone: true }),
 });
 
 export const fileGroups1 = pgTable("fileGroups1", {

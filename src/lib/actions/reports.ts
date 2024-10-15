@@ -96,6 +96,19 @@ export async function addSiteReportFile(
   }
 }
 
+export async function deleteSiteReportFile({
+  reportId,
+  fileId,
+}: {
+  reportId: number;
+  fileId: number;
+}) {
+  const session = await auth();
+  if (await siteActionAllowed(session, editingRoles, { reportId })) {
+    return db.updateFile(fileId, { deletedAt: new Date() });
+  }
+}
+
 // ======================== sections ========================
 
 export async function getSiteReportSections(reportId: number) {
