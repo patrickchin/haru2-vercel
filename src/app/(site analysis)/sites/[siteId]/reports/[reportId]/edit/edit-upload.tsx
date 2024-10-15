@@ -3,9 +3,10 @@ import { useState, ChangeEvent } from "react";
 import useSWR from "swr";
 import { HaruFile } from "@/lib/types";
 import { uploadReportFile } from "@/lib/utils/upload";
+import * as Actions from "@/lib/actions";
+import prettyBytes from 'pretty-bytes';
 
 import { LucideLoader2, LucideTrash2 } from "lucide-react";
-import * as Actions from "@/lib/actions";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -29,7 +30,6 @@ export function UploadAndManageFiles({ reportId }: { reportId: number }) {
   );
 
   const [isUploading, setIsUploading] = useState(false);
-  const [fileToDelete, setFileToDelete] = useState<HaruFile | null>(null);
 
   async function handleFileUpload(e: ChangeEvent<HTMLInputElement>) {
     const targetFiles = e.currentTarget.files;
@@ -52,10 +52,9 @@ export function UploadAndManageFiles({ reportId }: { reportId: number }) {
 
   async function handleFileDelete(file: HaruFile) {
     try {
-      // await deleteReportFile(file.id); // API for deleting file
-      mutate(); // Refresh the file list after deletion
-      setFileToDelete(null);
-      toast({ description: "File deleted successfully" });
+      await Actions.deleteSiteReportFile({ reportId, fileId: file.id });
+      await mutate(); // Refresh the file list after deletion
+      toast({ description: `File deleted successfully: ${file.filename}` });
     } catch (e) {
       toast({ description: `Delete Error: ${e}` });
     }
@@ -90,37 +89,39 @@ export function UploadAndManageFiles({ reportId }: { reportId: number }) {
           />
         </div>
 
-        <ul className="space-y-3">
+        <ul className="space-y-2">
           {files?.map((file) => (
             <li
               key={file.id}
-              className="flex justify-between items-center bg-accent px-6 py-2 rounded"
+              className="flex gap-4 items-center bg-accent px-6 py-1 rounded"
             >
-              <span className="font-medium text-gray-800">{file.filename}</span>
+              <span className="grow">{file.filename}</span>
+              <span className="">
+                {file.filesize && prettyBytes(file.filesize)}
+              </span>
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="text-gray-500 hover:text-red-500"
-                  >
+                  <Button size="icon" variant="ghost">
                     <LucideTrash2 className="h-4 w-4" />
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogTitle>Delete File</DialogTitle>
                   <DialogDescription>
-                    Are you sure you want to delete{" "}
+                    Are you sure you want to delete the file{" "}
                     <strong>{file.filename}</strong>?
                   </DialogDescription>
-                  <div className="flex space-x-4 mt-4">
-                    <Button
-                      onClick={() => handleFileDelete(file)}
-                      className="bg-red-500 text-white"
-                    >
-                      Confirm
-                    </Button>
+                  <div className="flex gap-2 justify-end">
                     <DialogClose asChild>
-                      <Button className="bg-gray-500 text-white">Cancel</Button>
+                      <Button variant="secondary">Cancel</Button>
+                    </DialogClose>
+                    <DialogClose asChild>
+                      <Button
+                        variant="destructive"
+                        onClick={() => handleFileDelete(file)}
+                      >
+                        Delete
+                      </Button>
                     </DialogClose>
                   </div>
                 </DialogContent>
