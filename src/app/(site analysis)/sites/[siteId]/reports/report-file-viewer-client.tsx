@@ -199,12 +199,12 @@ export function FileDisplayCarousel({
           onValueChange={(v) => setVideosView(v === "video")}
         >
           <TabsList className="bg-primary text-primary-foreground rounded h-fit">
-            <TabsTrigger value="video" className="rounded p-3 gap-2">
-              {videosView && <LucideCheck className="w-5 h-5" />}
+            <TabsTrigger value="video" className="rounded p-2 gap-2 pr-3">
+              {videosView && <LucideCheck className="w-4 h-4" />}
               Videos
             </TabsTrigger>
-            <TabsTrigger value="image" className="rounded p-3 gap-2">
-              {!videosView && <LucideCheck className="w-5 h-5" />}
+            <TabsTrigger value="image" className="rounded p-2 gap-2 pr-3">
+              {!videosView && <LucideCheck className="w-4 h-4" />}
               Images
             </TabsTrigger>
           </TabsList>
