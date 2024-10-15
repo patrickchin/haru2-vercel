@@ -151,7 +151,7 @@ function EditReportDetails({
         <h2 className="text-lg font-bold">Current Construction Activites</h2>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-4 p-4 pt-0">
+      <CardContent className="">
         <Form {...form}>
           <form
             className="w-full"
@@ -160,11 +160,11 @@ function EditReportDetails({
               mutate(); // TODO update from return value above
             })}
           >
-            {/* <div className="grid grid-cols-2 gap-3"> */}
-            <div className="flex flex-col gap-3">
+            <div className="grid grid-cols-2 gap-3">
+            {/* <div className="flex flex-col gap-3"> */}
               <div>
                 <div className="rounded border p-4 bg-background space-y-2">
-                  <h3>Site Activities</h3>
+                  <h3 className="font-semibold">Site Activities</h3>
                   <FormField
                     control={form.control}
                     name="activity"
@@ -186,7 +186,7 @@ function EditReportDetails({
 
               <div>
                 <div className="rounded border p-4 bg-background space-y-2">
-                  <h3>Site Personel</h3>
+                  <h3 className="font-semibold">Site Personel</h3>
 
                   <div>
                     <FormField
@@ -264,7 +264,7 @@ function EditReportDetails({
 
               <div>
                 <div className="rounded border p-4 bg-background space-y-2">
-                  <h3>Materials Used</h3>
+                  <h3 className="font-semibold">Materials Used</h3>
                   <FormField
                     control={form.control}
                     name="materials"
@@ -286,7 +286,7 @@ function EditReportDetails({
 
               <div>
                 <div className="rounded border p-4 bg-background space-y-2">
-                  <h3>Equiptment Used</h3>
+                  <h3 className="font-semibold">Equiptment Used</h3>
                   <FormField
                     control={form.control}
                     name="equiptment"
