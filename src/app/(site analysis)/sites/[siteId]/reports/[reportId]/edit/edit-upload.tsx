@@ -7,11 +7,11 @@ import { uploadReportFile } from "@/lib/utils/upload";
 import * as Actions from "@/lib/actions";
 import prettyBytes from "pretty-bytes";
 
-import { LucideLoader2, LucideTrash2 } from "lucide-react";
+import { LucideLoader2, LucidePlus, LucideTrash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogClose,
@@ -72,16 +72,22 @@ function UploadAndManageFilesSection({
   }
 
   return (
-    <div className="flex flex-col gap-2 mt-4">
+    <div className="flex flex-col gap-4">
       <div className="flex gap-4 items-center">
-        <h3 className="font-semibold capitalize">Report {type}s</h3>
-        <Button asChild variant="default" size="sm">
+        <h3 className="font-bold capitalize text-lg">
+          Report Overview {type}s
+        </h3>
+        <Button asChild variant="default">
           <label
             htmlFor={`upload-report-file-${type}`}
-            className="rounded hover:cursor-pointer flex gap-3"
+            className="rounded hover:cursor-pointer flex gap-2"
           >
             <span className="capitalize">Upload {type}</span>
-            {isUploading && <LucideLoader2 className="animate-spin h-5 w-5" />}
+            {isUploading ? (
+              <LucideLoader2 className="animate-spin h-5 w-5" />
+            ) : (
+              <LucidePlus className="w-4 h-4" />
+            )}
           </label>
         </Button>
         <Input
@@ -187,11 +193,12 @@ export function UploadAndManageFiles({ reportId }: { reportId: number }) {
   }, [files]);
 
   return (
-    <Card className="bg-background border-2">
-      <CardHeader className="flex flex-row justify-between pb-0">
+    <Card className="bg-background border-2 p-4">
+      {/* <CardHeader className="flex flex-row justify-between pb-0">
         <h2 className="text-lg font-bold">Report Overview Files</h2>
-      </CardHeader>
-      <CardContent className="grid grid-cols-1 gap-4 p-4">
+      </CardHeader> */}
+      {/* <CardContent className="grid grid-cols-4 gap-4 p-4"> */}
+      <CardContent className="flex flex-col gap-8 p-4">
         <UploadAndManageFilesSection
           type="video"
           reportId={reportId}
