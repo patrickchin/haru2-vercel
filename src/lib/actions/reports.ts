@@ -15,6 +15,7 @@ import {
   siteActionAllowed,
   viewingRoles,
 } from "@/lib/permissions-server";
+import { revalidatePath } from "next/cache";
 
 export async function getSiteReports(siteId: number) {
   const session = await auth();
@@ -51,7 +52,9 @@ export async function updateSiteReport(
 ) {
   const session = await auth();
   if (await siteActionAllowed(session, editingRoles, { reportId })) {
-    return await db.updateSiteReport(reportId, values);
+    const report = await db.updateSiteReport(reportId, values);
+    revalidatePath(`/sites/${report.siteId}/reports/${report.id}`);
+    return report;
   }
 }
 
@@ -61,7 +64,12 @@ export async function updateSiteReportDetails(
 ) {
   const session = await auth();
   if (await siteActionAllowed(session, editingRoles, { reportId })) {
-    return await db.updateSiteReportDetails(reportId, values);
+    const [details, report] = await Promise.all([
+      db.updateSiteReportDetails(reportId, values),
+      db.getSiteReport(reportId),
+    ]);
+    revalidatePath(`/sites/${report.siteId}/reports/${report.id}`);
+    return details;
   }
 }
 
