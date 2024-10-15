@@ -181,8 +181,13 @@ export function FileDisplayCarousel({
             <CarouselNext className="invisible group-hover:visible right-4" />
           </Carousel>
         ) : (
-          <div className="flex h-[30rem] items-center justify-center align-middle">
-            This report has no overview files
+          <div
+            className={cn(
+              "flex items-center justify-center align-middle",
+              largeView ? "h-[45rem]" : "h-[30rem]",
+            )}
+          >
+            This report has no overview {videosView ? "videos" : "images"}
           </div>
         )}
       </div>
