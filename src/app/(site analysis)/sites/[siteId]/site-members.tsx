@@ -152,7 +152,6 @@ function SiteMemberSelectRole({
   );
 }
 
-
 export default function SiteMembers({
   site,
   members: origMembers,

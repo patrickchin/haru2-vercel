@@ -33,7 +33,6 @@ export default auth((req) => {
       return Response.redirect(req.nextUrl);
     }
     */
-
     /*
     // TODO maybe match the full path?
     if (

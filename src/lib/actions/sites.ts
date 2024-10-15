@@ -156,7 +156,7 @@ export async function removeSiteMember({
   userId: number;
 }) {
   const session = await auth();
-  if ((await siteActionAllowed(session, editingRoles, { siteId }))) {
+  if (await siteActionAllowed(session, editingRoles, { siteId })) {
     const n = await db.countSiteMembers(siteId);
     if (n > 1) return db.removeSiteMember({ siteId, userId });
   }
