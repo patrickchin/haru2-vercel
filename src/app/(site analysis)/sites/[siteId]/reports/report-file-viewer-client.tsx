@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { HaruFile } from "@/lib/types";
 
@@ -12,6 +13,7 @@ import {
   LucideFileText,
   LucideMaximize2,
   LucideMinimize2,
+  LucideCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,12 +29,13 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function FileSelector({
-  fileList,
+  files,
   file,
 }: {
-  fileList?: HaruFile[];
+  files?: HaruFile[];
   file?: HaruFile;
 }) {
   const filters = [
@@ -41,12 +44,12 @@ export function FileSelector({
     { label: "Videos", mime: "video" },
   ];
 
-  const filteredFiles = fileList?.filter((f) => {
+  const filteredFiles = files?.filter((f) => {
     return f.type?.startsWith("");
   });
 
   return (
-    <div className="flex-none flex flex-col gap-3">
+    <div className="flex-none flex flex-col gap-3 border">
       {/* <div className="grid gap-2 w-44 px-1">
         <ul className="flex flex-col gap-2">
           {filters.map((f, i) => (
@@ -67,7 +70,7 @@ export function FileSelector({
       </div> */}
 
       <ScrollArea>
-        <ul className="flex flex-col gap-1 p-1 w-44">
+        <ul className="flex gap-1 p-3">
           {filteredFiles?.map((r, i) => (
             <li key={i}>
               <TooltipProvider delayDuration={0}>
@@ -82,22 +85,30 @@ export function FileSelector({
                       )}
                       // disabled={r.id === selectedFile?.id}
                     >
-                      <div>
+                      <div className="w-10 h-10 relative">
                         {r.type?.startsWith("image/") ? (
-                          <LucideCamera className="w-4" />
-                        ) : r.type?.startsWith("video/") ? (
+                          // this doesn't work?
+                          <Image
+                            src={r.url || ""}
+                            alt={r.filename || ""}
+                            width={40}
+                            height={40}
+                            className="object-cover"
+                          />
+                        ) : // <LucideCamera className="w-4" />
+                        r.type?.startsWith("video/") ? (
                           <LucideVideo className="w-4" />
                         ) : (
                           <LucideFileText className="w-4" />
                         )}
                       </div>
 
-                      <p className="text-nowrap overflow-hidden text-ellipsis">
+                      {/* <p className="text-nowrap overflow-hidden text-ellipsis">
                         {r.filename}
-                      </p>
+                      </p> */}
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent side="left">{r.filename}</TooltipContent>
+                  <TooltipContent side="bottom">{r.filename}</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </li>
@@ -116,6 +127,14 @@ export function FileDisplayCarousel({
   file?: HaruFile;
 }) {
   const [largeView, setLargeView] = useState(false);
+  const [videosView, setVideosView] = useState(true);
+
+  const files = useMemo(() => {
+    return fileList?.filter((f) => {
+      const isVideo = f.type?.startsWith("video/");
+      return videosView === isVideo;
+    });
+  }, [fileList, videosView]);
 
   return (
     <div
@@ -131,10 +150,10 @@ export function FileDisplayCarousel({
           "bg-gradient-to-r from-cyan-100 to-blue-100",
         )}
       >
-        {fileList && fileList.length > 0 ? (
+        {files && files.length > 0 ? (
           <Carousel className="w-full h-full group" opts={{ watchDrag: false }}>
             <CarouselContent>
-              {fileList?.map((f) => (
+              {files?.map((f) => (
                 <CarouselItem key={f.id} className="">
                   <FileDisplay
                     file={f}
@@ -166,8 +185,25 @@ export function FileDisplayCarousel({
             This report has no overview files
           </div>
         )}
+      </div>
+      {/* <FileSelector fileList={files} file={file} /> */}
 
-        {/* <FileSelector fileList={fileList} file={file} /> */}
+      <div className="flex justify-center w-full p-3">
+        <Tabs
+          defaultValue="video"
+          onValueChange={(v) => setVideosView(v === "video")}
+        >
+          <TabsList className="bg-primary text-primary-foreground rounded h-fit">
+            <TabsTrigger value="video" className="rounded p-3 gap-2">
+              {videosView && <LucideCheck className="w-5 h-5" />}
+              Videos
+            </TabsTrigger>
+            <TabsTrigger value="image" className="rounded p-3 gap-2">
+              {!videosView && <LucideCheck className="w-5 h-5" />}
+              Images
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
     </div>
   );
