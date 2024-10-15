@@ -293,7 +293,7 @@ export async function ReportDocumentDisplay({
         </CardContent>
       </Card>
 
-      <Card className="bg-yellow-50 border-2">
+      <Card className="bg-yellow-50 border-2 hidden">
         <CardHeader className="flex flex-row justify-between">
           <div className="text-lg font-bold">
             Current Budget and Timeline Estimates

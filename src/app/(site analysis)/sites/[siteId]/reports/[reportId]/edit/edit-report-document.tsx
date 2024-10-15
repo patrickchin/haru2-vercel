@@ -342,7 +342,7 @@ export function EditReportDocument({
 
   return (
     <>
-      <EditReportEstimates report={report} mutate={mutate} />
+      {/* <EditReportEstimates report={report} mutate={mutate} /> */}
       <EditReportDetails report={report} mutate={mutate} />
     </>
   );
