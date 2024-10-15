@@ -178,6 +178,7 @@ function EditReportDetails({
                             value={field.value ?? undefined}
                             className="min-h-10 h-40"
                             placeholder="eg. Excavation"
+                            autoResize={true}
                           />
                         </FormControl>
                       </FormItem>
@@ -203,6 +204,7 @@ function EditReportDetails({
                               value={field.value ?? undefined}
                               className="min-h-10 h-10"
                               placeholder="eg. John Doe"
+                              autoResize={true}
                             />
                           </FormControl>
                         </FormItem>
@@ -220,6 +222,7 @@ function EditReportDetails({
                               value={field.value ?? undefined}
                               className="min-h-10 h-10"
                               placeholder="eg. John Doe"
+                              autoResize={true}
                             />
                           </FormControl>
                         </FormItem>
@@ -236,8 +239,9 @@ function EditReportDetails({
                             <Textarea
                               {...field}
                               value={field.value ?? undefined}
-                              className="min-h-10 h-24"
+                              className="min-h-10 h-10"
                               placeholder="eg. John Doe"
+                              autoResize={true}
                             />
                           </FormControl>
                         </FormItem>
@@ -255,6 +259,7 @@ function EditReportDetails({
                               value={field.value ?? undefined}
                               className="min-h-10 h-10"
                               placeholder="eg. John Doe"
+                              autoResize={true}
                             />
                           </FormControl>
                         </FormItem>
@@ -278,6 +283,7 @@ function EditReportDetails({
                             value={field.value ?? undefined}
                             className="min-h-40 h-40"
                             placeholder="Type here"
+                            autoResize={true}
                           />
                         </FormControl>
                       </FormItem>
@@ -300,6 +306,7 @@ function EditReportDetails({
                             value={field.value ?? undefined}
                             className="min-h-40 h-40"
                             placeholder="Type here"
+                            autoResize={true}
                           />
                         </FormControl>
                       </FormItem>
