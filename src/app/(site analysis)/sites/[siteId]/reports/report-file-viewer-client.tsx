@@ -126,15 +126,18 @@ export function FileDisplayCarousel({
   fileList?: HaruFile[];
   file?: HaruFile;
 }) {
-  const [largeView, setLargeView] = useState(false);
-  const [videosView, setVideosView] = useState(true);
 
-  const files = useMemo(() => {
-    return fileList?.filter((f) => {
-      const isVideo = f.type?.startsWith("video/");
-      return videosView === isVideo;
-    });
-  }, [fileList, videosView]);
+  const videoFiles = useMemo(() => {
+    return fileList?.filter((f) => f.type?.startsWith("video/"));
+  }, [fileList]);
+  const imageFiles = useMemo(() => {
+    return fileList?.filter((f) => !f.type?.startsWith("video/"));
+  }, [fileList]);
+
+  const [largeView, setLargeView] = useState(false);
+  const [videosView, setVideosView] = useState(videoFiles && videoFiles?.length > 0);
+
+  const files = videosView ? videoFiles : imageFiles;
 
   return (
     <div
@@ -195,7 +198,7 @@ export function FileDisplayCarousel({
 
       <div className="flex justify-center w-full p-3">
         <Tabs
-          defaultValue="video"
+          defaultValue={videosView ? "video" : "image"}
           onValueChange={(v) => setVideosView(v === "video")}
         >
           <TabsList className="bg-primary text-primary-foreground rounded h-fit">
