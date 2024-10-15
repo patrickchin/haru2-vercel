@@ -1,7 +1,7 @@
 import "server-only";
 
 import { db } from "./_db";
-import { eq, getTableColumns } from "drizzle-orm";
+import { eq, getTableColumns, isNull, and } from "drizzle-orm";
 import { HaruFile, HaruFileNew } from "@/lib/types";
 import * as Schemas from "@/drizzle/schema";
 
@@ -58,7 +58,12 @@ export async function getFilesFromGroup(
       Schemas.fileGroupFiles1,
       eq(Schemas.fileGroupFiles1.fileId, Schemas.files1.id),
     )
-    .where(eq(Schemas.fileGroupFiles1.fileGroupId, fileGroupId));
+    .where(
+      and(
+        eq(Schemas.fileGroupFiles1.fileGroupId, fileGroupId),
+        isNull(Schemas.files1.deletedAt),
+      ),
+    );
 }
 
 export async function getFilesForReport(reportId: number): Promise<HaruFile[]> {
@@ -74,7 +79,12 @@ export async function getFilesForReport(reportId: number): Promise<HaruFile[]> {
       Schemas.siteReports1,
       eq(Schemas.siteReports1.fileGroupId, Schemas.fileGroupFiles1.fileGroupId),
     )
-    .where(eq(Schemas.siteReports1.id, reportId));
+    .where(
+      and(
+        eq(Schemas.siteReports1.id, reportId),
+        isNull(Schemas.files1.deletedAt),
+      ),
+    );
 }
 
 export async function getFilesForReportSection(
@@ -95,5 +105,10 @@ export async function getFilesForReportSection(
         Schemas.fileGroupFiles1.fileGroupId,
       ),
     )
-    .where(eq(Schemas.siteReportSections1.id, sectionId));
+    .where(
+      and(
+        eq(Schemas.siteReportSections1.id, sectionId),
+        isNull(Schemas.files1.deletedAt),
+      ),
+    );
 }
