@@ -46,7 +46,7 @@ export async function getAllVisibleSites(
       lastReportDate: Schemas.siteReports1.createdAt,
     })
     .from(Schemas.sites1)
-    .innerJoin(
+    .leftJoin(
       Schemas.siteReports1,
       eq(Schemas.siteReports1.siteId, Schemas.sites1.id),
     )

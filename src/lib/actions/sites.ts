@@ -20,11 +20,6 @@ export async function addSite(d: AddSiteType) {
   if (!parsed.success) return;
 
   const site = await db.addUserSite(session.user.idn, parsed.data);
-  const membership = await db.addSiteMember({
-    siteId: site.id,
-    userId: session.user.idn,
-    role: "owner",
-  });
 
   redirect(`/sites/${site.id}`);
 }
