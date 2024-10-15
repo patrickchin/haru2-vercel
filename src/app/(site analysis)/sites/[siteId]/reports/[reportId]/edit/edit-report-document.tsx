@@ -48,7 +48,7 @@ function EditReportEstimates({
       <CardContent className="p-4 pt-0">
         <Form {...form}>
           <form
-            className=""
+            className="flex flex-col gap-4"
             onSubmit={form.handleSubmit(async (data: ReportFormType) => {
               await Actions.updateSiteReportDetails(report.id, data);
               mutate(); // TODO update from return value above
@@ -125,7 +125,9 @@ function EditReportEstimates({
                 )}
               />
             </div>
-            <Button className="w-full mt-6">Save</Button>
+            <div className="flex justify-end">
+              <Button type="submit">Save</Button>
+            </div>
           </form>
         </Form>
       </CardContent>
@@ -154,14 +156,14 @@ function EditReportDetails({
       <CardContent className="">
         <Form {...form}>
           <form
-            className="w-full"
+            className="flex flex-col gap-4"
             onSubmit={form.handleSubmit(async (data: ReportFormType) => {
               await Actions.updateSiteReportDetails(report.id, data);
               mutate(); // TODO update from return value above
             })}
           >
             <div className="grid grid-cols-2 gap-3">
-            {/* <div className="flex flex-col gap-3"> */}
+              {/* <div className="flex flex-col gap-3"> */}
               <div>
                 <div className="rounded border p-4 bg-background space-y-2">
                   <h3 className="font-semibold">Site Activities</h3>
@@ -307,7 +309,9 @@ function EditReportDetails({
               </div>
             </div>
 
-            <Button className="w-full mt-6">Save</Button>
+            <div className="flex justify-end">
+              <Button type="submit">Save</Button>
+            </div>
           </form>
         </Form>
       </CardContent>
