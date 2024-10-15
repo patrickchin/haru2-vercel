@@ -96,7 +96,7 @@ export async function ReportTitleBarDisplay({
 }) {
   const memberRole = site ? await Actions.getSiteRole(site.id) : "";
   return (
-    <div className="grow flex flex-row gap-3">
+    <div className="grow flex flex-col sm:flex-row gap-3">
       <div>
         <Button variant="secondary" asChild>
           <Link
@@ -109,14 +109,14 @@ export async function ReportTitleBarDisplay({
         </Button>
       </div>
 
-      <div className="grow flex justify-between">
+      <div className="grow flex w-full sm:w-fit">
         <Popover>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className="items-center justify-between gap-4 border-2 p-4"
+              className="items-center justify-between gap-4 border-2 p-4 w-full"
             >
-              <h1 className="text-2xl font-semibold justify-start">
+              <h1 className="text-xl sm:text-2xl font-semibold">
                 {report
                   ? `Site Report #${report.id} - ${report.createdAt?.toDateString()}`
                   : "Click here to select a report"}
@@ -128,13 +128,15 @@ export async function ReportTitleBarDisplay({
             <ReportListPopup site={site} report={report} />
           </PopoverContent>
         </Popover>
+      </div>
 
+      <div className="">
         {site &&
           session &&
           session.user &&
           memberRole &&
           ["supervisor", "owner", "manager"].includes(memberRole) && (
-            <div className="flex gap-2">
+            <div className="grid grid-cols-2 w-full sm:w-fit sm:flex gap-4">
               {report && (
                 <Button variant="secondary" asChild>
                   <Link href={`/sites/${site.id}/reports/${report.id}/edit`}>
@@ -255,7 +257,7 @@ export async function ReportDocumentDisplay({
           <div className="text-lg font-bold">Site Project Details</div>
         </CardHeader>
 
-        <CardContent className="grid grid-cols-2 gap-4 p-4 pt-0">
+        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 pt-0">
           <Table>
             <TableBody>
               <TableRow>
@@ -364,9 +366,9 @@ export async function ReportDocumentDisplay({
                     Open
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="min-h-96">
+                <DialogContent className="min-h-96 max-h-svh flex flex-col p-2">
                   <h2 className="text-base font-semibold">Materials Status</h2>
-                  <ol>
+                  <ol className="overflow-y-auto border rounded p-3">
                     {report?.materials?.split("\n").map((eq, i) => {
                       return (
                         <li key={i} className="hover:bg-accent">
@@ -387,9 +389,9 @@ export async function ReportDocumentDisplay({
                     Open
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="min-h-96">
+                <DialogContent className="min-h-96 max-h-svh flex flex-col p-2">
                   <h2 className="text-base font-semibold">Equipment Status</h2>
-                  <ol>
+                  <ol className="overflow-y-auto border rounded p-3">
                     {report?.equiptment?.split("\n").map((eq, i) => {
                       return (
                         <li key={i} className="hover:bg-accent">

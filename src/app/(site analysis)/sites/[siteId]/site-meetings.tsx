@@ -79,7 +79,7 @@ function SiteCalendarForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-row gap-4 w-full"
+        className="flex flex-col sm:flex-row gap-4 w-full"
       >
         <FormField
           control={form.control}
@@ -142,7 +142,7 @@ function SiteCalendarForm({
           )}
         />
 
-        <div className="flex items-end">
+        <div className="flex sm:items-end sm:h-16 sm:mt-2">
           <Button type="submit" className="gap-2">
             Add Meeting Time
             <LucidePlus className="w-4" />

@@ -72,15 +72,10 @@ function NewSiteForm() {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((d) => {
-          console.log(d);
-          Actions.addSite(d);
+        onSubmit={form.handleSubmit(async (d) => {
+          await Actions.addSite(d);
         })}
-        // onSubmit={(e) => {
-        //   e.preventDefault();
-        //   console.log(e);
-        // }}
-        className="grid grid-cols-2 gap-6 w-full"
+        className="flex flex-col p-4 sm:grid sm:grid-cols-2 gap-6 w-full"
       >
         <FormField
           control={form.control}
@@ -136,7 +131,7 @@ function NewSiteForm() {
           )}
         />
 
-        <FormField
+        {/* <FormField
           control={form.control}
           name="postcode"
           render={({ field }) => (
@@ -152,11 +147,11 @@ function NewSiteForm() {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
 
         <CountrySelectForm form={form} />
 
-        <div className="col-span-2 space-y-4">
+        <div className="sm:col-span-2 space-y-4">
           <FormField
             control={form.control}
             name="description"
@@ -169,6 +164,7 @@ function NewSiteForm() {
                     onChange={field.onChange}
                     className="h-36"
                     placeholder="Tell us a little bit about your project"
+                    autoResize={true}
                   />
                 </FormControl>
                 <FormMessage />

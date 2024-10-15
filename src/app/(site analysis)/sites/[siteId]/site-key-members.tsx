@@ -9,8 +9,8 @@ import * as Actions from "@/lib/actions";
 
 import {
   Dialog,
+  DialogClose,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -38,7 +38,7 @@ function SiteMemberFields({
     <div className="flex flex-col">
       <h3 className="capitalize text-base font-semibold">{prefix}</h3>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <FormField
           control={form.control}
           name={`${prefix}Name`}
@@ -124,7 +124,7 @@ function EditSiteMembersForm({ site, members }: SiteDetailsProps) {
           Actions.updateKeySiteUsers(site.id, d);
           router.replace(`${pathname}?${createQueryString("m", "0")}`);
         })}
-        className="flex flex-col gap-2"
+        className="flex flex-col gap-4"
       >
         <SiteMemberFields
           site={site}
@@ -146,14 +146,16 @@ function EditSiteMembersForm({ site, members }: SiteDetailsProps) {
         />
 
         <div className="flex gap-3 justify-end pt-4">
-          <Button
-            variant="secondary"
-            type="button"
-            className="flex gap-2"
-            // disabled={form.formState.isSubmitting}
-          >
-            Cancel
-          </Button>
+          <DialogClose>
+            <Button
+              variant="secondary"
+              type="button"
+              className="flex gap-2"
+              // disabled={form.formState.isSubmitting}
+            >
+              Cancel
+            </Button>
+          </DialogClose>
           <Button
             type="submit"
             className="flex gap-2"
@@ -201,7 +203,7 @@ export default function EditSiteMembersButtonPopup({
           Edit Members <LucideEdit className="ml-2 w-3.5" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl">
+      <DialogContent className="max-w-4xl max-h-svh overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Key Site Member Information</DialogTitle>
         </DialogHeader>
