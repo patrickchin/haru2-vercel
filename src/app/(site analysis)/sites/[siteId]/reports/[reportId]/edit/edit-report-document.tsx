@@ -162,7 +162,7 @@ function EditReportDetails({
               mutate(); // TODO update from return value above
             })}
           >
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {/* <div className="flex flex-col gap-3"> */}
               <div>
                 <div className="rounded border p-4 bg-background space-y-2">

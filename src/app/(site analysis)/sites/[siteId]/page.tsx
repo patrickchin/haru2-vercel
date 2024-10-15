@@ -54,7 +54,7 @@ function SiteInfoBar({ site, members }: SiteDetailsProps) {
 
   return (
     <Card className="flex flex-col gap-4 px-6">
-      <ul className="inline-flex">
+      <ul className="flex flex-col sm:flex-row sm:inline-flex">
         <li className="hover:bg-accent py-4 px-4 space-x-1">
           <span className="font-semibold">Project Id: </span>
           <span className="">{site.id}</span>
@@ -120,25 +120,25 @@ function SiteMembersBar({ site, members }: SiteDetailsProps) {
   const owner = members?.find((m) => m.role === "owner");
 
   return (
-    <Card className="flex items-center gap-5 px-6">
-      <ul className="grow flex max-w-full">
-        <li className="hover:bg-accent py-4 px-4">
+    <Card className="flex flex-col sm:flex-row sm:items-center gap-5 p-6 overflow-auto">
+      <ul className="grow flex flex-col sm:flex-row gap-4 sm:gap-8">
+        <li className="min-w-32">
           <p className="font-semibold text-sm">Owner:</p>
           <p className="text-nowrap">{owner?.name.length ? owner.name : "-"}</p>
         </li>
-        <li className="hover:bg-accent py-4 px-8">
+        <li className="min-w-32">
           <p className="font-semibold text-sm">Manager: </p>
           <p className="text-nowrap">
             {site.managerName?.length ? site.managerName : "-"}
           </p>
         </li>
-        <li className="hover:bg-accent py-4 px-8">
+        <li className="min-w-32">
           <p className="font-semibold text-sm">Contractor: </p>
           <p className="text-nowrap">
             {site.contractorName?.length ? site.contractorName : "-"}
           </p>
         </li>
-        <li className="hover:bg-accent py-4 px-8">
+        <li className="min-w-32">
           <p className="font-semibold text-sm">Supervisor: </p>
           <p className="text-nowrap">
             {site.supervisorName?.length ? site.supervisorName : "-"}
@@ -325,7 +325,7 @@ export default async function Page({
 
   return (
     <DefaultLayout>
-      <div className="flex items-center justify-between pb-3">
+      <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between pb-3">
         <h1 className="text-2xl font-semibold">
           Site {siteId}: {site?.title}
         </h1>

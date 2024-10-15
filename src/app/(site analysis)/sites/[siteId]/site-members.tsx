@@ -182,14 +182,14 @@ export default function SiteMembers({
             return (
               <li
                 key={m.id}
-                className="flex p-4 bg-background justify-between [&:not(:last-child)]:border-b"
+                className="flex flex-col sm:flex-row gap-4 p-4 bg-background justify-between [&:not(:last-child)]:border-b"
               >
                 <div className="flex gap-3 items-center">
                   <HaruUserAvatar user={m} className="w-8 h-8" />
                   <p>{m.name}</p>
                 </div>
                 {myRole && editingRoles.includes(myRole) ? (
-                  <div className="flex gap-3 items-center">
+                  <div className="flex flex-row gap-3 sm:items-center">
                     <SiteMemberSelectRole
                       siteId={site.id}
                       member={m}

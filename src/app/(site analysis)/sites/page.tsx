@@ -17,9 +17,9 @@ async function SiteItem({ site }: { site?: SiteAndExtra }) {
   return (
     <Link
       href={`/sites/${site.id}`}
-      className="flex items-center gap-3 p-4 border hover:bg-accent bg-background"
+      className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 border hover:bg-accent bg-background"
     >
-      <div className="grow flex justify-between items-center">
+      <div className="grow flex flex-col sm:flex-row sm:justify-between sm:items-center">
         <div className="flex flex-col">
           <h2 className="whitespace-nowrap overflow-ellipsis font-semibold text-lg">
             Site {site.id}: {site.title}

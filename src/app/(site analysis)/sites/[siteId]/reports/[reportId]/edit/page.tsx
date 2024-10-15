@@ -19,7 +19,7 @@ export default async function Page({
   if (memberRole && ["supervisor", "owner", "manager"].includes(memberRole)) {
     return (
       <DefaultLayout className="max-w-5xl">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
           <Button asChild variant="secondary">
             <Link
               href={`/sites/${siteId}/reports/${reportId}`}
