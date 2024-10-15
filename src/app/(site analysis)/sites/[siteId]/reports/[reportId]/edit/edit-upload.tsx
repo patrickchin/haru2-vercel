@@ -1,6 +1,7 @@
 "use client";
-import { useState, ChangeEvent } from "react";
-import useSWR from "swr";
+
+import { useState, ChangeEvent, useMemo } from "react";
+import useSWR, { KeyedMutator } from "swr";
 import { HaruFile } from "@/lib/types";
 import { uploadReportFile } from "@/lib/utils/upload";
 import * as Actions from "@/lib/actions";
@@ -19,16 +20,26 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
-export function UploadAndManageFiles({ reportId }: { reportId: number }) {
-  const { data: files, mutate } = useSWR<HaruFile[]>(
-    `/api/report/${reportId}/files`,
-    async () => {
-      const files = await Actions.getFilesForReport(reportId);
-      return files || [];
-    },
-  );
-
+function UploadAndManageFilesSection({
+  reportId,
+  files,
+  mutate,
+  type,
+}: {
+  reportId: number;
+  files?: HaruFile[];
+  mutate: KeyedMutator<HaruFile[]>;
+  type: string;
+}) {
   const [isUploading, setIsUploading] = useState(false);
 
   async function handleFileUpload(e: ChangeEvent<HTMLInputElement>) {
@@ -61,74 +72,138 @@ export function UploadAndManageFiles({ reportId }: { reportId: number }) {
   }
 
   return (
+    <div className="flex flex-col gap-2 mt-4">
+      <div className="flex gap-4 items-center">
+        <h3 className="font-semibold capitalize">Report {type}s</h3>
+        <Button asChild variant="default" size="sm">
+          <label
+            htmlFor={`upload-report-file-${type}`}
+            className="rounded hover:cursor-pointer flex gap-3"
+          >
+            <span className="capitalize">Upload {type}</span>
+            {isUploading && <LucideLoader2 className="animate-spin h-5 w-5" />}
+          </label>
+        </Button>
+        <Input
+          type="file"
+          id={`upload-report-file-${type}`}
+          accept={`${type}/*`}
+          className="hidden"
+          onChange={handleFileUpload}
+          disabled={isUploading}
+          multiple
+        />
+      </div>
+
+      <Table className="border rounded">
+        <TableHeader>
+          <TableRow className="[&>th]:border-r">
+            <TableHead></TableHead>
+            <TableHead className="text-nowrap">File Name</TableHead>
+            <TableHead className="text-nowrap">File Size</TableHead>
+            <TableHead></TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {files && files.length > 0 ? (
+            files?.map((file, i) => (
+              <TableRow key={file.id} className="[&>td]:border-r">
+                <TableCell className="w-8 text-center">{i + 1}</TableCell>
+                <TableCell className="overflow-ellipsis overflow-hidden text-nowrap">
+                  {file.filename}
+                </TableCell>
+                {/* <TableCell className="w-24 whitespace-nowrap bg-red-">
+                {file.uploadedAt?.toDateString() ?? "unkonwn"}
+              </TableCell> */}
+                {/* <TableCell className="w-24 whitespace-nowrap bg-red-">
+                {file.uploader?.name ?? "unkonwn"}
+              </TableCell> */}
+                <TableCell className="w-24 whitespace-nowrap bg-red-">
+                  {file.filesize && prettyBytes(file.filesize)}
+                </TableCell>
+                <TableCell className="w-12">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button size="icon" variant="outline">
+                        <LucideTrash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogTitle>Delete File</DialogTitle>
+                      <DialogDescription>
+                        Are you sure you want to delete the file{" "}
+                        <strong>{file.filename}</strong>?
+                      </DialogDescription>
+                      <div className="flex gap-2 justify-end">
+                        <DialogClose asChild>
+                          <Button variant="secondary">Cancel</Button>
+                        </DialogClose>
+                        <DialogClose asChild>
+                          <Button
+                            variant="destructive"
+                            onClick={() => handleFileDelete(file)}
+                          >
+                            Delete
+                          </Button>
+                        </DialogClose>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={999} className="h-24 text-center">
+                No {type}s have been uploaded
+              </TableCell>
+              <TableHead></TableHead>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
+
+export function UploadAndManageFiles({ reportId }: { reportId: number }) {
+  const { data: files, mutate } = useSWR<HaruFile[]>(
+    `/api/report/${reportId}/files`,
+    async () => {
+      const files = await Actions.getFilesForReport(reportId);
+      return files || [];
+    },
+  );
+
+  const images = useMemo(() => {
+    return files?.filter((f) => {
+      return f.type?.startsWith("image/");
+    });
+  }, [files]);
+  const videos = useMemo(() => {
+    return files?.filter((f) => {
+      return f.type?.startsWith("video/");
+    });
+  }, [files]);
+
+  return (
     <Card className="bg-background border-2">
-      <CardHeader className="flex flex-row justify-between">
+      <CardHeader className="flex flex-row justify-between pb-0">
         <h2 className="text-lg font-bold">Report Overview Files</h2>
       </CardHeader>
-      {/* File Upload Section */}
-      <CardContent className="flex flex-col gap-4 p-4 pt-0">
-        <div>
-          <Button asChild>
-            <label
-              htmlFor="upload-report-file"
-              className="rounded hover:cursor-pointer"
-            >
-              Upload Files
-              {isUploading && (
-                <LucideLoader2 className="animate-spin h-5 w-5" />
-              )}
-            </label>
-          </Button>
-          <Input
-            type="file"
-            id="upload-report-file"
-            className="hidden"
-            onChange={handleFileUpload}
-            disabled={isUploading}
-            multiple
-          />
-        </div>
-
-        <ul className="space-y-2">
-          {files?.map((file) => (
-            <li
-              key={file.id}
-              className="flex gap-4 items-center bg-accent px-6 py-1 rounded"
-            >
-              <span className="grow">{file.filename}</span>
-              <span className="">
-                {file.filesize && prettyBytes(file.filesize)}
-              </span>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button size="icon" variant="ghost">
-                    <LucideTrash2 className="h-4 w-4" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogTitle>Delete File</DialogTitle>
-                  <DialogDescription>
-                    Are you sure you want to delete the file{" "}
-                    <strong>{file.filename}</strong>?
-                  </DialogDescription>
-                  <div className="flex gap-2 justify-end">
-                    <DialogClose asChild>
-                      <Button variant="secondary">Cancel</Button>
-                    </DialogClose>
-                    <DialogClose asChild>
-                      <Button
-                        variant="destructive"
-                        onClick={() => handleFileDelete(file)}
-                      >
-                        Delete
-                      </Button>
-                    </DialogClose>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </li>
-          ))}
-        </ul>
+      <CardContent className="grid grid-cols-1 gap-4 p-4">
+        <UploadAndManageFilesSection
+          type="video"
+          reportId={reportId}
+          files={videos}
+          mutate={mutate}
+        />
+        <UploadAndManageFilesSection
+          type="image"
+          reportId={reportId}
+          files={images}
+          mutate={mutate}
+        />
       </CardContent>
     </Card>
   );
