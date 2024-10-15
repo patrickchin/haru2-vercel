@@ -7,7 +7,7 @@ import { LucideLoader2 } from "lucide-react";
 import { UseFormReturn, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
-import { useCountdown } from "@/lib/hooks";
+import { useCountdown } from "@/lib/hooks/use-countdown";
 import {
   signInFromLogin,
   sendOtpViaWhatsApp,
