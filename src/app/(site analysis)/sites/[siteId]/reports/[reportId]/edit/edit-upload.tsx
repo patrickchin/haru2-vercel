@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { HaruFile } from "@/lib/types";
 import { uploadReportFile } from "@/lib/utils/upload";
 import * as Actions from "@/lib/actions";
-import prettyBytes from 'pretty-bytes';
+import prettyBytes from "pretty-bytes";
 
 import { LucideLoader2, LucideTrash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";

@@ -324,8 +324,11 @@ export function EditReportDocument({
   reportId: number;
   sections?: string[];
 }) {
-
-  const { data: report, mutate, isLoading } = useSWR(
+  const {
+    data: report,
+    mutate,
+    isLoading,
+  } = useSWR(
     `/api/reports/${reportId}/details`, // api route doesn't really exist
     async () => Actions.getSiteReportDetails(reportId),
   );

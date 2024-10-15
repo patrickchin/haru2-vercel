@@ -355,7 +355,6 @@ export default async function Page({
       <SiteMembers site={site} members={members} />
 
       <SiteDescription site={site} members={members} />
-
     </DefaultLayout>
   );
 }
