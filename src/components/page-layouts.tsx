@@ -30,7 +30,7 @@ export function DefaultLayout({
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="grow flex flex-col bg-gradient-to-br from-background to-muted sm:px-8">
+      <main className="grow flex flex-col bg-gradient-to-br from-background to-muted">
         <div
           className={cn(
             "grow flex flex-col gap-4 py-8 w-full mx-auto max-w-5xl",

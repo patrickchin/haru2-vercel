@@ -23,11 +23,14 @@ export default async function Page({
   const props: ReportsViewerProps = { siteId, reportId, fileId };
 
   return (
-    <DefaultLayout className="max-w-none">
-      <section className="w-full max-w-5xl mx-auto">
+    <DefaultLayout className="max-w-none relative p-0">
+
+      <section className="w-full sticky top-0 bg-background z-30 py-4 border-b">
+        <div className="w-full max-w-5xl mx-auto">
         {/* <Suspense fallback={<ReportTitleBarDisplay />}> */}
         <ReportTitleBar {...props} />
         {/* </Suspense> */}
+        </div>
       </section>
 
       <section className="w-full mx-auto">

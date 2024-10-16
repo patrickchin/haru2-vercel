@@ -354,11 +354,13 @@ export async function ReportDocumentDisplay({
 
               <Table>
                 <TableBody>
-                  <TableRow>
-                    <TableCell className="whitespace-pre-line">
-                      <p>{report?.activity ?? "--"}</p>
-                    </TableCell>
-                  </TableRow>
+                  {report?.activity?.split("\n").map((a, i) => (
+                    <TableRow key={i}>
+                      <TableCell className="whitespace-pre-line">
+                        <p>{a ?? "--"}</p>
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </div>
@@ -371,14 +373,14 @@ export async function ReportDocumentDisplay({
                     Open
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="min-h-96 max-h-svh flex flex-col p-2">
-                  <DialogTitle className="text-base font-semibold">
+                <DialogContent className="min-h-96 max-h-svh flex flex-col p-4">
+                  <DialogTitle className="text-lg font-semibold">
                     Materials Status
                   </DialogTitle>
-                  <ol className="overflow-y-auto border rounded p-3">
+                  <ol className="overflow-y-auto border rounded">
                     {report?.materials?.split("\n").map((eq, i) => {
                       return (
-                        <li key={i} className="hover:bg-accent">
+                        <li key={i} className="hover:bg-accent px-3 py-1">
                           {eq}
                         </li>
                       );
@@ -396,14 +398,14 @@ export async function ReportDocumentDisplay({
                     Open
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="min-h-96 max-h-svh flex flex-col p-2">
-                  <DialogTitle className="text-base font-semibold">
+                <DialogContent className="min-h-96 max-h-svh flex flex-col p-4">
+                  <DialogTitle className="text-lg font-semibold">
                     Equipment Status
                   </DialogTitle>
-                  <ol className="overflow-y-auto border rounded p-3">
+                  <ol className="overflow-y-auto border rounded">
                     {report?.equiptment?.split("\n").map((eq, i) => {
                       return (
-                        <li key={i} className="hover:bg-accent">
+                        <li key={i} className="hover:bg-accent px-3 py-1">
                           {eq}
                         </li>
                       );

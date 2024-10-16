@@ -19,8 +19,8 @@ export default async function Page({ params }: { params: { siteId: string } }) {
   const props: ReportsViewerProps = { siteId, reportId: NaN, fileId: NaN };
 
   return (
-    <DefaultLayout>
-      <section className="">
+    <DefaultLayout className="relative">
+      <section className="sticky top-0">
         <ReportTitleBar {...props} />
       </section>
 
