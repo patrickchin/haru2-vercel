@@ -33,7 +33,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Carousel,
   CarouselContent,
@@ -367,7 +372,9 @@ export async function ReportDocumentDisplay({
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="min-h-96 max-h-svh flex flex-col p-2">
-                  <h2 className="text-base font-semibold">Materials Status</h2>
+                  <DialogTitle className="text-base font-semibold">
+                    Materials Status
+                  </DialogTitle>
                   <ol className="overflow-y-auto border rounded p-3">
                     {report?.materials?.split("\n").map((eq, i) => {
                       return (
@@ -390,7 +397,9 @@ export async function ReportDocumentDisplay({
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="min-h-96 max-h-svh flex flex-col p-2">
-                  <h2 className="text-base font-semibold">Equipment Status</h2>
+                  <DialogTitle className="text-base font-semibold">
+                    Equipment Status
+                  </DialogTitle>
                   <ol className="overflow-y-auto border rounded p-3">
                     {report?.equiptment?.split("\n").map((eq, i) => {
                       return (
