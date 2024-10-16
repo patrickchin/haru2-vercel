@@ -5,7 +5,7 @@ import { HaruFile } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { Button } from "./ui/button";
-import { LucideRotate3D } from "lucide-react";
+import { LucideLoader2, LucideRotate3D } from "lucide-react";
 import { ReactPhotoSphereViewer } from "react-photo-sphere-viewer";
 
 export function FileDisplay({
@@ -22,6 +22,7 @@ export function FileDisplay({
   children?: ReactNode;
 }) {
   const [view360, setView360] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const isImage = file?.type?.startsWith("image/") ?? false;
   const isVideo = file?.type?.startsWith("video/");
@@ -38,12 +39,26 @@ export function FileDisplay({
               width={"100%"}
             ></ReactPhotoSphereViewer>
           ) : (
-            <Image
-              src={file.url || ""}
-              alt={file.filename || "<Untitled>"}
-              fill={true}
-              className="object-contain w-full h-full"
-            />
+            <>
+              <LucideLoader2
+                className={cn(
+                  "animate-spin w-4 h-4",
+                  isLoading ? "" : "hidden",
+                )}
+              />
+              <Image
+                src={file.url || ""}
+                alt={file.filename || "<Untitled>"}
+                fill={true}
+                onLoad={() => {
+                  setIsLoading(false);
+                }}
+                className={cn(
+                  "object-contain w-full h-full",
+                  isLoading ? "invisible" : "",
+                )}
+              />
+            </>
           )}
         </>
       ) : file && isVideo ? (
