@@ -6,7 +6,11 @@ import { cn } from "@/lib/utils";
 import { HaruFile } from "@/lib/types";
 import * as Actions from "@/lib/actions";
 
-import { LucideChevronDown, LucideMoveLeft } from "lucide-react";
+import {
+  LucideChevronDown,
+  LucideChevronRight,
+  LucideMoveLeft,
+} from "lucide-react";
 import { FileDisplay } from "@/components/file-display";
 import { Button } from "@/components/ui/button";
 import {
@@ -46,6 +50,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export interface ReportsViewerProps {
   siteId: number;
@@ -68,25 +73,30 @@ export async function ReportListPopup({
   if (reports.length < 1) return noReports;
 
   return (
-    <ol>
-      {reports.map((r) => (
-        <li key={r.id}>
-          <Button variant="link" asChild>
-            <Link
-              href={`/sites/${site.id}/reports/${r.id}`}
-              className={cn(
-                "text-xl",
-                report && report.id === r.id
-                  ? "pointer-events-none opacity-50"
-                  : "",
-              )}
-            >
-              {`Site Report #${r.id} - ${r.createdAt?.toDateString() || "unknown date"}`}
-            </Link>
-          </Button>
-        </li>
-      ))}
-    </ol>
+    <ScrollArea className="flex flex-col max-h-[60svh] p-0">
+      <ol>
+        {reports.map((r) => (
+          <li key={r.id} className="w-full">
+            <Button variant="link" asChild className="w-full px-8 py-5">
+              <Link
+                href={`/sites/${site.id}/reports/${r.id}`}
+                className={cn(
+                  "flex justify-between gap-4 w-full text-xl",
+                  report && report.id === r.id
+                    ? "pointer-events-none opacity-50"
+                    : "",
+                )}
+              >
+                <span>
+                  {`Site Report #${r.id} - ${r.createdAt?.toDateString() || "unknown date"}`}
+                </span>
+                <LucideChevronRight className="" />
+              </Link>
+            </Button>
+          </li>
+        ))}
+      </ol>
+    </ScrollArea>
   );
 }
 
@@ -118,10 +128,10 @@ export async function ReportTitleBarDisplay({
         <Popover>
           <PopoverTrigger asChild>
             <Button
-              variant="outline"
-              className="items-center justify-between gap-4 border-2 p-4 w-full"
+              variant="secondary"
+              className="items-center gap-4 border-2 rounded border-primary"
             >
-              <h1 className="text-xl sm:text-2xl font-semibold">
+              <h1 className="text-xl sm:text-2xl font-semibold grow text-center">
                 {report
                   ? `Site Report #${report.id} - ${report.createdAt?.toDateString()}`
                   : "Click here to select a report"}
@@ -129,7 +139,14 @@ export async function ReportTitleBarDisplay({
               <LucideChevronDown />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="px-8 py-6 w-fit" align="start">
+          <PopoverContent
+            className="px-0 py-4 w-full rounded border-2 border-primary shadow-xl"
+            align="center"
+            side="bottom"
+            sideOffset={12}
+            sticky="always"
+            avoidCollisions={false}
+          >
             <ReportListPopup site={site} report={report} />
           </PopoverContent>
         </Popover>
