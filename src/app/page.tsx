@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRightIcon } from "lucide-react";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import { cn } from "@/lib/utils";
 
 export default function Page() {
   return (
@@ -17,18 +18,28 @@ export default function Page() {
             src="/bg.jpg"
             alt="background"
             fill={true}
-            className="object-cover object-left-top"
+            className="object-cover object-left-top bg-gradient-to-br from-cyan-100 to-orange-100"
           />
         </div>
 
         <div className="flex flex-col gap-16 max-w-7xl lg:mb-64 lg:ml-80 justify-end transition-all">
-          <h1 className="flex text-right text-6xl whitespace-nowrap font-extrabold p-10 bg-slate-100/60 rounded">
+          <h1
+            className={cn(
+              "flex text-center lg:text-right text-6xl font-extrabold p-10 rounded",
+              "bg-gradient-to-bl from-slate-300/90 to-slate-900/0",
+            )}
+          >
             Your Construction Projects, <br />
             Seamlessly Supervised
           </h1>
 
           <div className="flex justify-end">
-            <p className="text-right font-bold p-10 bg-slate-100/60 rounded">
+            <p
+              className={cn(
+                "text-right font-bold p-10 rounded",
+                "bg-gradient-to-bl from-slate-300/90 to-slate-200/30",
+              )}
+            >
               <span className="whitespace-nowrap pr-2">
                 Hire our Site Analysis Professionals
               </span>
