@@ -17,6 +17,7 @@ export default function Page() {
           <Image
             src="/bg.jpg"
             alt="background"
+            loading="eager"
             fill={true}
             className="object-cover object-left-top bg-gradient-to-br from-cyan-100 to-orange-100"
           />
