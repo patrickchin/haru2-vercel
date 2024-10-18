@@ -126,7 +126,6 @@ export function FileDisplayCarousel({
   fileList?: HaruFile[];
   file?: HaruFile;
 }) {
-
   const videoFiles = useMemo(() => {
     return fileList?.filter((f) => f.type?.startsWith("video/"));
   }, [fileList]);
@@ -135,7 +134,9 @@ export function FileDisplayCarousel({
   }, [fileList]);
 
   const [largeView, setLargeView] = useState(false);
-  const [videosView, setVideosView] = useState(videoFiles && videoFiles?.length > 0);
+  const [videosView, setVideosView] = useState(
+    videoFiles && videoFiles?.length > 0,
+  );
 
   const files = videosView ? videoFiles : imageFiles;
 

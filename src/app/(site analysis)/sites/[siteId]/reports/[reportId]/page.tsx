@@ -24,12 +24,11 @@ export default async function Page({
 
   return (
     <DefaultLayout className="max-w-none relative p-0">
-
       <section className="w-full sticky top-0 bg-background z-30 py-4 border-b">
         <div className="w-full max-w-5xl mx-auto">
-        {/* <Suspense fallback={<ReportTitleBarDisplay />}> */}
-        <ReportTitleBar {...props} />
-        {/* </Suspense> */}
+          {/* <Suspense fallback={<ReportTitleBarDisplay />}> */}
+          <ReportTitleBar {...props} />
+          {/* </Suspense> */}
         </div>
       </section>
 
