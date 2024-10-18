@@ -1,15 +1,12 @@
 # Streamlined Construction Management
 
-## Next.js + PostgreSQL Auth Starter
-
-This project was started from [this template](https://github.com/vercel/nextjs-postgres-auth-starter). It is a [Next.js](https://nextjs.org/) starter kit that uses [NextAuth.js](https://next-auth.js.org/) for simple email + password login, [Drizzle](https://orm.drizzle.team) as the ORM, and a [Neon Postgres](https://vercel.com/postgres) database to persist the data.
-
 ## Getting Started
 
 ### Dependencies
 
 - [nodejs](https://nodejs.org/) > 20.0.0
 - [pnpm](https://pnpm.io/)
+- [docker](https://www.docker.com/)
 
 ### Development
 
@@ -17,9 +14,12 @@ Clone this repository
 
 ```bash
 git clone git@github.com:patrickchin/haru2-vercel.git
+cd haru2-vercel
 ```
 
-Copy the example env file, and fill out all the values
+Copy the example env file which contains all the necessary enviroment variables
+sufficient for most development. For file uploads, email and text sending more
+variables need to be set.
 
 ```bash
 cp .env.example .env.local
@@ -31,7 +31,19 @@ Install the node dependencies
 pnpm install
 ```
 
-Then run the development server using
+Start the database in a local container
+
+```bash
+docker compose up
+```
+
+Push the schemas to your local database using [Drizzle ORM](https://orm.drizzle.team)
+
+```bash
+pnpm drizzle-kit push
+```
+
+Then finally, run the development server using
 
 ```bash
 pnpm dev
@@ -50,18 +62,16 @@ pnpm start
 
 Drizzle makes database changes a lot easier!
 
-- After modifying `drizzle/schema.ts` file the changes are pushed to the database with:
+- After modifying `drizzle/schema.ts` file the changes are pushed to the database with the following commands:
   > [!CAUTION]
   > Very easy to delete data with this command, drizzle will warn
 
 ```bash
-pnpm drizzle-kit push:pg
-```
+# to generate sql migration files from the schema changes
+pnpm drizzle-kit generate
 
-- After modifying the database via other means, these changes are pulled into the code with:
-
-```bash
-pnpm drizzle-kit introspect:pg
+# to execute the migration files on the databse
+pnpm drizzle-kit migrate
 ```
 
 ### The Deployment
