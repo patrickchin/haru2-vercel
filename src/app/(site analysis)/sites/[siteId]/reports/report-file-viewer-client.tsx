@@ -120,9 +120,11 @@ export function FileSelector({
 }
 
 export function FileDisplayCarousel({
+  className,
   fileList,
   file,
 }: {
+  className?: string;
   fileList?: HaruFile[];
   file?: HaruFile;
 }) {
@@ -145,6 +147,7 @@ export function FileDisplayCarousel({
       className={cn(
         "w-full mx-auto",
         largeView ? "w-[90dw] max-w-[100rem]" : "max-w-5xl",
+        className,
       )}
     >
       <div

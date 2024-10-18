@@ -10,7 +10,7 @@ export async function ReportFileDisplay({
   reportId?: number;
   fileId?: number;
 }) {
-  if (!reportId) return <FileDisplayCarousel />;
+  if (!reportId) return <FileDisplayCarousel className="opacity-50" />;
   const fileList = await Actions.getFilesForReport(reportId);
   const file = fileList?.find((f) => f.id === fileId);
   return <FileDisplayCarousel fileList={fileList} file={file} />;
