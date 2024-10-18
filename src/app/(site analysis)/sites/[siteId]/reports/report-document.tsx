@@ -126,7 +126,7 @@ export async function ReportTitleBarDisplay({
 
       <div className="grow flex w-full sm:w-fit">
         <Popover>
-          <PopoverTrigger asChild>
+          <PopoverTrigger asChild disabled={!report}>
             <Button
               variant="secondary"
               className="items-center gap-4 border-2 rounded border-primary"
@@ -134,7 +134,7 @@ export async function ReportTitleBarDisplay({
               <h1 className="text-xl sm:text-2xl font-semibold grow text-center">
                 {report
                   ? `Site Report #${report.id} - ${report.createdAt?.toDateString()}`
-                  : "Click here to select a report"}
+                  : "This site has no reports yet"}
               </h1>
               <LucideChevronDown />
             </Button>
@@ -205,7 +205,7 @@ export async function ReportSection({
         <CardDescription className="text-base">
           {section.content}
         </CardDescription>
-        {section.fileGroupId && (
+        {files && files.length > 0 && (
           <ul className="bg-muted p-3">
             {files?.map((f: HaruFile, i) => (
               <li
@@ -471,15 +471,29 @@ export async function ReportDocumentDisplay({
         </CardContent>
       </Card>
 
-      <ol className="flex flex-col gap-4">
-        {sections?.map((section) => {
-          return (
-            <li key={section.id}>
-              <ReportSection section={section} />
-            </li>
-          );
-        })}
-      </ol>
+      {sections && sections.length > 0 ? (
+        <ol className="flex flex-col gap-4">
+          {sections?.map((section) => {
+            return (
+              <li key={section.id}>
+                <ReportSection section={section} />
+              </li>
+            );
+          })}
+        </ol>
+      ) : (
+        <Card className="border-2">
+          <CardHeader className="flex flex-row justify-between">
+            <div className="text-lg font-bold">
+              Report Detail Sections
+            </div>
+          </CardHeader>
+
+          <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 pt-0">
+            --
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
