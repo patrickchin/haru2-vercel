@@ -9,7 +9,9 @@ import * as Actions from "@/lib/actions";
 import {
   LucideChevronDown,
   LucideChevronRight,
+  LucideFilePlus2,
   LucideMoveLeft,
+  LucidePen,
 } from "lucide-react";
 import { FileDisplay } from "@/components/file-display";
 import { Button } from "@/components/ui/button";
@@ -111,14 +113,14 @@ export async function ReportTitleBarDisplay({
 }) {
   const memberRole = site ? await Actions.getSiteRole(site.id) : "";
   return (
-    <div className="grow flex flex-col sm:flex-row gap-3">
+    <div className="grow flex flex-col sm:flex-row gap-2">
       <div>
         <Button variant="secondary" asChild>
           <Link
             href={`/sites/${site?.id ?? ""}`}
             className="flex gap-2 w-full h-full items-center"
           >
-            <LucideMoveLeft />
+            <LucideMoveLeft className="h-5" />
             Back to Project
           </Link>
         </Button>
@@ -160,14 +162,16 @@ export async function ReportTitleBarDisplay({
           ["supervisor", "owner", "manager"].includes(memberRole) && (
             <div className="grid grid-cols-2 w-full sm:w-fit sm:flex gap-4">
               {report && (
-                <Button variant="secondary" asChild>
+                <Button variant="secondary" asChild className="gap-2">
                   <Link href={`/sites/${site.id}/reports/${report.id}/edit`}>
-                    Edit Report
+                    Edit Report <LucidePen className="h-3.5 w-3.5" />
                   </Link>
                 </Button>
               )}
-              <Button asChild>
-                <Link href={`/sites/${site.id}/reports/new`}>New Report</Link>
+              <Button asChild className="gap-2">
+                <Link href={`/sites/${site.id}/reports/new`}>
+                  New Report <LucideFilePlus2 className="h-4 w-4" />
+                </Link>
               </Button>
             </div>
           )}
