@@ -1,58 +1,19 @@
 import NextAuth from "next-auth";
-import { NextResponse } from "next/server";
 import { authConfig } from "@/lib/auth.config";
-import { notFound } from "next/navigation";
 
 const auth = NextAuth(authConfig).auth;
 
 export default auth((req) => {
-  const publicPathnames: string[] = [
-    "/",
-    "/favicon.ico",
-    "/login",
-    "/register",
-    "/register2",
-    "/bg.jpg",
-    "/bgblur.bmp",
-  ];
-  const isPublic = publicPathnames.some((p) => req.nextUrl.pathname === p);
+  const protectedPathnames: string[] = ["/sites", "/settings"];
+  const isProtected = protectedPathnames.some((p) =>
+    req.nextUrl.pathname.startsWith(p),
+  );
 
-  if (!req.auth && !isPublic) {
+  if (!req.auth && isProtected) {
     // TODO redirect to original url after logging in
     // req.nextUrl.searchParams.append();
     req.nextUrl.pathname = "/login";
     return Response.redirect(req.nextUrl);
-  }
-
-  if (req.auth) {
-    /*
-    if (
-      req.nextUrl.pathname.startsWith("/login") ||
-      req.nextUrl.pathname.startsWith("/register")
-    ) {
-      // is this expected behaviour?
-      req.nextUrl.pathname = "/sites";
-      return Response.redirect(req.nextUrl);
-    }
-    */
-    /*
-    // TODO maybe match the full path?
-    if (
-      req.nextUrl.pathname.endsWith("/edit") ||
-      req.nextUrl.pathname.endsWith("/new")
-    ) {
-      // role doesn't seem to exist here???
-      console.log("my current role is ", req.auth.user);
-      if (
-        req.auth.user?.role !== "admin" &&
-        req.auth.user?.role !== "supervisor"
-      ) {
-        // TODO what about a 401?
-        req.nextUrl.pathname = "/_error";
-        return Response.redirect(req.nextUrl);
-      }
-    }
-    */
   }
 });
 
