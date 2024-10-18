@@ -1,13 +1,19 @@
 "use client";
 
 import { useState, ChangeEvent, useMemo } from "react";
+import Image from "next/image";
 import useSWR, { KeyedMutator } from "swr";
 import { HaruFile } from "@/lib/types";
 import { uploadReportFile } from "@/lib/utils/upload";
 import * as Actions from "@/lib/actions";
 import prettyBytes from "pretty-bytes";
 
-import { LucideLoader2, LucidePlus, LucideTrash2 } from "lucide-react";
+import {
+  LucideLoader2,
+  LucidePlus,
+  LucideTrash2,
+  LucideVideo,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -28,6 +34,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 function UploadAndManageFilesSection({
   reportId,
@@ -105,6 +117,7 @@ function UploadAndManageFilesSection({
         <TableHeader>
           <TableRow className="[&>th]:border-r">
             <TableHead></TableHead>
+            <TableHead></TableHead>
             <TableHead className="text-nowrap">File Name</TableHead>
             <TableHead className="text-nowrap">File Size</TableHead>
             <TableHead></TableHead>
@@ -115,6 +128,43 @@ function UploadAndManageFilesSection({
             files?.map((file, i) => (
               <TableRow key={file.id} className="[&>td]:border-r">
                 <TableCell className="w-8 text-center">{i + 1}</TableCell>
+                <TableCell className="w-12 h-12 overflow-ellipsis overflow-hidden text-nowrap p-0 relative">
+                  {file.type?.startsWith("image/") && (
+                    <TooltipProvider
+                      delayDuration={0}
+                      disableHoverableContent={true}
+                    >
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="w-full h-full relative flex justify-center items-center border-4 border-background">
+                            <Image
+                              src={file.url || ""}
+                              alt={""}
+                              fill={true}
+                              // width={38}
+                              // height={38}
+                              className="object-cover absolute"
+                            />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="">
+                          <Image
+                            src={file.url || ""}
+                            alt={""}
+                            width={384}
+                            height={384}
+                            className="object-contain"
+                          />
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                  {file.type?.startsWith("video/") && (
+                    <div className="w-full h-full flex justify-center items-center">
+                      <LucideVideo className="h-5 w-5" />
+                    </div>
+                  )}
+                </TableCell>
                 <TableCell className="overflow-ellipsis overflow-hidden text-nowrap">
                   {file.filename}
                 </TableCell>
