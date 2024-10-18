@@ -471,7 +471,7 @@ export async function ReportDocumentDisplay({
         </CardContent>
       </Card>
 
-      <ol className="flex flex-col gap-2">
+      <ol className="flex flex-col gap-4">
         {sections?.map((section) => {
           return (
             <li key={section.id}>

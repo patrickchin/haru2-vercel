@@ -59,7 +59,7 @@ export default async function Page({
           </div>
         </div>
 
-        <div className="w-full max-w-5xl mx-auto">
+        <div className="w-full max-w-5xl mx-auto flex flex-col gap-4">
           <UploadAndManageFiles reportId={reportId} />
           <EditReportDocument reportId={reportId} />
           <UpdateSiteReportSections siteId={siteId} reportId={reportId} />
