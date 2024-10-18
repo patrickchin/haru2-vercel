@@ -2,8 +2,7 @@ import * as db from "@/lib/db";
 import { Session } from "next-auth";
 import { allSiteMemberRoles, SiteMemberRole } from "@/lib/types";
 
-export { viewingRoles } from "./permissions";
-export { editingRoles } from "./permissions";
+export * from "./permissions";
 
 export async function siteActionAllowed(
   session: Session | null,
