@@ -75,7 +75,7 @@ export default async function Page() {
 
       <div>
         <Button asChild>
-          <Link href="/new-site">Register New Construction Site</Link>
+          <Link href="/sites/new">Register New Construction Site</Link>
         </Button>
       </div>
 
