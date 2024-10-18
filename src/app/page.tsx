@@ -19,7 +19,7 @@ export default function Page() {
             alt="background"
             loading="eager"
             fill={true}
-            className="object-cover object-left-top bg-gradient-to-br from-cyan-100 to-orange-100"
+            className="object-cover object-center"
           />
         </div>
 
