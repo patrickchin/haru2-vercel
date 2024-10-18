@@ -6,7 +6,8 @@ import { UploadAndManageFiles } from "./edit-upload";
 import { UpdateSiteReportSections } from "./edit-sections";
 import { EditReportDocument } from "./edit-report-document";
 import * as Actions from "@/lib/actions";
-import { LucideBookOpenCheck, LucideMoveLeft } from "lucide-react";
+import { LucideMoveLeft } from "lucide-react";
+import { PublishButton } from "./publish-button";
 
 async function EditReportHeader({
   siteId,
@@ -30,14 +31,7 @@ async function EditReportHeader({
       <h1 className="font-semibold text-2xl grow">
         Editing Site Report #{reportId}: {report?.createdAt?.toDateString()}
       </h1>
-      <Button
-        variant="default"
-        disabled
-        className="cursor-not-allowed flex gap-2"
-      >
-        Publish Report
-        <LucideBookOpenCheck className="h-5 w-5" />
-      </Button>
+      <PublishButton reportId={reportId} disabled={!!report?.publishedAt} />
     </div>
   );
 }
@@ -49,23 +43,41 @@ export default async function Page({
 }) {
   const siteId = Number(params.siteId);
   const reportId = Number(params.reportId);
-  const memberRole = await Actions.getSiteRole(siteId);
+  const [report, memberRole] = await Promise.all([
+    Actions.getSiteReport(reportId),
+    Actions.getSiteRole(siteId),
+  ]);
   if (memberRole && ["supervisor", "owner", "manager"].includes(memberRole)) {
-    return (
-      <DefaultLayout className="max-w-none relative pt-0">
-        <div className="w-full sticky top-0 z-30 py-4 bg-background border-b">
-          <div className="max-w-5xl mx-auto">
-            <EditReportHeader siteId={siteId} reportId={reportId} />
+     
+      return (
+        <DefaultLayout className="max-w-none relative pt-0">
+          <div className="w-full sticky top-0 z-30 py-4 bg-background border-b">
+            <div className="max-w-5xl mx-auto">
+              <EditReportHeader siteId={siteId} reportId={reportId} />
+            </div>
           </div>
-        </div>
 
-        <div className="w-full max-w-5xl mx-auto flex flex-col gap-4">
-          <UploadAndManageFiles reportId={reportId} />
-          <EditReportDocument reportId={reportId} />
-          <UpdateSiteReportSections siteId={siteId} reportId={reportId} />
-        </div>
-      </DefaultLayout>
-    );
+          <div className="w-full max-w-5xl mx-auto flex flex-col gap-4">
+            {!report?.publishedAt ? (
+              <>
+                <UploadAndManageFiles reportId={reportId} />
+                <EditReportDocument reportId={reportId} />
+                <UpdateSiteReportSections siteId={siteId} reportId={reportId} />
+              </>
+            ) : (
+              <div>
+                <p>
+                  This report was published on{" "}
+                  {report?.publishedAt?.toLocaleString() ?? "--"}
+                </p>
+                <p>
+                  It can not longer be edited.
+                </p>
+              </div>
+            )}
+          </div>
+        </DefaultLayout>
+      );
   } else {
     notFound();
   }

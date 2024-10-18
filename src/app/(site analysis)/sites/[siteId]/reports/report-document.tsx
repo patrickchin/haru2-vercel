@@ -159,11 +159,18 @@ export async function ReportTitleBarDisplay({
           session &&
           session.user &&
           memberRole &&
-          ["supervisor", "owner", "manager"].includes(memberRole) && (
+          ["supervisor"].includes(memberRole) && (
             <div className="grid grid-cols-2 w-full sm:w-fit sm:flex gap-4">
-              {report && (
-                <Button variant="secondary" asChild className="gap-2">
-                  <Link href={`/sites/${site.id}/reports/${report.id}/edit`}>
+              {report && !report.publishedAt && (
+                <Button
+                  variant="secondary"
+                  asChild
+                  disabled={!!report.publishedAt}
+                >
+                  <Link
+                    href={`/sites/${site.id}/reports/${report.id}/edit`}
+                    className={cn("flex gap-2")}
+                  >
                     Edit Report <LucidePen className="h-3.5 w-3.5" />
                   </Link>
                 </Button>
@@ -287,10 +294,6 @@ export async function ReportDocumentDisplay({
           <Table>
             <TableBody>
               <TableRow>
-                <TableHead>Project Id</TableHead>
-                <TableCell>{report?.siteId ?? "--"}</TableCell>
-              </TableRow>
-              <TableRow>
                 <TableHead>Site Address</TableHead>
                 <TableCell>{report?.address ?? "--"}</TableCell>
               </TableRow>
@@ -298,6 +301,12 @@ export async function ReportDocumentDisplay({
                 <TableHead>Visit Date</TableHead>
                 <TableCell>
                   {report?.visitDate?.toDateString() ?? "--"}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead>Publish Date</TableHead>
+                <TableCell>
+                  {report?.publishedAt?.toDateString() ?? "--"}
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -488,9 +497,7 @@ export async function ReportDocumentDisplay({
       ) : (
         <Card className="border-2">
           <CardHeader className="flex flex-row justify-between">
-            <div className="text-lg font-bold">
-              Report Detail Sections
-            </div>
+            <div className="text-lg font-bold">Report Detail Sections</div>
           </CardHeader>
 
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 pt-0">

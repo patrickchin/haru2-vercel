@@ -38,7 +38,7 @@ export async function getSiteReportDetails(reportId: number) {
 
 export async function addSiteReport(siteId: number) {
   const session = await auth();
-  if (await siteActionAllowed(session, editingRoles, { siteId })) {
+  if (await siteActionAllowed(session, ["supervisor"], { siteId })) {
     return await db.addSiteReport({
       reporterId: session?.user?.idn ?? null,
       siteId: siteId,
@@ -48,10 +48,10 @@ export async function addSiteReport(siteId: number) {
 
 export async function updateSiteReport(
   reportId: number,
-  values: SiteReportNew,
+  values: Omit<SiteReportNew, "publishedAt">,
 ) {
   const session = await auth();
-  if (await siteActionAllowed(session, editingRoles, { reportId })) {
+  if (await siteActionAllowed(session, ["supervisor"], { reportId })) {
     const report = await db.updateSiteReport(reportId, values);
     revalidatePath(`/sites/${report.siteId}/reports/${report.id}`);
     return report;
@@ -63,13 +63,24 @@ export async function updateSiteReportDetails(
   values: SiteReportDetailsNew,
 ) {
   const session = await auth();
-  if (await siteActionAllowed(session, editingRoles, { reportId })) {
+  if (await siteActionAllowed(session, ["supervisor"], { reportId })) {
     const [details, report] = await Promise.all([
       db.updateSiteReportDetails(reportId, values),
       db.getSiteReport(reportId),
     ]);
     revalidatePath(`/sites/${report.siteId}/reports/${report.id}`);
     return details;
+  }
+}
+
+export async function publishReport(reportId: number) {
+  const session = await auth();
+  if (await siteActionAllowed(session, ["supervisor"], { reportId })) {
+    const report = await db.updateSiteReport(reportId, {
+      publishedAt: new Date(),
+    });
+    revalidatePath(`/sites/${report.siteId}/reports/${report.id}`);
+    return report;
   }
 }
 
