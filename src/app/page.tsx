@@ -6,6 +6,8 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { cn } from "@/lib/utils";
 
+import bgblur from "@/public/bgblur.bmp";
+
 export default function Page() {
   return (
     <div className="flex flex-col min-h-screen">
@@ -13,11 +15,12 @@ export default function Page() {
       <main className="grow flex flex-col justify-center items-center relative">
         <div className="grid grid-cols-1 absolute h-full w-full -z-10">
           {/* <div className="h-full bg-gradient-to-br from-cyan-100 to-indigo-200 hover:bg-none"></div> */}
-          {/* <div className="h-full bg-[url('/bg.jpg')] bg-"></div> */}
           <Image
             src="/bg.jpg"
             alt="background"
             loading="eager"
+            blurDataURL={bgblur.src}
+            placeholder="blur"
             fill={true}
             className="object-cover object-center"
           />

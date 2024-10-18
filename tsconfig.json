@@ -7,6 +7,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
+      "@/public/*": ["public/*"],
       "@/drizzle/*": ["src/lib/db/drizzle/*"]
     },
     "strict": true,
