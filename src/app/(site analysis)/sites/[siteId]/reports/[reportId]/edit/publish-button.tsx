@@ -22,7 +22,7 @@ export function PublishButton({
       }}
     >
       Publish Report
-      <LucideBookOpenCheck className="h-5 w-5" />
+      <LucideBookOpenCheck className="h-4 w-4" />
     </Button>
   );
 }
