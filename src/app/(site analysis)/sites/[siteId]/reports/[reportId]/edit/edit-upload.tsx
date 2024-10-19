@@ -226,7 +226,7 @@ export function UploadAndManageFiles({ reportId }: { reportId: number }) {
   const { data: files, mutate } = useSWR<HaruFile[]>(
     `/api/report/${reportId}/files`,
     async () => {
-      const files = await Actions.getFilesForReport(reportId);
+      const files = await Actions.listReportFiles(reportId);
       return files || [];
     },
   );

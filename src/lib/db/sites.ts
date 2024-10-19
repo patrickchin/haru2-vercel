@@ -108,7 +108,7 @@ export async function getSiteMembers(siteId: number): Promise<SiteMember[]> {
     .where(eq(Schemas.siteMembers1.siteId, siteId));
 }
 
-export async function getSiteMeetings(siteId: number): Promise<SiteMeeting[]> {
+export async function listSiteMeetings(siteId: number): Promise<SiteMeeting[]> {
   return await db
     .select()
     .from(Schemas.siteMeetings1)

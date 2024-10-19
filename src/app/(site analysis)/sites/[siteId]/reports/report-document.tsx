@@ -70,7 +70,7 @@ export async function ReportListPopup({
 }) {
   if (!site) return <div>invalid site</div>;
 
-  const reports = await Actions.getSiteReports(site.id);
+  const reports = await Actions.listSiteReports(site.id);
   const noReports = <div>No reports</div>;
   if (!reports) return noReports;
   if (reports.length < 1) return noReports;

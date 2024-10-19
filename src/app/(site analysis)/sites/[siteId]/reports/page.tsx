@@ -12,7 +12,7 @@ import { WarningBox } from "@/components/info-box";
 export default async function Page({ params }: { params: { siteId: string } }) {
   const siteId = Number(params.siteId);
 
-  const reports = await Actions.getSiteReports(siteId);
+  const reports = await Actions.listSiteReports(siteId);
   if (reports && reports?.length > 0) {
     redirect(`/sites/${params.siteId}/reports/${reports[0].id}`);
   }
