@@ -5,7 +5,6 @@ import * as db from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { HaruFileNew } from "@/lib/types/common";
 import {
-  allSiteMemberRoles,
   SiteReportDetailsNew,
   SiteReportNew,
   SiteReportSectionNew,
@@ -85,7 +84,7 @@ export async function deleteSiteReport(siteId: number) {
 export async function listReportFiles(reportId: number) {
   if (viewingRoles.includes(await getSiteMemberRole({ reportId }))) {
     let report = await db.getSiteReport(reportId);
-    if (report.fileGroupId) return db.getFilesFromGroup(report.fileGroupId);
+    if (report.fileGroupId) return db.listGroupFiles(report.fileGroupId);
   }
 }
 
@@ -112,7 +111,7 @@ export async function deleteSiteReportFile({
   reportId: number;
   fileId: number;
 }) {
-  if (editReportRoles.includes(await getSiteMemberRole( { reportId }))) {
+  if (editReportRoles.includes(await getSiteMemberRole({ reportId }))) {
     return db.updateFile(fileId, { deletedAt: new Date() });
   }
 }

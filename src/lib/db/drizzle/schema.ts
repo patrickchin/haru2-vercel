@@ -11,7 +11,9 @@ import {
   interval,
   boolean,
   primaryKey,
+  pgView,
 } from "drizzle-orm/pg-core";
+import { eq, getTableColumns, isNull } from "drizzle-orm";
 
 // pnpm drizzle-kit push
 // pnpm drizzle-kit introspect
@@ -90,6 +92,19 @@ export const fileGroupFiles1 = pgTable(
       // pk: primaryKey({ columns: [t.fileGroupId, t.fileId] }),
     };
   },
+);
+
+export const filesUsers1 = pgView("filesUsers1").as((qb) =>
+  qb
+    .select({
+      ...getTableColumns(files1),
+      uploader: users1,
+      fileGroupId: fileGroupFiles1.fileGroupId,
+    })
+    .from(files1)
+    .innerJoin(users1, eq(users1.id, files1.uploaderId))
+    .leftJoin(fileGroupFiles1, eq(fileGroupFiles1.fileId, files1.id))
+    .where(isNull(files1.deletedAt)),
 );
 
 export const otps1 = pgTable("otps1", {
