@@ -7,7 +7,7 @@ import {
 import { redirect } from "next/navigation";
 import { ReportFileDisplay } from "./report-file-viewer";
 import { DefaultLayout } from "@/components/page-layouts";
-import { InfoBox } from "@/components/info-box";
+import { WarningBox } from "@/components/info-box";
 
 export default async function Page({ params }: { params: { siteId: string } }) {
   const siteId = Number(params.siteId);
@@ -26,6 +26,14 @@ export default async function Page({ params }: { params: { siteId: string } }) {
           <ReportTitleBar {...props} />
         </div>
       </section>
+
+      <div className="w-full max-w-5xl mx-auto">
+        <WarningBox className="font-semibold text-base">
+          This project does not have any published reports yet. <br />
+          After schedule a meeting with us and our supervisor visiting your
+          site, your supervisor will create and publish reports on this page.
+        </WarningBox>
+      </div>
 
       <section className="w-full max-w-5xl mx-auto">
         <ReportFileDisplay {...props} />
