@@ -1,12 +1,11 @@
 import * as db from "@/lib/db";
 import { Session } from "next-auth";
-import { allSiteMemberRoles, SiteMemberRole } from "@/lib/types";
+import { SiteMemberRole } from "@/lib/types";
+import { auth } from "@/lib/auth";
 
 export * from "./permissions";
 
-export async function siteActionAllowed(
-  session: Session | null,
-  allowedRoles: SiteMemberRole[],
+export async function getSiteMemberRole(
   {
     siteId,
     reportId,
@@ -18,11 +17,14 @@ export async function siteActionAllowed(
     sectionId?: number;
     meetingId?: number;
   },
-) {
-  if (!session?.user) return false;
-  if (session.user.role === "admin") return true;
+  session?: Session | null,
+): Promise<SiteMemberRole> {
 
-  const userId = session.user.idn;
+  const s = session === undefined ? await auth() : session;
+  if (!s?.user) return null;
+  if (s.user.role === "admin") return "supervisor";
+
+  const userId = s.user.idn;
   let role: SiteMemberRole = null;
   if (siteId) {
     role = await db.getSiteRole({ siteId, userId });
@@ -32,8 +34,6 @@ export async function siteActionAllowed(
     role = await db.getReportSectionRole({ sectionId, userId });
   } else if (meetingId) {
     role = await db.getMeetingRole({ meetingId, userId });
-  } else {
-    return false;
   }
-  return allowedRoles.includes(role);
+  return role;
 }

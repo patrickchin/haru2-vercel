@@ -164,7 +164,7 @@ export default function SiteMeetings({ site, members }: SiteDetailsProps) {
   } = useSWR<SiteMeeting[] | undefined>(
     `/api/sites/${site.id}/meetings`, // api route doesn't really exist
     async () => {
-      return Actions.getSiteMeetings(site.id);
+      return Actions.listSiteMeetings(site.id);
     },
   );
 

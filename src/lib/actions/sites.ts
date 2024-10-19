@@ -7,7 +7,8 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import {
   editingRoles,
-  siteActionAllowed,
+  getSiteMemberRole,
+  editMeetingRoles,
   viewingRoles,
 } from "@/lib/permissions-server";
 import { SiteMeetingNew, SiteMemberRole } from "@/lib/types";
@@ -54,21 +55,24 @@ export async function getSiteRole(siteId: number) {
   return db.getSiteRole({ siteId, userId: session.user.idn });
 }
 
-export async function getSiteMeetings(siteId: number) {
-  const session = await auth();
-  if (await siteActionAllowed(session, viewingRoles, { siteId }))
-    return db.getSiteMeetings(siteId);
+export async function getSiteNotices(siteId: number) {
+  if (viewingRoles.includes(await getSiteMemberRole({ siteId })))
+    return db.getSiteNotices(siteId);
+}
+
+export async function listSiteMeetings(siteId: number) {
+  if (viewingRoles.includes(await getSiteMemberRole({ siteId })))
+    return db.listSiteMeetings(siteId);
 }
 
 export async function getSiteMeeting(meetingId: number) {
-  const session = await auth();
-  if (await siteActionAllowed(session, viewingRoles, { meetingId }))
+  if (viewingRoles.includes(await getSiteMemberRole({ meetingId })))
     return db.getSiteMeeting(meetingId);
 }
 
 export async function addSiteMeeting(siteId: number, values: SiteMeetingNew) {
   const session = await auth();
-  if (await siteActionAllowed(session, viewingRoles, { siteId }))
+  if (editMeetingRoles.includes(await getSiteMemberRole({ siteId })))
     return db.addSiteMeeting({ siteId, userId: session?.user?.idn }, values);
 }
 
@@ -76,41 +80,31 @@ export async function updateSiteMeeting(
   meetingId: number,
   values: SiteMeetingNew,
 ) {
-  const session = await auth();
-  // TODO only editingRoles should be allowed to confirm
-  if (await siteActionAllowed(session, viewingRoles, { meetingId })) {
+  // TODO only _we_ should be able to confirm a meeting with ourselves lol
+  if (editMeetingRoles.includes(await getSiteMemberRole({ meetingId }))) {
     return db.updateSiteMeeting(meetingId, values);
   }
-}
-
-export async function getSiteNotices(siteId: number) {
-  const session = await auth();
-  if (await siteActionAllowed(session, viewingRoles, { siteId }))
-    return db.getSiteNotices(siteId);
 }
 
 export async function updateSiteMeetingReturnAllMeetings(
   meetingId: number,
   values: SiteMeetingNew,
 ) {
-  const session = await auth();
-  if (await siteActionAllowed(session, editingRoles, { meetingId })) {
+  if (editMeetingRoles.includes(await getSiteMemberRole({ meetingId }))) {
     const meeting = await db.updateSiteMeeting(meetingId, values);
-    return meeting.siteId ? db.getSiteMeetings(meeting.siteId) : [meeting];
+    return meeting.siteId ? db.listSiteMeetings(meeting.siteId) : [meeting];
   }
 }
 
 export async function deleteSiteMeeting(meetingId: number) {
-  const session = await auth();
-  if (await siteActionAllowed(session, editingRoles, { meetingId }))
+  if (editingRoles.includes(await getSiteMemberRole({ meetingId })))
     return db.deleteSiteMeeting(meetingId);
 }
 
 export async function deleteSiteMeetingReturnAllMeetings(meetingId: number) {
-  const session = await auth();
-  if (await siteActionAllowed(session, editingRoles, { meetingId })) {
+  if (editingRoles.includes(await getSiteMemberRole({ meetingId }))) {
     const meeting = await db.deleteSiteMeeting(meetingId);
-    return meeting.siteId ? db.getSiteMeetings(meeting.siteId) : [meeting];
+    return meeting.siteId ? db.listSiteMeetings(meeting.siteId) : [meeting];
   }
 }
 export async function addSiteMemberByEmail({
@@ -120,8 +114,7 @@ export async function addSiteMemberByEmail({
   siteId: number;
   email: string;
 }) {
-  const session = await auth();
-  if (await siteActionAllowed(session, editingRoles, { siteId })) {
+  if (editingRoles.includes(await getSiteMemberRole({ siteId }))) {
     const user = await db.getUserByEmail(email);
     if (!user) return;
     return db.addSiteMember({ siteId, userId: user.id, role: "member" });
@@ -137,8 +130,7 @@ export async function updateSiteMemberRole({
   userId: number;
   role: SiteMemberRole;
 }) {
-  const session = await auth();
-  if (await siteActionAllowed(session, editingRoles, { siteId })) {
+  if (editingRoles.includes(await getSiteMemberRole({ siteId }))) {
     return db.updateSiteMemberRole({ siteId, userId, role });
   }
 }
@@ -150,8 +142,7 @@ export async function removeSiteMember({
   siteId: number;
   userId: number;
 }) {
-  const session = await auth();
-  if (await siteActionAllowed(session, editingRoles, { siteId })) {
+  if (editingRoles.includes(await getSiteMemberRole({ siteId }))) {
     const n = await db.countSiteMembers(siteId);
     if (n > 1) return db.removeSiteMember({ siteId, userId });
   }

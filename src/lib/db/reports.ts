@@ -74,7 +74,7 @@ export async function getMeetingRole({
     .then((r) => (r && r.length ? r[0].role : null));
 }
 
-export async function getSiteReports(siteId: number): Promise<SiteReport[]> {
+export async function listSiteReports(siteId: number): Promise<SiteReport[]> {
   return db
     .select(SiteReportColumns)
     .from(Schemas.siteReports1)
