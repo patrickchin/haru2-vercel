@@ -1,5 +1,5 @@
 {
-  "id": "1789a791-c65b-469c-b212-c2cf05bd17a5",
+  "id": "a388ea01-d4b0-4b3e-9fd4-4802751b4e4e",
   "prevId": "0b29193e-6802-4d52-8bf1-2b82d39819a8",
   "version": "6",
   "dialect": "postgresql",
@@ -349,13 +349,6 @@
           "type": "jsonb",
           "primaryKey": false,
           "notNull": false
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
         },
         "startDate": {
           "name": "startDate",
@@ -777,24 +770,6 @@
         "supervisorEmail": {
           "name": "supervisorEmail",
           "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "supervisorSignDate": {
-          "name": "supervisorSignDate",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "managerSignDate": {
-          "name": "managerSignDate",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "contractorSignDate": {
-          "name": "contractorSignDate",
-          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         },
