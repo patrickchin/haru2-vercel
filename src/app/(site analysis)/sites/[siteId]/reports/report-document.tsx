@@ -4,12 +4,15 @@ import { Session } from "next-auth";
 import { auth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { HaruFile } from "@/lib/types";
+import { editReportRoles } from "@/lib/permissions";
 import * as Actions from "@/lib/actions";
 
 import {
   LucideChevronDown,
   LucideChevronRight,
+  LucideFilePlus2,
   LucideMoveLeft,
+  LucidePen,
 } from "lucide-react";
 import { FileDisplay } from "@/components/file-display";
 import { Button } from "@/components/ui/button";
@@ -67,7 +70,7 @@ export async function ReportListPopup({
 }) {
   if (!site) return <div>invalid site</div>;
 
-  const reports = await Actions.getSiteReports(site.id);
+  const reports = await Actions.listSiteReports(site.id);
   const noReports = <div>No reports</div>;
   if (!reports) return noReports;
   if (reports.length < 1) return noReports;
@@ -90,6 +93,7 @@ export async function ReportListPopup({
                 <span>
                   {`Site Report #${r.id} - ${r.createdAt?.toDateString() || "unknown date"}`}
                 </span>
+                <span>{!r.publishedAt && "(unpublished)"}</span>
                 <LucideChevronRight className="" />
               </Link>
             </Button>
@@ -111,14 +115,14 @@ export async function ReportTitleBarDisplay({
 }) {
   const memberRole = site ? await Actions.getSiteRole(site.id) : "";
   return (
-    <div className="grow flex flex-col sm:flex-row gap-3">
+    <div className="grow flex flex-col sm:flex-row gap-2">
       <div>
         <Button variant="secondary" asChild>
           <Link
             href={`/sites/${site?.id ?? ""}`}
             className="flex gap-2 w-full h-full items-center"
           >
-            <LucideMoveLeft />
+            <LucideMoveLeft className="h-5" />
             Back to Project
           </Link>
         </Button>
@@ -157,17 +161,26 @@ export async function ReportTitleBarDisplay({
           session &&
           session.user &&
           memberRole &&
-          ["supervisor", "owner", "manager"].includes(memberRole) && (
+          editReportRoles.includes(memberRole) && (
             <div className="grid grid-cols-2 w-full sm:w-fit sm:flex gap-4">
-              {report && (
-                <Button variant="secondary" asChild>
-                  <Link href={`/sites/${site.id}/reports/${report.id}/edit`}>
-                    Edit Report
+              {report && !report.publishedAt && (
+                <Button
+                  variant="secondary"
+                  asChild
+                  disabled={!!report.publishedAt}
+                >
+                  <Link
+                    href={`/sites/${site.id}/reports/${report.id}/edit`}
+                    className={cn("flex gap-2")}
+                  >
+                    Edit Report <LucidePen className="h-3.5 w-3.5" />
                   </Link>
                 </Button>
               )}
-              <Button asChild>
-                <Link href={`/sites/${site.id}/reports/new`}>New Report</Link>
+              <Button asChild className="gap-2">
+                <Link href={`/sites/${site.id}/reports/new`}>
+                  New Report <LucideFilePlus2 className="h-4 w-4" />
+                </Link>
               </Button>
             </div>
           )}
@@ -283,10 +296,6 @@ export async function ReportDocumentDisplay({
           <Table>
             <TableBody>
               <TableRow>
-                <TableHead>Project Id</TableHead>
-                <TableCell>{report?.siteId ?? "--"}</TableCell>
-              </TableRow>
-              <TableRow>
                 <TableHead>Site Address</TableHead>
                 <TableCell>{report?.address ?? "--"}</TableCell>
               </TableRow>
@@ -294,6 +303,12 @@ export async function ReportDocumentDisplay({
                 <TableHead>Visit Date</TableHead>
                 <TableCell>
                   {report?.visitDate?.toDateString() ?? "--"}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead>Publish Date</TableHead>
+                <TableCell>
+                  {report?.publishedAt?.toDateString() ?? "--"}
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -484,9 +499,7 @@ export async function ReportDocumentDisplay({
       ) : (
         <Card className="border-2">
           <CardHeader className="flex flex-row justify-between">
-            <div className="text-lg font-bold">
-              Report Detail Sections
-            </div>
+            <div className="text-lg font-bold">Report Detail Sections</div>
           </CardHeader>
 
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 pt-0">

@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addSiteSchema, AddSiteType } from "@/lib/forms";
+import { zSiteNewBoth, zSiteNewBothType } from "@/lib/forms";
 import * as Actions from "@/lib/actions";
 
 import { LucideLoader2 } from "lucide-react";
@@ -65,8 +65,8 @@ function CountrySelectForm({ form }: { form: any }) {
 }
 
 function NewSiteForm() {
-  const form = useForm<AddSiteType>({
-    resolver: zodResolver(addSiteSchema),
+  const form = useForm<zSiteNewBothType>({
+    resolver: zodResolver(zSiteNewBoth),
   });
 
   return (

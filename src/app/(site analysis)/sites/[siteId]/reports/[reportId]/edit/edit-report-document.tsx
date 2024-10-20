@@ -176,9 +176,8 @@ function EditReportDetails({
                           <Textarea
                             {...field}
                             value={field.value ?? undefined}
-                            className="min-h-10 h-40"
+                            className="h-80"
                             placeholder="eg. Excavation"
-                            autoResize={true}
                           />
                         </FormControl>
                       </FormItem>
