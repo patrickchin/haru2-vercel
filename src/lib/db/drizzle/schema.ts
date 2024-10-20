@@ -245,18 +245,18 @@ export const siteReportDetails1 = pgTable("siteReportDetails1", {
   supervisorPhone: varchar("supervisorPhone"),
   supervisorEmail: varchar("supervisorEmail"),
 
-  supervisorSignDate: timestamp("supervisorSignDate", {
-    mode: "date",
-    withTimezone: true,
-  }),
-  managerSignDate: timestamp("managerSignDate", {
-    mode: "date",
-    withTimezone: true,
-  }),
-  contractorSignDate: timestamp("contractorSignDate", {
-    mode: "date",
-    withTimezone: true,
-  }),
+  // supervisorSignDate: timestamp("supervisorSignDate", {
+  //   mode: "date",
+  //   withTimezone: true,
+  // }),
+  // managerSignDate: timestamp("managerSignDate", {
+  //   mode: "date",
+  //   withTimezone: true,
+  // }),
+  // contractorSignDate: timestamp("contractorSignDate", {
+  //   mode: "date",
+  //   withTimezone: true,
+  // }),
 
   activity: varchar("activity"),
 
