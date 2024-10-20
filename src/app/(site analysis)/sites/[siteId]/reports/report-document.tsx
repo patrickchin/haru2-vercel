@@ -93,6 +93,7 @@ export async function ReportListPopup({
                 <span>
                   {`Site Report #${r.id} - ${r.createdAt?.toDateString() || "unknown date"}`}
                 </span>
+                <span>{!r.publishedAt && "(unpublished)"}</span>
                 <LucideChevronRight className="" />
               </Link>
             </Button>

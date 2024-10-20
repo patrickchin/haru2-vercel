@@ -129,9 +129,6 @@ export const siteDetails1 = pgTable("siteDetails1", {
   description: varchar("description"),
   extraInfo: jsonb("extraInfo"),
 
-  createdAt: timestamp("createdAt", { mode: "date", withTimezone: true })
-    .defaultNow()
-    .notNull(),
   startDate: timestamp("startDate", { mode: "date", withTimezone: true }),
   endDate: timestamp("endDate", { mode: "date", withTimezone: true }),
   nextReportDate: timestamp("nextReportDate", {

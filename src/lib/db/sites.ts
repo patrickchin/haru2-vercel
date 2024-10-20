@@ -6,10 +6,12 @@ import {
   Site,
   SiteAndExtra,
   SiteDetails,
+  SiteDetailsNew,
   SiteMeeting,
   SiteMeetingNew,
   SiteMember,
   SiteMemberRole,
+  SiteNew,
   SiteNoticeNew,
 } from "@/lib/types/site";
 import * as Schemas from "@/drizzle/schema";
@@ -180,16 +182,12 @@ export async function updateSiteNotice(siteId: number, values: SiteNoticeNew) {
     .then((n) => n[0]);
 }
 
-export async function addUserSite(
+export async function addSite(
   ownerId: number,
-  args: {
-    title: string;
-    type: string;
-    countryCode: string;
-    address?: string;
-    postcode?: string;
-    description?: string;
-  },
+  args: Pick<
+    SiteNew & SiteDetailsNew,
+    "title" | "type" | "countryCode" | "address" | "description"
+  >,
 ): Promise<Site> {
   return db.transaction(async (tx) => {
     const site = await tx
@@ -207,7 +205,6 @@ export async function addUserSite(
       .values({
         id: site.id,
         address: args.address,
-        postcode: args.postcode,
         description: args.description,
       })
       .returning()
