@@ -2,26 +2,23 @@
 
 import * as db from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { addSiteSchema, AddSiteType } from "@/lib/forms";
+import { zSiteNewBoth, zSiteNewBothType } from "@/lib/forms";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import {
   editingRoles,
-  getSiteMemberRole,
   editMeetingRoles,
   viewingRoles,
-} from "@/lib/permissions-server";
+} from "@/lib/permissions";
 import { SiteMeetingNew, SiteMemberRole } from "@/lib/types";
+import { Session } from "next-auth";
 
-export async function addSite(d: AddSiteType) {
+export async function addSite(data: zSiteNewBothType) {
   const session = await auth();
   if (!session?.user) return;
-
-  const parsed = addSiteSchema.safeParse(d);
+  const parsed = zSiteNewBoth.safeParse(data);
   if (!parsed.success) return;
-
-  const site = await db.addUserSite(session.user.idn, parsed.data);
-
+  const site = await db.addSite(session.user.idn, parsed.data);
   redirect(`/sites/${site.id}`);
 }
 
@@ -162,31 +159,41 @@ export async function updateKeySiteUsers(
     supervisorEmail?: string;
   },
 ) {
-  const session = await auth();
-  if (!session?.user) return;
-  const userId = session.user.idn;
-  if (isNaN(userId)) return;
-
-  const role = await db.getSiteRole({ siteId, userId });
-  if (!role) return;
-  const allowedRoles = [
-    "manager",
-    "owner",
-    "contractor",
-    "supervisor",
-    // "member", // don't allow normal members to edit that information ?
-  ];
-  if (!allowedRoles.includes(role)) return;
-
-  try {
-    console.log(`User ${userId} updating key site user information ${values}`);
+  if (editingRoles.includes(await getSiteMemberRole({ siteId }))) {
     const ret = await db.updateKeySiteUsers(siteId, values);
     revalidatePath(`/sites/${siteId}`);
     return ret;
-  } catch (e: any) {
-    console.log(
-      `Failed to update key site users (user ${userId}) (site ${siteId}) error: ${e}`,
-    );
-    return;
   }
+}
+
+export async function getSiteMemberRole(
+  {
+    siteId,
+    reportId,
+    sectionId,
+    meetingId,
+  }: {
+    siteId?: number;
+    reportId?: number;
+    sectionId?: number;
+    meetingId?: number;
+  },
+  session?: Session | null,
+): Promise<SiteMemberRole> {
+  const s = session === undefined ? await auth() : session;
+  if (!s?.user) return null;
+  if (s.user.role === "admin") return "supervisor";
+
+  const userId = s.user.idn;
+  let role: SiteMemberRole = null;
+  if (siteId) {
+    role = await db.getSiteRole({ siteId, userId });
+  } else if (reportId) {
+    role = await db.getReportRole({ reportId, userId });
+  } else if (sectionId) {
+    role = await db.getReportSectionRole({ sectionId, userId });
+  } else if (meetingId) {
+    role = await db.getMeetingRole({ meetingId, userId });
+  }
+  return role;
 }

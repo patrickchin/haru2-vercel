@@ -5,20 +5,22 @@ import * as db from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { HaruFileNew } from "@/lib/types/common";
 import {
-  allSiteMemberRoles,
   SiteReportDetailsNew,
   SiteReportNew,
   SiteReportSectionNew,
 } from "@/lib/types/site";
-import {
-  getSiteMemberRole,
-  viewingRoles,
-  editReportRoles,
-} from "@/lib/permissions-server";
+import { viewingRoles, editReportRoles } from "@/lib/permissions";
+import { getSiteMemberRole } from "@/lib/actions/sites";
 
 export async function listSiteReports(siteId: number) {
-  if (viewingRoles.includes(await getSiteMemberRole({ siteId })))
-    return db.listSiteReports(siteId);
+  const session = await auth();
+  const role = await getSiteMemberRole({ siteId }, session);
+  if (editReportRoles.includes(role)) {
+    return db.listSiteReports(siteId, true);
+  }
+  if (viewingRoles.includes(await getSiteMemberRole({ siteId }))) {
+    return db.listSiteReports(siteId, false);
+  }
 }
 
 export async function getSiteReport(reportId: number) {
@@ -112,7 +114,7 @@ export async function deleteSiteReportFile({
   reportId: number;
   fileId: number;
 }) {
-  if (editReportRoles.includes(await getSiteMemberRole( { reportId }))) {
+  if (editReportRoles.includes(await getSiteMemberRole({ reportId }))) {
     return db.updateFile(fileId, { deletedAt: new Date() });
   }
 }

@@ -69,7 +69,9 @@ function SiteInfoBar({ site, members }: SiteDetailsProps) {
         </li>
         <li className="hover:bg-accent py-4 px-4 space-x-1">
           <span className="font-semibold">Created: </span>
-          <span className="">{site.createdAt.toDateString()}</span>
+          <span className="">
+            {site.createdAt?.toDateString() || "Unknown"}
+          </span>
         </li>
       </ul>
     </Card>
@@ -276,7 +278,9 @@ function SiteProgress({ site }: { site: SiteDetails }) {
           <TableBody>
             <TableRow>
               <TableHead className="font-medium">Creation Date</TableHead>
-              <TableCell>{site.createdAt.toDateString()}</TableCell>
+              <TableCell>
+                {site.createdAt?.toDateString() || "Unknown"}
+              </TableCell>
             </TableRow>
             <TableRow>
               <TableHead className="font-medium">Start Date</TableHead>

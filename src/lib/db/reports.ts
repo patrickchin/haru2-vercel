@@ -1,7 +1,7 @@
 import "server-only";
 
 import { db } from "./_db";
-import { and, desc, eq, getTableColumns } from "drizzle-orm";
+import { and, desc, eq, getTableColumns, isNotNull } from "drizzle-orm";
 import {
   SiteMemberRole,
   SiteReport,
@@ -74,7 +74,10 @@ export async function getMeetingRole({
     .then((r) => (r && r.length ? r[0].role : null));
 }
 
-export async function listSiteReports(siteId: number): Promise<SiteReport[]> {
+export async function listSiteReports(
+  siteId: number,
+  includeUnpublished: boolean = false,
+): Promise<SiteReport[]> {
   return db
     .select(SiteReportColumns)
     .from(Schemas.siteReports1)
@@ -82,7 +85,14 @@ export async function listSiteReports(siteId: number): Promise<SiteReport[]> {
       Schemas.users1,
       eq(Schemas.users1.id, Schemas.siteReports1.reporterId),
     )
-    .where(eq(Schemas.siteReports1.siteId, siteId))
+    .where(
+      and(
+        eq(Schemas.siteReports1.siteId, siteId),
+        includeUnpublished
+          ? undefined
+          : isNotNull(Schemas.siteReports1.publishedAt),
+      ),
+    )
     .orderBy(desc(Schemas.siteReports1.id));
 }
 
