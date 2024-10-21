@@ -1,7 +1,7 @@
 import "server-only";
 
 import { db } from "./_db";
-import { eq, getTableColumns, isNull, and } from "drizzle-orm";
+import { eq, getTableColumns, isNull, and, isNotNull } from "drizzle-orm";
 import { HaruFile, HaruFileNew } from "@/lib/types";
 import * as Schemas from "@/drizzle/schema";
 
@@ -66,7 +66,10 @@ export async function getFilesFromGroup(
     );
 }
 
-export async function getFilesForReport(reportId: number): Promise<HaruFile[]> {
+export async function getFilesForReport(
+  reportId: number,
+  includeUnpublished: boolean = false,
+): Promise<HaruFile[]> {
   return db
     .select(HaruFileColumns)
     .from(Schemas.files1)
@@ -81,6 +84,9 @@ export async function getFilesForReport(reportId: number): Promise<HaruFile[]> {
     )
     .where(
       and(
+        includeUnpublished
+          ? undefined
+          : isNotNull(Schemas.siteReports1.publishedAt),
         eq(Schemas.siteReports1.id, reportId),
         isNull(Schemas.files1.deletedAt),
       ),
@@ -89,6 +95,7 @@ export async function getFilesForReport(reportId: number): Promise<HaruFile[]> {
 
 export async function getFilesForReportSection(
   sectionId: number,
+  includeUnpublished: boolean = false,
 ): Promise<HaruFile[]> {
   return db
     .select(HaruFileColumns)
@@ -105,8 +112,15 @@ export async function getFilesForReportSection(
         Schemas.fileGroupFiles1.fileGroupId,
       ),
     )
+    .innerJoin(
+      Schemas.siteReports1,
+      eq(Schemas.siteReports1.id, Schemas.siteReportSections1.reportId),
+    )
     .where(
       and(
+        includeUnpublished
+          ? undefined
+          : isNotNull(Schemas.siteReports1.publishedAt),
         eq(Schemas.siteReportSections1.id, sectionId),
         isNull(Schemas.files1.deletedAt),
       ),

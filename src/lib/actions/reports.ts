@@ -13,24 +13,24 @@ import { viewingRoles, editReportRoles } from "@/lib/permissions";
 import { getSiteMemberRole } from "@/lib/actions/sites";
 
 export async function listSiteReports(siteId: number) {
-  const session = await auth();
-  const role = await getSiteMemberRole({ siteId }, session);
-  if (editReportRoles.includes(role)) {
-    return db.listSiteReports(siteId, true);
-  }
-  if (viewingRoles.includes(await getSiteMemberRole({ siteId }))) {
-    return db.listSiteReports(siteId, false);
-  }
+  const role = await getSiteMemberRole({ siteId });
+  if (editReportRoles.includes(role)) return db.listSiteReports(siteId, true);
+  if (viewingRoles.includes(role)) return db.listSiteReports(siteId, false);
 }
 
 export async function getSiteReport(reportId: number) {
-  if (viewingRoles.includes(await getSiteMemberRole({ reportId })))
-    return db.getSiteReport(reportId);
+  const role = await getSiteMemberRole({ reportId });
+  // TODO inlcude/exclude unpublished reports
+  // if (editReportRoles.includes(role)) return db.getSiteReport(reportId, true);
+  if (viewingRoles.includes(role)) return db.getSiteReport(reportId);
 }
 
 export async function getSiteReportDetails(reportId: number) {
-  if (viewingRoles.includes(await getSiteMemberRole({ reportId })))
-    return db.getSiteReportDetails(reportId);
+  const role = await getSiteMemberRole({ reportId });
+  if (editReportRoles.includes(role))
+    return db.getSiteReportDetails(reportId, true);
+  if (viewingRoles.includes(role))
+    return db.getSiteReportDetails(reportId, false);
 }
 
 export async function addSiteReport(siteId: number) {
@@ -58,7 +58,8 @@ export async function updateSiteReportDetails(
   reportId: number,
   values: SiteReportDetailsNew,
 ) {
-  if (editReportRoles.includes(await getSiteMemberRole({ reportId }))) {
+  const role = await getSiteMemberRole({ reportId });
+  if (editReportRoles.includes(role)) {
     const [details, report] = await Promise.all([
       db.updateSiteReportDetails(reportId, values),
       db.getSiteReport(reportId),
@@ -69,7 +70,8 @@ export async function updateSiteReportDetails(
 }
 
 export async function publishReport(reportId: number) {
-  if (editReportRoles.includes(await getSiteMemberRole({ reportId }))) {
+  const role = await getSiteMemberRole({ reportId });
+  if (editReportRoles.includes(role)) {
     const report = await db.updateSiteReport(reportId, {
       publishedAt: new Date(),
     });
@@ -79,15 +81,24 @@ export async function publishReport(reportId: number) {
 }
 
 export async function deleteSiteReport(siteId: number) {
-  if (editReportRoles.includes(await getSiteMemberRole({ siteId }))) {
+  const role = await getSiteMemberRole({ siteId });
+  if (editReportRoles.includes(role)) {
     return await db.deleteSiteReport(siteId);
   }
 }
 
 export async function listReportFiles(reportId: number) {
-  if (viewingRoles.includes(await getSiteMemberRole({ reportId }))) {
-    let report = await db.getSiteReport(reportId);
-    if (report.fileGroupId) return db.getFilesFromGroup(report.fileGroupId);
+  const role = await getSiteMemberRole({ reportId });
+  let report = null;
+  // TODO inlcude/exclude unpublished reports
+  // if (editReportRoles.includes(role)) {
+  //   report = await db.getSiteReport(reportId, true);
+  // }
+  if (viewingRoles.includes(role)) {
+    report = await db.getSiteReport(reportId);
+  }
+  if (report?.fileGroupId){
+  return db.getFilesFromGroup(report.fileGroupId);
   }
 }
 
@@ -96,7 +107,8 @@ export async function addSiteReportFile(
   fileInfo: HaruFileNew,
 ) {
   const session = await auth();
-  if (editReportRoles.includes(await getSiteMemberRole({ reportId }))) {
+  const role = await getSiteMemberRole({ reportId }, session);
+  if (editReportRoles.includes(role)) {
     let report = await db.getSiteReport(reportId);
     if (report.fileGroupId) {
       return db.addFileToGroup(report.fileGroupId, {
@@ -114,7 +126,8 @@ export async function deleteSiteReportFile({
   reportId: number;
   fileId: number;
 }) {
-  if (editReportRoles.includes(await getSiteMemberRole({ reportId }))) {
+  const role = await getSiteMemberRole({ reportId });
+  if (editReportRoles.includes(role)) {
     return db.updateFile(fileId, { deletedAt: new Date() });
   }
 }
@@ -122,12 +135,20 @@ export async function deleteSiteReportFile({
 // ======================== sections ========================
 
 export async function getSiteReportSections(reportId: number) {
-  if (viewingRoles.includes(await getSiteMemberRole({ reportId })))
+  const role = await getSiteMemberRole({ reportId });
+  // TODO inlcude/exclude unpublished reports
+  // if (editReportRoles.includes(role))
+  //   return db.getSiteReportSections(reportId, true);
+  if (viewingRoles.includes(role))
     return db.getSiteReportSections(reportId);
 }
 
 export async function getSiteReportSection(sectionId: number) {
-  if (viewingRoles.includes(await getSiteMemberRole({ sectionId })))
+  const role = await getSiteMemberRole({ sectionId });
+  // TODO inlcude/exclude unpublished reports
+  // if (editReportRoles.includes(role))
+  //   return db.getSiteReportSection(reportId, true);
+  if (viewingRoles.includes(role))
     return db.getSiteReportSection(sectionId);
 }
 
@@ -135,7 +156,8 @@ export async function addSiteReportSection(
   reportId: number,
   args: { title: string; content: string },
 ) {
-  if (editReportRoles.includes(await getSiteMemberRole({ reportId }))) {
+  const role = await getSiteMemberRole({ reportId });
+  if (editReportRoles.includes(role)) {
     return db.addSiteReportSection({
       ...args,
       reportId,
@@ -147,7 +169,8 @@ export async function updateSiteReportSection(
   sectionId: number,
   args: SiteReportSectionNew,
 ) {
-  if (editReportRoles.includes(await getSiteMemberRole({ sectionId }))) {
+  const role = await getSiteMemberRole({ sectionId });
+  if (editReportRoles.includes(role)) {
     return db.updateSiteReportSection(sectionId, args);
   }
 }
@@ -157,7 +180,8 @@ export async function addSiteReportSectionFile(
   fileInfo: HaruFileNew,
 ) {
   const session = await auth();
-  if (editReportRoles.includes(await getSiteMemberRole({ sectionId }))) {
+  const role = await getSiteMemberRole({ sectionId });
+  if (editReportRoles.includes(role)) {
     let section = await db.getSiteReportSection(sectionId);
     if (section.fileGroupId) {
       return db.addFileToGroup(section.fileGroupId, {
@@ -169,6 +193,9 @@ export async function addSiteReportSectionFile(
 }
 
 export async function getSiteReportSectionFiles(sectionId: number) {
-  if (viewingRoles.includes(await getSiteMemberRole({ sectionId })))
-    return db.getFilesForReportSection(sectionId);
+  const role = await getSiteMemberRole({ sectionId });
+  if (editReportRoles.includes(role))
+    return db.getFilesForReportSection(sectionId, true);
+  if (viewingRoles.includes(role))
+    return db.getFilesForReportSection(sectionId, false);
 }
