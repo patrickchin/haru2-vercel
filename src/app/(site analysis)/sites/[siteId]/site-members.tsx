@@ -1,8 +1,12 @@
 "use client";
 
 import useSWR, { KeyedMutator } from "swr";
-import { SiteDetailsProps } from "./page";
-import { allSiteMemberRoles, SiteMember, SiteMemberRole } from "@/lib/types";
+import {
+  allSiteMemberRoles,
+  SiteDetails,
+  SiteMember,
+  SiteMemberRole,
+} from "@/lib/types";
 import * as Actions from "@/lib/actions";
 
 import { z } from "zod";
@@ -155,7 +159,10 @@ function SiteMemberSelectRole({
 export default function SiteMembers({
   site,
   members: origMembers,
-}: SiteDetailsProps) {
+}: {
+  site: SiteDetails;
+  members: SiteMember[] | undefined;
+}) {
   const {
     data: members,
     mutate: mutateMembers,

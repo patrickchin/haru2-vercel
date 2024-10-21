@@ -27,13 +27,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LucideEdit, LucideLoader2 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { SiteDetailsProps } from "./page";
+import { SiteDetails, SiteMember } from "@/lib/types";
 
 function SiteMemberFields({
   site,
   form,
   prefix,
-}: SiteDetailsProps & { form: any; prefix: string }) {
+}: {
+  site: SiteDetails;
+  members: SiteMember[] | undefined;
+} & { form: any; prefix: string }) {
   return (
     <div className="flex flex-col">
       <h3 className="capitalize text-base font-semibold">{prefix}</h3>
@@ -88,7 +91,13 @@ function SiteMemberFields({
   );
 }
 
-function EditSiteMembersForm({ site, members }: SiteDetailsProps) {
+function EditSiteMembersForm({
+  site,
+  members,
+}: {
+  site: SiteDetails;
+  members: SiteMember[] | undefined;
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -178,7 +187,10 @@ function EditSiteMembersForm({ site, members }: SiteDetailsProps) {
 export default function EditSiteMembersButtonPopup({
   site,
   members,
-}: SiteDetailsProps) {
+}: {
+  site: SiteDetails;
+  members: SiteMember[] | undefined;
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();

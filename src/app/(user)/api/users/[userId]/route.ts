@@ -1,10 +1,11 @@
 import { auth } from "@/lib/auth";
-import { NextAuthRequest } from "next-auth/lib";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import * as db from "@/db";
 
-export const GET = auth(async function GET(req: NextAuthRequest) {
-  if (!req.auth?.user) {
+// export const GET = auth(async function GET(req: NextAuthRequest) {
+export async function GET(req: NextRequest) {
+  const session = await auth();
+  if (!session?.user) {
     return NextResponse.json({ message: "Not authorized" }, { status: 401 });
   }
 
@@ -14,4 +15,4 @@ export const GET = auth(async function GET(req: NextAuthRequest) {
   // TODO check if user is in the same organisation,
   // to prevent any user searching up any other user
   return NextResponse.json(user);
-});
+}

@@ -9,12 +9,16 @@ import { ReportFileDisplay } from "./report-file-viewer";
 import { DefaultLayout } from "@/components/page-layouts";
 import { WarningBox } from "@/components/info-box";
 
-export default async function Page({ params }: { params: { siteId: string } }) {
-  const siteId = Number(params.siteId);
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ siteId: string }>;
+}) {
+  const siteId = Number((await params).siteId);
 
   const reports = await Actions.listSiteReports(siteId);
   if (reports && reports?.length > 0) {
-    redirect(`/sites/${params.siteId}/reports/${reports[0].id}`);
+    redirect(`/sites/${siteId}/reports/${reports[0].id}`);
   }
 
   const props: ReportsViewerProps = { siteId, reportId: NaN, fileId: NaN };

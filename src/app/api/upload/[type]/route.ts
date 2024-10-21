@@ -61,7 +61,7 @@ async function getPath(
 
 export async function POST(
   request: Request,
-  { params: { type } }: { params: { type: string } },
+  { params: urlParams }: { params: Promise<{ type: string }> },
 ): Promise<NextResponse> {
   const params = await request.json();
   const session = await auth();
@@ -72,6 +72,7 @@ export async function POST(
     );
   }
 
+  const type = (await urlParams).type;
   const path = await getPath(type, session, params);
   if (!path) {
     return NextResponse.json({ error: "Invalid Params" }, { status: 400 });
