@@ -111,6 +111,7 @@ export async function getSiteReport(reportId: number): Promise<SiteReport> {
 
 export async function getSiteReportDetails(
   reportId: number,
+  includeUnpublished: boolean = false,
 ): Promise<SiteReportAll> {
   return db
     .select(SiteReportDetailsColumns)
@@ -123,7 +124,14 @@ export async function getSiteReportDetails(
       Schemas.users1,
       eq(Schemas.users1.id, Schemas.siteReports1.reporterId),
     )
-    .where(eq(Schemas.siteReports1.id, reportId))
+    .where(
+      and(
+        eq(Schemas.siteReports1.id, reportId),
+        includeUnpublished
+          ? undefined
+          : isNotNull(Schemas.siteReports1.publishedAt),
+      ),
+    )
     .limit(1)
     .then((r) => r[0]);
 }
