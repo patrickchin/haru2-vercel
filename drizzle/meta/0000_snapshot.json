@@ -1,7 +1,5 @@
 {
-  "id": "35f62f5b-1396-43e1-80ac-33945a9bae9a",
-  "prevId": "00000000-0000-0000-0000-000000000000",
-  "version": "6",
+  "version": "7",
   "dialect": "postgresql",
   "tables": {
     "public.accounts1": {
@@ -66,17 +64,17 @@
       "uniqueConstraints": {
         "accounts1_email_unique": {
           "name": "accounts1_email_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "email"
-          ]
+          ],
+          "nullsNotDistinct": false
         },
         "accounts1_phone_unique": {
           "name": "accounts1_phone_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "phone"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
@@ -102,28 +100,28 @@
         "contacts1_id_users1_id_fk": {
           "name": "contacts1_id_users1_id_fk",
           "tableFrom": "contacts1",
-          "tableTo": "users1",
           "columnsFrom": [
             "id"
           ],
+          "tableTo": "users1",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "contacts1_contactId_users1_id_fk": {
           "name": "contacts1_contactId_users1_id_fk",
           "tableFrom": "contacts1",
-          "tableTo": "users1",
           "columnsFrom": [
             "contactId"
           ],
+          "tableTo": "users1",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -151,39 +149,39 @@
         "fileGroupFiles1_fileGroupId_fileGroups1_id_fk": {
           "name": "fileGroupFiles1_fileGroupId_fileGroups1_id_fk",
           "tableFrom": "fileGroupFiles1",
-          "tableTo": "fileGroups1",
           "columnsFrom": [
             "fileGroupId"
           ],
+          "tableTo": "fileGroups1",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "fileGroupFiles1_fileId_files1_id_fk": {
           "name": "fileGroupFiles1_fileId_files1_id_fk",
           "tableFrom": "fileGroupFiles1",
-          "tableTo": "files1",
           "columnsFrom": [
             "fileId"
           ],
+          "tableTo": "files1",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "fileGroupFiles1_fileGroupId_fileId_unique": {
           "name": "fileGroupFiles1_fileGroupId_fileId_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "fileGroupId",
             "fileId"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
@@ -256,15 +254,15 @@
         "files1_uploaderId_users1_id_fk": {
           "name": "files1_uploaderId_users1_id_fk",
           "tableFrom": "files1",
-          "tableTo": "users1",
           "columnsFrom": [
             "uploaderId"
           ],
+          "tableTo": "users1",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -465,15 +463,15 @@
         "siteDetails1_id_sites1_id_fk": {
           "name": "siteDetails1_id_sites1_id_fk",
           "tableFrom": "siteDetails1",
-          "tableTo": "sites1",
           "columnsFrom": [
             "id"
           ],
+          "tableTo": "sites1",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -509,28 +507,28 @@
         "siteMembers1_siteId_sites1_id_fk": {
           "name": "siteMembers1_siteId_sites1_id_fk",
           "tableFrom": "siteMembers1",
-          "tableTo": "sites1",
           "columnsFrom": [
             "siteId"
           ],
+          "tableTo": "sites1",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "siteMembers1_memberId_users1_id_fk": {
           "name": "siteMembers1_memberId_users1_id_fk",
           "tableFrom": "siteMembers1",
-          "tableTo": "users1",
           "columnsFrom": [
             "memberId"
           ],
+          "tableTo": "users1",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -697,15 +695,15 @@
         "siteReportDetails1_id_siteReports1_id_fk": {
           "name": "siteReportDetails1_id_siteReports1_id_fk",
           "tableFrom": "siteReportDetails1",
-          "tableTo": "siteReports1",
           "columnsFrom": [
             "id"
           ],
+          "tableTo": "siteReports1",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -751,28 +749,28 @@
         "siteReportSections1_reportId_siteReports1_id_fk": {
           "name": "siteReportSections1_reportId_siteReports1_id_fk",
           "tableFrom": "siteReportSections1",
-          "tableTo": "siteReports1",
           "columnsFrom": [
             "reportId"
           ],
+          "tableTo": "siteReports1",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "siteReportSections1_fileGroupId_fileGroups1_id_fk": {
           "name": "siteReportSections1_fileGroupId_fileGroups1_id_fk",
           "tableFrom": "siteReportSections1",
-          "tableTo": "fileGroups1",
           "columnsFrom": [
             "fileGroupId"
           ],
+          "tableTo": "fileGroups1",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -826,41 +824,41 @@
         "siteReports1_reporterId_users1_id_fk": {
           "name": "siteReports1_reporterId_users1_id_fk",
           "tableFrom": "siteReports1",
-          "tableTo": "users1",
           "columnsFrom": [
             "reporterId"
           ],
+          "tableTo": "users1",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "siteReports1_siteId_sites1_id_fk": {
           "name": "siteReports1_siteId_sites1_id_fk",
           "tableFrom": "siteReports1",
-          "tableTo": "sites1",
           "columnsFrom": [
             "siteId"
           ],
+          "tableTo": "sites1",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "siteReports1_fileGroupId_fileGroups1_id_fk": {
           "name": "siteReports1_fileGroupId_fileGroups1_id_fk",
           "tableFrom": "siteReports1",
-          "tableTo": "fileGroups1",
           "columnsFrom": [
             "fileGroupId"
           ],
+          "tableTo": "fileGroups1",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -935,15 +933,15 @@
         "users1_id_accounts1_id_fk": {
           "name": "users1_id_accounts1_id_fk",
           "tableFrom": "users1",
-          "tableTo": "accounts1",
           "columnsFrom": [
             "id"
           ],
+          "tableTo": "accounts1",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -975,8 +973,11 @@
   },
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "35f62f5b-1396-43e1-80ac-33945a9bae9a",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "sequences": {}
 }
