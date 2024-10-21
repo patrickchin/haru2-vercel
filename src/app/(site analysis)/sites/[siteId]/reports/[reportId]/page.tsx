@@ -13,12 +13,13 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: { siteId: string; reportId?: string };
-  searchParams?: { fileId: string };
+  params: Promise<{ siteId: string; reportId?: string }>;
+  searchParams?: Promise<{ fileId: string }>;
 }) {
-  const siteId = Number(params.siteId);
-  const reportId = Number(params.reportId);
-  const fileId = Number(searchParams?.fileId);
+  const params2 = await params;
+  const siteId = Number(params2.siteId);
+  const reportId = Number(params2.reportId);
+  const fileId = Number((await searchParams)?.fileId);
 
   const props: ReportsViewerProps = { siteId, reportId, fileId };
 

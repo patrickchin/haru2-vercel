@@ -35,10 +35,10 @@ async function EditReportHeader({ report }: { report: SiteReport }) {
 export default async function Page({
   params,
 }: {
-  params: { siteId: string; reportId: string };
+  params: Promise<{ siteId: string; reportId: string }>;
 }) {
-  const siteId = Number(params.siteId);
-  const reportId = Number(params.reportId);
+  const siteId = Number((await params).siteId);
+  const reportId = Number((await params).reportId);
   const [report, memberRole] = await Promise.all([
     Actions.getSiteReport(reportId),
     Actions.getSiteRole(siteId),

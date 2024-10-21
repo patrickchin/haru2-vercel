@@ -7,11 +7,14 @@ import useSWR from "swr";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { createInsertSchema } from "drizzle-zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
-import { SiteMeeting, SiteMeetingNew } from "@/lib/types";
-import * as Schemas from "@/db/schema";
+import {
+  SiteDetails,
+  SiteMeeting,
+  SiteMeetingNew,
+  SiteMember,
+} from "@/lib/types";
 import * as Actions from "@/lib/actions";
 
 import {
@@ -49,8 +52,6 @@ import {
 } from "@/components/ui/table";
 import { InfoBox } from "@/components/info-box";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-
-import { SiteDetailsProps } from "./page";
 
 const formSchema = z.object({
   date: z.date(),
@@ -115,7 +116,6 @@ function SiteCalendarForm({
                       date < new Date(dateNow.getTime() - 24 * 60 * 60_000) ||
                       date > new Date(dateNow.getTime() + 62 * 24 * 60 * 60_000)
                     }
-                    initialFocus
                   />
                 </PopoverContent>
               </Popover>
@@ -153,7 +153,13 @@ function SiteCalendarForm({
   );
 }
 
-export default function SiteMeetings({ site, members }: SiteDetailsProps) {
+export default function SiteMeetings({
+  site,
+  members,
+}: {
+  site: SiteDetails;
+  members: SiteMember[] | undefined;
+}) {
   const { data: session } = useSession();
 
   const {

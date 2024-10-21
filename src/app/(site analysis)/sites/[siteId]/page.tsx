@@ -27,12 +27,13 @@ import {
 import { GoodBox, InfoBox } from "@/components/info-box";
 import SiteMembers from "./site-members";
 
-export interface SiteDetailsProps {
+function SiteDescription({
+  site,
+  members,
+}: {
   site: SiteDetails;
   members: SiteMember[] | undefined;
-}
-
-function SiteDescription({ site, members }: SiteDetailsProps) {
+}) {
   const desc =
     site.description ??
     "There is currently no description for this site project";
@@ -44,7 +45,13 @@ function SiteDescription({ site, members }: SiteDetailsProps) {
   );
 }
 
-function SiteInfoBar({ site, members }: SiteDetailsProps) {
+function SiteInfoBar({
+  site,
+  members,
+}: {
+  site: SiteDetails;
+  members: SiteMember[] | undefined;
+}) {
   const displayNames = useMemo(() => {
     return new Intl.DisplayNames(["en"], { type: "region" });
   }, []);
@@ -78,7 +85,13 @@ function SiteInfoBar({ site, members }: SiteDetailsProps) {
   );
 }
 
-function SiteMembersBar2({ site, members }: SiteDetailsProps) {
+function SiteMembersBar2({
+  site,
+  members,
+}: {
+  site: SiteDetails;
+  members: SiteMember[] | undefined;
+}) {
   const keyMemberRoles: SiteMemberRole[] = [
     "owner",
     "manager",
@@ -118,7 +131,13 @@ function SiteMembersBar2({ site, members }: SiteDetailsProps) {
   );
 }
 
-function SiteMembersBar({ site, members }: SiteDetailsProps) {
+function SiteMembersBar({
+  site,
+  members,
+}: {
+  site: SiteDetails;
+  members: SiteMember[] | undefined;
+}) {
   const owner = members?.find((m) => m.role === "owner");
 
   return (
@@ -152,7 +171,13 @@ function SiteMembersBar({ site, members }: SiteDetailsProps) {
   );
 }
 
-function SiteMembersTable({ site, members }: SiteDetailsProps) {
+function SiteMembersTable({
+  site,
+  members,
+}: {
+  site: SiteDetails;
+  members: SiteMember[] | undefined;
+}) {
   const owner = members?.find((m) => m.role === "owner");
 
   return (
@@ -315,10 +340,10 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: { siteId: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ siteId: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const siteId = Number(params.siteId);
+  const siteId = Number((await params).siteId);
   const [site, members] = await Promise.all([
     Actions.getSiteDetails(siteId),
     Actions.getSiteMembers(siteId),
