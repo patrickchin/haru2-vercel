@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { NextAuthRequest } from "next-auth/lib";
 import { NextResponse } from "next/server";
-import * as db from "@/lib/db";
+import * as db from "@/db";
 
 export const GET = auth(async function GET(req: NextAuthRequest) {
   if (!req.auth?.user) {

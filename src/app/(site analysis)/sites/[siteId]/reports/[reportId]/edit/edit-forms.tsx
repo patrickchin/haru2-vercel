@@ -9,7 +9,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { getTableConfig } from "drizzle-orm/pg-core";
 import { SiteReportDetails, SiteReportDetailsNew } from "@/lib/types";
 import * as Actions from "@/lib/actions";
-import * as Schemas from "@/drizzle/schema";
+import * as Schemas from "@/db/schema";
 
 import { LucideLoader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";

@@ -14,7 +14,7 @@ import {
   SiteNew,
   SiteNoticeNew,
 } from "@/lib/types/site";
-import * as Schemas from "@/drizzle/schema";
+import * as Schemas from "@/db/schema";
 
 // get all the sites that userId is the owner of
 export async function getMySites(userId: number): Promise<Site[]> {

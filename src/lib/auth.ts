@@ -6,7 +6,7 @@ import {
   getUserAccountByEmail,
   getUserAccountByPhone,
   verifyOtp,
-} from "@/lib/db";
+} from "@/db";
 import { authConfig } from "@/lib/auth.config";
 import { AccountRole } from "@/lib/types";
 import { authorizeSchema } from "@/lib/forms";

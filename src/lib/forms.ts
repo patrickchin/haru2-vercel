@@ -2,7 +2,7 @@ import { z, ZodType } from "zod";
 import { isPossiblePhoneNumber } from "libphonenumber-js";
 import { createInsertSchema } from "drizzle-zod";
 import { SiteDetailsNew, SiteNew } from "./types";
-import * as Schemas from "@/drizzle/schema";
+import * as Schemas from "@/db/schema";
 
 function allFilesSmall(list: FileList | undefined) {
   if (list === undefined) return true;

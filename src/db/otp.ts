@@ -4,7 +4,7 @@ import { db } from "./_db";
 import { eq } from "drizzle-orm";
 import { genSaltSync, hashSync, compareSync } from "bcrypt-ts";
 
-import * as Schemas from "@/drizzle/schema";
+import * as Schemas from "@/db/schema";
 
 export async function saveOtp(
   contactInfo: string,

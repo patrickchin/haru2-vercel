@@ -3,7 +3,7 @@ import "server-only";
 import { db } from "./_db";
 import { eq, getTableColumns, isNull, and, isNotNull } from "drizzle-orm";
 import { HaruFile, HaruFileNew } from "@/lib/types";
-import * as Schemas from "@/drizzle/schema";
+import * as Schemas from "@/db/schema";
 
 const HaruFileColumns = {
   ...getTableColumns(Schemas.files1),

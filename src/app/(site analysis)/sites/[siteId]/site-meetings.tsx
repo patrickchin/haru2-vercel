@@ -11,7 +11,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 import { SiteMeeting, SiteMeetingNew } from "@/lib/types";
-import * as Schemas from "@/drizzle/schema";
+import * as Schemas from "@/db/schema";
 import * as Actions from "@/lib/actions";
 
 import {
