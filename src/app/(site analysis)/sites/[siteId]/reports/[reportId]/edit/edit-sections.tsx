@@ -9,7 +9,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 import * as Actions from "@/lib/actions";
-import * as Schemas from "@/drizzle/schema";
+import * as Schemas from "@/db/schema";
 
 import { LucideLoader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";

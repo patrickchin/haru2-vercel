@@ -1,4 +1,4 @@
-import * as Schemas from "@/drizzle/schema";
+import * as Schemas from "@/db/schema";
 
 export type AccountRole = (typeof Schemas.accountRoleEnum.enumValues)[number];
 export type HaruUserBasic = typeof Schemas.users1.$inferSelect;

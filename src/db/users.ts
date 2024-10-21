@@ -4,7 +4,7 @@ import { db } from "./_db";
 import { eq, getTableColumns } from "drizzle-orm";
 import { genSaltSync, hashSync } from "bcrypt-ts";
 import { parsePhoneNumber } from "libphonenumber-js";
-import * as Schemas from "@/drizzle/schema";
+import * as Schemas from "@/db/schema";
 import { HaruUserBasic } from "@/lib/types";
 
 export async function getUserAccount(userId: number) {

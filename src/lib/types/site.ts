@@ -1,4 +1,4 @@
-import * as Schemas from "@/drizzle/schema";
+import * as Schemas from "@/db/schema";
 import { HaruUserBasic } from "./common";
 
 export type Site = typeof Schemas.sites1.$inferSelect;

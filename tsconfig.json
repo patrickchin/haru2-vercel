@@ -8,7 +8,7 @@
     "paths": {
       "@/*": ["src/*"],
       "@/public/*": ["public/*"],
-      "@/drizzle/*": ["src/lib/db/drizzle/*"]
+      "@/drizzle/*": ["drizzle/*"]
     },
     "strict": true,
     "forceConsistentCasingInFileNames": true,

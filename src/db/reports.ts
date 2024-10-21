@@ -12,7 +12,7 @@ import {
   SiteReportSection,
   SiteReportSectionNew,
 } from "@/lib/types/site";
-import * as Schemas from "@/drizzle/schema";
+import * as Schemas from "@/db/schema";
 
 const SiteReportColumns = {
   ...getTableColumns(Schemas.siteReports1),

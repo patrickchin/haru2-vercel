@@ -1,6 +1,6 @@
 "use server";
 
-import * as db from "@/lib/db";
+import * as db from "@/db";
 import { auth } from "@/lib/auth";
 import { zSiteNewBoth, zSiteNewBothType } from "@/lib/forms";
 import { redirect } from "next/navigation";

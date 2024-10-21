@@ -1,6 +1,6 @@
 "use server";
 
-import * as db from "@/lib/db";
+import * as db from "@/db";
 import { signIn, auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { isRedirectError } from "next/dist/client/components/redirect";
