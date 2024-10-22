@@ -336,14 +336,14 @@ function SiteProgress({ site }: { site: SiteDetails }) {
   );
 }
 
-export default async function Page({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ siteId: string }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const siteId = Number((await params).siteId);
+export default async function Page(
+  props: {
+    params: Promise<{ siteId: string }>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const siteId = Number((await props.params).siteId);
   const [site, members] = await Promise.all([
     Actions.getSiteDetails(siteId),
     Actions.getSiteMembers(siteId),
