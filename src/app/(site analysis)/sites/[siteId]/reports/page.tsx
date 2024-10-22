@@ -34,8 +34,8 @@ export default async function Page({
       <div className="w-full max-w-5xl mx-auto">
         <WarningBox className="font-semibold text-base">
           This project does not have any published reports yet. <br />
-          After schedule a meeting with us and our supervisor visiting your
-          site, your supervisor will create and publish reports on this page.
+          After scheduling a meeting with us, our supervisor will visit your
+          site and publish reports on this page.
         </WarningBox>
       </div>
 
