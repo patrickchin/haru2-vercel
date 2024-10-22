@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import * as Actions from "@/lib/actions";
 import { LucideBookOpenCheck } from "lucide-react";
 
-
 export function PublishButton({
   reportId,
   disabled,

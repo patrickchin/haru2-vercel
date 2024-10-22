@@ -1,3 +1,6 @@
 /src/lib/types
 /drizzle
 /src/components/ui
+
+/next-env.d.ts
+/pnpm-lock.yaml

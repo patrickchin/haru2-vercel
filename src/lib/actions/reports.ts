@@ -97,8 +97,8 @@ export async function listReportFiles(reportId: number) {
   if (viewingRoles.includes(role)) {
     report = await db.getSiteReport(reportId);
   }
-  if (report?.fileGroupId){
-  return db.getFilesFromGroup(report.fileGroupId);
+  if (report?.fileGroupId) {
+    return db.getFilesFromGroup(report.fileGroupId);
   }
 }
 
@@ -139,8 +139,7 @@ export async function getSiteReportSections(reportId: number) {
   // TODO inlcude/exclude unpublished reports
   // if (editReportRoles.includes(role))
   //   return db.getSiteReportSections(reportId, true);
-  if (viewingRoles.includes(role))
-    return db.getSiteReportSections(reportId);
+  if (viewingRoles.includes(role)) return db.getSiteReportSections(reportId);
 }
 
 export async function getSiteReportSection(sectionId: number) {
@@ -148,8 +147,7 @@ export async function getSiteReportSection(sectionId: number) {
   // TODO inlcude/exclude unpublished reports
   // if (editReportRoles.includes(role))
   //   return db.getSiteReportSection(reportId, true);
-  if (viewingRoles.includes(role))
-    return db.getSiteReportSection(sectionId);
+  if (viewingRoles.includes(role)) return db.getSiteReportSection(sectionId);
 }
 
 export async function addSiteReportSection(

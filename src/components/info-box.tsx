@@ -35,9 +35,7 @@ export function WarningBox({
       )}
     >
       <LucideMessageCircleWarning className="flex-none h-6 w-6" />
-      <p className="text-inherit align-bottom">
-        {children}
-      </p>
+      <p className="text-inherit align-bottom">{children}</p>
     </div>
   );
 }
