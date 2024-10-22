@@ -21,7 +21,7 @@ export default async function Page({
     redirect(`/sites/${siteId}/reports/${reports[0].id}`);
   }
 
-  const props: ReportsViewerProps = { siteId, reportId: NaN, fileId: NaN };
+  const props: ReportsViewerProps = { siteId };
 
   return (
     <DefaultLayout className="max-w-none relative p-0 pb-12">

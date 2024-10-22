@@ -57,8 +57,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 export interface ReportsViewerProps {
   siteId: number;
-  reportId: number;
-  fileId: number;
+  reportId?: number;
+  fileId?: number;
 }
 
 export async function ReportListPopup({
@@ -193,7 +193,7 @@ export async function ReportTitleBar({ siteId, reportId }: ReportsViewerProps) {
   const session = await auth();
   const [site, report] = await Promise.all([
     Actions.getSiteDetails(siteId),
-    Actions.getSiteReport(reportId),
+    reportId ? Actions.getSiteReport(reportId) : undefined,
   ]);
   const props = { session, site, report };
   return <ReportTitleBarDisplay {...props} />;
@@ -516,13 +516,13 @@ export async function ReportDocument({
   reportId,
 }: {
   siteId: number;
-  reportId: number;
-  fileId: number;
+  reportId?: number;
+  fileId?: number;
 }) {
   const [site, report, sections /* sectionFiles */] = await Promise.all([
     Actions.getSiteDetails(siteId),
-    Actions.getSiteReportDetails(reportId),
-    Actions.getSiteReportSections(reportId),
+    reportId ? Actions.getSiteReportDetails(reportId) : undefined,
+    reportId ? Actions.getSiteReportSections(reportId) : undefined,
     // Actions.getFilesForReport(reportId),
   ]);
   const props = { site, report, sections };
