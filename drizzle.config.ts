@@ -4,7 +4,11 @@ import { defineConfig } from "drizzle-kit";
 // needed for drizzle studio
 require("dotenv").config({ path: [".env.local"] });
 console.log("Drizzle connecting to ", process.env.POSTGRES_HOST);
-console.log("Using SSL", process.env.POSTGRES_SSL, process.env.POSTGRES_SSL != "false");
+console.log(
+  "Using SSL",
+  process.env.POSTGRES_SSL,
+  process.env.POSTGRES_SSL != "false",
+);
 
 assert(process.env.POSTGRES_USER);
 assert(process.env.POSTGRES_PASSWORD);
