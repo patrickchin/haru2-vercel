@@ -6,9 +6,9 @@ import { zSiteNewBoth, zSiteNewBothType } from "@/lib/forms";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import {
-  editingRoles,
+  editSiteRoles,
   editMeetingRoles,
-  viewingRoles,
+  viewSiteRoles,
 } from "@/lib/permissions";
 import { SiteMeetingNew, SiteMemberRole } from "@/lib/types";
 import { Session } from "next-auth";
@@ -53,23 +53,24 @@ export async function getSiteRole(siteId: number) {
 }
 
 export async function getSiteNotices(siteId: number) {
-  if (viewingRoles.includes(await getSiteMemberRole({ siteId })))
+  if (viewSiteRoles.includes(await getSiteMemberRole({ siteId })))
     return db.getSiteNotices(siteId);
 }
 
 export async function listSiteMeetings(siteId: number) {
-  if (viewingRoles.includes(await getSiteMemberRole({ siteId })))
+  if (viewSiteRoles.includes(await getSiteMemberRole({ siteId })))
     return db.listSiteMeetings(siteId);
 }
 
 export async function getSiteMeeting(meetingId: number) {
-  if (viewingRoles.includes(await getSiteMemberRole({ meetingId })))
+  if (viewSiteRoles.includes(await getSiteMemberRole({ meetingId })))
     return db.getSiteMeeting(meetingId);
 }
 
 export async function addSiteMeeting(siteId: number, values: SiteMeetingNew) {
   const session = await auth();
-  if (editMeetingRoles.includes(await getSiteMemberRole({ siteId })))
+  const role = await getSiteMemberRole({ siteId }, session);
+  if (editMeetingRoles.includes(role))
     return db.addSiteMeeting({ siteId, userId: session?.user?.idn }, values);
 }
 
@@ -94,12 +95,12 @@ export async function updateSiteMeetingReturnAllMeetings(
 }
 
 export async function deleteSiteMeeting(meetingId: number) {
-  if (editingRoles.includes(await getSiteMemberRole({ meetingId })))
+  if (editSiteRoles.includes(await getSiteMemberRole({ meetingId })))
     return db.deleteSiteMeeting(meetingId);
 }
 
 export async function deleteSiteMeetingReturnAllMeetings(meetingId: number) {
-  if (editingRoles.includes(await getSiteMemberRole({ meetingId }))) {
+  if (editSiteRoles.includes(await getSiteMemberRole({ meetingId }))) {
     const meeting = await db.deleteSiteMeeting(meetingId);
     return meeting.siteId ? db.listSiteMeetings(meeting.siteId) : [meeting];
   }
@@ -111,7 +112,7 @@ export async function addSiteMemberByEmail({
   siteId: number;
   email: string;
 }) {
-  if (editingRoles.includes(await getSiteMemberRole({ siteId }))) {
+  if (editSiteRoles.includes(await getSiteMemberRole({ siteId }))) {
     const user = await db.getUserByEmail(email);
     if (!user) return;
     return db.addSiteMember({ siteId, userId: user.id, role: "member" });
@@ -127,7 +128,7 @@ export async function updateSiteMemberRole({
   userId: number;
   role: SiteMemberRole;
 }) {
-  if (editingRoles.includes(await getSiteMemberRole({ siteId }))) {
+  if (editSiteRoles.includes(await getSiteMemberRole({ siteId }))) {
     return db.updateSiteMemberRole({ siteId, userId, role });
   }
 }
@@ -139,7 +140,7 @@ export async function removeSiteMember({
   siteId: number;
   userId: number;
 }) {
-  if (editingRoles.includes(await getSiteMemberRole({ siteId }))) {
+  if (editSiteRoles.includes(await getSiteMemberRole({ siteId }))) {
     const n = await db.countSiteMembers(siteId);
     if (n > 1) return db.removeSiteMember({ siteId, userId });
   }
@@ -159,7 +160,7 @@ export async function updateKeySiteUsers(
     supervisorEmail?: string;
   },
 ) {
-  if (editingRoles.includes(await getSiteMemberRole({ siteId }))) {
+  if (editSiteRoles.includes(await getSiteMemberRole({ siteId }))) {
     const ret = await db.updateKeySiteUsers(siteId, values);
     revalidatePath(`/sites/${siteId}`);
     return ret;

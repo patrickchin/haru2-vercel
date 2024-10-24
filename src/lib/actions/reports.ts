@@ -9,27 +9,27 @@ import {
   SiteReportNew,
   SiteReportSectionNew,
 } from "@/lib/types/site";
-import { viewingRoles, editReportRoles } from "@/lib/permissions";
+import { viewSiteRoles, editReportRoles } from "@/lib/permissions";
 import { getSiteMemberRole } from "@/lib/actions/sites";
 
 export async function listSiteReports(siteId: number) {
   const role = await getSiteMemberRole({ siteId });
   if (editReportRoles.includes(role)) return db.listSiteReports(siteId, true);
-  if (viewingRoles.includes(role)) return db.listSiteReports(siteId, false);
+  if (viewSiteRoles.includes(role)) return db.listSiteReports(siteId, false);
 }
 
 export async function getSiteReport(reportId: number) {
   const role = await getSiteMemberRole({ reportId });
   // TODO inlcude/exclude unpublished reports
   // if (editReportRoles.includes(role)) return db.getSiteReport(reportId, true);
-  if (viewingRoles.includes(role)) return db.getSiteReport(reportId);
+  if (viewSiteRoles.includes(role)) return db.getSiteReport(reportId);
 }
 
 export async function getSiteReportDetails(reportId: number) {
   const role = await getSiteMemberRole({ reportId });
   if (editReportRoles.includes(role))
     return db.getSiteReportDetails(reportId, true);
-  if (viewingRoles.includes(role))
+  if (viewSiteRoles.includes(role))
     return db.getSiteReportDetails(reportId, false);
 }
 
@@ -94,7 +94,7 @@ export async function listReportFiles(reportId: number) {
   // if (editReportRoles.includes(role)) {
   //   report = await db.getSiteReport(reportId, true);
   // }
-  if (viewingRoles.includes(role)) {
+  if (viewSiteRoles.includes(role)) {
     report = await db.getSiteReport(reportId);
   }
   if (report?.fileGroupId) {
@@ -139,7 +139,7 @@ export async function getSiteReportSections(reportId: number) {
   // TODO inlcude/exclude unpublished reports
   // if (editReportRoles.includes(role))
   //   return db.getSiteReportSections(reportId, true);
-  if (viewingRoles.includes(role)) return db.getSiteReportSections(reportId);
+  if (viewSiteRoles.includes(role)) return db.getSiteReportSections(reportId);
 }
 
 export async function getSiteReportSection(sectionId: number) {
@@ -147,7 +147,7 @@ export async function getSiteReportSection(sectionId: number) {
   // TODO inlcude/exclude unpublished reports
   // if (editReportRoles.includes(role))
   //   return db.getSiteReportSection(reportId, true);
-  if (viewingRoles.includes(role)) return db.getSiteReportSection(sectionId);
+  if (viewSiteRoles.includes(role)) return db.getSiteReportSection(sectionId);
 }
 
 export async function addSiteReportSection(
@@ -194,6 +194,6 @@ export async function getSiteReportSectionFiles(sectionId: number) {
   const role = await getSiteMemberRole({ sectionId });
   if (editReportRoles.includes(role))
     return db.getFilesForReportSection(sectionId, true);
-  if (viewingRoles.includes(role))
+  if (viewSiteRoles.includes(role))
     return db.getFilesForReportSection(sectionId, false);
 }
