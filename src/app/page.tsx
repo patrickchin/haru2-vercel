@@ -47,22 +47,24 @@ export default function Page() {
           />
         </div>
 
-        <div className="flex flex-col gap-16 max-w-7xl lg:mb-64 lg:ml-80 justify-end transition-all">
-          <h1
-            className={cn(
-              "flex text-center lg:text-right text-6xl font-extrabold p-10 rounded",
-              "bg-gradient-to-bl from-slate-300/90 to-slate-900/0",
-            )}
-          >
-            Your Construction Projects, <br />
-            Seamlessly Supervised
-          </h1>
+        <div className="flex flex-col gap-16 max-w-[90rem] w-full lg:w-4/5 justify-end transition-all">
+          <div className="flex justify-end">
+            <h1
+              className={cn(
+                "lg:text-right text-4xl lg:text-6xl font-extrabold p-10 rounded",
+                "bg-background/50 backdrop-blur-md",
+              )}
+            >
+              Your Construction Projects, <br />
+              Seamlessly Supervised
+            </h1>
+          </div>
 
           <div className="flex justify-end">
             <p
               className={cn(
                 "text-right font-bold p-10 rounded",
-                "bg-gradient-to-bl from-slate-300/90 to-slate-200/30",
+                "bg-background/50 backdrop-blur-md",
               )}
             >
               <span className="whitespace-nowrap pr-2">
