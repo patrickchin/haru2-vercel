@@ -1,10 +1,13 @@
 import { allSiteMemberRoles, SiteMemberRole } from "@/lib/types";
 
-export const viewingRoles: SiteMemberRole[] = allSiteMemberRoles;
-export const editingRoles: SiteMemberRole[] = [
+export const viewSiteRoles: SiteMemberRole[] = allSiteMemberRoles;
+export const editSiteRoles: SiteMemberRole[] = [
   "supervisor",
   "owner",
   "manager",
 ];
-export const editReportRoles: SiteMemberRole[] = ["supervisor"];
+
 export const editMeetingRoles: SiteMemberRole[] = ["owner"];
+export const acceptMeetingRoles: SiteMemberRole[] = ["supervisor"];
+
+export const editReportRoles: SiteMemberRole[] = ["supervisor"];

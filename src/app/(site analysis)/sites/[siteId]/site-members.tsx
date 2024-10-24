@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { editingRoles } from "@/lib/permissions";
+import { editSiteRoles } from "@/lib/permissions";
 
 function SiteSearchAddMember({
   siteId,
@@ -175,13 +175,14 @@ export default function SiteMembers({
   );
   const [isRemoving, setIsRemoving] = useState(false);
   const { data: session } = useSession();
-  const myRole = members?.find((m) => m.id === session?.user?.idn)?.role;
+  const role = members?.find((m) => m.id === session?.user?.idn)?.role;
+  const canEditSite = role && editSiteRoles.includes(role);
 
   return (
     <Card>
       <CardHeader className="font-semibold">Project Members</CardHeader>
       <CardContent className="space-y-8">
-        {myRole && editingRoles.includes(myRole) && (
+        {canEditSite && (
           <SiteSearchAddMember siteId={site.id} mutate={mutateMembers} />
         )}
         <ul className="border rounded overflow-hidden">
@@ -195,7 +196,7 @@ export default function SiteMembers({
                   <HaruUserAvatar user={m} className="w-8 h-8" />
                   <p>{m.name}</p>
                 </div>
-                {myRole && editingRoles.includes(myRole) ? (
+                {canEditSite ? (
                   <div className="flex flex-row gap-3 sm:items-center">
                     <SiteMemberSelectRole
                       siteId={site.id}

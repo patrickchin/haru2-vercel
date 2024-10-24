@@ -52,6 +52,7 @@ import {
 } from "@/components/ui/table";
 import { InfoBox } from "@/components/info-box";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { acceptMeetingRoles, editMeetingRoles } from "@/lib/permissions";
 
 const formSchema = z.object({
   date: z.date(),
@@ -174,8 +175,6 @@ export default function SiteMeetings({
     },
   );
 
-  const role = members?.find((m) => m.id === session?.user?.idn)?.role;
-
   const [isUpdating, setIsUpdating] = useState(false);
   const updateMeeting = useCallback(
     async (
@@ -200,20 +199,31 @@ export default function SiteMeetings({
     [mutateMeetings],
   );
 
+  const role = members?.find((m) => m.id === session?.user?.idn)?.role;
+  const canEditMeetings = role && editMeetingRoles.includes(role);
+  const canAcceptMeetings = role && acceptMeetingRoles.includes(role);
+
   return (
     <Card id="meetings">
       <CardHeader className="font-semibold">
         Schedule a Zoom Meeting with the Team
       </CardHeader>
       <CardContent className="space-y-8">
-        {!site.startDate && (
+        {canEditMeetings ? (
           <InfoBox>
             Suggest a few meeting times and dates and we will confirm the time
             both here and via email. The zoom link will be emailed out and shown
             below prior to the meeting.
           </InfoBox>
+        ) : (
+          <InfoBox>
+            The project owner will create schedule meetings with the site
+            supervisor. Meeting dates and times will appear here.
+          </InfoBox>
         )}
-        <SiteCalendarForm siteId={site.id} mutated={() => mutateMeetings()} />
+        {canEditMeetings && (
+          <SiteCalendarForm siteId={site.id} mutated={() => mutateMeetings()} />
+        )}
         <Table>
           <TableHeader>
             <TableRow>
@@ -267,7 +277,7 @@ export default function SiteMeetings({
                     )}
                   </TableCell>
                   <TableCell className="flex gap-1">
-                    {role === "owner" && (
+                    {canEditMeetings && (
                       <Button
                         size="icon"
                         variant="outline"
@@ -281,7 +291,7 @@ export default function SiteMeetings({
                         />
                       </Button>
                     )}
-                    {role === "supervisor" && (
+                    {canAcceptMeetings && (
                       <>
                         <Button
                           size="icon"
