@@ -9,6 +9,7 @@ import {
   editSiteRoles,
   editMeetingRoles,
   viewSiteRoles,
+  acceptMeetingRoles,
 } from "@/lib/permissions";
 import { SiteMeetingNew, SiteMemberRole } from "@/lib/types";
 import { Session } from "next-auth";
@@ -79,7 +80,8 @@ export async function updateSiteMeeting(
   values: SiteMeetingNew,
 ) {
   // TODO only _we_ should be able to confirm a meeting with ourselves lol
-  if (editMeetingRoles.includes(await getSiteMemberRole({ meetingId }))) {
+  const role = await getSiteMemberRole({ meetingId });
+  if (editMeetingRoles.includes(role) || acceptMeetingRoles.includes(role)) {
     return db.updateSiteMeeting(meetingId, values);
   }
 }
@@ -88,19 +90,23 @@ export async function updateSiteMeetingReturnAllMeetings(
   meetingId: number,
   values: SiteMeetingNew,
 ) {
-  if (editMeetingRoles.includes(await getSiteMemberRole({ meetingId }))) {
+  // TODO split this into two functions ... or not 
+  const role = await getSiteMemberRole({ meetingId });
+  if (editMeetingRoles.includes(role) || acceptMeetingRoles.includes(role)) {
     const meeting = await db.updateSiteMeeting(meetingId, values);
     return meeting.siteId ? db.listSiteMeetings(meeting.siteId) : [meeting];
   }
 }
 
 export async function deleteSiteMeeting(meetingId: number) {
-  if (editSiteRoles.includes(await getSiteMemberRole({ meetingId })))
+  const role = await getSiteMemberRole({ meetingId });
+  if (editSiteRoles.includes(role))
     return db.deleteSiteMeeting(meetingId);
 }
 
 export async function deleteSiteMeetingReturnAllMeetings(meetingId: number) {
-  if (editSiteRoles.includes(await getSiteMemberRole({ meetingId }))) {
+  const role = await getSiteMemberRole({ meetingId });
+  if (editSiteRoles.includes(role)) {
     const meeting = await db.deleteSiteMeeting(meetingId);
     return meeting.siteId ? db.listSiteMeetings(meeting.siteId) : [meeting];
   }
@@ -112,7 +118,8 @@ export async function addSiteMemberByEmail({
   siteId: number;
   email: string;
 }) {
-  if (editSiteRoles.includes(await getSiteMemberRole({ siteId }))) {
+  const role = await getSiteMemberRole({ siteId });
+  if (editSiteRoles.includes(role)) {
     const user = await db.getUserByEmail(email);
     if (!user) return;
     return db.addSiteMember({ siteId, userId: user.id, role: "member" });
