@@ -2,18 +2,23 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteDetails, SiteMember, SiteMemberRole } from "@/lib/types";
+import { auth } from "@/lib/auth";
+import { editSiteRoles } from "@/lib/permissions";
 import * as Actions from "@/lib/actions";
+
 import {
   LucideAlertTriangle,
   LucideArrowRight,
   LucideCheck,
 } from "lucide-react";
-
 import SiteMeetings from "./site-meetings";
+import SiteMembers from "./site-members";
+import { EditSiteSchedule } from "./edit-schedule";
+
 import EditSiteMembersButtonPopup from "./site-key-members";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { DefaultLayout } from "@/components/page-layouts";
 import {
@@ -25,7 +30,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { GoodBox, InfoBox } from "@/components/info-box";
-import SiteMembers from "./site-members";
 
 function SiteDescription({
   site,
@@ -279,7 +283,13 @@ async function SiteComplaints({ site }: { site: SiteDetails }) {
   );
 }
 
-function SiteProgress({ site }: { site: SiteDetails }) {
+function SiteProgress({
+  site,
+  role,
+}: {
+  site: SiteDetails;
+  role?: SiteMemberRole;
+}) {
   const progressPct =
     site.startDate && site.endDate
       ? (100 * (new Date().getTime() - site.startDate.getTime())) /
@@ -288,8 +298,11 @@ function SiteProgress({ site }: { site: SiteDetails }) {
 
   return (
     <Card id="progress">
-      <CardHeader className="font-semibold">
-        Supervision Progress and Milestones
+      <CardHeader className="flex flex-row justify-between items-center py-0 space-y-0">
+        <CardTitle className="font-semibold text-base py-6">
+          Supervision Progress and Milestones
+        </CardTitle>
+        {editSiteRoles.includes(role) && <EditSiteSchedule site={site} />}
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         {!site.startDate && (
@@ -352,6 +365,10 @@ export default async function Page(
   // TODO custom site not found page
   if (!site) notFound();
 
+
+  const session = await auth();
+  const role = members?.find((m) => m.id === session?.user?.idn)?.role;
+
   return (
     <DefaultLayout>
       <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between pb-3">
@@ -373,7 +390,7 @@ export default async function Page(
       <SiteMembersBar site={site} members={members} />
 
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-        <SiteProgress site={site} />
+        <SiteProgress site={site} role={role} />
         <SiteComplaints site={site} />
       </div>
 
