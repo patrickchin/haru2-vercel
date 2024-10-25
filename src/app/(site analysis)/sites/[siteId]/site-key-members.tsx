@@ -155,16 +155,15 @@ function EditSiteMembersForm({
         />
 
         <div className="flex gap-3 justify-end pt-4">
-          <DialogClose>
-            <Button
-              variant="secondary"
-              type="button"
-              className="flex gap-2"
-              // disabled={form.formState.isSubmitting}
-            >
-              Cancel
-            </Button>
-          </DialogClose>
+          <Button
+            asChild
+            variant="secondary"
+            type="button"
+            className="flex gap-2"
+            // disabled={form.formState.isSubmitting}
+          >
+            <DialogClose>Cancel</DialogClose>
+          </Button>
           <Button
             type="submit"
             className="flex gap-2"
