@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import useSWR from "swr";
-import { format } from "date-fns";
+import { formatDate } from "date-fns";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -100,7 +100,7 @@ function SiteCalendarForm({
                       )}
                     >
                       {field.value ? (
-                        format(field.value, "PPP")
+                        formatDate(field.value, "PPP")
                       ) : (
                         <span>Pick a date</span>
                       )}
