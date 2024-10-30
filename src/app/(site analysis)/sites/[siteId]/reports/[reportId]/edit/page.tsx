@@ -9,7 +9,7 @@ import { LucideMoveLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UploadAndManageFiles } from "./edit-upload";
 import { UpdateSiteReportSections } from "./edit-sections";
-import { EditReportDocument } from "./edit-report-document";
+import { EditReportDocument } from "./edit-details";
 import { PublishButton } from "./publish-button";
 
 async function EditReportHeader({ report }: { report: SiteReport }) {
