@@ -95,6 +95,18 @@ export async function getSiteDetails({
     .then((r) => r[0]);
 }
 
+export async function updateSiteDetails(
+  siteId: number,
+  values: SiteDetailsNew,
+) {
+  return await db
+    .update(Schemas.siteDetails1)
+    .set(values)
+    .where(eq(Schemas.siteDetails1.id, siteId))
+    .returning()
+    .then((r) => r[0]);
+}
+
 // basically because the joins get really confusing,
 export async function getSiteMembers(siteId: number): Promise<SiteMember[]> {
   return await db
@@ -143,7 +155,7 @@ export async function updateSiteMeeting(
 ): Promise<SiteMeeting> {
   return await db
     .update(Schemas.siteMeetings1)
-    .set({ ...values })
+    .set(values)
     .where(eq(Schemas.siteMeetings1.id, meetingId))
     .returning()
     .then((r) => r[0]);
