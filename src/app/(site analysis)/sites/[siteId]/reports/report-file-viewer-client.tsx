@@ -153,7 +153,7 @@ export function FileDisplayCarousel({
       <div
         className={cn(
           "grow flex flex-col items-center justify-center relative",
-          "border-4 border-black rounded",
+          "outline outline-4 rounded",
           "bg-gradient-to-r from-cyan-100 to-blue-100",
         )}
       >
