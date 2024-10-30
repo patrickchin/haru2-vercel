@@ -231,15 +231,26 @@ function SiteMembersTable({
   );
 }
 
-async function SiteComplaints({ site }: { site: SiteDetails }) {
+async function SiteComplaints({
+  site,
+  role,
+}: {
+  site: SiteDetails;
+  role?: SiteMemberRole;
+}) {
   const complaints = await Actions.getSiteNotices(site.id);
   const resolved = complaints?.filter((c) => c.resolved);
   const unresolved = complaints?.filter((c) => !c.resolved);
 
   return (
     <Card id="meetings">
-      <CardHeader className="font-semibold">
-        Current Unresolved Issues
+      <CardHeader className="flex flex-row justify-between items-center py-0 space-y-0">
+        <CardTitle className="font-semibold text-base py-6">
+          Current Unresolved Issues
+        </CardTitle>
+        {/* {role && editSiteRoles.includes(role) && (
+          <EditSiteSchedule site={site} /> // TODO
+        )} */}
       </CardHeader>
       <CardContent>
         {unresolved && unresolved.length > 0 ? (
@@ -300,9 +311,11 @@ function SiteProgress({
     <Card id="progress">
       <CardHeader className="flex flex-row justify-between items-center py-0 space-y-0">
         <CardTitle className="font-semibold text-base py-6">
-          Supervision Progress and Milestones
+          Supervision Schedule
         </CardTitle>
-        {editSiteRoles.includes(role) && <EditSiteSchedule site={site} />}
+        {role && editSiteRoles.includes(role) && (
+          <EditSiteSchedule site={site} />
+        )}
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         {!site.startDate && (
@@ -349,12 +362,10 @@ function SiteProgress({
   );
 }
 
-export default async function Page(
-  props: {
-    params: Promise<{ siteId: string }>;
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-  }
-) {
+export default async function Page(props: {
+  params: Promise<{ siteId: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const searchParams = await props.searchParams;
   const siteId = Number((await props.params).siteId);
   const [site, members] = await Promise.all([
@@ -364,7 +375,6 @@ export default async function Page(
 
   // TODO custom site not found page
   if (!site) notFound();
-
 
   const session = await auth();
   const role = members?.find((m) => m.id === session?.user?.idn)?.role;
@@ -391,7 +401,7 @@ export default async function Page(
 
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
         <SiteProgress site={site} role={role} />
-        <SiteComplaints site={site} />
+        <SiteComplaints site={site} role={role} />
       </div>
 
       <SiteMeetings site={site} members={members} />

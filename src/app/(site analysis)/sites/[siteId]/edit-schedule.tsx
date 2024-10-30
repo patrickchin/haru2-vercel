@@ -11,18 +11,11 @@ import * as Schemas from "@/db/schema";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   Form,
   FormControl,
@@ -31,75 +24,94 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { InputDate } from "@/components/input-date";
 import { Input } from "@/components/ui/input";
 
 function EditSiteScheduleForm({ site }: { site: SiteDetails }) {
   const editScheduleSchema = createInsertSchema(Schemas.siteDetails1).pick({
-    address: true,
-    description: true,
+    startDate: true,
+    endDate: true,
+    nextReportDate: true,
+    schedule: true,
   }) satisfies ZodType<SiteDetailsNew>;
 
   type EditScheduleSchema = z.infer<typeof editScheduleSchema>;
 
   const form = useForm<EditScheduleSchema>({
     resolver: zodResolver(editScheduleSchema),
+    defaultValues: { ...site },
   });
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(async (data: EditScheduleSchema) => {
-            Actions.updateSiteDetails();
-          //   await Actions.addSiteMemberByEmail({ siteId, email: data.email });
+          await Actions.updateSiteDetails(site.id, data);
         })}
-        className="flex gap-4 items-end"
+        className="flex flex-col gap-4"
       >
         <FormField
           control={form.control}
-          name="completion"
+          name="startDate"
           render={({ field }) => (
             <FormItem className="grow max-w-lg">
-              <FormLabel>Add User</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Email address of the user to add"
-                />
-              </FormControl>
+              <FormLabel>Start Date</FormLabel>
+              <InputDate field={field} />
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <div className="col-span-2 flex"></div>
-      </form>
+        <FormField
+          control={form.control}
+          name="endDate"
+          render={({ field }) => (
+            <FormItem className="grow max-w-lg">
+              <FormLabel>End Date</FormLabel>
+              <InputDate field={field} />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <Table>
-        <TableBody>
-          <TableRow>
-            <TableHead className="font-medium">Creation Date</TableHead>
-            <TableCell>{site.createdAt?.toDateString() || "Unknown"}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableHead className="font-medium">Start Date</TableHead>
-            <TableCell>{site.startDate?.toDateString() ?? "Unknown"}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableHead className="font-medium">End Date</TableHead>
-            <TableCell>{site.endDate?.toDateString() ?? "Unknown"}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableHead className="font-medium">Next Report Date</TableHead>
-            <TableCell>
-              {site.nextReportDate?.toDateString() ?? "Unknown"}
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableHead className="font-medium">Supervision Schedule</TableHead>
-            <TableCell>{site.schedule ?? "Unknown"}</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
+        <FormField
+          control={form.control}
+          name="nextReportDate"
+          render={({ field }) => (
+            <FormItem className="grow max-w-lg">
+              <FormLabel>End Date</FormLabel>
+              <InputDate field={field} />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="schedule"
+          render={({ field }) => (
+            <FormItem className="grow max-w-lg">
+              <FormLabel>Schedule</FormLabel>
+              <Input {...field} value={field.value || undefined} />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="flex gap-2 justify-end">
+          <Button
+            type="reset"
+            variant="secondary"
+            disabled={!form.formState.isDirty}
+            onClick={() => form.reset()}
+          >
+            Revert Changes
+          </Button>
+          <Button type="submit" disabled={!form.formState.isDirty} asChild>
+            <DialogClose>Save</DialogClose>
+          </Button>
+        </div>
+      </form>
     </Form>
   );
 }
