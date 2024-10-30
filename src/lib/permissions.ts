@@ -10,4 +10,4 @@ export const editSiteRoles: SiteMemberRole[] = [
 export const editMeetingRoles: SiteMemberRole[] = ["owner"];
 export const acceptMeetingRoles: SiteMemberRole[] = ["supervisor"];
 
-export const editReportRoles: SiteMemberRole[] = ["supervisor"];
+export const editReportRoles: SiteMemberRole[] = ["supervisor", "owner"];
