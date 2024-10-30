@@ -165,7 +165,7 @@ export function FileDisplayCarousel({
                   <FileDisplay
                     file={f}
                     allow3d={true}
-                    className={cn(largeView ? "h-[45rem]" : "h-[30rem]")}
+                    className={cn(largeView ? "h-[56rem]" : "h-[36rem]")}
                     controlsClassName="invisible group-hover:visible"
                   >
                     <Button
@@ -191,7 +191,7 @@ export function FileDisplayCarousel({
           <div
             className={cn(
               "flex items-center justify-center align-middle",
-              largeView ? "h-[45rem]" : "h-[30rem]",
+              largeView ? "h-[56rem]" : "h-[36rem]",
             )}
           >
             This report has no overview {videosView ? "videos" : "images"}
