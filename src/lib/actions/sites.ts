@@ -11,7 +11,7 @@ import {
   viewSiteRoles,
   acceptMeetingRoles,
 } from "@/lib/permissions";
-import { SiteMeetingNew, SiteMemberRole } from "@/lib/types";
+import { SiteDetailsNew, SiteMeetingNew, SiteMemberRole } from "@/lib/types";
 import { Session } from "next-auth";
 
 export async function addSite(data: zSiteNewBothType) {
@@ -38,13 +38,26 @@ export async function getAllVisibleSites() {
 export async function getSiteDetails(siteId: number) {
   const session = await auth();
   if (!session?.user) return;
-  return db.getSiteDetails({ siteId, userId: session.user.idn });
+  const role = await getSiteMemberRole({ siteId }, session);
+  if (viewSiteRoles.includes(role))
+    return db.getSiteDetails({ siteId, userId: session.user.idn });
+}
+
+export async function updateSiteDetails(
+  siteId: number,
+  details: SiteDetailsNew,
+) {
+  const role = await getSiteMemberRole({ siteId });
+  if (editSiteRoles.includes(role)) {
+    const updated = await db.updateSiteDetails(siteId, details);
+    revalidatePath(`/sites/${siteId}`);
+    return updated;
+  }
 }
 
 export async function getSiteMembers(siteId: number) {
-  const session = await auth();
-  if (!session?.user) return;
-  return db.getSiteMembers(siteId);
+  const role = await getSiteMemberRole({ siteId });
+  if (viewSiteRoles.includes(role)) return db.getSiteMembers(siteId);
 }
 
 export async function getSiteRole(siteId: number) {
@@ -90,7 +103,7 @@ export async function updateSiteMeetingReturnAllMeetings(
   meetingId: number,
   values: SiteMeetingNew,
 ) {
-  // TODO split this into two functions ... or not 
+  // TODO split this into two functions ... or not
   const role = await getSiteMemberRole({ meetingId });
   if (editMeetingRoles.includes(role) || acceptMeetingRoles.includes(role)) {
     const meeting = await db.updateSiteMeeting(meetingId, values);
@@ -100,8 +113,7 @@ export async function updateSiteMeetingReturnAllMeetings(
 
 export async function deleteSiteMeeting(meetingId: number) {
   const role = await getSiteMemberRole({ meetingId });
-  if (editSiteRoles.includes(role))
-    return db.deleteSiteMeeting(meetingId);
+  if (editSiteRoles.includes(role)) return db.deleteSiteMeeting(meetingId);
 }
 
 export async function deleteSiteMeetingReturnAllMeetings(meetingId: number) {
