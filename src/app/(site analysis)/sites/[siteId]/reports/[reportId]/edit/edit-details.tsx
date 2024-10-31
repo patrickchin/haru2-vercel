@@ -16,6 +16,7 @@ import { Form, FormField, FormItem } from "@/components/ui/form";
 import { FormControl, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { SaveRevertForm } from "@/components/save-revert-form";
 import {
   Dialog,
   DialogContent,
@@ -52,7 +53,8 @@ function EditReportEstimates({
             className="flex flex-col gap-4"
             onSubmit={form.handleSubmit(async (data: ReportFormType) => {
               await Actions.updateSiteReportDetails(report.id, data);
-              mutate(); // TODO update from return value above
+              const newReport = await mutate(); // TODO update from return value above
+              form.reset(newReport);
             })}
           >
             <div className="grid grid-cols-2 gap-6 w-full">
@@ -128,17 +130,7 @@ function EditReportEstimates({
             </div>
 
             <div className="flex gap-2 justify-end">
-              <Button
-                type="reset"
-                variant="secondary"
-                disabled={!form.formState.isDirty}
-                onClick={() => form.reset()}
-              >
-                Revert Changes
-              </Button>
-              <Button type="submit" disabled={!form.formState.isDirty}>
-                Save
-              </Button>
+              <SaveRevertForm form={form} />
             </div>
           </form>
         </Form>
@@ -168,7 +160,8 @@ function EditEquipment({
         className="flex flex-col rounded border bg-background"
         onSubmit={form.handleSubmit(async (data: ReportFormType) => {
           await Actions.updateSiteReportDetails(report.id, data);
-          mutate(); // TODO update from return value above
+          const newReport = await mutate(); // TODO update from return value above
+          form.reset(newReport);
         })}
       >
         <Dialog>
@@ -205,17 +198,7 @@ function EditEquipment({
             />
 
             <div className="flex gap-2 justify-end">
-              <Button
-                type="reset"
-                variant="secondary"
-                disabled={!form.formState.isDirty}
-                onClick={() => form.reset()}
-              >
-                Revert Changes
-              </Button>
-              <Button type="submit" disabled={!form.formState.isDirty}>
-                Save
-              </Button>
+              <SaveRevertForm form={form} />
             </div>
           </DialogContent>
         </Dialog>
@@ -244,7 +227,8 @@ function EditMaterials({
         className="flex flex-col rounded border bg-background"
         onSubmit={form.handleSubmit(async (data: ReportFormType) => {
           await Actions.updateSiteReportDetails(report.id, data);
-          mutate(); // TODO update from return value above
+          const newReport = await mutate(); // TODO update from return value above
+          form.reset(newReport);
         })}
       >
         <Dialog>
@@ -281,17 +265,7 @@ function EditMaterials({
             />
 
             <div className="flex gap-2 justify-end">
-              <Button
-                type="reset"
-                variant="secondary"
-                disabled={!form.formState.isDirty}
-                onClick={() => form.reset()}
-              >
-                Revert Changes
-              </Button>
-              <Button type="submit" disabled={!form.formState.isDirty}>
-                Save
-              </Button>
+              <SaveRevertForm form={form} />
             </div>
           </DialogContent>
         </Dialog>
@@ -309,7 +283,7 @@ function EditSitePersonel({
 }) {
   const form = useForm<ReportFormType>({
     resolver: zodResolver(reportFormSchema),
-    defaultValues: { ...report },
+    values: report,
   });
 
   return (
@@ -318,7 +292,8 @@ function EditSitePersonel({
         className="flex flex-col gap-4 rounded border p-4 bg-background"
         onSubmit={form.handleSubmit(async (data: ReportFormType) => {
           await Actions.updateSiteReportDetails(report.id, data);
-          mutate(); // TODO update from return value above
+          const newReport = await mutate(); // TODO update from return value above
+          form.reset(newReport);
         })}
       >
         <h3 className="font-semibold">Site Personel</h3>
@@ -400,17 +375,7 @@ function EditSitePersonel({
         </div>
 
         <div className="flex gap-2 justify-end">
-          <Button
-            type="reset"
-            variant="secondary"
-            disabled={!form.formState.isDirty}
-            onClick={() => form.reset()}
-          >
-            Revert Changes
-          </Button>
-          <Button type="submit" disabled={!form.formState.isDirty}>
-            Save
-          </Button>
+          <SaveRevertForm form={form} />
         </div>
       </form>
     </Form>
@@ -435,7 +400,8 @@ function EditSiteActivities({
         className="flex flex-col gap-4 rounded border p-4 bg-background"
         onSubmit={form.handleSubmit(async (data: ReportFormType) => {
           await Actions.updateSiteReportDetails(report.id, data);
-          mutate(); // TODO update from return value above
+          const newReport = await mutate(); // TODO update from return value above
+          form.reset(newReport);
         })}
       >
         <h3 className="font-semibold">Site Activities</h3>
@@ -457,17 +423,7 @@ function EditSiteActivities({
         />
 
         <div className="flex gap-2 justify-end">
-          <Button
-            type="reset"
-            variant="secondary"
-            disabled={!form.formState.isDirty}
-            onClick={() => form.reset()}
-          >
-            Revert Changes
-          </Button>
-          <Button type="submit" disabled={!form.formState.isDirty}>
-            Save
-          </Button>
+          <SaveRevertForm form={form} />
         </div>
       </form>
     </Form>
