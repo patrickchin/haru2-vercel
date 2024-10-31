@@ -7,6 +7,7 @@ import * as Actions from "@/lib/actions";
 
 import { LucideMoveLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { WarningBox } from "@/components/info-box";
 import { UploadAndManageFiles } from "./edit-upload";
 import { UpdateSiteReportSections } from "./edit-sections";
 import { EditReportDocument } from "./edit-details";
@@ -62,13 +63,13 @@ export default async function Page({
             <UpdateSiteReportSections siteId={siteId} reportId={reportId} />
           </>
         ) : (
-          <div>
-            <p>
-              This report was published on{" "}
-              {report?.publishedAt?.toLocaleString() ?? "--"}
-            </p>
-            <p>It can not longer be edited.</p>
-          </div>
+          <WarningBox className="font-normal text-base">
+            This report was published on{" "}
+            <code className="bg-accent p-1">
+              {report?.publishedAt?.toString() ?? "--"}
+            </code>{" "}
+            and can no longer be edited.
+          </WarningBox>
         )}
       </div>
     </DefaultLayout>
