@@ -146,7 +146,7 @@ export function FileDisplayCarousel({
     <div
       className={cn(
         "w-full mx-auto",
-        largeView ? "w-[90dw] max-w-[100rem]" : "max-w-5xl",
+        largeView ? "fixed w-svw top-0 z-30" : "max-w-5xl",
         className,
       )}
     >
@@ -154,7 +154,9 @@ export function FileDisplayCarousel({
         className={cn(
           "grow flex flex-col items-center justify-center relative",
           "outline outline-4 rounded",
-          "bg-gradient-to-r from-cyan-100 to-blue-100",
+          largeView
+            ? "rounded border-none outline-none bg-zinc-800"
+            : "bg-gradient-to-r from-cyan-100 to-blue-100",
         )}
       >
         {files && files.length > 0 ? (
@@ -165,7 +167,7 @@ export function FileDisplayCarousel({
                   <FileDisplay
                     file={f}
                     allow3d={true}
-                    className={cn(largeView ? "h-[56rem]" : "h-[36rem]")}
+                    className={cn(largeView ? "h-svh" : "h-[36rem]")}
                     controlsClassName="invisible group-hover:visible"
                   >
                     <Button
