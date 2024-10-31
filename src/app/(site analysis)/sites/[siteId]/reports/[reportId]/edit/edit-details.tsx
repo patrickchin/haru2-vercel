@@ -155,31 +155,36 @@ function EditEquipment({
     "e.g.\nSand - 10kg bags x 10\nGravel - 10kg bags x 8\nCrushed Stone ...";
 
   return (
-    <Form {...form}>
-      <form
-        className="flex flex-col rounded border bg-background"
-        onSubmit={form.handleSubmit(async (data: ReportFormType) => {
-          await Actions.updateSiteReportDetails(report.id, data);
-          const newReport = await mutate(); // TODO update from return value above
-          form.reset(newReport);
-        })}
-      >
-        <Dialog>
-          <DialogTrigger className="flex gap-4 items-center p-4" asChild>
-            <div>
-              <h2 className="text-base font-semibold grow text-left">
-                Equipment Status
-              </h2>
-              <Button size="sm" variant="outline">
-                Open
-              </Button>
-            </div>
-          </DialogTrigger>
-          <DialogContent className="max-h-[90svh] h-[90rem] flex flex-col p-4 gap-4">
-            <DialogTitle className="text-lg font-semibold">
-              Equipment Status
-            </DialogTitle>
+    <Dialog>
+      <div className="flex gap-4 items-center p-4 rounded border bg-background">
+        <h2 className="text-base font-semibold grow text-left">
+          Equipment Status
+        </h2>
+        <DialogTrigger asChild>
+          <Button size="sm" variant="outline">
+            Open
+          </Button>
+        </DialogTrigger>
+      </div>
 
+      <DialogContent
+        className="max-h-[90svh] h-[50rem] flex flex-col p-4 gap-4"
+        id="edit-equipment-dialog-content"
+      >
+        <DialogTitle className="text-lg font-semibold">
+          Equipment Status
+        </DialogTitle>
+
+        <Form {...form}>
+          <form
+            className="flex flex-col gap-4 grow"
+            onSubmit={form.handleSubmit(async (data: ReportFormType) => {
+              const newReport = await mutate(
+                Actions.updateSiteReportDetails(report.id, data),
+              );
+              form.reset(newReport);
+            })}
+          >
             <FormField
               control={form.control}
               name="equiptment"
@@ -189,7 +194,7 @@ function EditEquipment({
                     <Textarea
                       {...field}
                       value={field.value ?? undefined}
-                      className="h-full text-base leading-8"
+                      className="h-full text-base leading-8 resize-none"
                       placeholder={placeholder}
                     />
                   </FormControl>
@@ -200,10 +205,10 @@ function EditEquipment({
             <div className="flex gap-2 justify-end">
               <SaveRevertForm form={form} />
             </div>
-          </DialogContent>
-        </Dialog>
-      </form>
-    </Form>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -222,31 +227,36 @@ function EditMaterials({
   const placeholder = "e.g.\nExcavators\nBulldozers\nBackhoe Loaders";
 
   return (
-    <Form {...form}>
-      <form
-        className="flex flex-col rounded border bg-background"
-        onSubmit={form.handleSubmit(async (data: ReportFormType) => {
-          await Actions.updateSiteReportDetails(report.id, data);
-          const newReport = await mutate(); // TODO update from return value above
-          form.reset(newReport);
-        })}
-      >
-        <Dialog>
-          <DialogTrigger className="flex gap-4 items-center p-4" asChild>
-            <div>
-              <h2 className="text-base font-semibold grow text-left">
-                Materials Status
-              </h2>
-              <Button size="sm" variant="outline">
-                Open
-              </Button>
-            </div>
-          </DialogTrigger>
-          <DialogContent className="max-h-[90svh] h-[90rem] flex flex-col p-4 gap-4">
-            <DialogTitle className="text-lg font-semibold">
-              Materials Status
-            </DialogTitle>
+    <Dialog>
+      <div className="flex gap-4 items-center p-4 rounded border bg-background">
+        <h2 className="text-base font-semibold grow text-left">
+          Materials Status
+        </h2>
+        <DialogTrigger asChild>
+          <Button size="sm" variant="outline">
+            Open
+          </Button>
+        </DialogTrigger>
+      </div>
 
+      <DialogContent
+        className="max-h-[90svh] h-[50rem] flex flex-col p-4 gap-4"
+        id="edit-materials-dialog-content"
+      >
+        <DialogTitle className="text-lg font-semibold">
+          Materials Status
+        </DialogTitle>
+
+        <Form {...form}>
+          <form
+            className="flex flex-col gap-4 grow"
+            onSubmit={form.handleSubmit(async (data: ReportFormType) => {
+              const newReport = await mutate(
+                Actions.updateSiteReportDetails(report.id, data),
+              );
+              form.reset(newReport);
+            })}
+          >
             <FormField
               control={form.control}
               name="materials"
@@ -256,7 +266,7 @@ function EditMaterials({
                     <Textarea
                       {...field}
                       value={field.value ?? undefined}
-                      className="h-full text-base leading-8"
+                      className="h-full text-base leading-8 resize-none"
                       placeholder={placeholder}
                     />
                   </FormControl>
@@ -267,10 +277,10 @@ function EditMaterials({
             <div className="flex gap-2 justify-end">
               <SaveRevertForm form={form} />
             </div>
-          </DialogContent>
-        </Dialog>
-      </form>
-    </Form>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 }
 

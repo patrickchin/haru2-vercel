@@ -65,7 +65,7 @@ export async function updateSiteReportDetails(
       db.getSiteReport(reportId),
     ]);
     revalidatePath(`/sites/${report.siteId}/reports/${report.id}`);
-    return details;
+    return { ...report, ...details };
   }
 }
 
