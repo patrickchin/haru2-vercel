@@ -34,9 +34,20 @@ function EditReportEstimates({
   report: SiteReportAll;
   mutate: KeyedMutator<SiteReportAll | undefined>;
 }) {
-  const form = useForm<ReportFormType>({
-    resolver: zodResolver(reportFormSchema),
-    defaultValues: { ...report },
+  const schema = reportFormSchema.pick({
+    budget: true,
+    timeline: true,
+    spent: true,
+    completion: true,
+  });
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      budget: report.budget || "",
+      timeline: report.timeline || "",
+      spent: report.spent || "",
+      completion: report.completion || null,
+    },
   });
 
   return (
@@ -52,8 +63,10 @@ function EditReportEstimates({
           <form
             className="flex flex-col gap-4"
             onSubmit={form.handleSubmit(async (data: ReportFormType) => {
-              await Actions.updateSiteReportDetails(report.id, data);
-              const newReport = await mutate(); // TODO update from return value above
+              const newReport = await mutate(
+                Actions.updateSiteReportDetails(report.id, data),
+                { revalidate: false },
+              );
               form.reset(newReport);
             })}
           >
@@ -146,9 +159,10 @@ function EditEquipment({
   report: SiteReportAll;
   mutate: KeyedMutator<SiteReportAll | undefined>;
 }) {
-  const form = useForm<ReportFormType>({
-    resolver: zodResolver(reportFormSchema),
-    defaultValues: { ...report },
+  const schema = reportFormSchema.pick({ equiptment: true });
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+    defaultValues: { equiptment: report.equiptment || "" },
   });
 
   const placeholder =
@@ -181,6 +195,7 @@ function EditEquipment({
             onSubmit={form.handleSubmit(async (data: ReportFormType) => {
               const newReport = await mutate(
                 Actions.updateSiteReportDetails(report.id, data),
+                { revalidate: false },
               );
               form.reset(newReport);
             })}
@@ -219,9 +234,10 @@ function EditMaterials({
   report: SiteReportAll;
   mutate: KeyedMutator<SiteReportAll | undefined>;
 }) {
-  const form = useForm<ReportFormType>({
-    resolver: zodResolver(reportFormSchema),
-    defaultValues: { ...report },
+  const schema = reportFormSchema.pick({ materials: true });
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+    defaultValues: { materials: report.materials || "" },
   });
 
   const placeholder = "e.g.\nExcavators\nBulldozers\nBackhoe Loaders";
@@ -253,6 +269,7 @@ function EditMaterials({
             onSubmit={form.handleSubmit(async (data: ReportFormType) => {
               const newReport = await mutate(
                 Actions.updateSiteReportDetails(report.id, data),
+                { revalidate: false },
               );
               form.reset(newReport);
             })}
@@ -291,9 +308,20 @@ function EditSitePersonel({
   report: SiteReportAll;
   mutate: KeyedMutator<SiteReportAll | undefined>;
 }) {
-  const form = useForm<ReportFormType>({
-    resolver: zodResolver(reportFormSchema),
-    values: report,
+  const schema = reportFormSchema.pick({
+    contractors: true,
+    engineers: true,
+    workers: true,
+    visitors: true,
+  });
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      contractors: report.contractors || "",
+      engineers: report.engineers || "",
+      workers: report.workers || "",
+      visitors: report.visitors || "",
+    },
   });
 
   return (
@@ -301,8 +329,10 @@ function EditSitePersonel({
       <form
         className="flex flex-col gap-4 rounded border p-4 bg-background"
         onSubmit={form.handleSubmit(async (data: ReportFormType) => {
-          await Actions.updateSiteReportDetails(report.id, data);
-          const newReport = await mutate(); // TODO update from return value above
+          const newReport = await mutate(
+            Actions.updateSiteReportDetails(report.id, data),
+            { revalidate: false },
+          );
           form.reset(newReport);
         })}
       >
@@ -399,9 +429,10 @@ function EditSiteActivities({
   report: SiteReportAll;
   mutate: KeyedMutator<SiteReportAll | undefined>;
 }) {
-  const form = useForm<ReportFormType>({
-    resolver: zodResolver(reportFormSchema),
-    defaultValues: { ...report },
+  const schema = reportFormSchema.pick({ activity: true });
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+    defaultValues: { activity: report.activity || "" },
   });
 
   return (
@@ -409,8 +440,10 @@ function EditSiteActivities({
       <form
         className="flex flex-col gap-4 rounded border p-4 bg-background"
         onSubmit={form.handleSubmit(async (data: ReportFormType) => {
-          await Actions.updateSiteReportDetails(report.id, data);
-          const newReport = await mutate(); // TODO update from return value above
+          const newReport = await mutate(
+            Actions.updateSiteReportDetails(report.id, data),
+            { revalidate: false }
+          );
           form.reset(newReport);
         })}
       >
