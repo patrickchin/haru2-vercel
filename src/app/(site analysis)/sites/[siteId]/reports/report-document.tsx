@@ -170,41 +170,42 @@ export async function ReportTitleBarDisplay({
           memberRole &&
           editReportRoles.includes(memberRole) && (
             <div className="grid grid-cols-2 w-full sm:w-fit sm:flex gap-4">
-              {report && !report.publishedAt ? (
-                <Button variant="secondary" asChild>
-                  <Link
-                    href={`/sites/${site.id}/reports/${report.id}/edit`}
-                    className="flex gap-2"
-                  >
-                    Edit Report <LucidePen className="h-3.5 w-3.5" />
-                  </Link>
-                </Button>
-              ) : (
-                <TooltipProvider delayDuration={0}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="secondary"
-                        className="flex gap-2 opacity-50"
-                      >
-                        Edit Report <LucidePen className="h-3.5 w-3.5" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent
-                      side="bottom"
-                      sideOffset={10}
-                      align="end"
-                      asChild
-                      className="p-1"
+              {report &&
+                (!report.publishedAt ? (
+                  <Button variant="secondary" asChild>
+                    <Link
+                      href={`/sites/${site.id}/reports/${report.id}/edit`}
+                      className="flex gap-2"
                     >
-                      <WarningBox>
-                        This report has already been published and can no longer
-                        be edited.
-                      </WarningBox>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
+                      Edit Report <LucidePen className="h-3.5 w-3.5" />
+                    </Link>
+                  </Button>
+                ) : (
+                  <TooltipProvider delayDuration={0}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="secondary"
+                          className="flex gap-2 opacity-50"
+                        >
+                          Edit Report <LucidePen className="h-3.5 w-3.5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="bottom"
+                        sideOffset={10}
+                        align="end"
+                        asChild
+                        className="p-1"
+                      >
+                        <WarningBox>
+                          This report has already been published and can no
+                          longer be edited.
+                        </WarningBox>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ))}
 
               <Button asChild className="gap-2">
                 <Link href={`/sites/${site.id}/reports/new`}>
