@@ -172,13 +172,15 @@ function EditEquipment({
         })}
       >
         <Dialog>
-          <DialogTrigger className="flex gap-4 items-center p-4">
-            <h2 className="text-base font-semibold grow text-left">
-              Equipment Status
-            </h2>
-            <Button size="sm" variant="outline">
-              Open
-            </Button>
+          <DialogTrigger className="flex gap-4 items-center p-4" asChild>
+            <div>
+              <h2 className="text-base font-semibold grow text-left">
+                Equipment Status
+              </h2>
+              <Button size="sm" variant="outline">
+                Open
+              </Button>
+            </div>
           </DialogTrigger>
           <DialogContent className="max-h-[90svh] h-[90rem] flex flex-col p-4 gap-4">
             <DialogTitle className="text-lg font-semibold">
@@ -246,13 +248,15 @@ function EditMaterials({
         })}
       >
         <Dialog>
-          <DialogTrigger className="flex gap-4 items-center p-4">
-            <h2 className="text-base font-semibold grow text-left">
-              Materials Status
-            </h2>
-            <Button size="sm" variant="outline">
-              Open
-            </Button>
+          <DialogTrigger className="flex gap-4 items-center p-4" asChild>
+            <div>
+              <h2 className="text-base font-semibold grow text-left">
+                Materials Status
+              </h2>
+              <Button size="sm" variant="outline">
+                Open
+              </Button>
+            </div>
           </DialogTrigger>
           <DialogContent className="max-h-[90svh] h-[90rem] flex flex-col p-4 gap-4">
             <DialogTitle className="text-lg font-semibold">
