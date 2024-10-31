@@ -434,14 +434,14 @@ export async function ReportDocumentDisplay({
                     Open
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="min-h-96 max-h-svh flex flex-col p-4">
+                <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] flex flex-col p-4 gap-4">
                   <DialogTitle className="text-lg font-semibold">
                     Materials Status
                   </DialogTitle>
                   <ol className="overflow-y-auto border rounded">
                     {report?.materials?.split("\n").map((eq, i) => {
                       return (
-                        <li key={i} className="hover:bg-accent px-3 py-1">
+                        <li key={i} className="hover:bg-accent px-3 py-2">
                           {eq}
                         </li>
                       );
@@ -459,14 +459,14 @@ export async function ReportDocumentDisplay({
                     Open
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="min-h-96 max-h-svh flex flex-col p-4">
+                <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] flex flex-col p-4 gap-4">
                   <DialogTitle className="text-lg font-semibold">
                     Equipment Status
                   </DialogTitle>
                   <ol className="overflow-y-auto border rounded">
                     {report?.equiptment?.split("\n").map((eq, i) => {
                       return (
-                        <li key={i} className="hover:bg-accent px-3 py-1">
+                        <li key={i} className="hover:bg-accent px-3 py-2">
                           {eq}
                         </li>
                       );
