@@ -79,7 +79,6 @@ export function FileDisplay({
       <div
         className={cn("absolute right-4 top-4 flex gap-2", controlsClassName)}
       >
-        {children}
         {isImage && allow3d && (
           <Button
             className="rounded-full w-8 h-8"
@@ -90,6 +89,7 @@ export function FileDisplay({
             <LucideRotate3D className="w-4 h-4" />
           </Button>
         )}
+        {children}
       </div>
     </div>
   );
