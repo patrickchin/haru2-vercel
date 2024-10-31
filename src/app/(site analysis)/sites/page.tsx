@@ -5,6 +5,7 @@ import { LucideArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DefaultLayout } from "@/components/page-layouts";
 import { SiteAndExtra } from "@/lib/types";
+import { InfoBox } from "@/components/info-box";
 
 function EmptySitesList() {
   return <p>You currently do not have any sites registered with us</p>;
@@ -77,6 +78,12 @@ export default async function Page() {
         <Button asChild>
           <Link href="/sites/new">Register New Construction Site</Link>
         </Button>
+        <InfoBox>
+        <div>
+        If this is your first time login, click on the Resgister New Construction Site button above to start. <br />
+        Else click on the project list below to continue.
+        </div>
+      </InfoBox>
       </div>
 
       <SitesList />

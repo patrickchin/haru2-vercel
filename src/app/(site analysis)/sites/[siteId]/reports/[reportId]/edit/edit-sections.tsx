@@ -27,6 +27,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
+import { InfoBox } from "@/components/info-box";
 
 function UpdateSiteReportSectionFiles({
   siteId,
@@ -68,7 +69,7 @@ function UpdateSiteReportSectionFiles({
 
   return (
     <div className="border">
-      <p>list of files:</p>
+      <p className="p-1">list of files:</p>
       <ul>{files?.map((f) => <li key={f.id}>{f.filename}</li>)}</ul>
       <Button asChild>
         <Label
@@ -113,7 +114,8 @@ function UpdateSiteReportSection({
   });
 
   return (
-    <Card>
+    
+    <Card className="p-4">
       <CardContent className="p-6">
         <Form {...form}>
           <form
@@ -121,13 +123,13 @@ function UpdateSiteReportSection({
               console.log(data);
               Actions.updateSiteReportSection(section.id, data);
             })}
-            className="grid grid-cols-3 gap-4"
+            className="flex-col"
           >
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="pb-4">
                   <FormLabel>Title</FormLabel>
                   <FormControl>
                     <Input
@@ -145,8 +147,8 @@ function UpdateSiteReportSection({
               control={form.control}
               name="content"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>content</FormLabel>
+                <FormItem className="pb-4">
+                  <FormLabel>Content</FormLabel>
                   <FormControl>
                     <Textarea
                       name={field.name}
@@ -159,7 +161,7 @@ function UpdateSiteReportSection({
               )}
             />
 
-            <div className="col-span-2 flex justify-end">
+            <div className="col-span-2 flex justify-end pb-4">
               <Button
                 type="submit"
                 className="flex gap-2"
@@ -215,7 +217,13 @@ export function UpdateSiteReportSections({
         />
       ))}
       <div>
-        <Button
+      <InfoBox>
+        <div>
+          You can create a more detailed site report by adding new sections and attaching photos to them. <br />
+          Please refer to the "How to Use" Page for demonstration.
+        </div>
+      </InfoBox>
+        <Button className="m-1"
           onClick={() => {
             Actions.addSiteReportSection(reportId, {
               title: "title",

@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { InfoBox } from "@/components/info-box";
 
 function CountrySelectForm({ form }: { form: any }) {
   const displayNames = useMemo(() => {
@@ -71,12 +72,18 @@ function NewSiteForm() {
 
   return (
     <Form {...form}>
+      <InfoBox>
+        <div>
+        Please provide accurate and comprehensive information, these information will be used to setup your site supervision project on the next page.
+        </div>
+      </InfoBox>
       <form
         onSubmit={form.handleSubmit(async (d) => {
           await Actions.addSite(d);
         })}
         className="flex flex-col p-4 sm:grid sm:grid-cols-2 gap-6 w-full"
       >
+        
         <FormField
           control={form.control}
           name="title"
@@ -87,7 +94,7 @@ function NewSiteForm() {
                 <Input
                   onChange={field.onChange}
                   name={field.name}
-                  placeholder="Blue Bird Housing Project 1"
+                  placeholder="Mr. Patrick, Blue Bird Housing Project 1"
                 />
               </FormControl>
               <FormMessage />
