@@ -30,7 +30,7 @@ export default async function RootLayout({
   const session = await auth();
   return (
     <html lang="en">
-      <body className={cn("overflow-y-scroll", GeistSans.variable)}>
+      <body className={cn("", GeistSans.variable)}>
         <SpeedInsights />
         <Analytics />
         <SessionProvider session={session}>{children}</SessionProvider>
