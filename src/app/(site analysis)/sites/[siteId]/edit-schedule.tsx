@@ -11,7 +11,6 @@ import * as Schemas from "@/db/schema";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogTitle,
   DialogTrigger,
@@ -26,6 +25,7 @@ import {
 } from "@/components/ui/form";
 import { InputDate } from "@/components/input-date";
 import { Input } from "@/components/ui/input";
+import { SaveRevertForm } from "@/components/save-revert-form";
 
 function EditSiteScheduleForm({ site }: { site: SiteDetails }) {
   const editScheduleSchema = createInsertSchema(Schemas.siteDetails1).pick({
@@ -46,7 +46,8 @@ function EditSiteScheduleForm({ site }: { site: SiteDetails }) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(async (data: EditScheduleSchema) => {
-          await Actions.updateSiteDetails(site.id, data);
+          const newDetails = await Actions.updateSiteDetails(site.id, data);
+          form.reset(newDetails);
         })}
         className="flex flex-col gap-4"
       >
@@ -99,17 +100,7 @@ function EditSiteScheduleForm({ site }: { site: SiteDetails }) {
         />
 
         <div className="flex gap-2 justify-end">
-          <Button
-            type="reset"
-            variant="secondary"
-            disabled={!form.formState.isDirty}
-            onClick={() => form.reset()}
-          >
-            Revert Changes
-          </Button>
-          <Button type="submit" disabled={!form.formState.isDirty} asChild>
-            <DialogClose>Save</DialogClose>
-          </Button>
+          <SaveRevertForm form={form} />
         </div>
       </form>
     </Form>
