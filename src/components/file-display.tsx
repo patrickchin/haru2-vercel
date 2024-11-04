@@ -64,7 +64,7 @@ export function FileDisplay({
       ) : file && isVideo ? (
         <video
           controls
-          className="max-w-full max-h-full w-full h-full"
+          className="max-w-full max-h-full w-full h-full bg-foreground"
           preload="metadata"
         >
           <source src={file.url || ""} type={file.type || ""} />

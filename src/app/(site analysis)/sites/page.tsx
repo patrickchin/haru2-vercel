@@ -5,6 +5,7 @@ import { LucideArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DefaultLayout } from "@/components/page-layouts";
 import { SiteAndExtra } from "@/lib/types";
+import { Card } from "@/components/ui/card";
 
 function EmptySitesList() {
   return <p>You currently do not have any sites registered with us</p>;
@@ -15,36 +16,38 @@ async function SiteItem({ site }: { site?: SiteAndExtra }) {
   // const reports = await Actions.getSiteReports(site.id);
   if (!site) return <div>Invalid Site Project</div>;
   return (
-    <Link
-      href={`/sites/${site.id}`}
-      className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 border hover:bg-accent bg-background"
-    >
-      <div className="grow flex flex-col sm:flex-row sm:justify-between sm:items-center">
-        <div className="flex flex-col">
-          <h2 className="whitespace-nowrap overflow-ellipsis font-semibold text-lg">
-            Site {site.id}: {site.title}
-          </h2>
-          <p>
-            You are a{" "}
-            <span className="capitalize font-semibold">{site.myRole}</span> of
-            this site.
-          </p>
+    <Card className="hover:bg-accent ">
+      <Link
+        href={`/sites/${site.id}`}
+        className="flex flex-col sm:flex-row sm:items-center gap-3 p-4"
+      >
+        <div className="grow flex flex-col sm:flex-row sm:justify-between sm:items-center">
+          <div className="flex flex-col">
+            <h2 className="whitespace-nowrap overflow-ellipsis font-semibold text-lg">
+              Site {site.id}: {site.title}
+            </h2>
+            <p>
+              You are a{" "}
+              <span className="capitalize font-semibold">{site.myRole}</span> of
+              this site.
+            </p>
+          </div>
+          {site.lastReportDate ? (
+            <p>
+              Last report published{" "}
+              <span className="font-semibold">
+                {site.lastReportDate.toDateString()}
+              </span>
+            </p>
+          ) : (
+            <p>No reports published</p>
+          )}
         </div>
-        {site.lastReportDate ? (
-          <p>
-            Last report published{" "}
-            <span className="font-semibold">
-              {site.lastReportDate.toDateString()}
-            </span>
-          </p>
-        ) : (
-          <p>No reports published</p>
-        )}
-      </div>
-      <Button variant="secondary">
-        <LucideArrowRight className="w-3.5" />
-      </Button>
-    </Link>
+        <Button variant="secondary">
+          <LucideArrowRight className="w-3.5" />
+        </Button>
+      </Link>
+    </Card>
   );
 }
 

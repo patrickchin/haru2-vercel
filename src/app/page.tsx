@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { ArrowRightIcon } from "lucide-react";
+import { LucideMoveRight } from "lucide-react";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { cn } from "@/lib/utils";
@@ -70,9 +70,13 @@ export default function Page() {
               <span className="whitespace-nowrap pr-2">
                 Hire our Site Analysis Professionals
               </span>
-              <Button asChild className="w-fit font-bold text-base">
-                <Link href="/sites/new">
-                  Get Started <ArrowRightIcon className="ml-2" />
+              <Button
+                asChild
+                className="w-fit font-bold text-base [&_svg]:size-8"
+              >
+                <Link href="/sites">
+                  Get Started
+                  <LucideMoveRight className="ml-1" />
                 </Link>
               </Button>
             </p>

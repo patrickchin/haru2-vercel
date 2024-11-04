@@ -26,6 +26,7 @@ import {
 import { InputDate } from "@/components/input-date";
 import { Input } from "@/components/ui/input";
 import { SaveRevertForm } from "@/components/save-revert-form";
+import { LucideEdit } from "lucide-react";
 
 function EditSiteScheduleForm({ site }: { site: SiteDetails }) {
   const editScheduleSchema = createInsertSchema(Schemas.siteDetails1).pick({
@@ -111,7 +112,9 @@ export function EditSiteSchedule({ site }: { site: SiteDetails }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="secondary">Edit</Button>
+        <Button variant="outline">
+          Edit <LucideEdit />
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Edit Supervision Milestones</DialogTitle>

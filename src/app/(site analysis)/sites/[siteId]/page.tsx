@@ -8,8 +8,9 @@ import * as Actions from "@/lib/actions";
 
 import {
   LucideAlertTriangle,
-  LucideArrowRight,
   LucideCheck,
+  LucideMoveLeft,
+  LucideMoveRight,
 } from "lucide-react";
 import SiteMeetings from "./site-meetings";
 import SiteMembers from "./site-members";
@@ -350,9 +351,7 @@ function SiteProgress({
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableHead className="font-medium">
-                Supervision Schedule
-              </TableHead>
+              <TableHead className="font-medium">Report Schedule</TableHead>
               <TableCell>{site.schedule ?? "Unknown"}</TableCell>
             </TableRow>
           </TableBody>
@@ -381,17 +380,23 @@ export default async function Page(props: {
 
   return (
     <DefaultLayout>
-      <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between pb-3">
-        <h1 className="text-2xl font-semibold">
+      <div className="flex flex-col sm:flex-row gap-4 sm:items-center pb-3">
+        <Button variant="secondary" asChild>
+          <Link href={`/sites`} className="flex items-center gap-2">
+            <LucideMoveLeft />
+            Back to Site List
+          </Link>
+        </Button>
+        <h1 className="grow text-2xl font-semibold">
           Site {siteId}: {site?.title}
         </h1>
         <Button variant={"default"} size={"lg"} asChild>
           <Link
             href={`/sites/${siteId}/reports`}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 [&_svg]:size-6"
           >
             Click Here to View Reports
-            <LucideArrowRight />
+            <LucideMoveRight />
           </Link>
         </Button>
       </div>

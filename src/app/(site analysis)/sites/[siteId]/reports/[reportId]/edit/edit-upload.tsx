@@ -140,9 +140,8 @@ function UploadAndManageFilesSection({
                             <Image
                               src={file.url || ""}
                               alt={""}
-                              fill={true}
-                              // width={38}
-                              // height={38}
+                              width={40}
+                              height={40}
                               className="object-cover absolute"
                             />
                           </div>
