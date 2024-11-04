@@ -81,7 +81,7 @@ function EditSiteScheduleForm({ site }: { site: SiteDetails }) {
           name="nextReportDate"
           render={({ field }) => (
             <FormItem className="grow max-w-lg">
-              <FormLabel>End Date</FormLabel>
+              <FormLabel>Next Report Date</FormLabel>
               <InputDate field={field} />
               <FormMessage />
             </FormItem>
