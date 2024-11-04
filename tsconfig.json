@@ -6,9 +6,9 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@/public/*": ["public/*"],
-      "@/drizzle/*": ["drizzle/*"]
+      "@/*": ["./src/*"],
+      "@/public/*": ["./public/*"],
+      "@/drizzle/*": ["./drizzle/*"]
     },
     "strict": true,
     "forceConsistentCasingInFileNames": true,
