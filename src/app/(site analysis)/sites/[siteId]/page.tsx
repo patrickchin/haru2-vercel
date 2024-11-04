@@ -145,14 +145,20 @@ function SiteMembersBar({
   const owner = members?.find((m) => m.role === "owner");
 
   return (
-    <Card className="flex flex-col sm:flex-row sm:items-center gap-5 p-6 overflow-auto">
+    <Card className="flex-col sm:items-center gap-5 p-6 overflow-auto">
+      <InfoBox>
+        <div>
+        Click on Edit Members button to update contact information of Proj. Manager, Contractor, and Site Supervisor.
+        </div>
+      </InfoBox>
+      <div className="flex sm:flex-row p-4">
       <ul className="grow flex flex-col sm:flex-row gap-4 sm:gap-8">
         <li className="min-w-32">
           <p className="font-semibold text-sm">Owner:</p>
           <p className="text-nowrap">{owner?.name.length ? owner.name : "-"}</p>
         </li>
         <li className="min-w-32">
-          <p className="font-semibold text-sm">Manager: </p>
+          <p className="font-semibold text-sm">Proj. Manager: </p>
           <p className="text-nowrap">
             {site.managerName?.length ? site.managerName : "-"}
           </p>
@@ -171,6 +177,8 @@ function SiteMembersBar({
         </li>
       </ul>
       <EditSiteMembersButtonPopup site={site} members={members} />
+      </div>
+      
     </Card>
   );
 }
@@ -207,7 +215,7 @@ function SiteMembersTable({
               <TableCell>{site.ownerPhone}</TableCell>
             </TableRow>
             <TableRow>
-              <TableHead className="font-medium">Manager</TableHead>
+              <TableHead className="font-medium">Proj. Manager</TableHead>
               <TableCell>{site.managerName}</TableCell>
               <TableCell>{site.managerEmail}</TableCell>
               <TableCell>{site.managerPhone}</TableCell>
@@ -246,7 +254,7 @@ async function SiteComplaints({
     <Card id="meetings">
       <CardHeader className="flex flex-row justify-between items-center py-0 space-y-0">
         <CardTitle className="font-semibold text-base py-6">
-          Current Unresolved Issues
+          Current Unresolved Issues at Site
         </CardTitle>
         {/* {role && editSiteRoles.includes(role) && (
           <EditSiteSchedule site={site} /> // TODO

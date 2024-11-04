@@ -87,12 +87,6 @@ function UploadAndManageFilesSection({
   return (
     
     <div className="flex flex-col gap-4">
-      <InfoBox>
-        <div>
-          Upload summary videos/photos to show details/purpose of the site visit <br />
-       
-        </div>
-      </InfoBox>
       <div className="flex gap-4 items-center">
       
         <h3 className="font-bold capitalize text-lg">

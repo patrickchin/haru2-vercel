@@ -48,27 +48,37 @@ export default function Page() {
         </div>
 
         <div className="flex flex-col gap-16 max-w-[90rem] w-full lg:w-4/5 justify-end transition-all">
-          <div className="flex justify-end">
+          <div className="flex-col justify-end">
             <h1
               className={cn(
-                "lg:text-right text-4xl lg:text-6xl font-extrabold p-10 rounded",
+                "lg:text-right text-4xl lg:text-6xl font-extrabold p-6 rounded",
                 "bg-background/50 backdrop-blur-md",
               )}
             >
-              Your Construction Projects, <br />
-              Seamlessly Supervised
+              Supervise Your Construction Projects <br />
+            </h1>
+            <div className="flex justify-end mt-3">
+            <h1
+              className={cn(
+                "lg:text-right text-2xl lg:text-4xl font-extrabold p-6 rounded",
+                "bg-background/50 backdrop-blur-md",
+              )}
+            >
+              Control, Monitor, and Online <br />
             </h1>
           </div>
 
+          </div>
+         
           <div className="flex justify-end">
             <p
               className={cn(
-                "text-right font-bold p-10 rounded",
+                "text-right font-bold p-4 rounded",
                 "bg-background/50 backdrop-blur-md",
               )}
             >
               <span className="whitespace-nowrap pr-2">
-                Hire our Site Analysis Professionals
+                Setup your team/Hire our team
               </span>
               <Button asChild className="w-fit font-bold text-base">
                 <Link href="/sites/new">

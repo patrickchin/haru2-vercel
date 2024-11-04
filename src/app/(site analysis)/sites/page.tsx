@@ -75,13 +75,15 @@ export default async function Page() {
       <h1 className="text-3xl font-semibold">My Site Supervision Projects</h1>
 
       <div>
+        <div className="mb-2">
         <Button asChild>
           <Link href="/sites/new">Register New Construction Site</Link>
         </Button>
+        </div>
         <InfoBox>
         <div>
         If this is your first time login, click on the Resgister New Construction Site button above to start. <br />
-        Else click on the project list below to continue.
+        Or click on one of the projects in the list below to continue.
         </div>
       </InfoBox>
       </div>

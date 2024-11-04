@@ -74,7 +74,7 @@ function NewSiteForm() {
     <Form {...form}>
       <InfoBox>
         <div>
-        Please provide accurate and comprehensive information, these information will be used to setup your site supervision project on the next page.
+        Please provide accurate information, these information will be used to setup your site supervision project on the next page.
         </div>
       </InfoBox>
       <form

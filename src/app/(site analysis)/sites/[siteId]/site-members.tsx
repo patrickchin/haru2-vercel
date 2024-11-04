@@ -37,6 +37,7 @@ import {
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { editSiteRoles } from "@/lib/permissions";
+import { InfoBox } from "@/components/info-box";
 
 function SiteSearchAddMember({
   siteId,
@@ -179,7 +180,13 @@ export default function SiteMembers({
   const canEditSite = role && editSiteRoles.includes(role);
 
   return (
-    <Card>
+    <Card className="p-2">
+      <InfoBox>
+        <div>
+        You can only add members that have signed up on the website, and assign roles to them. Please inform members to sign up to have access. . <br />
+        NOTE: Each role have a different level of access on the website. eg; only supervisor can access site report editing
+        </div>
+      </InfoBox>
       <CardHeader className="font-semibold">Project Members</CardHeader>
       <CardContent className="space-y-8">
         {canEditSite && (

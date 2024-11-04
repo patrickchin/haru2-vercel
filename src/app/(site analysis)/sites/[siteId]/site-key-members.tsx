@@ -139,7 +139,7 @@ function EditSiteMembersForm({
           site={site}
           members={members}
           form={form}
-          prefix="manager"
+          prefix="proj. manager"
         />
         <SiteMemberFields
           site={site}
