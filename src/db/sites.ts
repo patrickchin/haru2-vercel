@@ -1,7 +1,7 @@
 import "server-only";
 
 import { db } from "./_db";
-import { and, count, desc, eq, getTableColumns, ne } from "drizzle-orm";
+import { and, count, desc, eq, getTableColumns, ne, sql } from "drizzle-orm";
 import {
   Site,
   SiteAndExtra,
@@ -16,8 +16,14 @@ import {
 } from "@/lib/types/site";
 import * as Schemas from "@/db/schema";
 
-export async function getAllSites(): Promise<Site[]> {
-  return await db.select().from(Schemas.sites1);
+export async function getAllSites(): Promise<SiteAndExtra[]> {
+  return (await db
+    .select({
+      ...getTableColumns(Schemas.sites1),
+      myRole: sql`null`,
+      // lastReportDate: 0,
+    })
+    .from(Schemas.sites1)) as SiteAndExtra[];
 }
 
 // get all the sites that userId is the owner of
