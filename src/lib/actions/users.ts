@@ -18,6 +18,7 @@ import {
   InvalidInputError,
   UnknownError,
 } from "@/lib/errors";
+import { demoSiteIds } from "@/lib/constants";
 
 export async function getAllUsers() {
   const session = await auth();
@@ -34,11 +35,28 @@ export async function registerUser(data: RegisterSchemaType) {
     return InvalidInputError;
   }
 
+  let newUser = undefined;
   try {
-    await db.createUserIfNotExists(data);
+    newUser = await db.createUserIfNotExists(data);
   } catch (error: unknown) {
     console.log(`Failed to register user ${error}`);
     return UnknownError;
+  }
+
+  if (newUser) {
+    for (let demoSiteId of demoSiteIds) {
+      try {
+        await db.addSiteMember({
+          userId: newUser.id,
+          siteId: demoSiteId,
+          role: "member",
+        });
+      } catch (error: unknown) {
+        console.log(
+          `Failed to add new user to site ${demoSiteId}, the demo project`,
+        );
+      }
+    }
   }
 
   redirect("/login");

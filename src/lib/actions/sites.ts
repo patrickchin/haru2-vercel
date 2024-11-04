@@ -11,6 +11,7 @@ import {
   viewSiteRoles,
   acceptMeetingRoles,
 } from "@/lib/permissions";
+import { demoSiteIds } from "@/lib/constants";
 import { SiteDetailsNew, SiteMeetingNew, SiteMemberRole } from "@/lib/types";
 import { Session } from "next-auth";
 
@@ -32,6 +33,7 @@ export async function getMySites() {
 export async function getAllVisibleSites() {
   const session = await auth();
   if (!session?.user) return;
+  if (session?.user.role === "admin") return db.getAllSites();
   return db.getAllVisibleSites(session.user.idn);
 }
 
@@ -56,8 +58,23 @@ export async function updateSiteDetails(
 }
 
 export async function getSiteMembers(siteId: number) {
-  const role = await getSiteMemberRole({ siteId });
-  if (viewSiteRoles.includes(role)) return db.getSiteMembers(siteId);
+  const session = await auth();
+  const role = await getSiteMemberRole({ siteId }, session);
+  if (demoSiteIds.includes(siteId)) {
+
+    if (session?.user?.role === "admin")
+      return db.getSiteMembers(siteId, true);
+    return db.getSiteMembers(siteId, false);
+  }
+  if (editSiteRoles.includes(role)) {
+    return db.getSiteMembers(siteId, true);
+  }
+
+  if (viewSiteRoles.includes(role)) {
+    // don't show all members in demo site project
+    const includeBasicMembers = !demoSiteIds.includes(siteId);
+    return db.getSiteMembers(siteId, includeBasicMembers);
+  }
 }
 
 export async function getSiteRole(siteId: number) {

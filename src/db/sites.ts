@@ -16,6 +16,10 @@ import {
 } from "@/lib/types/site";
 import * as Schemas from "@/db/schema";
 
+export async function getAllSites(): Promise<Site[]> {
+  return await db.select().from(Schemas.sites1);
+}
+
 // get all the sites that userId is the owner of
 export async function getMySites(userId: number): Promise<Site[]> {
   return await db
@@ -108,7 +112,10 @@ export async function updateSiteDetails(
 }
 
 // basically because the joins get really confusing,
-export async function getSiteMembers(siteId: number): Promise<SiteMember[]> {
+export async function getSiteMembers(
+  siteId: number,
+  includeBasicMembers: boolean = true,
+): Promise<SiteMember[]> {
   return await db
     .select({
       ...getTableColumns(Schemas.siteMembers1),
@@ -119,7 +126,14 @@ export async function getSiteMembers(siteId: number): Promise<SiteMember[]> {
       Schemas.users1,
       eq(Schemas.users1.id, Schemas.siteMembers1.memberId),
     )
-    .where(eq(Schemas.siteMembers1.siteId, siteId));
+    .where(
+      and(
+        eq(Schemas.siteMembers1.siteId, siteId),
+        includeBasicMembers
+          ? undefined
+          : ne(Schemas.siteMembers1.role, "member"),
+      ),
+    );
 }
 
 export async function listSiteMeetings(siteId: number): Promise<SiteMeeting[]> {
