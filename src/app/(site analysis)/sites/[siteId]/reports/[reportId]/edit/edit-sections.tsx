@@ -11,7 +11,13 @@ import { cn } from "@/lib/utils";
 import * as Actions from "@/lib/actions";
 import * as Schemas from "@/db/schema";
 
-import { LucideLoader2 } from "lucide-react";
+import Image from "next/image";
+import {
+  LucideLoader2,
+  LucidePlus,
+  LucideTrash2,
+  LucideVideo,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -26,7 +32,150 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Textarea } from "@/components/ui/textarea";
+import prettyBytes from "pretty-bytes";
+import { SaveRevertForm } from "@/components/save-revert-form";
+import { Separator } from "@/components/ui/separator";
+
+// DUPLICATED FROM edit-upload.tsx can be improved
+function FileListTable({
+  files,
+  handleFileDelete,
+  type,
+}: {
+  files: HaruFile[] | undefined;
+  handleFileDelete: (file: HaruFile) => Promise<void>;
+  type: string;
+}) {
+  return (
+    <Table className="border rounded">
+      <TableHeader>
+        <TableRow className="[&>th]:border-r">
+          <TableHead></TableHead>
+          <TableHead></TableHead>
+          <TableHead className="text-nowrap">File Name</TableHead>
+          <TableHead className="text-nowrap">File Size</TableHead>
+          <TableHead></TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {files && files.length > 0 ? (
+          files?.map((file, i) => (
+            <TableRow key={file.id} className="[&>td]:border-r">
+              <TableCell className="w-8 text-center">{i + 1}</TableCell>
+              <TableCell className="w-12 h-12 overflow-ellipsis overflow-hidden text-nowrap p-0 relative">
+                {file.type?.startsWith("image/") && (
+                  <TooltipProvider
+                    delayDuration={0}
+                    disableHoverableContent={true}
+                  >
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="w-full h-full relative flex justify-center items-center border-4 border-background">
+                          <Image
+                            src={file.url || ""}
+                            alt={""}
+                            width={40}
+                            height={40}
+                            className="object-cover absolute"
+                          />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" className="">
+                        <Image
+                          src={file.url || ""}
+                          alt={""}
+                          width={384}
+                          height={384}
+                          className="object-contain"
+                        />
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+                {file.type?.startsWith("video/") && (
+                  <div className="w-full h-full flex justify-center items-center">
+                    <LucideVideo className="h-5 w-5" />
+                  </div>
+                )}
+              </TableCell>
+              <TableCell className="overflow-ellipsis overflow-hidden text-nowrap">
+                {file.filename}
+              </TableCell>
+              {/* <TableCell className="w-24 whitespace-nowrap bg-red-">
+                {file.uploadedAt?.toDateString() ?? "unkonwn"}
+              </TableCell> */}
+              {/* <TableCell className="w-24 whitespace-nowrap bg-red-">
+                {file.uploader?.name ?? "unkonwn"}
+              </TableCell> */}
+              <TableCell className="w-24 whitespace-nowrap bg-red-">
+                {file.filesize && prettyBytes(file.filesize)}
+              </TableCell>
+              <TableCell className="w-12">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button size="icon" variant="outline">
+                      <LucideTrash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogTitle>Delete File</DialogTitle>
+                    <DialogDescription>
+                      Are you sure you want to delete the file{" "}
+                      <strong>{file.filename}</strong>?
+                    </DialogDescription>
+                    <div className="flex gap-2 justify-end">
+                      <DialogClose asChild>
+                        <Button variant="secondary">Cancel</Button>
+                      </DialogClose>
+                      <DialogClose asChild>
+                        <Button
+                          variant="destructive"
+                          onClick={() => handleFileDelete(file)}
+                        >
+                          Delete
+                        </Button>
+                      </DialogClose>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </TableCell>
+            </TableRow>
+          ))
+        ) : (
+          <TableRow>
+            <TableCell colSpan={999} className="h-24 text-center">
+              No {type}s have been uploaded
+            </TableCell>
+            <TableHead></TableHead>
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
 
 function UpdateSiteReportSectionFiles({
   siteId,
@@ -46,6 +195,16 @@ function UpdateSiteReportSectionFiles({
       return files || [];
     },
   );
+
+  async function handleFileDelete(file: HaruFile) {
+    try {
+      await Actions.deleteSiteReportFile({ reportId, fileId: file.id });
+      await mutateFiles(); // Refresh the file list after deletion
+      toast({ description: `File deleted successfully: ${file.filename}` });
+    } catch (e) {
+      toast({ description: `Delete Error: ${e}` });
+    }
+  }
 
   const [isUploading, setIsUploading] = useState(false);
 
@@ -67,26 +226,36 @@ function UpdateSiteReportSectionFiles({
   }
 
   return (
-    <div className="border">
-      <p>list of files:</p>
-      <ul>{files?.map((f) => <li key={f.id}>{f.filename}</li>)}</ul>
-      <Button asChild>
-        <Label
-          htmlFor={`upload-file-section-${section.id}`}
-          // className="flex w-full h-full"
-        >
-          Add File to Section
-          <Input
-            type="file"
-            id={`upload-file-section-${section.id}`}
-            className="hidden"
-            onChange={onChangeUploadFile}
-            disabled={isUploading}
-            multiple
-          />
-          {isUploading && <LucideLoader2 className="animate-spin h-4" />}
-        </Label>
-      </Button>
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-4">
+        <h3 className="font-semibold">Section Files</h3>
+        <Button asChild>
+          <Label
+            htmlFor={`upload-file-section-${section.id}`}
+            className="rounded hover:cursor-pointer flex gap-2"
+          >
+            <Input
+              type="file"
+              id={`upload-file-section-${section.id}`}
+              className="hidden"
+              onChange={onChangeUploadFile}
+              disabled={isUploading}
+              multiple
+            />
+            <span className="capitalize">Upload Section Image</span>
+            {isUploading ? (
+              <LucideLoader2 className="animate-spin h-5 w-5" />
+            ) : (
+              <LucidePlus className="w-4 h-4" />
+            )}
+          </Label>
+        </Button>
+      </div>
+      <FileListTable
+        files={files}
+        handleFileDelete={handleFileDelete}
+        type={"image"}
+      />
     </div>
   );
 }
@@ -109,26 +278,29 @@ function UpdateSiteReportSection({
   type FormType = z.infer<typeof formSchema>;
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
-    defaultValues: { ...section },
+    defaultValues: {
+      title: section.title || undefined,
+      content: section.content || undefined,
+    },
   });
 
   return (
     <Card>
-      <CardContent className="p-6">
+      <CardContent className="p-6 flex flex-col gap-4">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit((data) => {
               console.log(data);
               Actions.updateSiteReportSection(section.id, data);
             })}
-            className="grid grid-cols-3 gap-4"
+            className="flex flex-col gap-4"
           >
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title</FormLabel>
+                  <FormLabel>Section Title</FormLabel>
                   <FormControl>
                     <Input
                       name={field.name}
@@ -146,7 +318,7 @@ function UpdateSiteReportSection({
               name="content"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>content</FormLabel>
+                  <FormLabel>Section Content</FormLabel>
                   <FormControl>
                     <Textarea
                       name={field.name}
@@ -160,22 +332,12 @@ function UpdateSiteReportSection({
             />
 
             <div className="col-span-2 flex justify-end">
-              <Button
-                type="submit"
-                className="flex gap-2"
-                disabled={form.formState.isSubmitting}
-              >
-                Save
-                <LucideLoader2
-                  className={cn(
-                    "animate-spin w-4 h-4",
-                    form.formState.isSubmitting ? "" : "hidden",
-                  )}
-                />
-              </Button>
+              <SaveRevertForm form={form} />
             </div>
           </form>
         </Form>
+
+        <Separator />
 
         <UpdateSiteReportSectionFiles
           siteId={siteId}
