@@ -265,8 +265,10 @@ export const siteReportDetails1 = pgTable("siteReportDetails1", {
   workers: varchar("workers"),
   visitors: varchar("visitors"),
 
-  materials: varchar("materials"),
-  equiptment: varchar("equiptment"),
+  materialsUsed: varchar("materialsUsed"),
+  equipmentUsed: varchar("equipmentUsed"),
+  materialsInventory: varchar("materialsInventory"),
+  equipmentInventory: varchar("equipmentInventory"),
 
   budget: varchar("budget"),
   spent: varchar("spent"),

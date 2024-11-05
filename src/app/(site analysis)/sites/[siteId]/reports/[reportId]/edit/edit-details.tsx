@@ -159,10 +159,10 @@ function EditEquipment({
   report: SiteReportAll;
   mutate: KeyedMutator<SiteReportAll | undefined>;
 }) {
-  const schema = reportFormSchema.pick({ equiptment: true });
+  const schema = reportFormSchema.pick({ equipmentUsed: true });
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
-    defaultValues: { equiptment: report.equiptment || "" },
+    defaultValues: { equipmentUsed: report.equipmentUsed || "" },
   });
 
   const placeholder =
@@ -183,7 +183,7 @@ function EditEquipment({
 
       <DialogContent
         className="max-h-[90svh] h-[50rem] flex flex-col p-4 gap-4"
-        id="edit-equipment-dialog-content"
+        id="edit-equipment-used-dialog-content"
       >
         <DialogTitle className="text-lg font-semibold">
           Equipment Used
@@ -202,7 +202,7 @@ function EditEquipment({
           >
             <FormField
               control={form.control}
-              name="equiptment"
+              name="equipmentUsed"
               render={({ field }) => (
                 <FormItem className="grow">
                   <FormControl>
@@ -234,10 +234,10 @@ function EditMaterials({
   report: SiteReportAll;
   mutate: KeyedMutator<SiteReportAll | undefined>;
 }) {
-  const schema = reportFormSchema.pick({ materials: true });
+  const schema = reportFormSchema.pick({ materialsUsed: true });
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
-    defaultValues: { materials: report.materials || "" },
+    defaultValues: { materialsUsed: report.materialsUsed || "" },
   });
 
   const placeholder = "e.g.\nExcavators\nBulldozers\nBackhoe Loaders";
@@ -257,7 +257,7 @@ function EditMaterials({
 
       <DialogContent
         className="max-h-[90svh] h-[50rem] flex flex-col p-4 gap-4"
-        id="edit-materials-dialog-content"
+        id="edit-materials-used-dialog-content"
       >
         <DialogTitle className="text-lg font-semibold">
           Materials Used
@@ -276,7 +276,7 @@ function EditMaterials({
           >
             <FormField
               control={form.control}
-              name="materials"
+              name="materialsUsed"
               render={({ field }) => (
                 <FormItem className="grow">
                   <FormControl>
