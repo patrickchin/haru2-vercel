@@ -23,7 +23,8 @@ export async function getAllSites(): Promise<SiteAndExtra[]> {
       myRole: sql`null`,
       // lastReportDate: 0,
     })
-    .from(Schemas.sites1)) as SiteAndExtra[];
+    .from(Schemas.sites1)
+    .orderBy(desc(Schemas.sites1.id))) as SiteAndExtra[];
 }
 
 // get all the sites that userId is the owner of
@@ -44,7 +45,8 @@ export async function getMySites(userId: number): Promise<Site[]> {
       Schemas.users1,
       eq(Schemas.users1.id, Schemas.siteMembers1.memberId),
     )
-    .where(eq(Schemas.siteMembers1.memberId, userId));
+    .where(eq(Schemas.siteMembers1.memberId, userId))
+    .orderBy(desc(Schemas.sites1.id));
 }
 
 // get all the sites that userId is a member of
