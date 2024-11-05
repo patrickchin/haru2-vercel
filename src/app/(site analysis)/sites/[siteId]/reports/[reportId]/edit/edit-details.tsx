@@ -2,6 +2,7 @@
 
 import { notFound } from "next/navigation";
 import useSWR, { KeyedMutator } from "swr";
+import { cn } from "@/lib/utils";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -442,7 +443,7 @@ function EditSiteActivities({
         onSubmit={form.handleSubmit(async (data: ReportFormType) => {
           const newReport = await mutate(
             Actions.updateSiteReportDetails(report.id, data),
-            { revalidate: false }
+            { revalidate: false },
           );
           form.reset(newReport);
         })}
@@ -473,6 +474,142 @@ function EditSiteActivities({
   );
 }
 
+function EditInventory({
+  report,
+  mutate,
+}: {
+  report: SiteReportAll;
+  mutate: KeyedMutator<SiteReportAll | undefined>;
+}) {
+  const materialsSchema = reportFormSchema.pick({
+    materialsInventory: true,
+  });
+  const materialsForm = useForm<z.infer<typeof materialsSchema>>({
+    resolver: zodResolver(materialsSchema),
+    defaultValues: {
+      materialsInventory: report.materialsInventory || "",
+    },
+  });
+
+  const equipmentSchema = reportFormSchema.pick({
+    equipmentInventory: true,
+  });
+  const equipmentForm = useForm<z.infer<typeof equipmentSchema>>({
+    resolver: zodResolver(equipmentSchema),
+    defaultValues: {
+      equipmentInventory: report.equipmentInventory || "",
+    },
+  });
+
+  const placeholder =
+    "e.g.\nSand - 10kg bags x 10\nGravel - 10kg bags x 8\nCrushed Stone ...";
+
+  return (
+    <Dialog>
+      <div className="flex gap-4 p-0 items-center">
+        <h2 className="text-base font-semibold grow text-left">
+          Inventory and Storage
+        </h2>
+        <DialogTrigger asChild>
+          <Button size="sm" variant="outline">
+            Open
+          </Button>
+        </DialogTrigger>
+      </div>
+
+      <DialogContent
+        className={cn(
+          "min-h-96 max-h-[90svh] h-[50rem]",
+          "min-w-80 max-w-[90svw] w-[60rem]",
+          "overflow-hidden",
+          "grid grid-cols-2 gap-4",
+        )}
+      >
+        <Form {...materialsForm}>
+          <form
+            className="grow flex flex-col gap-4"
+            onSubmit={materialsForm.handleSubmit(
+              async (data: ReportFormType) => {
+                const newReport = await mutate(
+                  Actions.updateSiteReportDetails(report.id, data),
+                  { revalidate: false },
+                );
+                materialsForm.reset(newReport);
+              },
+            )}
+          >
+            <DialogTitle className="text-lg font-semibold">
+              Materials Storage
+            </DialogTitle>
+
+            <FormField
+              control={materialsForm.control}
+              name="materialsInventory"
+              render={({ field }) => (
+                <FormItem className="grow">
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      value={field.value ?? undefined}
+                      className="h-full text-base leading-8 resize-none"
+                      placeholder={placeholder}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <div className="flex gap-2 justify-end">
+              <SaveRevertForm form={materialsForm} />
+            </div>
+          </form>
+        </Form>
+
+        <Form {...equipmentForm}>
+          <form
+            className="grow flex flex-col gap-4"
+            onSubmit={equipmentForm.handleSubmit(
+              async (data: ReportFormType) => {
+                const newReport = await mutate(
+                  Actions.updateSiteReportDetails(report.id, data),
+                  { revalidate: false },
+                );
+                equipmentForm.reset(newReport);
+              },
+            )}
+          >
+            <div className="flex flex-col gap-4 h-full">
+              <DialogTitle className="text-lg font-semibold">
+                Equipment Storage
+              </DialogTitle>
+              <FormField
+                control={equipmentForm.control}
+                name="equipmentInventory"
+                render={({ field }) => (
+                  <FormItem className="grow">
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        value={field.value ?? undefined}
+                        className="h-full text-base leading-8 resize-none"
+                        placeholder={placeholder}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="flex gap-2 justify-end">
+              <SaveRevertForm form={equipmentForm} />
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export function EditReportDocument({
   siteId,
   reportId,
@@ -495,21 +632,29 @@ export function EditReportDocument({
   if (!report) notFound();
 
   return (
-    <Card className="bg-cyan-50 border-2">
-      <CardHeader className="flex flex-row justify-between">
-        <h2 className="text-lg font-bold">Current Construction Activites</h2>
-      </CardHeader>
+    <>
+      <Card className="bg-cyan-50 border-2">
+        <CardHeader className="flex flex-row justify-between">
+          <h2 className="text-lg font-bold">Current Construction Activites</h2>
+        </CardHeader>
 
-      <CardContent className="grid grid-cols-2 gap-4 items-start">
-        {/* <EditReportEstimates report={report} mutate={mutate} /> */}
-        {/* <EditReportDetails report={report} mutate={mutate} /> */}
-        <div className="flex flex-col gap-4">
-          <EditSiteActivities report={report} mutate={mutate} />
-          <EditEquipment report={report} mutate={mutate} />
-          <EditMaterials report={report} mutate={mutate} />
-        </div>
-        <EditSitePersonel report={report} mutate={mutate} />
-      </CardContent>
-    </Card>
+        <CardContent className="grid grid-cols-2 gap-4 items-start">
+          {/* <EditReportEstimates report={report} mutate={mutate} /> */}
+          {/* <EditReportDetails report={report} mutate={mutate} /> */}
+          <div className="flex flex-col gap-4">
+            <EditSiteActivities report={report} mutate={mutate} />
+            <EditEquipment report={report} mutate={mutate} />
+            <EditMaterials report={report} mutate={mutate} />
+          </div>
+          <EditSitePersonel report={report} mutate={mutate} />
+        </CardContent>
+      </Card>
+
+      <Card className="bg-muted border-2">
+        <CardContent className="flex p-6">
+          <EditInventory report={report} mutate={mutate} />
+        </CardContent>
+      </Card>
+    </>
   );
 }
