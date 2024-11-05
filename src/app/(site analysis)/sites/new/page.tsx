@@ -11,6 +11,7 @@ import { LucideLoader2 } from "lucide-react";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -28,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { InfoBox } from "@/components/info-box";
 
 function CountrySelectForm({ form }: { form: any }) {
   const displayNames = useMemo(() => {
@@ -87,7 +89,7 @@ function NewSiteForm() {
                 <Input
                   onChange={field.onChange}
                   name={field.name}
-                  placeholder="Blue Bird Housing Project 1"
+                  placeholder="Mr Patrick, Blue Bird Housing Project"
                 />
               </FormControl>
               <FormMessage />
@@ -158,12 +160,29 @@ function NewSiteForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Project Description</FormLabel>
+                <FormDescription className="p-4 pt-0">
+                  Tell us a little bit about your project, possible information
+                  to include:
+                  <ul className="list-inside list-disc">
+                    <li>Current or expected timeline of your project </li>
+                    <li>
+                      Current and expected project size in terms of workers
+                    </li>
+                    <li>
+                      Current and expected project size in terms of cost any
+                    </li>
+                    <li>
+                      Issues you've faced on this or previous construction
+                      projects
+                    </li>
+                  </ul>
+                </FormDescription>
                 <FormControl>
                   <Textarea
                     name={field.name}
                     onChange={field.onChange}
                     className="h-36"
-                    placeholder="Tell us a little bit about your project"
+                    placeholder="e.g. I'm building a two story hotel in ..."
                     autoResize={true}
                   />
                 </FormControl>
@@ -173,8 +192,12 @@ function NewSiteForm() {
           />
         </div>
 
-        <Separator className="col-span-2" />
-
+        <InfoBox className="col-span-2 leading-6 font-normal">
+          After submitting your project, you will be redirected to your project
+          page. <br />
+          From there you will be able to schedule a meeting with us and we will
+          organize a site supervisor to attend your construction site.
+        </InfoBox>
         <div className="col-span-2 flex justify-end">
           <Button
             type="submit"
@@ -199,6 +222,7 @@ export default function Page() {
   return (
     <DefaultLayout className="items-center max-w-3xl">
       <NewSiteForm />
+      
     </DefaultLayout>
   );
 }
