@@ -107,6 +107,18 @@ export async function getSiteDetails({
     .then((r) => r[0]);
 }
 
+export async function updateSite(
+  siteId: number,
+  values: SiteNew,
+) {
+  return await db
+    .update(Schemas.sites1)
+    .set(values)
+    .where(eq(Schemas.sites1.id, siteId))
+    .returning()
+    .then((r) => r[0]);
+}
+
 export async function updateSiteDetails(
   siteId: number,
   values: SiteDetailsNew,

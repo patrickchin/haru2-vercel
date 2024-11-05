@@ -6,8 +6,15 @@ import {
   LucideUndo2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { MouseEventHandler } from "react";
 
-export function SaveRevertForm({ form }: { form: UseFormReturn }) {
+export function SaveRevertForm({
+  form,
+  onSaveClick,
+}: {
+  form: UseFormReturn;
+  onSaveClick?: MouseEventHandler;
+}) {
   return (
     <>
       <Button
@@ -23,6 +30,7 @@ export function SaveRevertForm({ form }: { form: UseFormReturn }) {
         type="submit"
         disabled={!form.formState.isDirty || form.formState.isSubmitting}
         className="flex items-center"
+        onClick={onSaveClick}
       >
         {form.formState.isSubmitting ? (
           <>

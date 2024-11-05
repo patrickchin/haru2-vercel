@@ -9,14 +9,14 @@ import * as Actions from "@/lib/actions";
 import {
   LucideAlertTriangle,
   LucideCheck,
+  LucideEdit,
   LucideMoveLeft,
   LucideMoveRight,
 } from "lucide-react";
 import SiteMeetings from "./site-meetings";
 import SiteMembers from "./site-members";
 import { EditSiteSchedule } from "./edit-schedule";
-
-import EditSiteMembersButtonPopup from "./site-key-members";
+import EditSiteMembersButtonPopup from "./edit-key-members";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,7 +30,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { GoodBox, InfoBox } from "@/components/info-box";
+import { EditSiteTitle } from "./edit-title";
 
 function SiteDescription({
   site,
@@ -367,16 +374,14 @@ export default async function Page(props: {
 }) {
   const searchParams = await props.searchParams;
   const siteId = Number((await props.params).siteId);
-  const [site, members] = await Promise.all([
+  const [site, members, role] = await Promise.all([
     Actions.getSiteDetails(siteId),
     Actions.getSiteMembers(siteId),
+    Actions.getSiteMemberRole({ siteId }),
   ]);
 
   // TODO custom site not found page
   if (!site) notFound();
-
-  const session = await auth();
-  const role = members?.find((m) => m.id === session?.user?.idn)?.role;
 
   return (
     <DefaultLayout>
@@ -387,9 +392,17 @@ export default async function Page(props: {
             Back to Site List
           </Link>
         </Button>
-        <h1 className="grow text-2xl font-semibold">
-          Site {siteId}: {site?.title}
-        </h1>
+
+        {editSiteRoles.includes(role) ? (
+          <EditSiteTitle site={site} />
+        ) : (
+          <div className="grow flex gap-4">
+            <h1 className="text-2xl font-semibold">
+              Site {site.id}: {site?.title}
+            </h1>
+          </div>
+        )}
+
         <Button variant={"default"} size={"lg"} asChild>
           <Link
             href={`/sites/${siteId}/reports`}

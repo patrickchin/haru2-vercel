@@ -12,7 +12,12 @@ import {
   acceptMeetingRoles,
 } from "@/lib/permissions";
 import { demoSiteIds } from "@/lib/constants";
-import { SiteDetailsNew, SiteMeetingNew, SiteMemberRole } from "@/lib/types";
+import {
+  SiteDetailsNew,
+  SiteMeetingNew,
+  SiteMemberRole,
+  SiteNew,
+} from "@/lib/types";
 import { Session } from "next-auth";
 
 export async function addSite(data: zSiteNewBothType) {
@@ -45,6 +50,15 @@ export async function getSiteDetails(siteId: number) {
     return db.getSiteDetails({ siteId, userId: session.user.idn });
 }
 
+export async function updateSite(siteId: number, data: SiteNew) {
+  const role = await getSiteMemberRole({ siteId });
+  if (editSiteRoles.includes(role)) {
+    const updated = await db.updateSite(siteId, data);
+    revalidatePath(`/sites/${siteId}`);
+    return updated;
+  }
+}
+
 export async function updateSiteDetails(
   siteId: number,
   details: SiteDetailsNew,
@@ -61,9 +75,7 @@ export async function getSiteMembers(siteId: number) {
   const session = await auth();
   const role = await getSiteMemberRole({ siteId }, session);
   if (demoSiteIds.includes(siteId)) {
-
-    if (session?.user?.role === "admin")
-      return db.getSiteMembers(siteId, true);
+    if (session?.user?.role === "admin") return db.getSiteMembers(siteId, true);
     return db.getSiteMembers(siteId, false);
   }
   if (editSiteRoles.includes(role)) {
