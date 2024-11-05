@@ -172,7 +172,7 @@ function NewSiteForm() {
                       Current and expected project size in terms of cost any
                     </li>
                     <li>
-                      Issues you've faced on this or previous construction
+                      Issues you&apos;ve faced on this or previous construction
                       projects
                     </li>
                   </ul>

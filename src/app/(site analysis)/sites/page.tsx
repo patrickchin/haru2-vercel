@@ -90,7 +90,7 @@ export default async function Page() {
       <InfoBox className="whitespace-pre-line text-base font-normal leading-7 max-w-3xl mx-auto">
         <ul className="list-inside list-disc ">
           <li>
-            All site projects you've created, or site projects that you are a
+            All site projects you&apos;ve created, or site projects that you are a
             member of, will appear here.
           </li>
           <li>
