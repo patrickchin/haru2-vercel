@@ -47,28 +47,56 @@ export default function Page() {
           />
         </div>
 
-        <div className="flex flex-col gap-16 max-w-[90rem] w-full lg:w-4/5 justify-end transition-all">
-          <div className="flex justify-end">
-            <h1
+        <div className="flex flex-col gap-10 max-w-[90rem] w-full lg:w-4/5 justify-end transition-all">
+          <div className="justify-end flex">
+            <div
               className={cn(
-                "lg:text-right text-4xl lg:text-6xl font-extrabold p-10 rounded",
+                "flex flex-col gap-5 justify-end lg:text-right p-8 rounded",
                 "bg-background/50 backdrop-blur-md",
               )}
             >
-              Your Construction Projects, <br />
-              Seamlessly Supervised
-            </h1>
+              <h1 className="text-4xl lg:text-6xl font-extrabold">
+                Supervise Your Construction Projects
+              </h1>
+              <h2 className="text-2xl lg:text-3xl font-bold">
+                Tools for Remote Monitoring and Management
+              </h2>
+            </div>
           </div>
 
-          <div className="flex justify-end">
-            <p
+          <div className="justify-end flex">
+            <div
               className={cn(
-                "text-right font-bold p-10 rounded",
+                "flex flex-col gap-5 justify-end lg:text-right p-8 rounded",
                 "bg-background/50 backdrop-blur-md",
               )}
             >
-              <span className="whitespace-nowrap pr-2">
-                Hire our Site Analysis Professionals
+              <p className="font-bold">
+                <span className="whitespace-nowrap pr-2 text-xl">
+                  Setup your own team or hire our experts
+                </span>
+                <Button
+                  asChild
+                  className="w-fit font-bold text-base [&_svg]:size-8"
+                >
+                  <Link href="/sites">
+                    Get Started
+                    <LucideMoveRight className="ml-1" />
+                  </Link>
+                </Button>
+              </p>
+            </div>
+          </div>
+
+          <div className="flex justify-end hidden">
+            <p
+              className={cn(
+                "text-right font-bold p-8 rounded",
+                "bg-background/50 backdrop-blur-md",
+              )}
+            >
+              <span className="whitespace-nowrap pr-2 text-base">
+                Setup your own team or hire our experts
               </span>
               <Button
                 asChild
