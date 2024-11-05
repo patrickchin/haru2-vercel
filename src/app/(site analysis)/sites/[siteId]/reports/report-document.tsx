@@ -3,14 +3,8 @@ import * as Actions from "@/lib/actions";
 import { ReportSections } from "./report-sections";
 
 import { Button } from "@/components/ui/button";
-import {
-  SiteReportAll,
-} from "@/lib/types/site";
-import {
-  Card,
-  CardHeader,
-  CardContent,
-} from "@/components/ui/card";
+import { SiteReportAll } from "@/lib/types/site";
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -232,6 +226,62 @@ function ReportActivities({ report }: { report?: SiteReportAll }) {
   );
 }
 
+function ReportInventory({ report }: { report?: SiteReportAll }) {
+  return (
+    <Card className="bg-muted border-2">
+      <CardContent className="flex flex-col sm:flex-row justify-between items-center p-6">
+        <CardTitle className="text-lg font-semibold">
+          Inventory and Storage
+        </CardTitle>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button size="default" variant="outline">
+              Open
+            </Button>
+          </DialogTrigger>
+          <DialogContent
+            className={cn(
+              "min-h-96 max-h-[90svh] h-[50rem]",
+              "min-w-80 max-w-[90svw] w-[60rem]",
+              "overflow-hidden",
+              "grid grid-cols-2",
+            )}
+          >
+            <div className="flex flex-col gap-4 h-full">
+              <DialogTitle className="text-lg font-semibold">
+                Materials Storage
+              </DialogTitle>
+              <ol className="overflow-y-auto border rounded grow">
+                {report?.materialsInventory?.split("\n").map((eq, i) => {
+                  return (
+                    <li key={i} className="hover:bg-accent px-3 py-2">
+                      {eq}
+                    </li>
+                  );
+                })}
+              </ol>
+            </div>
+            <div className="flex flex-col gap-4 h-full">
+              <DialogTitle className="text-lg font-semibold">
+                Equipment Storage
+              </DialogTitle>
+              <ol className="overflow-y-auto border rounded grow">
+                {report?.equipmentInventory?.split("\n").map((eq, i) => {
+                  return (
+                    <li key={i} className="hover:bg-accent px-3 py-2">
+                      {eq}
+                    </li>
+                  );
+                })}
+              </ol>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </CardContent>
+    </Card>
+  );
+}
+
 export async function ReportDocument({
   siteId,
   reportId,
@@ -257,6 +307,7 @@ export async function ReportDocument({
       <ReportSiteDetails report={report} />
       <ReportBudget report={report} />
       <ReportActivities report={report} />
+      <ReportInventory report={report} />
       <ReportSections sections={sections} />
     </div>
   );
