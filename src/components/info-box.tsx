@@ -57,9 +57,9 @@ export function InfoBox({
       )}
     >
       <LucideInfo className="flex-none h-6 w-6" />
-      <p className="align-bottom">
+      <div className="align-bottom">
         {children}
-      </p>
+      </div>
     </div>
   );
 }

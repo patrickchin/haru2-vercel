@@ -109,17 +109,13 @@ export const changePasswordSchema = z.object({
 });
 export type ChangePasswordType = z.infer<typeof changePasswordSchema>;
 
-export const zSiteNew = createInsertSchema(Schemas.sites1).pick({
-  type: true,
-  title: true,
-  countryCode: true,
-}) satisfies ZodType<SiteNew>;
-export const zSiteDetailsNew = createInsertSchema(Schemas.siteDetails1).pick({
-  address: true,
-  description: true,
-}) satisfies ZodType<SiteDetailsNew>;
-
-export const zSiteNewBoth = zSiteNew.and(zSiteDetailsNew);
+export const zSiteNewBoth = z.object({
+  title: z.string().min(1),
+  type: z.string().optional(),
+  countryCode: z.string().min(2).max(2),
+  address: z.string().optional(),
+  description: z.string().min(1),
+})
 export type zSiteNewBothType = z.infer<typeof zSiteNewBoth>;
 
 export const updateSiteMembersSchema = z.object({

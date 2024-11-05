@@ -71,10 +71,15 @@ function NewSiteForm() {
     resolver: zodResolver(zSiteNewBoth),
   });
 
+  const descriptionPlaceholder =
+    "e.g.\n" +
+    "I'm building a hospital, it is a large-scale development ...\n" +
+    "The construction is expected to be completed within the next two years ...\n";
+
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(async (d) => {
+        onSubmit={form.handleSubmit(async (d: zSiteNewBothType) => {
           await Actions.addSite(d);
         })}
         className="flex flex-col p-4 sm:grid sm:grid-cols-2 gap-6 w-full"
@@ -87,8 +92,8 @@ function NewSiteForm() {
               <FormLabel>Project Title/Owner</FormLabel>
               <FormControl>
                 <Input
-                  onChange={field.onChange}
-                  name={field.name}
+                  {...field}
+                  value={undefined}
                   placeholder="Mr Patrick, Blue Bird Housing Project"
                 />
               </FormControl>
@@ -102,7 +107,7 @@ function NewSiteForm() {
           name="type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Type of Construciton Project</FormLabel>
+              <FormLabel>Type of Construciton Project (Optional)</FormLabel>
               <FormControl>
                 <Input
                   onChange={field.onChange}
@@ -120,7 +125,7 @@ function NewSiteForm() {
           name="address"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Site Address</FormLabel>
+              <FormLabel>Site Address (Optional)</FormLabel>
               <FormControl>
                 <Input
                   onChange={field.onChange}
@@ -160,29 +165,23 @@ function NewSiteForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Project Description</FormLabel>
-                <FormDescription className="p-4 pt-0">
+                <div className="text-sm text-muted-foreground p-1">
                   Tell us a little bit about your project, possible information
                   to include:
                   <ul className="list-inside list-disc">
                     <li>Current or expected timeline of your project </li>
                     <li>
-                      Current and expected project size in terms of workers
-                    </li>
-                    <li>
-                      Current and expected project size in terms of cost any
-                    </li>
-                    <li>
-                      Issues you&apos;ve faced on this or previous construction
-                      projects
+                      Current and expected project size (eg; small scale, medium
+                      scale, or large scale)
                     </li>
                   </ul>
-                </FormDescription>
+                </div>
                 <FormControl>
                   <Textarea
                     name={field.name}
                     onChange={field.onChange}
-                    className="h-36"
-                    placeholder="e.g. I'm building a two story hotel in ..."
+                    className="min-h-28"
+                    placeholder={descriptionPlaceholder}
                     autoResize={true}
                   />
                 </FormControl>
