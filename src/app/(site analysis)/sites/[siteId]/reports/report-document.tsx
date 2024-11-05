@@ -440,7 +440,7 @@ export async function ReportDocumentDisplay({
                     Materials Used
                   </DialogTitle>
                   <ol className="overflow-y-auto border rounded">
-                    {report?.materials?.split("\n").map((eq, i) => {
+                    {report?.materialsUsed?.split("\n").map((eq, i) => {
                       return (
                         <li key={i} className="hover:bg-accent px-3 py-2">
                           {eq}
@@ -465,7 +465,7 @@ export async function ReportDocumentDisplay({
                     Equipment Used
                   </DialogTitle>
                   <ol className="overflow-y-auto border rounded">
-                    {report?.equiptment?.split("\n").map((eq, i) => {
+                    {report?.equipmentUsed?.split("\n").map((eq, i) => {
                       return (
                         <li key={i} className="hover:bg-accent px-3 py-2">
                           {eq}
