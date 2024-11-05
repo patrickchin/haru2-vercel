@@ -379,10 +379,7 @@ export function UpdateSiteReportSections({
       <div>
         <Button
           onClick={() => {
-            Actions.addSiteReportSection(reportId, {
-              title: "title",
-              content: "content",
-            });
+            Actions.addSiteReportSection(reportId, {});
             mutate();
           }}
         >

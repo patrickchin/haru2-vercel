@@ -152,7 +152,7 @@ export async function getSiteReportSection(sectionId: number) {
 
 export async function addSiteReportSection(
   reportId: number,
-  args: { title: string; content: string },
+  args: { title?: string; content?: string },
 ) {
   const role = await getSiteMemberRole({ reportId });
   if (editReportRoles.includes(role)) {

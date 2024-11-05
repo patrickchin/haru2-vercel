@@ -259,8 +259,8 @@ export async function getSiteReportSection(
 
 export async function addSiteReportSection(values: {
   reportId: number;
-  title: string;
-  content: string;
+  title?: string;
+  content?: string;
 }) {
   return db.transaction(async (tx) => {
     const fileGroup = await tx
