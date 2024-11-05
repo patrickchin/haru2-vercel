@@ -39,7 +39,10 @@ function SiteMemberFields({
 } & { form: any; prefix: string }) {
   return (
     <div className="flex flex-col">
-      <h3 className="capitalize text-base font-semibold">{prefix}</h3>
+      <h3 className="capitalize text-base font-semibold">
+        {/* hacky */}
+        {prefix === "manager" ? "Project Manager" : prefix}
+      </h3>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <FormField
@@ -183,7 +186,7 @@ function EditSiteMembersForm({
   );
 }
 
-export default function EditSiteMembersButtonPopup({
+export function EditKeySiteMembers({
   site,
   members,
 }: {
@@ -214,7 +217,7 @@ export default function EditSiteMembersButtonPopup({
           Edit Members <LucideEdit className="ml-2 w-3.5" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-svh overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-svh overflow-y-auto gap-10">
         <DialogHeader>
           <DialogTitle>Edit Key Site Member Information</DialogTitle>
         </DialogHeader>

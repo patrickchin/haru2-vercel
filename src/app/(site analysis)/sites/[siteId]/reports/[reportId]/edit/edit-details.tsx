@@ -172,7 +172,7 @@ function EditEquipment({
     <Dialog>
       <div className="flex gap-4 items-center p-4 rounded border bg-background">
         <h2 className="text-base font-semibold grow text-left">
-          Equipment Status
+          Equipment Used
         </h2>
         <DialogTrigger asChild>
           <Button size="sm" variant="outline">
@@ -186,7 +186,7 @@ function EditEquipment({
         id="edit-equipment-dialog-content"
       >
         <DialogTitle className="text-lg font-semibold">
-          Equipment Status
+          Equipment Used
         </DialogTitle>
 
         <Form {...form}>
@@ -246,7 +246,7 @@ function EditMaterials({
     <Dialog>
       <div className="flex gap-4 items-center p-4 rounded border bg-background">
         <h2 className="text-base font-semibold grow text-left">
-          Materials Status
+          Materials Used
         </h2>
         <DialogTrigger asChild>
           <Button size="sm" variant="outline">
@@ -260,7 +260,7 @@ function EditMaterials({
         id="edit-materials-dialog-content"
       >
         <DialogTitle className="text-lg font-semibold">
-          Materials Status
+          Materials Used
         </DialogTitle>
 
         <Form {...form}>

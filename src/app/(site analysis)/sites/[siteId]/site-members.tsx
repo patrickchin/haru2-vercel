@@ -181,7 +181,14 @@ export default function SiteMembers({
   return (
     <Card>
       <CardHeader className="font-semibold">Project Members</CardHeader>
-      <CardContent className="space-y-8">
+      <CardContent className="flex flex-col gap-4">
+        <p className="border bg-accent p-4 rounded text-sm">
+          You can only add members that have signed up on the website. Please
+          inform members to sign up to have access.
+          <br />
+          Each role have a different level of access on the website. e.g. only
+          supervisor can access site report editing.
+        </p>
         {canEditSite && (
           <SiteSearchAddMember siteId={site.id} mutate={mutateMembers} />
         )}

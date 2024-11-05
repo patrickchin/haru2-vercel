@@ -428,7 +428,7 @@ export async function ReportDocumentDisplay({
             </div>
 
             <div className="flex justify-between items-center p-3 bg-background rounded border">
-              <h2 className="text-base font-semibold">Materials Status</h2>
+              <h2 className="text-base font-semibold">Materials Used</h2>
               <Dialog>
                 <DialogTrigger asChild>
                   <Button size="sm" variant="outline">
@@ -437,7 +437,7 @@ export async function ReportDocumentDisplay({
                 </DialogTrigger>
                 <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] flex flex-col p-4 gap-4">
                   <DialogTitle className="text-lg font-semibold">
-                    Materials Status
+                    Materials Used
                   </DialogTitle>
                   <ol className="overflow-y-auto border rounded">
                     {report?.materials?.split("\n").map((eq, i) => {
@@ -453,7 +453,7 @@ export async function ReportDocumentDisplay({
             </div>
 
             <div className="flex justify-between items-center p-3 bg-background rounded border">
-              <h2 className="text-base font-semibold">Equipment Status</h2>
+              <h2 className="text-base font-semibold">Equipment Used</h2>
               <Dialog>
                 <DialogTrigger asChild>
                   <Button size="sm" variant="outline">
@@ -462,7 +462,7 @@ export async function ReportDocumentDisplay({
                 </DialogTrigger>
                 <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] flex flex-col p-4 gap-4">
                   <DialogTitle className="text-lg font-semibold">
-                    Equipment Status
+                    Equipment Used
                   </DialogTitle>
                   <ol className="overflow-y-auto border rounded">
                     {report?.equiptment?.split("\n").map((eq, i) => {

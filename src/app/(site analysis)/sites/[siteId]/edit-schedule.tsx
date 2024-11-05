@@ -94,7 +94,11 @@ function EditSiteScheduleForm({ site }: { site: SiteDetails }) {
           render={({ field }) => (
             <FormItem className="grow max-w-lg">
               <FormLabel>Schedule</FormLabel>
-              <Input {...field} value={field.value || undefined} />
+              <Input
+                {...field}
+                value={field.value || undefined}
+                placeholder="Tuesdays and Thursdays every week"
+              />
               <FormMessage />
             </FormItem>
           )}

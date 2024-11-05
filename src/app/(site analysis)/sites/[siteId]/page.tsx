@@ -15,7 +15,7 @@ import {
 import SiteMeetings from "./site-meetings";
 import SiteMembers from "./site-members";
 import { EditSiteSchedule } from "./edit-schedule";
-import EditSiteMembersButtonPopup from "./edit-key-members";
+import { EditKeySiteMembers } from "./edit-key-members";
 import { EditSiteTitle } from "./edit-title";
 import { EditSiteDescription } from "./edit-description";
 
@@ -100,52 +100,6 @@ function SiteInfoBar({
   );
 }
 
-function SiteMembersBar2({
-  site,
-  members,
-}: {
-  site: SiteDetails;
-  members: SiteMember[] | undefined;
-}) {
-  const keyMemberRoles: SiteMemberRole[] = [
-    "owner",
-    "manager",
-    "contractor",
-    "supervisor",
-  ];
-  const membersByRole: { [k: string]: SiteMember[] } = Object.fromEntries(
-    keyMemberRoles.map((r) => [
-      r,
-      (members?.filter((m) => m.role === r) ?? []) as SiteMember[],
-    ]),
-  );
-
-  return (
-    <Card className="flex items-center gap-3 p-4 px-6">
-      <ul className="grow inline-flex gap-4">
-        {Object.entries(membersByRole).map(([role, mems]) => {
-          if (mems.length === 0) {
-            return (
-              <li key={`${role}-0`}>
-                <span className="font-semibold capitalize">{role}: </span>
-                <span className="">{"<unknown>"}</span>
-              </li>
-            );
-          } else {
-            return mems.map((mem, i) => (
-              <li key={`${role}-${i}`}>
-                <span className="font-semibold capitalize">{role}: </span>
-                <span className="">{mem?.name ?? "<unknown>"}</span>
-              </li>
-            ));
-          }
-        })}
-      </ul>
-      <EditSiteMembersButtonPopup site={site} members={members} />
-    </Card>
-  );
-}
-
 function SiteMembersBar({
   site,
   members,
@@ -163,7 +117,7 @@ function SiteMembersBar({
           <p className="text-nowrap">{owner?.name.length ? owner.name : "-"}</p>
         </li>
         <li className="min-w-32">
-          <p className="font-semibold text-sm">Manager: </p>
+          <p className="font-semibold text-sm">Project Manager: </p>
           <p className="text-nowrap">
             {site.managerName?.length ? site.managerName : "-"}
           </p>
@@ -181,7 +135,7 @@ function SiteMembersBar({
           </p>
         </li>
       </ul>
-      <EditSiteMembersButtonPopup site={site} members={members} />
+      <EditKeySiteMembers site={site} members={members} />
     </Card>
   );
 }
@@ -218,7 +172,7 @@ function SiteMembersTable({
               <TableCell>{site.ownerPhone}</TableCell>
             </TableRow>
             <TableRow>
-              <TableHead className="font-medium">Manager</TableHead>
+              <TableHead className="font-medium">Project Manager</TableHead>
               <TableCell>{site.managerName}</TableCell>
               <TableCell>{site.managerEmail}</TableCell>
               <TableCell>{site.managerPhone}</TableCell>
@@ -257,7 +211,7 @@ async function SiteComplaints({
     <Card id="meetings">
       <CardHeader className="flex flex-row justify-between items-center py-0 space-y-0">
         <CardTitle className="font-semibold text-base py-6">
-          Current Unresolved Issues
+          Current Unresolved Issues as Site
         </CardTitle>
         {/* {role && editSiteRoles.includes(role) && (
           <EditSiteSchedule site={site} /> // TODO

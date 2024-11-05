@@ -31,20 +31,33 @@ export function WarningBox({
     <div
       className={cn(
         "flex gap-3 bg-yellow-50 border-2 p-4 rounded border-yellow-200",
+        "text-sm font-semibold",
         className,
       )}
     >
       <LucideMessageCircleWarning className="flex-none h-6 w-6" />
-      <p className="text-inherit align-bottom">{children}</p>
+      <p className="align-bottom">{children}</p>
     </div>
   );
 }
 
-export function InfoBox({ children }: { children?: ReactNode }) {
+export function InfoBox({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) {
   return (
-    <div className="flex gap-3 bg-blue-50 border-2 p-4 rounded border-blue-200">
+    <div
+      className={cn(
+        "flex gap-3 bg-blue-50 border-2 p-4 rounded border-blue-200",
+        "text-sm font-semibold",
+        className,
+      )}
+    >
       <LucideInfo className="flex-none h-6 w-6" />
-      <p className="flex items-center text-sm font-semibold align-bottom">
+      <p className="align-bottom">
         {children}
       </p>
     </div>

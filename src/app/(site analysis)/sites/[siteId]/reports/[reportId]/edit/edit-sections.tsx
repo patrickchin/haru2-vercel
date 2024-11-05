@@ -58,6 +58,7 @@ import { Textarea } from "@/components/ui/textarea";
 import prettyBytes from "pretty-bytes";
 import { SaveRevertForm } from "@/components/save-revert-form";
 import { Separator } from "@/components/ui/separator";
+import { InfoBox } from "@/components/info-box";
 
 // DUPLICATED FROM edit-upload.tsx can be improved
 function FileListTable({
@@ -367,15 +368,22 @@ export function UpdateSiteReportSections({
 
   return (
     <div className="flex flex-col gap-4">
-      {sections?.map((s) => (
-        <UpdateSiteReportSection
-          siteId={siteId}
-          reportId={reportId}
-          section={s}
-          sectionsMutate={mutate}
-          key={`UpdateSiteReportSection-${s.id}`}
-        />
-      ))}
+      {sections && sections.length > 0 ? (
+        sections?.map((s) => (
+          <UpdateSiteReportSection
+            siteId={siteId}
+            reportId={reportId}
+            section={s}
+            sectionsMutate={mutate}
+            key={`UpdateSiteReportSection-${s.id}`}
+          />
+        ))
+      ) : (
+        <InfoBox className="text-base p-6 shadow-lg rounded-lg">
+          You can create a more detailed site report by adding new sections and
+          attaching photos.
+        </InfoBox>
+      )}
       <div>
         <Button
           onClick={() => {
