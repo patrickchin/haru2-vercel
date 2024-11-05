@@ -291,7 +291,10 @@ function UpdateSiteReportSection({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(async (data) => {
-              const newSection = await Actions.updateSiteReportSection(section.id, data);
+              const newSection = await Actions.updateSiteReportSection(
+                section.id,
+                data,
+              );
               await sectionsMutate();
               form.reset(newSection);
             })}
@@ -326,6 +329,7 @@ function UpdateSiteReportSection({
                       name={field.name}
                       onChange={field.onChange}
                       value={field.value || ""}
+                      autoResize={true}
                     />
                   </FormControl>
                   <FormMessage />
