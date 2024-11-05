@@ -2,21 +2,22 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteDetails, SiteMember, SiteMemberRole } from "@/lib/types";
-import { auth } from "@/lib/auth";
 import { editSiteRoles } from "@/lib/permissions";
 import * as Actions from "@/lib/actions";
 
 import {
   LucideAlertTriangle,
   LucideCheck,
-  LucideEdit,
   LucideMoveLeft,
   LucideMoveRight,
 } from "lucide-react";
+
 import SiteMeetings from "./site-meetings";
 import SiteMembers from "./site-members";
 import { EditSiteSchedule } from "./edit-schedule";
 import EditSiteMembersButtonPopup from "./edit-key-members";
+import { EditSiteTitle } from "./edit-title";
+import { EditSiteDescription } from "./edit-description";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,29 +31,31 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { GoodBox, InfoBox } from "@/components/info-box";
-import { EditSiteTitle } from "./edit-title";
 
 function SiteDescription({
   site,
   members,
+  role,
 }: {
   site: SiteDetails;
   members: SiteMember[] | undefined;
+  role: SiteMemberRole;
 }) {
   const desc =
     site.description ??
     "There is currently no description for this site project";
   return (
     <Card id="description">
-      <CardHeader className="font-semibold">Description</CardHeader>
-      <CardContent>{desc}</CardContent>
+      <CardHeader className="flex flex-row font-semibold py-0 items-center">
+        <span className="grow py-6">Description</span>
+        {editSiteRoles.includes(role) && <EditSiteDescription site={site} />}
+      </CardHeader>
+      <CardContent>
+        <div className="bg-muted border rounded p-4 whitespace-pre-line">
+          {desc}
+        </div>
+      </CardContent>
     </Card>
   );
 }
@@ -428,7 +431,7 @@ export default async function Page(props: {
 
       <SiteMembers site={site} members={members} />
 
-      <SiteDescription site={site} members={members} />
+      <SiteDescription site={site} members={members} role={role} />
     </DefaultLayout>
   );
 }
