@@ -1,11 +1,12 @@
 import Link from "next/link";
 import * as Actions from "@/lib/actions";
 
-import { LucideArrowRight } from "lucide-react";
+import { LucideArrowRight, LucidePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DefaultLayout } from "@/components/page-layouts";
 import { SiteAndExtra } from "@/lib/types";
 import { Card } from "@/components/ui/card";
+import { InfoBox } from "@/components/info-box";
 
 function EmptySitesList() {
   return <p>You currently do not have any sites registered with us</p>;
@@ -74,13 +75,35 @@ async function SitesList() {
 export default async function Page() {
   return (
     <DefaultLayout>
-      <h1 className="text-3xl font-semibold">My Site Supervision Projects</h1>
-
-      <div>
+      <div className="flex items-center">
+        <h1 className="grow text-3xl font-semibold">
+          Site Supervision Projects
+        </h1>
         <Button asChild>
-          <Link href="/sites/new">Register New Construction Site</Link>
+          <Link href="/sites/new">
+            Register New Construction Site
+            <LucidePlus />
+          </Link>
         </Button>
       </div>
+
+      <InfoBox className="whitespace-pre-line text-base font-normal leading-7 max-w-3xl mx-auto">
+        <ul className="list-inside list-disc ">
+          <li>
+            All site projects you've created, or site projects that you are a
+            member of, will appear here.
+          </li>
+          <li>
+            If you are the owner of a site that needs supervision, please first
+            register your site.
+          </li>
+          <li>
+            If you are a contractor or supervisor, please ask the site owner to
+            make you a member of the site project and it will appear in the list
+            below.
+          </li>
+        </ul>
+      </InfoBox>
 
       <SitesList />
     </DefaultLayout>
