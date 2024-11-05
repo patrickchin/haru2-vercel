@@ -237,7 +237,7 @@ export async function getReportSectionRole({
     .then((r) => (r && r.length ? r[0].role : null));
 }
 
-export async function getSiteReportSections(
+export async function listSiteReportSections(
   reportId: number,
 ): Promise<SiteReportSection[]> {
   return db

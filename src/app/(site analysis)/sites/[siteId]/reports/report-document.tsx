@@ -552,7 +552,7 @@ export async function ReportDocument({
   const [site, report, sections /* sectionFiles */] = await Promise.all([
     Actions.getSiteDetails(siteId),
     reportId ? Actions.getSiteReportDetails(reportId) : undefined,
-    reportId ? Actions.getSiteReportSections(reportId) : undefined,
+    reportId ? Actions.listSiteReportSections(reportId) : undefined,
     // Actions.getFilesForReport(reportId),
   ]);
   const props = { site, report, sections };

@@ -134,12 +134,12 @@ export async function deleteSiteReportFile({
 
 // ======================== sections ========================
 
-export async function getSiteReportSections(reportId: number) {
+export async function listSiteReportSections(reportId: number) {
   const role = await getSiteMemberRole({ reportId });
   // TODO inlcude/exclude unpublished reports
   // if (editReportRoles.includes(role))
-  //   return db.getSiteReportSections(reportId, true);
-  if (viewSiteRoles.includes(role)) return db.getSiteReportSections(reportId);
+  //   return db.listSiteReportSections(reportId, true);
+  if (viewSiteRoles.includes(role)) return db.listSiteReportSections(reportId);
 }
 
 export async function getSiteReportSection(sectionId: number) {

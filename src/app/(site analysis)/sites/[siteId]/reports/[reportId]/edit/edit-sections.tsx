@@ -280,8 +280,8 @@ function UpdateSiteReportSection({
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: section.title || undefined,
-      content: section.content || undefined,
+      title: section.title || "",
+      content: section.content || "",
     },
   });
 
@@ -290,9 +290,10 @@ function UpdateSiteReportSection({
       <CardContent className="p-6 flex flex-col gap-4">
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit((data) => {
-              console.log(data);
-              Actions.updateSiteReportSection(section.id, data);
+            onSubmit={form.handleSubmit(async (data) => {
+              const newSection = await Actions.updateSiteReportSection(section.id, data);
+              await sectionsMutate();
+              form.reset(newSection);
             })}
             className="flex flex-col gap-4"
           >
@@ -306,7 +307,7 @@ function UpdateSiteReportSection({
                     <Input
                       name={field.name}
                       onChange={field.onChange}
-                      value={field.value || undefined}
+                      value={field.value || ""}
                     />
                   </FormControl>
                   <FormMessage />
@@ -324,7 +325,7 @@ function UpdateSiteReportSection({
                     <Textarea
                       name={field.name}
                       onChange={field.onChange}
-                      value={field.value || undefined}
+                      value={field.value || ""}
                     />
                   </FormControl>
                   <FormMessage />
@@ -361,7 +362,7 @@ export function UpdateSiteReportSections({
   const { data: sections, mutate } = useSWR<SiteReportSection[]>(
     `/api/report/${reportId}/sections`, // api route doesn't really exist
     async () => {
-      const sections = await Actions.getSiteReportSections(reportId);
+      const sections = await Actions.listSiteReportSections(reportId);
       return sections || [];
     },
   );
@@ -386,9 +387,9 @@ export function UpdateSiteReportSections({
       )}
       <div>
         <Button
-          onClick={() => {
-            Actions.addSiteReportSection(reportId, {});
-            mutate();
+          onClick={async () => {
+            await Actions.addSiteReportSection(reportId, {});
+            await mutate();
           }}
         >
           Add Section
