@@ -1,13 +1,10 @@
 import { Suspense } from "react";
 import * as Actions from "@/lib/actions";
 import { DefaultLayout } from "@/components/page-layouts";
-import {
-  ReportDocument,
-  ReportDocumentNull,
-  ReportsViewerProps,
-  ReportTitleBar,
-} from "../report-document";
+import { ReportDocument } from "../report-document";
 import { ReportFileDisplay } from "../report-file-viewer";
+import { ReportTitleBar } from "../report-title";
+
 import { FileDisplay } from "@/components/file-display";
 import { WarningBox } from "@/components/info-box";
 
@@ -23,7 +20,7 @@ export default async function Page({
   const reportId = Number(params2.reportId);
   const fileId = Number((await searchParams)?.fileId);
 
-  const props: ReportsViewerProps = { siteId, reportId, fileId };
+  const props = { siteId, reportId, fileId };
   const report = await Actions.getSiteReport(reportId);
 
   return (
@@ -51,7 +48,7 @@ export default async function Page({
       </section>
 
       <section className="w-full max-w-5xl mx-auto">
-        <Suspense fallback={<ReportDocumentNull />}>
+        <Suspense fallback={<ReportDocument />}>
           <ReportDocument {...props} />
         </Suspense>
       </section>

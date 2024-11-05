@@ -1,11 +1,10 @@
-import * as Actions from "@/lib/actions";
-import {
-  ReportDocumentNull,
-  ReportsViewerProps,
-  ReportTitleBar,
-} from "./report-document";
 import { redirect } from "next/navigation";
+import * as Actions from "@/lib/actions";
+
+import { ReportDocument } from "./report-document";
 import { ReportFileDisplay } from "./report-file-viewer";
+import { ReportTitleBar } from "./report-title";
+
 import { DefaultLayout } from "@/components/page-layouts";
 import { WarningBox } from "@/components/info-box";
 
@@ -21,7 +20,7 @@ export default async function Page({
     redirect(`/sites/${siteId}/reports/${reports[0].id}`);
   }
 
-  const props: ReportsViewerProps = { siteId };
+  const props = { siteId };
 
   return (
     <DefaultLayout className="max-w-none relative p-0 pb-12">
@@ -44,7 +43,7 @@ export default async function Page({
       </section>
 
       <section className="w-full max-w-5xl mx-auto">
-        <ReportDocumentNull />
+        <ReportDocument />
       </section>
     </DefaultLayout>
   );
