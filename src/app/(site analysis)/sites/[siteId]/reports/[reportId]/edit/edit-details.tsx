@@ -593,7 +593,11 @@ function EditInventory({
                         value={field.value ?? undefined}
                         className="h-full text-base leading-8 resize-none"
                         placeholder={
-                          "e.g.\nExcavators\nBulldozers\nBackhoe Loaders"
+                          "e.g.\n" +
+                          "Excavators - 1 - Good condition\n" +
+                          "Dump Trucks - 3 - Average condition\n" +
+                          "Pick Axes - 12 - Bad condition\n" +
+                          "Shovels - 15 - Good condition\n"
                         }
                       />
                     </FormControl>
