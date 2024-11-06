@@ -89,10 +89,8 @@ export async function getAllVisibleSites(
 
 export async function getSiteDetails({
   siteId,
-  userId,
 }: {
   siteId: number;
-  userId: number;
 }): Promise<SiteDetails> {
   return await db
     .select({
@@ -104,16 +102,7 @@ export async function getSiteDetails({
       Schemas.siteDetails1,
       eq(Schemas.siteDetails1.id, Schemas.sites1.id),
     )
-    .innerJoin(
-      Schemas.siteMembers1,
-      eq(Schemas.siteMembers1.siteId, Schemas.sites1.id),
-    )
-    .where(
-      and(
-        eq(Schemas.siteDetails1.id, siteId),
-        eq(Schemas.siteMembers1.memberId, userId),
-      ),
-    )
+    .where(eq(Schemas.siteDetails1.id, siteId))
     .limit(1)
     .then((r) => r[0]);
 }

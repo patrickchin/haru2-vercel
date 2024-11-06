@@ -48,8 +48,9 @@ export async function getSiteDetails(siteId: number) {
   const session = await auth();
   if (!session?.user) return;
   const role = await getSiteMemberRole({ siteId }, session);
-  if (viewSiteRoles.includes(role))
-    return db.getSiteDetails({ siteId, userId: session.user.idn });
+  if (viewSiteRoles.includes(role)) {
+    return db.getSiteDetails({ siteId });
+  }
 }
 
 export async function updateSite(siteId: number, data: SiteNew) {
