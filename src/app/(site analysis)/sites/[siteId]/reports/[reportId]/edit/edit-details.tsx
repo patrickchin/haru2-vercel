@@ -549,8 +549,8 @@ function EditInventory({
                       className="h-full text-base leading-8 resize-none"
                       placeholder={
                         "e.g.\n" +
-                        "Cement - 50kg - 20 bags - Good condition\n" +
-                        "Steel rods - 70 bundles - Average condition\n" +
+                        "Cement - 50kg - 20 bags - New condition\n" +
+                        "Steel rods - 70 bundles - Good condition\n" +
                         "Cement bricks - 300 bricks - Bad condition\n"
                       }
                     />
@@ -594,10 +594,10 @@ function EditInventory({
                         className="h-full text-base leading-8 resize-none"
                         placeholder={
                           "e.g.\n" +
-                          "Excavators - 1 - Good condition\n" +
-                          "Dump Trucks - 3 - Average condition\n" +
+                          "Excavators - 1 - New condition\n" +
+                          "Dump Trucks - 3 - Good condition\n" +
                           "Pick Axes - 12 - Bad condition\n" +
-                          "Shovels - 15 - Good condition\n"
+                          "Shovels - 15 - New condition\n"
                         }
                       />
                     </FormControl>
