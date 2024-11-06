@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardContent,
   CardDescription,
+  CardTitle,
 } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
@@ -84,11 +85,11 @@ export async function ReportSections({
             return (
               <li key={section.id}>
                 <Card>
-                  <CardHeader className="p-4 pb-3 font-bold text-lg">
-                    {section.title}
+                  <CardHeader className="p-6 pb-3">
+                    <CardTitle>{section.title}</CardTitle>
                   </CardHeader>
-                  <CardContent className="p-4 pt-0 space-y-4">
-                    <CardDescription className="text-base">
+                  <CardContent className="p-6 pt-0 space-y-4">
+                    <CardDescription className="text-base whitespace-pre-line">
                       {section.content}
                     </CardDescription>
                     <ReportSectionFiles section={section} />
