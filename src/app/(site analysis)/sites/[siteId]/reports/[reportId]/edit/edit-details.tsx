@@ -548,7 +548,10 @@ function EditInventory({
                       value={field.value ?? undefined}
                       className="h-full text-base leading-8 resize-none"
                       placeholder={
-                        "e.g.\nSand - 10kg bags x 10\nGravel - 10kg bags x 8\nCrushed Stone ..."
+                        "e.g.\n" +
+                        "Cement - 50kg - 20 bags - Good condition\n" +
+                        "Steel rods - 70 bundles - Average condition\n" +
+                        "Cement bricks - 300 bricks - Bad condition\n"
                       }
                     />
                   </FormControl>
