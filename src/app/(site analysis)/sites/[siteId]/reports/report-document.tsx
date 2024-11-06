@@ -147,7 +147,7 @@ function ReportActivities({ report }: { report?: SiteReportAll }) {
                 <DialogTitle className="text-lg font-semibold">
                   Materials Used
                 </DialogTitle>
-                <ol className="overflow-y-auto border rounded">
+                <ol className="overflow-y-auto border rounded grow">
                   {report?.materialsUsed?.split("\n").map((eq, i) => {
                     return (
                       <li key={i} className="hover:bg-accent px-3 py-2">
@@ -172,7 +172,7 @@ function ReportActivities({ report }: { report?: SiteReportAll }) {
                 <DialogTitle className="text-lg font-semibold">
                   Equipment Used
                 </DialogTitle>
-                <ol className="overflow-y-auto border rounded">
+                <ol className="overflow-y-auto border rounded grow">
                   {report?.equipmentUsed?.split("\n").map((eq, i) => {
                     return (
                       <li key={i} className="hover:bg-accent px-3 py-2">
@@ -243,15 +243,14 @@ function ReportInventory({ report }: { report?: SiteReportAll }) {
             className={cn(
               "min-h-96 max-h-[90svh] h-[50rem]",
               "min-w-80 max-w-[90svw] w-[60rem]",
-              "overflow-hidden",
               "grid grid-cols-2",
             )}
           >
-            <div className="flex flex-col gap-4 h-full">
+            <div className="flex flex-col gap-4">
               <DialogTitle className="text-lg font-semibold">
                 Materials Storage
               </DialogTitle>
-              <ol className="overflow-y-auto border rounded grow">
+              <ol className="overflow-y-auto border rounded h-0 grow">
                 {report?.materialsInventory?.split("\n").map((eq, i) => {
                   return (
                     <li key={i} className="hover:bg-accent px-3 py-2">
@@ -261,11 +260,11 @@ function ReportInventory({ report }: { report?: SiteReportAll }) {
                 })}
               </ol>
             </div>
-            <div className="flex flex-col gap-4 h-full">
+            <div className="flex flex-col gap-4">
               <DialogTitle className="text-lg font-semibold">
                 Equipment Storage
               </DialogTitle>
-              <ol className="overflow-y-auto border rounded grow">
+              <ol className="overflow-y-auto border rounded h-0 grow">
                 {report?.equipmentInventory?.split("\n").map((eq, i) => {
                   return (
                     <li key={i} className="hover:bg-accent px-3 py-2">
