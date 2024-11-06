@@ -547,7 +547,9 @@ function EditInventory({
                       {...field}
                       value={field.value ?? undefined}
                       className="h-full text-base leading-8 resize-none"
-                      placeholder="e.g.\nSand - 10kg bags x 10\nGravel - 10kg bags x 8\nCrushed Stone ..."
+                      placeholder={
+                        "e.g.\nSand - 10kg bags x 10\nGravel - 10kg bags x 8\nCrushed Stone ..."
+                      }
                     />
                   </FormControl>
                 </FormItem>
@@ -587,7 +589,9 @@ function EditInventory({
                         {...field}
                         value={field.value ?? undefined}
                         className="h-full text-base leading-8 resize-none"
-                        placeholder="e.g.\nExcavators\nBulldozers\nBackhoe Loaders"
+                        placeholder={
+                          "e.g.\nExcavators\nBulldozers\nBackhoe Loaders"
+                        }
                       />
                     </FormControl>
                   </FormItem>
