@@ -16,15 +16,26 @@ import {
 } from "@/lib/types/site";
 import * as Schemas from "@/db/schema";
 
-export async function getAllSites(): Promise<SiteAndExtra[]> {
-  return (await db
-    .select({
+export async function getAllSites(userId?: number): Promise<SiteAndExtra[]> {
+  return await db
+    .selectDistinctOn([Schemas.sites1.id], {
       ...getTableColumns(Schemas.sites1),
-      myRole: sql`null`,
-      // lastReportDate: 0,
+      myRole: Schemas.siteMembers1.role,
+      lastReportDate: Schemas.siteReports1.createdAt,
     })
     .from(Schemas.sites1)
-    .orderBy(desc(Schemas.sites1.id))) as SiteAndExtra[];
+    .leftJoin(
+      Schemas.siteReports1,
+      eq(Schemas.siteReports1.siteId, Schemas.sites1.id),
+    )
+    .leftJoin(
+      Schemas.siteMembers1,
+      and(
+        eq(Schemas.siteMembers1.siteId, Schemas.sites1.id),
+        userId ? eq(Schemas.siteMembers1.memberId, userId) : undefined,
+      ),
+    )
+    .orderBy(desc(Schemas.sites1.id));
 }
 
 // get all the sites that userId is the owner of
@@ -107,10 +118,7 @@ export async function getSiteDetails({
     .then((r) => r[0]);
 }
 
-export async function updateSite(
-  siteId: number,
-  values: SiteNew,
-) {
+export async function updateSite(siteId: number, values: SiteNew) {
   return await db
     .update(Schemas.sites1)
     .set(values)

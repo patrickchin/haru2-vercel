@@ -38,7 +38,9 @@ export async function getMySites() {
 export async function getAllVisibleSites() {
   const session = await auth();
   if (!session?.user) return;
-  if (session?.user.role === "admin") return db.getAllSites();
+  if (session?.user.role === "admin") {
+    return db.getAllSites(session.user.idn);
+  }
   return db.getAllVisibleSites(session.user.idn);
 }
 

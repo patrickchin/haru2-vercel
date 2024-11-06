@@ -27,11 +27,15 @@ async function SiteItem({ site }: { site?: SiteAndExtra }) {
             <h2 className="whitespace-nowrap overflow-ellipsis font-semibold text-lg">
               Site {site.id}: {site.title}
             </h2>
-            <p>
-              You are a{" "}
-              <span className="capitalize font-semibold">{site.myRole}</span> of
-              this site.
-            </p>
+            {site.myRole ? (
+              <p>
+                You are a{" "}
+                <span className="capitalize font-semibold">{site.myRole}</span>{" "}
+                of this site.
+              </p>
+            ) : (
+              <p>You are not a member of this site.</p>
+            )}
           </div>
           {site.lastReportDate ? (
             <p>
