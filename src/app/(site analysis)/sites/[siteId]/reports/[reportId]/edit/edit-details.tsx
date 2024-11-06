@@ -12,7 +12,7 @@ import * as Actions from "@/lib/actions";
 import * as Schemas from "@/db/schema";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormField, FormItem } from "@/components/ui/form";
 import { FormControl, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -506,16 +506,11 @@ function EditInventory({
 
   return (
     <Dialog>
-      <div className="flex gap-4 p-0 items-center">
-        <h2 className="text-base font-semibold grow text-left">
-          Inventory and Storage
-        </h2>
-        <DialogTrigger asChild>
-          <Button size="sm" variant="outline">
-            Open
-          </Button>
-        </DialogTrigger>
-      </div>
+      <DialogTrigger asChild>
+        <Button size="sm" variant="outline">
+          Open
+        </Button>
+      </DialogTrigger>
 
       <DialogContent
         className={cn(
@@ -552,7 +547,7 @@ function EditInventory({
                       {...field}
                       value={field.value ?? undefined}
                       className="h-full text-base leading-8 resize-none"
-                      placeholder={placeholder}
+                      placeholder="e.g.\nSand - 10kg bags x 10\nGravel - 10kg bags x 8\nCrushed Stone ..."
                     />
                   </FormControl>
                 </FormItem>
@@ -592,7 +587,7 @@ function EditInventory({
                         {...field}
                         value={field.value ?? undefined}
                         className="h-full text-base leading-8 resize-none"
-                        placeholder={placeholder}
+                        placeholder="e.g.\nExcavators\nBulldozers\nBackhoe Loaders"
                       />
                     </FormControl>
                   </FormItem>
@@ -635,23 +630,28 @@ export function EditReportDocument({
     <>
       <Card className="bg-cyan-50 border-2">
         <CardHeader className="flex flex-row justify-between">
-          <h2 className="text-lg font-bold">Current Construction Activites</h2>
+          <CardTitle className="text-lg font-bold">
+            Current Construction Activites
+          </CardTitle>
         </CardHeader>
 
-        <CardContent className="grid grid-cols-2 gap-4 items-start">
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
           {/* <EditReportEstimates report={report} mutate={mutate} /> */}
           {/* <EditReportDetails report={report} mutate={mutate} /> */}
           <div className="flex flex-col gap-4">
             <EditSiteActivities report={report} mutate={mutate} />
-            <EditEquipment report={report} mutate={mutate} />
             <EditMaterials report={report} mutate={mutate} />
+            <EditEquipment report={report} mutate={mutate} />
           </div>
           <EditSitePersonel report={report} mutate={mutate} />
         </CardContent>
       </Card>
 
       <Card className="bg-muted border-2">
-        <CardContent className="flex p-6">
+        <CardContent className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-6">
+          <CardTitle className="text-base font-semibold grow text-left">
+            Inventory and Storage
+          </CardTitle>
           <EditInventory report={report} mutate={mutate} />
         </CardContent>
       </Card>
