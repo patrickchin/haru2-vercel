@@ -44,6 +44,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
+import { WarningBox } from "@/components/info-box";
 
 function ChangePassword() {
   const form = useForm<ChangePasswordType>({
@@ -58,6 +59,10 @@ function ChangePassword() {
         })}
         className="w-full max-w-md space-y-4"
       >
+        <WarningBox>
+          Changing passwords has not been implemented yet.
+        </WarningBox>
+
         <FormField
           control={form.control}
           name="password"
@@ -65,7 +70,7 @@ function ChangePassword() {
             <FormItem>
               <FormLabel>Current Password</FormLabel>
               <FormControl>
-                <Input {...field} type="password" />
+                <Input {...field} type="password" disabled />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -79,7 +84,7 @@ function ChangePassword() {
             <FormItem>
               <FormLabel>New Password</FormLabel>
               <FormControl>
-                <Input {...field} type="password" />
+                <Input {...field} type="password" disabled />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -93,7 +98,7 @@ function ChangePassword() {
             <FormItem>
               <FormLabel>Confirm New Password</FormLabel>
               <FormControl>
-                <Input {...field} type="password" />
+                <Input {...field} type="password" disabled />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -104,6 +109,7 @@ function ChangePassword() {
           <Button
             type="submit"
             className="flex gap-2"
+            disabled
             // disabled={form.formState.isSubmitting}
           >
             Confirm
