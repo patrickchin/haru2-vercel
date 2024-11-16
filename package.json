@@ -72,7 +72,7 @@
     "react": "19.0.0-rc-65a56d0e-20241020",
     "react-day-picker": "^8.10.1",
     "react-dom": "19.0.0-rc-65a56d0e-20241020",
-    "react-hook-form": "^7.53.1",
+    "react-hook-form": "^7.53.2",
     "react-phone-number-input": "^3.4.9",
     "react-photo-sphere-viewer": "^6.0.0",
     "react-resizable-panels": "^2.1.4",
