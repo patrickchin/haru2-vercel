@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { GeistSans } from "geist/font/sans";
 import { auth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
+import { AddFeedback } from "@/components/feedback";
 
 let title = "HarpaPro";
 let description = "Plan and organise and your construction projects";
@@ -34,6 +35,7 @@ export default async function RootLayout({
         <SpeedInsights />
         <Analytics />
         <SessionProvider session={session}>{children}</SessionProvider>
+        <AddFeedback />
         <Toaster />
       </body>
     </html>
