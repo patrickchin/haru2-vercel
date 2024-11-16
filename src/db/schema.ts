@@ -286,3 +286,13 @@ export const siteReportSections1 = pgTable("siteReportSections1", {
   content: varchar("content"),
   fileGroupId: integer("fileGroupId").references(() => fileGroups1.id),
 });
+
+export const feedback1 = pgTable("feedback1", {
+  id: serial("id").primaryKey(),
+  email: varchar("email"),
+  message: varchar("message"),
+
+  createdAt: timestamp("createdAt", { mode: "date", withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
