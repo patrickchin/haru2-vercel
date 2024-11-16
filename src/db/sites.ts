@@ -348,23 +348,3 @@ export async function getSiteRole({
     .limit(1)
     .then((r) => (r && r.length ? r[0].role : null));
 }
-
-export async function updateKeySiteUsers(
-  siteId: number,
-  values: {
-    managerName?: string;
-    managerPhone?: string;
-    managerEmail?: string;
-    contractorName?: string;
-    contractorPhone?: string;
-    contractorEmail?: string;
-    supervisorName?: string;
-    supervisorPhone?: string;
-    supervisorEmail?: string;
-  },
-) {
-  return db
-    .update(Schemas.siteDetails1)
-    .set(values)
-    .where(eq(Schemas.siteDetails1.id, siteId));
-}

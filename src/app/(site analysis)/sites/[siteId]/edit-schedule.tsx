@@ -96,7 +96,7 @@ function EditSiteScheduleForm({ site }: { site: SiteDetails }) {
               <FormLabel>Schedule</FormLabel>
               <Input
                 {...field}
-                value={field.value || undefined}
+                value={field.value || ""}
                 placeholder="Tuesdays and Thursdays every week"
               />
               <FormMessage />

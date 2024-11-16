@@ -1,15 +1,15 @@
 "use client";
 
-import { useCallback } from "react";
-import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UpdateSiteMembersType, updateSiteMembersSchema } from "@/lib/forms";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { SiteDetails, SiteDetailsNew, SiteMember } from "@/lib/types";
 import * as Actions from "@/lib/actions";
+import * as Schemas from "@/db/schema";
 
+import { LucideEdit } from "lucide-react";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -25,9 +25,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { LucideEdit, LucideLoader2 } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { SiteDetails, SiteMember } from "@/lib/types";
+import { SaveRevertForm } from "@/components/save-revert-form";
+import { createInsertSchema } from "drizzle-zod";
+import { z, ZodType } from "zod";
+import { useCallback } from "react";
+import { InfoBox } from "@/components/info-box";
 
 function SiteMemberFields({
   site,
@@ -52,7 +54,7 @@ function SiteMemberFields({
             <FormItem>
               <FormLabel className="capitalize">Name</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} value={field.value || ""} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -68,6 +70,7 @@ function SiteMemberFields({
               <FormControl>
                 <Input
                   {...field}
+                  value={field.value || ""}
                   placeholder="Include International Code (+234 803 555 5555)"
                 />
               </FormControl>
@@ -83,7 +86,7 @@ function SiteMemberFields({
             <FormItem>
               <FormLabel className="capitalize">Email</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} value={field.value || ""} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -101,40 +104,30 @@ function EditSiteMembersForm({
   site: SiteDetails;
   members: SiteMember[] | undefined;
 }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
-      return params.toString();
-    },
-    [searchParams],
-  );
+  const schema = createInsertSchema(Schemas.siteDetails1).pick({
+    managerName: true,
+    managerPhone: true,
+    managerEmail: true,
+    contractorName: true,
+    contractorPhone: true,
+    contractorEmail: true,
+    supervisorName: true,
+    supervisorPhone: true,
+    supervisorEmail: true,
+  }) satisfies ZodType<SiteDetailsNew>;
+  type SchemaType = z.infer<typeof schema>;
 
-  const form = useForm<UpdateSiteMembersType>({
-    resolver: zodResolver(updateSiteMembersSchema),
-    defaultValues: {
-      // so ugly
-      managerName: site.managerName ?? undefined,
-      managerPhone: site.managerPhone ?? undefined,
-      managerEmail: site.managerEmail ?? undefined,
-      contractorName: site.contractorName ?? undefined,
-      contractorPhone: site.contractorPhone ?? undefined,
-      contractorEmail: site.contractorEmail ?? undefined,
-      supervisorName: site.supervisorName ?? undefined,
-      supervisorPhone: site.supervisorPhone ?? undefined,
-      supervisorEmail: site.supervisorEmail ?? undefined,
-    },
+  const form = useForm<SchemaType>({
+    resolver: zodResolver(schema),
+    defaultValues: { ...site },
   });
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(async (d) => {
-          Actions.updateKeySiteUsers(site.id, d);
-          router.replace(`${pathname}?${createQueryString("m", "0")}`);
+          const newDetails = await Actions.updateSiteDetails(site.id, d);
+          form.reset(newDetails);
         })}
         className="flex flex-col gap-4"
       >
@@ -158,28 +151,7 @@ function EditSiteMembersForm({
         />
 
         <div className="flex gap-3 justify-end pt-4">
-          <Button
-            asChild
-            variant="secondary"
-            type="button"
-            className="flex gap-2"
-            // disabled={form.formState.isSubmitting}
-          >
-            <DialogClose>Cancel</DialogClose>
-          </Button>
-          <Button
-            type="submit"
-            className="flex gap-2"
-            // disabled={form.formState.isSubmitting}
-          >
-            Save
-            <LucideLoader2
-              className={cn(
-                "animate-spin w-4 h-4",
-                form.formState.isSubmitting ? "" : "hidden",
-              )}
-            />
-          </Button>
+          <SaveRevertForm form={form} />
         </div>
       </form>
     </Form>
@@ -189,27 +161,32 @@ function EditSiteMembersForm({
 export function EditKeySiteMembers({
   site,
   members,
+  dialogName,
 }: {
   site: SiteDetails;
   members: SiteMember[] | undefined;
+  dialogName: string;
 }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const createQueryString = useCallback(
-    (name: string, value: string) => {
+    (name: string, value: string | null) => {
       const params = new URLSearchParams(searchParams.toString());
-      console.log("setting ", name, value);
-      params.set(name, value);
+      value ? params.set(name, value) : params.delete(name);
       return params.toString();
     },
     [searchParams],
   );
+
   return (
     <Dialog
-      open={searchParams.get("m") === "1"}
+      defaultOpen={searchParams.get("dialog") === dialogName}
       onOpenChange={(o) =>
-        router.replace(pathname + "?" + createQueryString("m", o ? "1" : "0"))
+        router.replace(
+          `${pathname}?${createQueryString("dialog", o ? dialogName : null)}`,
+          { scroll: false },
+        )
       }
     >
       <DialogTrigger asChild>
@@ -217,10 +194,19 @@ export function EditKeySiteMembers({
           Edit Members <LucideEdit className="ml-2 w-3.5" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-svh overflow-y-auto gap-10">
-        <DialogHeader>
+      <DialogContent className="max-w-4xl max-h-svh overflow-y-auto gap-6">
+        <DialogHeader className="py-2">
           <DialogTitle>Edit Key Site Member Information</DialogTitle>
         </DialogHeader>
+        <InfoBox>
+          Here you can optionally fill out the information of existing members
+          of your project and can be updated at any time.
+          <br />
+          <br />
+          {
+            'If you would like these members or anyone else to also be able to view the supervisors reports, please add their account in the "Project Members" section.'
+          }
+        </InfoBox>
         <EditSiteMembersForm site={site} members={members} />
       </DialogContent>
     </Dialog>

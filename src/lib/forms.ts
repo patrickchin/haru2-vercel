@@ -117,16 +117,3 @@ export const zSiteNewBoth = z.object({
   description: z.string().min(1),
 })
 export type zSiteNewBothType = z.infer<typeof zSiteNewBoth>;
-
-export const updateSiteMembersSchema = z.object({
-  managerName: z.string().optional(),
-  managerPhone: phoneNumberZod.optional(),
-  managerEmail: z.string().email().optional(),
-  contractorName: z.string().optional(),
-  contractorPhone: phoneNumberZod.optional(),
-  contractorEmail: z.string().email().optional(),
-  supervisorName: z.string().optional(),
-  supervisorPhone: phoneNumberZod.optional(),
-  supervisorEmail: z.string().email().optional(),
-});
-export type UpdateSiteMembersType = z.infer<typeof updateSiteMembersSchema>;

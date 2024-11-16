@@ -26,7 +26,8 @@ export async function addSite(data: zSiteNewBothType) {
   const parsed = zSiteNewBoth.safeParse(data);
   if (!parsed.success) return;
   const site = await db.addSite(session.user.idn, parsed.data);
-  redirect(`/sites/${site.id}`);
+  redirect(`/sites/${site.id}?dialog=editMembersBar`);
+  
 }
 
 export async function getMySites() {
@@ -194,27 +195,6 @@ export async function removeSiteMember({
   if (editSiteRoles.includes(await getSiteMemberRole({ siteId }))) {
     const n = await db.countSiteMembers(siteId);
     if (n > 1) return db.removeSiteMember({ siteId, userId });
-  }
-}
-
-export async function updateKeySiteUsers(
-  siteId: number,
-  values: {
-    managerName?: string;
-    managerPhone?: string;
-    managerEmail?: string;
-    contractorName?: string;
-    contractorPhone?: string;
-    contractorEmail?: string;
-    supervisorName?: string;
-    supervisorPhone?: string;
-    supervisorEmail?: string;
-  },
-) {
-  if (editSiteRoles.includes(await getSiteMemberRole({ siteId }))) {
-    const ret = await db.updateKeySiteUsers(siteId, values);
-    revalidatePath(`/sites/${siteId}`);
-    return ret;
   }
 }
 

@@ -110,32 +110,39 @@ function SiteMembersBar({
   const owner = members?.find((m) => m.role === "owner");
 
   return (
-    <Card className="flex flex-col sm:flex-row sm:items-center gap-5 p-6 overflow-auto">
-      <ul className="grow flex flex-col sm:flex-row gap-4 sm:gap-8">
+    <Card className="flex flex-col sm:flex-row sm:items-center gap-5 p-6">
+      <ul className="grow flex flex-col sm:flex-row gap-0 sm:gap-8 max-w-full">
         <li className="min-w-32">
           <p className="font-semibold text-sm">Owner:</p>
-          <p className="text-nowrap">{owner?.name.length ? owner.name : "-"}</p>
+          <p className="text-nowrap overflow-ellipsis">
+            {owner?.name.length ? owner.name : "-"}
+          </p>
         </li>
         <li className="min-w-32">
           <p className="font-semibold text-sm">Project Manager: </p>
-          <p className="text-nowrap">
+          <p className="text-nowrap overflow-ellipsis">
             {site.managerName?.length ? site.managerName : "-"}
           </p>
         </li>
         <li className="min-w-32">
           <p className="font-semibold text-sm">Contractor: </p>
-          <p className="text-nowrap">
+          <p className="text-nowrap overflow-ellipsis">
             {site.contractorName?.length ? site.contractorName : "-"}
           </p>
         </li>
         <li className="min-w-32">
           <p className="font-semibold text-sm">Supervisor: </p>
-          <p className="text-nowrap">
+          <p className="text-nowrap overflow-ellipsis">
             {site.supervisorName?.length ? site.supervisorName : "-"}
           </p>
         </li>
       </ul>
-      <EditKeySiteMembers site={site} members={members} />
+
+      <EditKeySiteMembers
+        site={site}
+        members={members}
+        dialogName="editMembersBar"
+      />
     </Card>
   );
 }
@@ -151,17 +158,22 @@ function SiteMembersTable({
 
   return (
     <Card id="members">
-      <CardHeader className="font-semibold">
-        Key Project Member Details
+      <CardHeader className="font-semibold flex flex-row justify-between items-center py-0">
+        <span className="py-6">Key Project Member Details</span>
+        <EditKeySiteMembers
+          site={site}
+          members={members}
+          dialogName="editMembers"
+        />
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead></TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Phone</TableHead>
+              <TableHead className="w-48"></TableHead>
+              <TableHead className="w-48">Name</TableHead>
+              <TableHead className="w-48">Email</TableHead>
+              <TableHead className="w-48">Phone</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
