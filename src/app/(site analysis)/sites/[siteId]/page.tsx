@@ -8,6 +8,7 @@ import * as Actions from "@/lib/actions";
 import {
   LucideAlertTriangle,
   LucideCheck,
+  LucideEdit,
   LucideMoveLeft,
   LucideMoveRight,
 } from "lucide-react";
@@ -31,7 +32,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { GoodBox, InfoBox } from "@/components/info-box";
+import { GoodBox, InfoBox, WarningBox } from "@/components/info-box";
+import { Tooltip, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
+import { TooltipTrigger } from "@radix-ui/react-tooltip";
 
 function SiteDescription({
   site,
@@ -225,9 +228,24 @@ async function SiteComplaints({
         <CardTitle className="font-semibold text-base py-6">
           Current Unresolved Issues as Site
         </CardTitle>
-        {/* {role && editSiteRoles.includes(role) && (
-          <EditSiteSchedule site={site} /> // TODO
-        )} */}
+        {role && editSiteRoles.includes(role) && (
+          <TooltipProvider delayDuration={0}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <Button variant="outline" disabled>
+                    Edit <LucideEdit />
+                  </Button>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent asChild>
+                <WarningBox>
+                  Coming Soon
+                </WarningBox>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
       </CardHeader>
       <CardContent>
         {unresolved && unresolved.length > 0 ? (
