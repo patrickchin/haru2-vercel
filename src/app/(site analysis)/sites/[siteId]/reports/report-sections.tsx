@@ -12,7 +12,7 @@ import {
   CardDescription,
   CardTitle,
 } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import {
   Carousel,
   CarouselContent,
@@ -49,6 +49,7 @@ async function ReportSectionFiles({ section }: { section: SiteReportSection }) {
                 "w-[100dvw] rounded border-none bg-zinc-800",
               )}
             >
+              <DialogTitle className="hidden">Section File Viewer</DialogTitle>
               <Carousel className="w-full h-full" opts={{ startIndex: i }}>
                 <CarouselContent>
                   {files?.map((f) => (
