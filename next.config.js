@@ -13,18 +13,11 @@ const nextConfig = {
   },
   images: {
     remotePatterns: [
-      {
-        hostname: `${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`,
-      },
-      {
-        hostname: process.env.BLOB_STORE_HOSTNAME || "",
-      },
+      { hostname: `haru2.s3.me-central-1.amazonaws.com` },
+      { hostname: `haru2-cape.s3.af-south-1.amazonaws.com` },
+      { hostname: `${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com` },
+      { hostname: process.env.BLOB_STORE_HOSTNAME || "" },
     ],
-    // deprecated, but I'm missing something from remotePatterns ...
-    // so it doesn't work in dev
-    // domains: [
-    //   `${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`,
-    // ],
   },
 };
 
