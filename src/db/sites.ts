@@ -243,12 +243,19 @@ export async function addSite(
       .returning()
       .then((r) => r[0]);
 
+    const commentsSection = await tx
+      .insert(Schemas.commentsSections1)
+      .values({})
+      .returning()
+      .then((r) => r[0]);
+
     const details = await tx
       .insert(Schemas.siteDetails1)
       .values({
         id: site.id,
         address: args.address,
         description: args.description,
+        commentsSectionId: commentsSection.id,
       })
       .returning()
       .then((r) => r[0]);
@@ -260,6 +267,33 @@ export async function addSite(
       .then((r) => r[0]);
 
     return site;
+  });
+}
+
+export async function ensureSiteCommentsSection(siteId: number) {
+  return db.transaction(async (tx) => {
+    const { commentsSectionId } = await tx
+      .select({ commentsSectionId: Schemas.siteDetails1.commentsSectionId })
+      .from(Schemas.siteDetails1)
+      .where(eq(Schemas.siteDetails1.id, siteId))
+      .then((r) => r[0]);
+
+    if (commentsSectionId) return commentsSectionId;
+
+    const commentsSection = await tx
+      .insert(Schemas.commentsSections1)
+      .values({})
+      .returning()
+      .then((r) => r[0]);
+
+    const { commentsSectionId: commentsSectionId2 } = await tx
+      .update(Schemas.siteDetails1)
+      .set({ commentsSectionId: commentsSection.id })
+      .where(eq(Schemas.siteDetails1.id, siteId))
+      .returning()
+      .then((r) => r[0]);
+
+    return commentsSectionId2;
   });
 }
 

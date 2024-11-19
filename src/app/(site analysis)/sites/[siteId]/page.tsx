@@ -33,8 +33,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { GoodBox, InfoBox, WarningBox } from "@/components/info-box";
-import { Tooltip, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 import { TooltipTrigger } from "@radix-ui/react-tooltip";
+import CommentsSection from "@/components/comments-section";
 
 function SiteDescription({
   site,
@@ -239,9 +244,7 @@ async function SiteComplaints({
                 </div>
               </TooltipTrigger>
               <TooltipContent asChild>
-                <WarningBox>
-                  Coming Soon
-                </WarningBox>
+                <WarningBox>Coming Soon</WarningBox>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -361,10 +364,11 @@ export default async function Page(props: {
 }) {
   const searchParams = await props.searchParams;
   const siteId = Number((await props.params).siteId);
-  const [site, members, role] = await Promise.all([
+  const [site, members, role, commentsSectionId] = await Promise.all([
     Actions.getSiteDetails(siteId),
     Actions.getSiteMembers(siteId),
     Actions.getSiteMemberRole({ siteId }),
+    Actions.getSiteCommentsSection(siteId),
   ]);
 
   // TODO custom site not found page
@@ -416,6 +420,10 @@ export default async function Page(props: {
       <SiteMembers site={site} members={members} />
 
       <SiteDescription site={site} members={members} role={role} />
+
+      {commentsSectionId && (
+        <CommentsSection commentsSectionId={commentsSectionId} />
+      )}
     </DefaultLayout>
   );
 }

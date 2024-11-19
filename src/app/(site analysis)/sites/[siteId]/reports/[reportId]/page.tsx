@@ -7,6 +7,7 @@ import { ReportTitleBar } from "../report-title";
 
 import { FileDisplay } from "@/components/file-display";
 import { WarningBox } from "@/components/info-box";
+import CommentsSection from "@/components/comments-section";
 
 export default async function Page({
   params,
@@ -21,7 +22,10 @@ export default async function Page({
   const fileId = Number((await searchParams)?.fileId);
 
   const props = { siteId, reportId, fileId };
-  const report = await Actions.getSiteReport(reportId);
+  const [report, commentsSectionId] = await Promise.all([
+    Actions.getSiteReport(reportId),
+    Actions.getSiteReportCommentsSectionId(reportId),
+  ]);
 
   return (
     <DefaultLayout className="max-w-none relative p-0 pb-12">
@@ -50,6 +54,14 @@ export default async function Page({
       <section className="w-full max-w-5xl mx-auto">
         <Suspense fallback={<ReportDocument />}>
           <ReportDocument {...props} />
+        </Suspense>
+      </section>
+
+      <section className="w-full max-w-5xl mx-auto">
+        <Suspense fallback={<ReportDocument />}>
+          {commentsSectionId && (
+            <CommentsSection commentsSectionId={commentsSectionId} />
+          )}
         </Suspense>
       </section>
     </DefaultLayout>
