@@ -129,6 +129,10 @@ export const siteDetails1 = pgTable("siteDetails1", {
   description: varchar("description"),
   extraInfo: jsonb("extraInfo"),
 
+  commentsSectionId: integer("commentsSectionId").references(
+    () => commentsSections1.id,
+  ),
+
   startDate: timestamp("startDate", { mode: "date", withTimezone: true }),
   endDate: timestamp("endDate", { mode: "date", withTimezone: true }),
   nextReportDate: timestamp("nextReportDate", {
@@ -223,6 +227,9 @@ export const siteReports1 = pgTable("siteReports1", {
     withTimezone: true,
   }).defaultNow(),
   fileGroupId: integer("fileGroupId").references(() => fileGroups1.id),
+  commentsSectionId: integer("commentsSectionId").references(
+    () => commentsSections1.id,
+  ),
 });
 
 export const siteReportDetails1 = pgTable("siteReportDetails1", {
@@ -295,4 +302,20 @@ export const feedback1 = pgTable("feedback1", {
   createdAt: timestamp("createdAt", { mode: "date", withTimezone: true })
     .notNull()
     .defaultNow(),
+});
+
+export const commentsSections1 = pgTable("commentsSections1", {
+  id: serial("id").primaryKey(),
+});
+
+export const comments1 = pgTable("comments1", {
+  id: serial("id").primaryKey(),
+  commentsSectionId: integer("commentsSectionId").references(
+    () => commentsSections1.id,
+  ),
+  userId: integer("userId").references(() => users1.id),
+  createdAt: timestamp("createdAt", { mode: "date", withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  comment: varchar("comment"),
 });

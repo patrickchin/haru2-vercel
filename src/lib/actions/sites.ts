@@ -27,7 +27,6 @@ export async function addSite(data: zSiteNewBothType) {
   if (!parsed.success) return;
   const site = await db.addSite(session.user.idn, parsed.data);
   redirect(`/sites/${site.id}?dialog=editMembersBar`);
-  
 }
 
 export async function getMySites() {
@@ -198,17 +197,25 @@ export async function removeSiteMember({
   }
 }
 
+export async function getSiteCommentsSection(siteId: number) {
+  if (viewSiteRoles.includes(await getSiteMemberRole({ siteId }))) {
+    return db.ensureSiteCommentsSection(siteId);
+  }
+}
+
 export async function getSiteMemberRole(
   {
     siteId,
     reportId,
     sectionId,
     meetingId,
+    commentsSectionId,
   }: {
     siteId?: number;
     reportId?: number;
     sectionId?: number;
     meetingId?: number;
+    commentsSectionId?: number;
   },
   session?: Session | null,
 ): Promise<SiteMemberRole> {
@@ -226,6 +233,8 @@ export async function getSiteMemberRole(
     role = await db.getReportSectionRole({ sectionId, userId });
   } else if (meetingId) {
     role = await db.getMeetingRole({ meetingId, userId });
+  } else if (commentsSectionId) {
+    role = await db.getCommentsSectionRole({ commentsSectionId, userId });
   }
   return role;
 }

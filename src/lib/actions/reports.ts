@@ -190,6 +190,12 @@ export async function addSiteReportSectionFile(
   }
 }
 
+export async function getSiteReportCommentsSectionId(reportId: number) {
+  if (viewSiteRoles.includes(await getSiteMemberRole({ reportId }))) {
+    return db.ensureSiteReportCommentsSection(reportId);
+  }
+}
+
 export async function getSiteReportSectionFiles(sectionId: number) {
   const role = await getSiteMemberRole({ sectionId });
   if (editReportRoles.includes(role))

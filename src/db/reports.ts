@@ -146,11 +146,18 @@ export async function addSiteReport(
       .returning()
       .then((r) => r[0]);
 
+    const commentsSection = await tx
+      .insert(Schemas.commentsSections1)
+      .values({})
+      .returning()
+      .then((r) => r[0]);
+
     const report = await tx
       .insert(Schemas.siteReports1)
       .values({
         ...siteReport,
         fileGroupId: fileGroup.id,
+        commentsSectionId: commentsSection.id,
       })
       .returning()
       .then((r) => r[0]);
@@ -162,6 +169,33 @@ export async function addSiteReport(
       .then((r) => r[0]);
 
     return { ...report, ...details };
+  });
+}
+
+export async function ensureSiteReportCommentsSection(reportId: number) {
+  return db.transaction(async (tx) => {
+    const { commentsSectionId } = await tx
+      .select({ commentsSectionId: Schemas.siteReports1.commentsSectionId })
+      .from(Schemas.siteReports1)
+      .where(eq(Schemas.siteReports1.id, reportId))
+      .then((r) => r[0]);
+
+    if (commentsSectionId) return commentsSectionId;
+
+    const commentsSection = await tx
+      .insert(Schemas.commentsSections1)
+      .values({})
+      .returning()
+      .then((r) => r[0]);
+
+    const { commentsSectionId: commentsSectionId2 } = await tx
+      .update(Schemas.siteReports1)
+      .set({ commentsSectionId: commentsSection.id })
+      .where(eq(Schemas.siteReports1.id, reportId))
+      .returning()
+      .then((r) => r[0]);
+
+    return commentsSectionId2;
   });
 }
 
