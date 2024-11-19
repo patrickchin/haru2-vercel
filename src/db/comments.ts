@@ -1,7 +1,7 @@
 import "server-only";
 
 import { db } from "./_db";
-import { and, eq, getTableColumns } from "drizzle-orm";
+import { and, desc, eq, getTableColumns } from "drizzle-orm";
 import { HaruComment, HaruCommentNew } from "@/lib/types";
 import { comments1, siteDetails1, siteMembers1, users1 } from "@/db/schema";
 
@@ -41,7 +41,7 @@ export async function listCommentsFromSection(
     .from(comments1)
     .leftJoin(users1, eq(users1.id, comments1.userId))
     .where(eq(comments1.commentsSectionId, commentsSectionId))
-    .orderBy(comments1.createdAt);
+    .orderBy(desc(comments1.createdAt));
 }
 
 export async function addCommentToSection(
