@@ -3,7 +3,7 @@
 import { ReactNode, useState } from "react";
 import { HaruFile } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import { Button } from "./ui/button";
 import { LucideLoader2, LucideRotate3D } from "lucide-react";
 import { ReactPhotoSphereViewer } from "react-photo-sphere-viewer";
@@ -28,13 +28,19 @@ export function FileDisplay({
   const isVideo = file?.type?.startsWith("video/");
   const isOther = !isImage && !isVideo;
 
+  const fileImage = getImageProps({
+    src: file?.url || "",
+    alt: file?.filename || "<Untitled>",
+    fill: true,
+  });
+
   return (
     <div className={cn("flex items-center justify-center relative", className)}>
-      {file && isImage ? (
+      {file && file.url && isImage && fileImage ? (
         <>
           {view360 ? (
             <ReactPhotoSphereViewer
-              src={file.url || ""}
+              src={fileImage.props.src}
               height={"100vh"}
               width={"100%"}
             ></ReactPhotoSphereViewer>
@@ -47,7 +53,7 @@ export function FileDisplay({
                 )}
               />
               <Image
-                src={file.url || ""}
+                src={file.url}
                 alt={file.filename || "<Untitled>"}
                 fill={true}
                 onLoad={() => {
