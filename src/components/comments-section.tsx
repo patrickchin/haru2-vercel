@@ -7,7 +7,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { HaruComment } from "@/lib/types";
 import * as Actions from "@/lib/actions";
 
-import { LucideLoader2, LucideSendHorizontal } from "lucide-react";
+import {
+  LucideArrowUp,
+  LucideLoader2,
+  LucideSendHorizontal,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -20,7 +24,6 @@ import {
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { HaruUserAvatar, UserAvatar } from "@/components/user-avatar";
 import { Textarea } from "@/components/ui/textarea";
-import { getTimeAgo } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 
 function CommentsSectionAdd({
@@ -115,9 +118,23 @@ export default function CommentsSection({
         />
 
         <ol>
+          <li className="flex flex-row justify-center mb-4">
+            <Button
+              variant="secondary"
+              disabled={isLoading || isValidating}
+              onClick={() => mutateComments()}
+            >
+              Load new comments
+              {isValidating ? (
+                <LucideLoader2 className="animate-spin" />
+              ) : (
+                <LucideArrowUp />
+              )}
+            </Button>
+          </li>
           {comments?.map((c) => (
             <li
-              className="flex items-start gap-4 p-4 hover:bg-accent rounded"
+              className="flex items-start gap-4 p-4 hover:bg-accent rounded border-t"
               key={c.id}
             >
               <HaruUserAvatar user={c.user ?? undefined} />
