@@ -167,7 +167,7 @@ function SiteMembersTable({
   return (
     <Card id="members">
       <CardHeader className="font-semibold flex flex-row justify-between items-center py-0">
-        <span className="py-6">Key Project Member Details</span>
+        <span className="py-6">Project Member Details</span>
         <EditKeySiteMembers
           site={site}
           members={members}
@@ -231,7 +231,7 @@ async function SiteComplaints({
     <Card id="meetings">
       <CardHeader className="flex flex-row justify-between items-center py-0 space-y-0">
         <CardTitle className="font-semibold text-base py-6">
-          Current Unresolved Issues as Site
+          Current Unresolved Issues at the Site
         </CardTitle>
         {role && editSiteRoles.includes(role) && (
           <TooltipProvider delayDuration={0}>
@@ -374,6 +374,9 @@ export default async function Page(props: {
   // TODO custom site not found page
   if (!site) notFound();
 
+  const showProgressAndComplaints = false;
+  const showMemberDetails = false;
+
   return (
     <DefaultLayout>
       <div className="flex flex-col sm:flex-row gap-4 sm:items-center pb-3">
@@ -408,14 +411,16 @@ export default async function Page(props: {
       <SiteInfoBar site={site} members={members} />
       <SiteMembersBar site={site} members={members} />
 
-      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-        <SiteProgress site={site} role={role} />
-        <SiteComplaints site={site} role={role} />
-      </div>
+      {showProgressAndComplaints && (
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+          <SiteProgress site={site} role={role} />
+          <SiteComplaints site={site} role={role} />
+        </div>
+      )}
 
       <SiteMeetings site={site} members={members} />
 
-      <SiteMembersTable site={site} members={members} />
+      {showMemberDetails && <SiteMembersTable site={site} members={members} />}
 
       <SiteMembers site={site} members={members} />
 
