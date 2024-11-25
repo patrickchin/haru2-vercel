@@ -150,7 +150,8 @@ export async function getSiteMembers(
           ? undefined
           : ne(Schemas.siteMembers1.role, "member"),
       ),
-    );
+    )
+    .orderBy(Schemas.siteMembers1.role, Schemas.siteMembers1.memberId);
 }
 
 export async function listSiteMeetings(siteId: number): Promise<SiteMeeting[]> {
