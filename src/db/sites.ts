@@ -151,7 +151,11 @@ export async function getSiteMembers(
           : ne(Schemas.siteMembers1.role, "member"),
       ),
     )
-    .orderBy(Schemas.siteMembers1.role, Schemas.siteMembers1.memberId);
+    .orderBy(
+      Schemas.siteMembers1.role,
+      Schemas.siteMembers1.dateAdded,
+      Schemas.siteMembers1.id,
+    );
 }
 
 export async function listSiteMeetings(siteId: number): Promise<SiteMeeting[]> {

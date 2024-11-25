@@ -170,9 +170,14 @@ export const siteMemberRole = pgEnum("siteMemberRole", [
 export const siteMembers1 = pgTable(
   "siteMembers1",
   {
+    id: serial("id").unique(),
     siteId: integer("siteId").references(() => sites1.id),
     memberId: integer("memberId").references(() => users1.id),
     role: siteMemberRole("role").default("member"),
+
+    dateAdded: timestamp("dateAdded", { mode: "date", withTimezone: true })
+      .notNull()
+      .defaultNow(),
   },
   (t) => {
     return {
