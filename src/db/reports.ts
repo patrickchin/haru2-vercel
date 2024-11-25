@@ -61,8 +61,8 @@ export async function getMeetingRole({
     .select({ role: Schemas.siteMembers1.role })
     .from(Schemas.siteMembers1)
     .leftJoin(
-      Schemas.siteReports1,
-      eq(Schemas.siteReports1.siteId, Schemas.siteMembers1.siteId),
+      Schemas.siteMeetings1,
+      eq(Schemas.siteMeetings1.siteId, Schemas.siteMembers1.siteId),
     )
     .where(
       and(
