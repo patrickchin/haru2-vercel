@@ -203,6 +203,7 @@ export async function deleteSiteMeeting(
   return await db
     .delete(Schemas.siteMeetings1)
     .where(eq(Schemas.siteMeetings1.id, meetingId))
+    .returning()
     .then((r) => r[0]);
 }
 

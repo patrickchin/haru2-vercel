@@ -54,11 +54,6 @@ import { InfoBox } from "@/components/info-box";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { acceptMeetingRoles, editMeetingRoles } from "@/lib/permissions";
 
-const formSchema = z.object({
-  date: z.date(),
-  notes: z.string(),
-});
-
 function SiteCalendarForm({
   siteId,
   mutated,
@@ -66,11 +61,20 @@ function SiteCalendarForm({
   siteId: number;
   mutated: () => void;
 }) {
+  const formSchema = z.object({
+    date: z.date(),
+    notes: z.string(),
+  });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      notes: ""
+    }
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
+    form.reset();
     await Actions.addSiteMeeting(siteId, data);
     mutated();
   }
@@ -111,7 +115,7 @@ function SiteCalendarForm({
                 <PopoverContent className="w-auto p-0" align="center">
                   <Calendar
                     mode="single"
-                    selected={field.value ?? undefined}
+                    selected={field.value}
                     onSelect={field.onChange}
                     disabled={(date) =>
                       date < new Date(dateNow.getTime() - 24 * 60 * 60_000) ||
@@ -134,7 +138,6 @@ function SiteCalendarForm({
               <FormControl>
                 <Input
                   {...field}
-                  value={field.value ?? undefined}
                   placeholder="Specify your prefered times"
                 />
               </FormControl>
