@@ -315,7 +315,7 @@ function PasswordRegister() {
 function RegisterCard() {
   const [tabValue, setTabValue] = useState("phone");
   return (
-    <Card className="w-full max-w-lg p-0 rounded-3xl shadow-xl overflow-hidden">
+    <Card className="w-full max-w-lg p-0 rounded-3xl overflow-hidden">
       <Tabs value={tabValue} onValueChange={setTabValue}>
         <CardHeader className="space-y-3 text-center pt-8">
           <CardTitle className="text-3xl">Create an Account</CardTitle>

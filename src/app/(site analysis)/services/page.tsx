@@ -126,7 +126,7 @@ export default function Page() {
           return (
             <li
               key={i}
-              className="flex flex-col p-4 border rounded space-y-3 bg-background shadow"
+              className="flex flex-col p-4 border rounded space-y-3 bg-background"
             >
               <Label
                 htmlFor={id}

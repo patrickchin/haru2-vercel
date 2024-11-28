@@ -384,7 +384,7 @@ export function UpdateSiteReportSections({
           />
         ))
       ) : (
-        <InfoBox className="text-base p-6 shadow-lg rounded-lg">
+        <InfoBox className="text-base p-6 rounded-lg">
           You can create a more detailed site report by adding new sections and
           attaching photos.
         </InfoBox>

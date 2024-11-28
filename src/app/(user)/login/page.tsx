@@ -393,7 +393,7 @@ function PasswordLogin() {
 function LoginCard() {
   const [tabValue, setTabValue] = useState("password");
   return (
-    <Card className="w-full max-w-lg p-0 rounded-4xl shadow-xl overflow-hidden">
+    <Card className="w-full max-w-lg p-0 rounded-4xl overflow-hidden">
       <Tabs value={tabValue} onValueChange={setTabValue}>
         <CardHeader className="space-y-3 text-center pt-8">
           <CardTitle className="text-3xl">Login</CardTitle>
@@ -435,7 +435,7 @@ function LoginCard() {
 export default function Login() {
   return (
     <GradientLayout>
-      <div className="w-screen max-w-md rounded-2xl shadow-xl overflow-hidden">
+      <div className="w-screen max-w-md rounded-2xl overflow-hidden">
         <LoginCard />
       </div>
     </GradientLayout>
