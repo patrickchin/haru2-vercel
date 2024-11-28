@@ -1,8 +1,6 @@
 import nodemailer from "nodemailer";
 import { Resend } from "resend";
 
-const from = "noreply@harpapro.com";
-
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST, // e.g., "smtp.example.com"
   port: parseInt(process.env.SMTP_PORT || "587", 10), // typically 587 for TLS or 465 for SSL
@@ -13,8 +11,18 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-async function sendEmailNodeMailer(to: string, subject: string, text: string) {
-  const mailOptions = { from, to, subject, text };
+async function sendEmailNodeMailer({
+  from,
+  to,
+  subject,
+  body,
+}: {
+  from: string;
+  to: string;
+  subject: string;
+  body: string;
+}) {
+  const mailOptions = { from, to, subject, body };
   return new Promise<void>((resolve, reject) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
@@ -26,16 +34,36 @@ async function sendEmailNodeMailer(to: string, subject: string, text: string) {
   });
 }
 
-async function sendEmailResend(to: string, subject: string, html: string) {
+async function sendEmailResend({
+  from,
+  to,
+  subject,
+  body,
+}: {
+  from: string;
+  to: string;
+  subject: string;
+  body: string;
+}) {
   const resend = new Resend(process.env.RESEND_API_TOKEN);
-  const { data, error } = await resend.emails.send({ from, to, subject, html });
+  const { data, error } = await resend.emails.send({
+    from,
+    to,
+    subject,
+    html: body,
+  });
   if (error) throw error;
 }
 
-export async function sendEmail(to: string, subject: string, text: string) {
+export async function sendEmail(args: {
+  from: string;
+  to: string;
+  subject: string;
+  body: string;
+}) {
   if (true) {
-    await sendEmailResend(to, subject, text);
+    await sendEmailResend(args);
   } else {
-    await sendEmailNodeMailer(to, subject, text);
+    await sendEmailNodeMailer(args);
   }
 }

@@ -117,7 +117,12 @@ export async function sendOtpViaEmail(email: string) {
     const text = `Your OTP is: ${otp}`;
 
     try {
-      await sendEmail(email, subject, text);
+      await sendEmail({
+        from: "noreply@harpapro.com",
+        to: email,
+        subject,
+        body: text,
+      });
     } catch (error) {
       console.error(`Failed to send email: ${error}`);
       return FailedToSendEmailOTP;
