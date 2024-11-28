@@ -101,7 +101,7 @@ export async function ReportSections({
           })}
         </ol>
       ) : (
-        <Card className="border-2">
+        <Card className="">
           <CardHeader className="flex flex-row justify-between">
             <div className="text-lg font-bold">Report Detail Sections</div>
           </CardHeader>

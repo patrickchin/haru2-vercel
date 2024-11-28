@@ -21,7 +21,7 @@ import {
 
 function ReportSiteDetails({ report }: { report?: SiteReportAll }) {
   return (
-    <Card className="border-2">
+    <Card className="">
       <CardHeader className="flex flex-row justify-between">
         <div className="text-lg font-bold">Site Project Details</div>
       </CardHeader>
@@ -68,7 +68,7 @@ function ReportSiteDetails({ report }: { report?: SiteReportAll }) {
 
 function ReportBudget({ report }: { report?: SiteReportAll }) {
   return (
-    <Card className="bg-yellow-50 border-2 hidden">
+    <Card className="bg-yellow-50 hidden">
       <CardHeader className="flex flex-row justify-between">
         <div className="text-lg font-bold">
           Current Budget and Timeline Estimates
@@ -109,7 +109,7 @@ function ReportBudget({ report }: { report?: SiteReportAll }) {
 
 function ReportActivities({ report }: { report?: SiteReportAll }) {
   return (
-    <Card className="bg-cyan-50 border-2">
+    <Card className="bg-cyan-50">
       <CardHeader className="flex flex-row justify-between">
         <div className="text-lg font-bold">Current Construction Activites</div>
       </CardHeader>
@@ -228,7 +228,7 @@ function ReportActivities({ report }: { report?: SiteReportAll }) {
 
 function ReportInventory({ report }: { report?: SiteReportAll }) {
   return (
-    <Card className="bg-muted border-2">
+    <Card className="bg-muted">
       <CardContent className="flex flex-col sm:flex-row justify-between items-center p-6">
         <CardTitle className="text-lg font-semibold">
           Inventory and Storage
