@@ -33,7 +33,7 @@ export default function Page() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="grow flex flex-col justify-center items-center relative">
+      <main className="grow flex flex-col justify-center items-center relative overflow-auto">
         <div className="grid grid-cols-1 absolute h-full w-full -z-10">
           {/* <div className="h-full bg-gradient-to-br from-cyan-100 to-indigo-200 hover:bg-none"></div> */}
           <Image
@@ -47,19 +47,19 @@ export default function Page() {
           />
         </div>
 
-        <div className="flex flex-col gap-10 max-w-[90rem] w-full lg:w-4/5 justify-end transition-all">
-          <div className="justify-end flex">
+        <div className="flex flex-col gap-8 max-w-[72rem] w-full justify-end transition-all">
+          <div className="justify-end flex -mt-32">
             <div
               className={cn(
                 "flex flex-col gap-5 justify-end lg:text-right p-8 rounded",
                 "bg-background/50 backdrop-blur-md",
               )}
             >
-              <h1 className="text-4xl lg:text-6xl font-extrabold">
+              <h1 className="text-4xl lg:text-4xl font-extrabold">
                 Supervise Your Construction Projects
               </h1>
-              <h2 className="text-2xl lg:text-3xl font-bold">
-                Tools for Remote Monitoring and Management
+              <h2 className="text-xl font-extrabold">
+                Remote Monitoring of your Construction Projects in Sierra Leone
               </h2>
             </div>
           </div>
@@ -71,8 +71,8 @@ export default function Page() {
                 "bg-background/50 backdrop-blur-md",
               )}
             >
-              <p className="font-bold">
-                <span className="whitespace-nowrap pr-2 text-xl">
+              <p className="font-extrabold">
+                <span className="pr-2 text-xl">
                   Setup your own team or hire our experts
                 </span>
                 <Button
@@ -88,27 +88,6 @@ export default function Page() {
             </div>
           </div>
 
-          <div className="flex justify-end hidden">
-            <p
-              className={cn(
-                "text-right font-bold p-8 rounded",
-                "bg-background/50 backdrop-blur-md",
-              )}
-            >
-              <span className="whitespace-nowrap pr-2 text-base">
-                Setup your own team or hire our experts
-              </span>
-              <Button
-                asChild
-                className="w-fit font-bold text-base [&_svg]:size-8"
-              >
-                <Link href="/sites">
-                  Get Started
-                  <LucideMoveRight className="ml-1" />
-                </Link>
-              </Button>
-            </p>
-          </div>
         </div>
       </main>
       {/* <Footer /> */}
