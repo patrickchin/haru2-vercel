@@ -59,7 +59,7 @@ export default function Page() {
                 Supervise Your Construction Projects
               </h1>
               <h2 className="text-xl font-extrabold">
-                Remote Monitoring of your Construction Projects in Sierra Leone
+                Remote Site Monitoring and Management Services
               </h2>
             </div>
           </div>
