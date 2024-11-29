@@ -105,6 +105,9 @@ function EditSiteMembersForm({
   members: SiteMember[] | undefined;
 }) {
   const schema = createInsertSchema(Schemas.siteDetails1).pick({
+    ownerName: true,
+    ownerPhone: true,
+    ownerEmail: true,
     managerName: true,
     managerPhone: true,
     managerEmail: true,
@@ -131,6 +134,12 @@ function EditSiteMembersForm({
         })}
         className="flex flex-col gap-4"
       >
+        <SiteMemberFields
+          site={site}
+          members={members}
+          form={form}
+          prefix="owner"
+        />
         <SiteMemberFields
           site={site}
           members={members}
