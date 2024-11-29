@@ -68,24 +68,18 @@ function SiteDescription({
   );
 }
 
-function SiteInfoBar({
-  site,
-  members,
-}: {
-  site: SiteDetails;
-  members: SiteMember[] | undefined;
-}) {
-  const displayNames = useMemo(() => {
-    return new Intl.DisplayNames(["en"], { type: "region" });
-  }, []);
-  const country = site.countryCode
-    ? displayNames.of(site.countryCode)
-    : undefined;
+function SiteInfoBar({ site }: { site: SiteDetails }) {
+  const country = useMemo(() => {
+    const displayNames = new Intl.DisplayNames(["en"], { type: "region" });
+    return site.countryCode
+      ? displayNames.of(site.countryCode)
+      : undefined;
+  }, [site.countryCode]);
 
   return (
     <Card className="flex flex-col gap-4 px-6">
       <ul className="flex flex-col sm:flex-row sm:inline-flex">
-        <li className="hover:bg-accent py-4 px-4 space-x-1">
+        <li className="hover:bg-accent p-4 pl-0 space-x-1">
           <span className="font-semibold">Project Id: </span>
           <span className="">{site.id}</span>
         </li>
@@ -108,47 +102,66 @@ function SiteInfoBar({
   );
 }
 
-function SiteMembersBar({
-  site,
-  members,
-}: {
-  site: SiteDetails;
-  members: SiteMember[] | undefined;
-}) {
+function SiteInfoBar2({ site }: { site: SiteDetails }) {
+
+  const country = useMemo(() => {
+    const displayNames = new Intl.DisplayNames(["en"], { type: "region" });
+    return site.countryCode
+      ? displayNames.of(site.countryCode)
+      : undefined;
+  }, [site.countryCode]);
+
+  const memberNames = [
+    { label: "Project Id", value: site.id.toString() },
+    { label: "Country", value: country },
+    { label: "Site Type", value: site.type },
+    { label: "Created", value: site.createdAt?.toDateString() },
+  ];
   return (
     <Card className="flex flex-col sm:flex-row sm:items-center gap-5 p-6">
       <ul className="grow flex flex-col sm:flex-row gap-3 sm:gap-8">
-        <li className="">
-          <p className="font-semibold text-sm">Site Owner:</p>
-          <p className="text-nowrap overflow-ellipsis">
-            {site.ownerName?.length ? site.ownerName : "-"}
-          </p>
-        </li>
-        <li className="">
-          <p className="font-semibold text-sm">Project Manager: </p>
-          <p className="text-nowrap overflow-ellipsis">
-            {site.managerName?.length ? site.managerName : "-"}
-          </p>
-        </li>
-        <li className="">
-          <p className="font-semibold text-sm">Contractor: </p>
-          <p className="text-nowrap overflow-ellipsis">
-            {site.contractorName?.length ? site.contractorName : "-"}
-          </p>
-        </li>
-        <li className="">
-          <p className="font-semibold text-sm">Supervisor: </p>
-          <p className="text-nowrap overflow-ellipsis">
-            {site.supervisorName?.length ? site.supervisorName : "-"}
-          </p>
-        </li>
+        {memberNames.map((it, i) => (
+          <li key={i} className="inline-flex gap-1 items-baseline">
+            <p className="font-semibold">{it.label}:</p>
+            <p className="text-nowrap overflow-ellipsis">
+              {it.value?.length ? (
+                it.value
+              ) : (
+                <span className="text-muted-foreground">--</span>
+              )}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </Card>
+  );
+}
+
+function SiteMembersBar({ site }: { site: SiteDetails }) {
+  const memberNames = [
+    { label: "Site Owner", value: site.ownerName },
+    { label: "Project Manager", value: site.managerName },
+    { label: "Contractor", value: site.contractorName },
+    { label: "Supervisor", value: site.supervisorName },
+  ];
+  return (
+    <Card className="flex flex-col sm:flex-row sm:items-center gap-5 p-6">
+      <ul className="grow flex flex-col sm:flex-row gap-3 sm:gap-8">
+        {memberNames.map((it, i) => (
+          <li key={i} className="">
+            <p className="font-semibold text-sm">{it.label}:</p>
+            <p className="text-nowrap overflow-ellipsis">
+              {it.value?.length ? (
+                it.value
+              ) : (
+                <span className="text-muted-foreground">--</span>
+              )}
+            </p>
+          </li>
+        ))}
       </ul>
 
-      <EditKeySiteMembers
-        site={site}
-        members={members}
-        dialogName="editMembersBar"
-      />
+      <EditKeySiteMembers site={site} dialogName="editMembersBar" />
     </Card>
   );
 }
@@ -406,8 +419,8 @@ export default async function Page(props: {
         </Button>
       </div>
 
-      <SiteInfoBar site={site} members={members} />
-      <SiteMembersBar site={site} members={members} />
+      <SiteInfoBar site={site} />
+      <SiteMembersBar site={site} />
 
       {showProgressAndComplaints && (
         <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">

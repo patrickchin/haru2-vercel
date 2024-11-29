@@ -31,14 +31,7 @@ import { z, ZodType } from "zod";
 import { useCallback } from "react";
 import { InfoBox } from "@/components/info-box";
 
-function SiteMemberFields({
-  site,
-  form,
-  prefix,
-}: {
-  site: SiteDetails;
-  members: SiteMember[] | undefined;
-} & { form: any; prefix: string }) {
+function SiteMemberFields({ form, prefix }: { form: any; prefix: string }) {
   return (
     <div className="flex flex-col">
       <h3 className="capitalize text-base font-semibold">
@@ -97,13 +90,7 @@ function SiteMemberFields({
   );
 }
 
-function EditSiteMembersForm({
-  site,
-  members,
-}: {
-  site: SiteDetails;
-  members: SiteMember[] | undefined;
-}) {
+function EditSiteMembersForm({ site }: { site: SiteDetails }) {
   const schema = createInsertSchema(Schemas.siteDetails1).pick({
     ownerName: true,
     ownerPhone: true,
@@ -134,30 +121,10 @@ function EditSiteMembersForm({
         })}
         className="flex flex-col gap-4"
       >
-        <SiteMemberFields
-          site={site}
-          members={members}
-          form={form}
-          prefix="owner"
-        />
-        <SiteMemberFields
-          site={site}
-          members={members}
-          form={form}
-          prefix="manager"
-        />
-        <SiteMemberFields
-          site={site}
-          members={members}
-          form={form}
-          prefix="contractor"
-        />
-        <SiteMemberFields
-          site={site}
-          members={members}
-          form={form}
-          prefix="supervisor"
-        />
+        <SiteMemberFields form={form} prefix="owner" />
+        <SiteMemberFields form={form} prefix="manager" />
+        <SiteMemberFields form={form} prefix="contractor" />
+        <SiteMemberFields form={form} prefix="supervisor" />
 
         <div className="flex gap-3 justify-end pt-4">
           <SaveRevertForm form={form} />
@@ -169,11 +136,9 @@ function EditSiteMembersForm({
 
 export function EditKeySiteMembers({
   site,
-  members,
   dialogName,
 }: {
   site: SiteDetails;
-  members: SiteMember[] | undefined;
   dialogName: string;
 }) {
   const router = useRouter();
@@ -216,7 +181,7 @@ export function EditKeySiteMembers({
             'If you would like these members or anyone else to also be able to view the supervisors reports, please add their account in the "Member Permissions" section.'
           }
         </InfoBox>
-        <EditSiteMembersForm site={site} members={members} />
+        <EditSiteMembersForm site={site} />
       </DialogContent>
     </Dialog>
   );
