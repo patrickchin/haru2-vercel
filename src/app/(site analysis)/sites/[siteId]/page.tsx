@@ -60,7 +60,7 @@ function SiteDescription({
         {editSiteRoles.includes(role) && <EditSiteDescription site={site} />}
       </CardHeader>
       <CardContent>
-        <div className="bg-muted border rounded p-4 whitespace-pre-line">
+        <div className="p-4 whitespace-pre-line">
           {desc}
         </div>
       </CardContent>
