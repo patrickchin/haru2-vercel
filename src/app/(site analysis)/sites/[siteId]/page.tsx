@@ -179,11 +179,7 @@ function SiteMembersTable({
     <Card id="members">
       <CardHeader className="font-semibold flex flex-row justify-between items-center py-0">
         <span className="py-6">Project Member Details</span>
-        <EditKeySiteMembers
-          site={site}
-          members={members}
-          dialogName="editMembers"
-        />
+        <EditKeySiteMembers site={site} dialogName="editMembers" />
       </CardHeader>
       <CardContent>
         <Table>
