@@ -36,7 +36,12 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { editSiteRoles } from "@/lib/permissions";
+import {
+  acceptMeetingRoles,
+  editMeetingRoles,
+  editReportRoles,
+  editSiteRoles,
+} from "@/lib/permissions";
 
 function SiteSearchAddMember({
   siteId,
@@ -180,14 +185,63 @@ export default function SiteMembers({
 
   return (
     <Card>
-      <CardHeader className="font-semibold">Project Members</CardHeader>
+      <CardHeader className="font-semibold">Member Permissions</CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <p className="border bg-accent p-4 rounded text-sm">
-          You can only add members that have signed up on the website. Please
-          inform members to sign up to have access.
+        <p className="p-4 pt-0 text-base">
+          Here you can give other users online access to view your site overview
+          and your site reports.
           <br />
-          Each role have a different level of access on the website. e.g. only
-          supervisor can access site report editing.
+          Each role have a different level of access on the website.
+          <ol className="list-disc list-inside mt-2 text-base">
+            <li>
+              All members have permission to view the site overview as well as
+              all published reports.
+            </li>
+            <li>
+              The{" "}
+              <pre className="inline-block bg-slate-100 text-inherit px-1">
+                {editSiteRoles.join(", ")}
+              </pre>{" "}
+              {editSiteRoles.length == 1 ? "has" : "have"} permissions to add
+              new members and change their roles.
+            </li>
+            <li>
+              The{" "}
+              <pre className="inline-block bg-slate-100 text-inherit px-1">
+                {editSiteRoles.join(", ")}
+              </pre>{" "}
+              {editSiteRoles.length == 1 ? "has" : "have"} permissions to edit
+              details about the site. e.g. title, description, contact details.
+            </li>
+            <li>
+              The{" "}
+              <pre className="inline-block bg-slate-100 text-inherit px-1">
+                {editMeetingRoles.join(", ")}
+              </pre>{" "}
+              {editMeetingRoles.length == 1 ? "has" : "have"} permissions to
+              create, schedule, and delete meetings.
+            </li>
+            <li>
+              And the{" "}
+              <pre className="inline-block bg-slate-100 text-inherit px-1">
+                {acceptMeetingRoles.join(", ")}
+              </pre>{" "}
+              {acceptMeetingRoles.length == 1 ? "has" : "have"} permissions to
+              accept or decline meetings.
+            </li>
+            <li>
+              Finally the{" "}
+              <pre className="inline-block bg-slate-100 text-inherit px-1">
+                {editReportRoles.join(", ")}
+              </pre>{" "}
+              {editReportRoles.length == 1 ? "has" : "have"} permissions to
+              create, edit and publish site reports.
+            </li>
+            <li>
+              Note that once a site report has been published, it cannot be
+              edited.
+            </li>
+          </ol>
         </p>
         {canEditSite && (
           <SiteSearchAddMember siteId={site.id} mutate={mutateMembers} />

@@ -204,7 +204,7 @@ export function EditKeySiteMembers({
           <br />
           <br />
           {
-            'If you would like these members or anyone else to also be able to view the supervisors reports, please add their account in the "Project Members" section.'
+            'If you would like these members or anyone else to also be able to view the supervisors reports, please add their account in the "Member Permissions" section.'
           }
         </InfoBox>
         <EditSiteMembersForm site={site} members={members} />
