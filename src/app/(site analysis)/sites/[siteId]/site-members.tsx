@@ -187,11 +187,13 @@ export default function SiteMembers({
     <Card>
       <CardHeader className="font-semibold">Member Permissions</CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <p className="p-4 pt-0 text-base">
-          Here you can give other users online access to view your site overview
-          and your site reports.
-          <br />
-          Each role have a different level of access on the website.
+        <div className="p-4 pt-0 text-base">
+          <p>
+            Here you can give other users online access to view your site
+            overview and your site reports.
+            <br />
+            Each role have a different level of access on the website.
+          </p>
           <ol className="list-disc list-inside mt-2 text-base">
             <li>
               All members have permission to view the site overview as well as
@@ -199,41 +201,41 @@ export default function SiteMembers({
             </li>
             <li>
               The{" "}
-              <pre className="inline-block bg-slate-100 text-inherit px-1">
+              <code className="inline-block bg-slate-100 text-inherit px-1">
                 {editSiteRoles.join(", ")}
-              </pre>{" "}
+              </code>{" "}
               {editSiteRoles.length == 1 ? "has" : "have"} permissions to add
               new members and change their roles.
             </li>
             <li>
               The{" "}
-              <pre className="inline-block bg-slate-100 text-inherit px-1">
+              <code className="inline-block bg-slate-100 text-inherit px-1">
                 {editSiteRoles.join(", ")}
-              </pre>{" "}
+              </code>{" "}
               {editSiteRoles.length == 1 ? "has" : "have"} permissions to edit
               details about the site. e.g. title, description, contact details.
             </li>
             <li>
               The{" "}
-              <pre className="inline-block bg-slate-100 text-inherit px-1">
+              <code className="inline-block bg-slate-100 text-inherit px-1">
                 {editMeetingRoles.join(", ")}
-              </pre>{" "}
+              </code>{" "}
               {editMeetingRoles.length == 1 ? "has" : "have"} permissions to
               create, schedule, and delete meetings.
             </li>
             <li>
               And the{" "}
-              <pre className="inline-block bg-slate-100 text-inherit px-1">
+              <code className="inline-block bg-slate-100 text-inherit px-1">
                 {acceptMeetingRoles.join(", ")}
-              </pre>{" "}
+              </code>{" "}
               {acceptMeetingRoles.length == 1 ? "has" : "have"} permissions to
               accept or decline meetings.
             </li>
             <li>
               Finally the{" "}
-              <pre className="inline-block bg-slate-100 text-inherit px-1">
+              <code className="inline-block bg-slate-100 text-inherit px-1">
                 {editReportRoles.join(", ")}
-              </pre>{" "}
+              </code>{" "}
               {editReportRoles.length == 1 ? "has" : "have"} permissions to
               create, edit and publish site reports.
             </li>
@@ -242,7 +244,7 @@ export default function SiteMembers({
               edited.
             </li>
           </ol>
-        </p>
+        </div>
         {canEditSite && (
           <SiteSearchAddMember siteId={site.id} mutate={mutateMembers} />
         )}
