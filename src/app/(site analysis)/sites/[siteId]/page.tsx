@@ -115,30 +115,28 @@ function SiteMembersBar({
   site: SiteDetails;
   members: SiteMember[] | undefined;
 }) {
-  const owner = members?.find((m) => m.role === "owner");
-
   return (
     <Card className="flex flex-col sm:flex-row sm:items-center gap-5 p-6">
-      <ul className="grow flex flex-col sm:flex-row gap-0 sm:gap-8 max-w-full">
-        <li className="min-w-32">
-          <p className="font-semibold text-sm">Owner:</p>
+      <ul className="grow flex flex-col sm:flex-row gap-3 sm:gap-8">
+        <li className="">
+          <p className="font-semibold text-sm">Site Owner:</p>
           <p className="text-nowrap overflow-ellipsis">
-            {owner?.name.length ? owner.name : "-"}
+            {site.ownerName?.length ? site.ownerName : "-"}
           </p>
         </li>
-        <li className="min-w-32">
+        <li className="">
           <p className="font-semibold text-sm">Project Manager: </p>
           <p className="text-nowrap overflow-ellipsis">
             {site.managerName?.length ? site.managerName : "-"}
           </p>
         </li>
-        <li className="min-w-32">
+        <li className="">
           <p className="font-semibold text-sm">Contractor: </p>
           <p className="text-nowrap overflow-ellipsis">
             {site.contractorName?.length ? site.contractorName : "-"}
           </p>
         </li>
-        <li className="min-w-32">
+        <li className="">
           <p className="font-semibold text-sm">Supervisor: </p>
           <p className="text-nowrap overflow-ellipsis">
             {site.supervisorName?.length ? site.supervisorName : "-"}
