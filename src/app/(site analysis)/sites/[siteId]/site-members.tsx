@@ -42,6 +42,11 @@ import {
   editReportRoles,
   editSiteRoles,
 } from "@/lib/permissions";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 function SiteSearchAddMember({
   siteId,
@@ -188,62 +193,72 @@ export default function SiteMembers({
       <CardHeader className="font-semibold">Member Permissions</CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div className="p-4 pt-0 text-base">
-          <p>
-            Here you can give other users online access to view your site
-            overview and your site reports.
-            <br />
-            Each role have a different level of access on the website.
-          </p>
-          <ol className="list-disc list-inside mt-2 text-base">
-            <li>
-              All members have permission to view the site overview as well as
-              all published reports.
-            </li>
-            <li>
-              The{" "}
-              <code className="inline-block bg-slate-100 text-inherit px-1">
-                {editSiteRoles.join(", ")}
-              </code>{" "}
-              {editSiteRoles.length == 1 ? "has" : "have"} permissions to add
-              new members and change their roles.
-            </li>
-            <li>
-              The{" "}
-              <code className="inline-block bg-slate-100 text-inherit px-1">
-                {editSiteRoles.join(", ")}
-              </code>{" "}
-              {editSiteRoles.length == 1 ? "has" : "have"} permissions to edit
-              details about the site. e.g. title, description, contact details.
-            </li>
-            <li>
-              The{" "}
-              <code className="inline-block bg-slate-100 text-inherit px-1">
-                {editMeetingRoles.join(", ")}
-              </code>{" "}
-              {editMeetingRoles.length == 1 ? "has" : "have"} permissions to
-              create, schedule, and delete meetings.
-            </li>
-            <li>
-              And the{" "}
-              <code className="inline-block bg-slate-100 text-inherit px-1">
-                {acceptMeetingRoles.join(", ")}
-              </code>{" "}
-              {acceptMeetingRoles.length == 1 ? "has" : "have"} permissions to
-              accept or decline meetings.
-            </li>
-            <li>
-              Finally the{" "}
-              <code className="inline-block bg-slate-100 text-inherit px-1">
-                {editReportRoles.join(", ")}
-              </code>{" "}
-              {editReportRoles.length == 1 ? "has" : "have"} permissions to
-              create, edit and publish site reports.
-            </li>
-            <li>
-              Note that once a site report has been published, it cannot be
-              edited.
-            </li>
-          </ol>
+          <Collapsible>
+            <p>
+              Here you can give other users online access to view your site
+              overview and your site reports.
+              <br />
+              Each role have a different level of access on the website.
+              <CollapsibleTrigger asChild>
+                <Button variant="link" className="text-blue-800 px-2">
+                  [Expand Permission Details]
+                </Button>
+              </CollapsibleTrigger>
+            </p>
+            <CollapsibleContent>
+              <ol className="list-disc list-inside mt-2 text-base">
+                <li>
+                  All members have permission to view the site overview as well
+                  as all published reports.
+                </li>
+                <li>
+                  The{" "}
+                  <code className="inline-block bg-slate-100 text-inherit px-1">
+                    {editSiteRoles.join(", ")}
+                  </code>{" "}
+                  {editSiteRoles.length == 1 ? "has" : "have"} permissions to
+                  add new members and change their roles.
+                </li>
+                <li>
+                  The{" "}
+                  <code className="inline-block bg-slate-100 text-inherit px-1">
+                    {editSiteRoles.join(", ")}
+                  </code>{" "}
+                  {editSiteRoles.length == 1 ? "has" : "have"} permissions to
+                  edit details about the site. e.g. title, description, contact
+                  details.
+                </li>
+                <li>
+                  The{" "}
+                  <code className="inline-block bg-slate-100 text-inherit px-1">
+                    {editMeetingRoles.join(", ")}
+                  </code>{" "}
+                  {editMeetingRoles.length == 1 ? "has" : "have"} permissions to
+                  create, schedule, and delete meetings.
+                </li>
+                <li>
+                  And the{" "}
+                  <code className="inline-block bg-slate-100 text-inherit px-1">
+                    {acceptMeetingRoles.join(", ")}
+                  </code>{" "}
+                  {acceptMeetingRoles.length == 1 ? "has" : "have"} permissions
+                  to accept or decline meetings.
+                </li>
+                <li>
+                  Finally the{" "}
+                  <code className="inline-block bg-slate-100 text-inherit px-1">
+                    {editReportRoles.join(", ")}
+                  </code>{" "}
+                  {editReportRoles.length == 1 ? "has" : "have"} permissions to
+                  create, edit and publish site reports.
+                </li>
+                <li>
+                  Note that once a site report has been published, it cannot be
+                  edited.
+                </li>
+              </ol>
+            </CollapsibleContent>
+          </Collapsible>
         </div>
         {canEditSite && (
           <SiteSearchAddMember siteId={site.id} mutate={mutateMembers} />
