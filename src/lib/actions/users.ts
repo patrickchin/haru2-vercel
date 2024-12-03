@@ -29,6 +29,12 @@ export async function getAllUsers() {
   }
 }
 
+export async function getUser(userId: number) {
+  const session = await auth();
+  if (!session?.user) return;
+  return db.getUser(userId, session.user.idn);
+}
+
 export async function registerUser(data: RegisterSchemaType) {
   const parsed = RegisterSchema.safeParse(data);
   if (!parsed.success) {
