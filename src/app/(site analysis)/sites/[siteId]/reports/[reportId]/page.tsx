@@ -8,6 +8,7 @@ import { ReportTitleBar } from "../report-title";
 import { FileDisplay } from "@/components/file-display";
 import { WarningBox } from "@/components/info-box";
 import CommentsSection from "@/components/comments-section";
+import { ReportSignatureSection } from "../report-sign";
 
 export default async function Page({
   params,
@@ -38,7 +39,7 @@ export default async function Page({
       </section>
 
       {report?.publishedAt ? null : (
-        <WarningBox className="w-full max-w-5xl mx-auto font-semibold text-lg">
+        <WarningBox className="w-full max-w-5xl mx-auto">
           This report has NOT yet been published so normal members of this
           project cannot yet view this report. <br />
           To publish this report go to the edit page.
@@ -63,6 +64,10 @@ export default async function Page({
             <CommentsSection commentsSectionId={commentsSectionId} />
           )}
         </Suspense>
+      </section>
+
+      <section className="w-full max-w-5xl mx-auto">
+        <ReportSignatureSection {...props} />
       </section>
     </DefaultLayout>
   );
