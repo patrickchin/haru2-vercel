@@ -5,6 +5,7 @@ import * as db from "@/db";
 import { auth } from "@/lib/auth";
 import { HaruFileNew } from "@/lib/types/common";
 import {
+  SiteMemberRole,
   SiteReportDetailsNew,
   SiteReportNew,
   SiteReportSectionNew,
@@ -56,7 +57,17 @@ export async function updateSiteReport(
 
 export async function updateSiteReportDetails(
   reportId: number,
-  values: SiteReportDetailsNew,
+  // TODO Pick instead of Omit?
+  // or use for schemas directly
+  values: Omit<
+    SiteReportDetailsNew,
+    | "supervisorId"
+    | "supervisorSignDate"
+    | "managerId"
+    | "managerSignDate"
+    | "contractorId"
+    | "contractorSignDate"
+  >,
 ) {
   const role = await getSiteMemberRole({ reportId });
   if (editReportRoles.includes(role)) {
@@ -78,6 +89,42 @@ export async function publishReport(reportId: number) {
     revalidatePath(`/sites/${report.siteId}/reports/${report.id}`);
     return report;
   }
+}
+
+export async function signReport(reportId: number, buttonRole: SiteMemberRole) {
+  const session = await auth();
+  if (!session?.user) return;
+  const role = await getSiteMemberRole({ reportId }, session);
+  if (role != buttonRole) return;
+
+
+  const oldReport = await db.getSiteReportDetails(reportId);
+  if (!oldReport.publishedAt) return;
+
+  let signArgs: SiteReportDetailsNew = {};
+  if (role === "supervisor") {
+    signArgs = {
+      supervisorId: session.user.idn,
+      supervisorSignDate: new Date(),
+    };
+  } else if (role === "manager") {
+    signArgs = {
+      contractorId: session.user.idn,
+      contractorSignDate: new Date(),
+    };
+  } else if (role === "contractor") {
+    signArgs = {
+      contractorId: session.user.idn,
+      contractorSignDate: new Date(),
+    };
+  }
+
+  if (!signArgs) return;
+  const report = await db.updateSiteReportDetails(reportId, signArgs);
+  if (!report) return;
+
+  revalidatePath(`/sites/${oldReport.siteId}/reports/${report.id}`);
+  return report;
 }
 
 export async function deleteSiteReport(siteId: number) {
