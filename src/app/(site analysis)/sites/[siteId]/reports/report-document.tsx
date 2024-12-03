@@ -23,16 +23,16 @@ function ReportSiteDetails({ report }: { report?: SiteReportAll }) {
   return (
     <Card className="">
       <CardHeader className="flex flex-row justify-between">
-        <div className="text-lg font-bold">Site Project Details</div>
+        <CardTitle>Site Project Details</CardTitle>
       </CardHeader>
 
       <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 pt-0">
         <Table>
           <TableBody>
-            <TableRow>
+            {/* <TableRow>
               <TableHead>Site Address</TableHead>
               <TableCell>{report?.address ?? "--"}</TableCell>
-            </TableRow>
+            </TableRow> */}
             <TableRow>
               <TableHead>Visit Date</TableHead>
               <TableCell>{report?.visitDate?.toDateString() ?? "--"}</TableCell>

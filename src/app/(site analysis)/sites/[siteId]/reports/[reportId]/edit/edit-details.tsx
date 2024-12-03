@@ -641,9 +641,7 @@ export function EditReportDocument({
     <>
       <Card className="bg-cyan-50">
         <CardHeader className="flex flex-row justify-between">
-          <CardTitle className="text-lg font-bold">
-            Current Construction Activites
-          </CardTitle>
+          <CardTitle>Current Construction Activites</CardTitle>
         </CardHeader>
 
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
