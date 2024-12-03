@@ -19,7 +19,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-function ReportSiteDetails({ report }: { report?: SiteReportAll }) {
+async function ReportSiteDetails({ report }: { report?: SiteReportAll }) {
+
+  const site =
+    report && report.siteId ? await Actions.getSiteDetails(report.siteId) : undefined;
+
   return (
     <Card className="">
       <CardHeader className="flex flex-row justify-between">
@@ -29,10 +33,10 @@ function ReportSiteDetails({ report }: { report?: SiteReportAll }) {
       <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 pt-0">
         <Table>
           <TableBody>
-            {/* <TableRow>
+            <TableRow>
               <TableHead>Site Address</TableHead>
-              <TableCell>{report?.address ?? "--"}</TableCell>
-            </TableRow> */}
+              <TableCell>{site?.address ?? "--"}</TableCell>
+            </TableRow>
             <TableRow>
               <TableHead>Visit Date</TableHead>
               <TableCell>{report?.visitDate?.toDateString() ?? "--"}</TableCell>
@@ -49,15 +53,15 @@ function ReportSiteDetails({ report }: { report?: SiteReportAll }) {
           <TableBody>
             <TableRow>
               <TableHead>Owner</TableHead>
-              <TableCell>{report?.ownerName ?? "--"}</TableCell>
+              <TableCell>{site?.ownerName ?? "--"}</TableCell>
             </TableRow>
             <TableRow>
               <TableHead>Contractor</TableHead>
-              <TableCell>{report?.contractorName ?? "--"}</TableCell>
+              <TableCell>{site?.contractorName ?? "--"}</TableCell>
             </TableRow>
             <TableRow>
               <TableHead>Supervisor</TableHead>
-              <TableCell>{report?.supervisorName ?? "--"}</TableCell>
+              <TableCell>{site?.supervisorName ?? "--"}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
