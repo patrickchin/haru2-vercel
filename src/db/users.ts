@@ -4,30 +4,30 @@ import { db } from "./_db";
 import { eq, getTableColumns } from "drizzle-orm";
 import { genSaltSync, hashSync } from "bcrypt-ts";
 import { parsePhoneNumber } from "libphonenumber-js";
-import * as Schemas from "@/db/schema";
 import { HaruUserBasic } from "@/lib/types";
+import { users1, accounts1, siteMembers1 } from "./schema";
 
 export async function getUserAccount(userId: number) {
   return db
     .select({
-      ...getTableColumns(Schemas.users1),
-      ...getTableColumns(Schemas.accounts1),
+      ...getTableColumns(users1),
+      ...getTableColumns(accounts1),
     })
-    .from(Schemas.accounts1)
-    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.accounts1.id))
-    .where(eq(Schemas.accounts1.id, userId))
+    .from(accounts1)
+    .leftJoin(users1, eq(users1.id, accounts1.id))
+    .where(eq(accounts1.id, userId))
     .then((r) => r[0]);
 }
 
 export async function getUserAccountByEmail(email: string) {
   return db
     .select({
-      ...getTableColumns(Schemas.users1),
-      ...getTableColumns(Schemas.accounts1),
+      ...getTableColumns(users1),
+      ...getTableColumns(accounts1),
     })
-    .from(Schemas.accounts1)
-    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.accounts1.id))
-    .where(eq(Schemas.accounts1.email, email))
+    .from(accounts1)
+    .leftJoin(users1, eq(users1.id, accounts1.id))
+    .where(eq(accounts1.email, email))
     .then((r) => r[0]);
 }
 
@@ -35,31 +35,59 @@ export async function getUserAccountByPhone(phone: string) {
   const phoneURI = parsePhoneNumber(phone).getURI();
   return db
     .select({
-      ...getTableColumns(Schemas.users1),
-      ...getTableColumns(Schemas.accounts1),
+      ...getTableColumns(users1),
+      ...getTableColumns(accounts1),
     })
-    .from(Schemas.accounts1)
-    .leftJoin(Schemas.users1, eq(Schemas.users1.id, Schemas.accounts1.id))
-    .where(eq(Schemas.accounts1.phone, phoneURI))
+    .from(accounts1)
+    .leftJoin(users1, eq(users1.id, accounts1.id))
+    .where(eq(accounts1.phone, phoneURI))
     .then((r) => r[0]);
 }
 
-export async function getUser(userId: number) {
+export async function getUserInternal(userId: number) {
   return await db
     .select()
-    .from(Schemas.users1)
-    .where(eq(Schemas.users1.id, userId))
+    .from(users1)
+    .where(eq(users1.id, userId))
+    .then((r) => r.at(0));
+}
+
+export async function getUser(userId: number, requestinUserId: number) {
+  const requestUserSites = db
+    .selectDistinct({ siteId: siteMembers1.siteId })
+    .from(siteMembers1)
+    .where(eq(siteMembers1.id, requestinUserId))
+    .as("siteIds");
+
+  const requestUserSiteMembers = db
+    .selectDistinct({ memberId: siteMembers1.memberId })
+    .from(siteMembers1)
+    .fullJoin(
+      requestUserSites,
+      eq(siteMembers1.siteId, requestUserSites.siteId),
+    )
+    .where(eq(siteMembers1.siteId, requestUserSites.siteId))
+    .as("memberIds");
+
+  return await db
+    .select()
+    .from(users1)
+    .fullJoin(
+      requestUserSiteMembers,
+      eq(requestUserSiteMembers.memberId, users1.id),
+    )
+    .where(eq(requestUserSiteMembers.memberId, userId))
     .then((r) => r.at(0));
 }
 
 export async function getUserByEmail(email: string) {
   return await db
     .select({
-      ...getTableColumns(Schemas.users1),
+      ...getTableColumns(users1),
     })
-    .from(Schemas.users1)
-    .leftJoin(Schemas.accounts1, eq(Schemas.accounts1.id, Schemas.users1.id))
-    .where(eq(Schemas.accounts1.email, email))
+    .from(users1)
+    .leftJoin(accounts1, eq(accounts1.id, users1.id))
+    .where(eq(accounts1.email, email))
     .then((r) => r.at(0));
 }
 
@@ -67,22 +95,22 @@ export async function getUserByPhone(phone: string) {
   const phoneURI = parsePhoneNumber(phone).getURI();
   return await db
     .select({
-      ...getTableColumns(Schemas.users1),
+      ...getTableColumns(users1),
     })
-    .from(Schemas.users1)
-    .leftJoin(Schemas.accounts1, eq(Schemas.accounts1.id, Schemas.users1.id))
-    .where(eq(Schemas.accounts1.phone, phoneURI))
+    .from(users1)
+    .leftJoin(accounts1, eq(accounts1.id, users1.id))
+    .where(eq(accounts1.phone, phoneURI))
     .then((r) => r.at(0));
 }
 
 export async function getAllUsers() {
   return await db
     .select({
-      ...getTableColumns(Schemas.users1),
-      email: Schemas.accounts1.email,
+      ...getTableColumns(users1),
+      email: accounts1.email,
     })
-    .from(Schemas.users1)
-    .leftJoin(Schemas.accounts1, eq(Schemas.accounts1.id, Schemas.users1.id));
+    .from(users1)
+    .leftJoin(accounts1, eq(accounts1.id, users1.id));
 }
 
 export async function createUserIfNotExists({
@@ -103,7 +131,7 @@ export async function createUserIfNotExists({
   return db.transaction(async (tx) => {
     console.log(`createUserIfNotExists phone: ${phoneURI} , email: ${email}`);
     const newAccount = await tx
-      .insert(Schemas.accounts1)
+      .insert(accounts1)
       .values({
         phone: phoneURI,
         email,
@@ -114,7 +142,7 @@ export async function createUserIfNotExists({
 
     console.log(`createUserIfNotExists id: ${newAccount.id} , name: ${name}`);
     const newUser = await tx
-      .insert(Schemas.users1)
+      .insert(users1)
       .values({
         id: newAccount.id,
         name,
@@ -134,13 +162,13 @@ export async function updateUserAvatar(
   return await db.transaction(async (tx) => {
     const oldUser = await tx
       .select()
-      .from(Schemas.users1)
-      .where(eq(Schemas.users1.id, uploaderId))
+      .from(users1)
+      .where(eq(users1.id, uploaderId))
       .then((r) => r[0]);
     const updatedUser = await tx
-      .update(Schemas.users1)
+      .update(users1)
       .set(values)
-      .where(eq(Schemas.users1.id, uploaderId))
+      .where(eq(users1.id, uploaderId))
       .returning()
       .then((r) => r[0]);
     return {
@@ -154,8 +182,8 @@ export async function deleteUserAvatar(uploaderId: number) {
   return await db.transaction(async (tx) => {
     const oldUser = await tx
       .select()
-      .from(Schemas.users1)
-      .where(eq(Schemas.users1.id, uploaderId))
+      .from(users1)
+      .where(eq(users1.id, uploaderId))
       .then((r) => r[0]);
 
     if (!oldUser) {
@@ -163,9 +191,9 @@ export async function deleteUserAvatar(uploaderId: number) {
     }
 
     const updatedUser = await tx
-      .update(Schemas.users1)
+      .update(users1)
       .set({ avatarUrl: null })
-      .where(eq(Schemas.users1.id, uploaderId))
+      .where(eq(users1.id, uploaderId))
       .returning()
       .then((r) => r[0]);
 
