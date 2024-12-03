@@ -37,7 +37,7 @@ async function ReportSignature({
       <div
         className={cn(
           "flex flex-col justify-center items-center",
-          "border border-dashed h-28 bg-muted",
+          "border border-dashed h-28 bg-muted rounded",
         )}
       >
         {signDate ? (
