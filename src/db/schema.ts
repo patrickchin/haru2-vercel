@@ -241,34 +241,23 @@ export const siteReportDetails1 = pgTable("siteReportDetails1", {
   id: serial("id")
     .primaryKey()
     .references(() => siteReports1.id),
-  address: varchar("address"),
 
-  // until something better is figured out with maybe temporary accounts ?
-  ownerName: varchar("ownerName"),
-  ownerPhone: varchar("ownerPhone"),
-  ownerEmail: varchar("ownerEmail"),
-  managerName: varchar("managerName"),
-  managerPhone: varchar("managerPhone"),
-  managerEmail: varchar("managerEmail"),
-  contractorName: varchar("contractorName"),
-  contractorPhone: varchar("contractorPhone"),
-  contractorEmail: varchar("contractorEmail"),
-  supervisorName: varchar("supervisorName"),
-  supervisorPhone: varchar("supervisorPhone"),
-  supervisorEmail: varchar("supervisorEmail"),
+  supervisorId: integer("supervisorId").references(() => users1.id),
+  managerId: integer("managerId").references(() => users1.id),
+  contractorId: integer("contractorId").references(() => users1.id),
 
-  // supervisorSignDate: timestamp("supervisorSignDate", {
-  //   mode: "date",
-  //   withTimezone: true,
-  // }),
-  // managerSignDate: timestamp("managerSignDate", {
-  //   mode: "date",
-  //   withTimezone: true,
-  // }),
-  // contractorSignDate: timestamp("contractorSignDate", {
-  //   mode: "date",
-  //   withTimezone: true,
-  // }),
+  supervisorSignDate: timestamp("supervisorSignDate", {
+    mode: "date",
+    withTimezone: true,
+  }),
+  managerSignDate: timestamp("managerSignDate", {
+    mode: "date",
+    withTimezone: true,
+  }),
+  contractorSignDate: timestamp("contractorSignDate", {
+    mode: "date",
+    withTimezone: true,
+  }),
 
   activity: varchar("activity"),
 
