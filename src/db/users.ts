@@ -56,7 +56,7 @@ export async function getUser(userId: number, requestinUserId: number) {
   const requestUserSites = db
     .selectDistinct({ siteId: siteMembers1.siteId })
     .from(siteMembers1)
-    .where(eq(siteMembers1.id, requestinUserId))
+    .where(eq(siteMembers1.memberId, requestinUserId))
     .as("siteIds");
 
   const requestUserSiteMembers = db
