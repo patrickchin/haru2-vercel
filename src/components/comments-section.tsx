@@ -21,8 +21,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { HaruUserAvatar, UserAvatar } from "@/components/user-avatar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { HaruUserAvatar } from "@/components/user-avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { formatDistanceToNow } from "date-fns";
 
@@ -110,7 +110,9 @@ export default function CommentsSection({
 
   return (
     <Card id="meetings">
-      <CardHeader className="font-semibold">Comments Section</CardHeader>
+      <CardHeader className="font-semibold">
+        <CardTitle>Comments Section</CardTitle>
+      </CardHeader>
       <CardContent className="space-y-8">
         <CommentsSectionAdd
           commentsSectionId={commentsSectionId}

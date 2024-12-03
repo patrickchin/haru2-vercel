@@ -12,7 +12,12 @@ import {
   CardDescription,
   CardTitle,
 } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Carousel,
   CarouselContent,
@@ -103,7 +108,7 @@ export async function ReportSections({
       ) : (
         <Card className="">
           <CardHeader className="flex flex-row justify-between">
-            <div className="text-lg font-bold">Report Detail Sections</div>
+            <CardTitle>Report Detail Sections</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 pt-0">
             --
