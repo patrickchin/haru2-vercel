@@ -117,6 +117,11 @@ export async function signReport(reportId: number, buttonRole: SiteMemberRole) {
       contractorId: session.user.idn,
       contractorSignDate: new Date(),
     };
+  } else if (role === "owner") {
+    signArgs = {
+      ownerId: session.user.idn,
+      ownerSignDate: new Date(),
+    };
   }
 
   if (!signArgs) return;

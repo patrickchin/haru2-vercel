@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 
   const pathname = new URL(req.url).pathname.split("/");
   const userId = Number(pathname[3]);
-  const user = await db.getUserInternal(userId);
+  const user = await db.getUser(userId, session.user.idn);
   // TODO check if user is in the same organisation,
   // to prevent any user searching up any other user
   return NextResponse.json(user);

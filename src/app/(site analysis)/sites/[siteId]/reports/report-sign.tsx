@@ -93,7 +93,15 @@ export async function ReportSignatureSection({
             they can no longer be edited.
           </WarningBox>
         )}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-4 gap-4">
+          <ReportSignature
+            reportId={reportId}
+            buttonRole="owner"
+            role={role}
+            signDate={report?.ownerSignDate}
+            signUserId={report?.ownerId}
+            disabled={!report?.publishedAt}
+          />
           <ReportSignature
             reportId={reportId}
             buttonRole="supervisor"

@@ -242,10 +242,15 @@ export const siteReportDetails1 = pgTable("siteReportDetails1", {
     .primaryKey()
     .references(() => siteReports1.id),
 
+  ownerId: integer("ownerId").references(() => users1.id),
   supervisorId: integer("supervisorId").references(() => users1.id),
   managerId: integer("managerId").references(() => users1.id),
   contractorId: integer("contractorId").references(() => users1.id),
 
+  ownerSignDate: timestamp("ownerSignDate", {
+    mode: "date",
+    withTimezone: true,
+  }),
   supervisorSignDate: timestamp("supervisorSignDate", {
     mode: "date",
     withTimezone: true,

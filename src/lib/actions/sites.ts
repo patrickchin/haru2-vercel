@@ -221,7 +221,6 @@ export async function getSiteMemberRole(
 ): Promise<SiteMemberRole> {
   const s = session === undefined ? await auth() : session;
   if (!s?.user) return null;
-  if (s.user.role === "admin") return "supervisor";
 
   const userId = s.user.idn;
   let role: SiteMemberRole = null;
@@ -235,6 +234,10 @@ export async function getSiteMemberRole(
     role = await db.getMeetingRole({ meetingId, userId });
   } else if (commentsSectionId) {
     role = await db.getCommentsSectionRole({ commentsSectionId, userId });
+  }
+  if (!role) {
+    if (s.user.role === "admin")
+      return "supervisor";
   }
   return role;
 }
