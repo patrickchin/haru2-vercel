@@ -91,9 +91,9 @@ export default async function Page() {
         </Button>
       </div>
 
-      <InfoBox className="whitespace-pre-line text-base font-normal leading-7 max-w-3xl mx-auto">
+      <div className="whitespace-pre-line text-base font-normal leading-7 mx-auto text-muted-foreground">
         <ul className="list-inside list-disc">
-          <li>
+          <li className="hidden">
             All site projects you&apos;ve created, or site projects that you are a
             member of, will appear here.
           </li>
@@ -107,7 +107,7 @@ export default async function Page() {
             below.
           </li>
         </ul>
-      </InfoBox>
+      </div>
 
       <SitesList />
     </DefaultLayout>
