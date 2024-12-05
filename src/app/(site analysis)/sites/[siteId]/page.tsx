@@ -22,6 +22,7 @@ import { EditSiteDescription } from "./edit-description";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { DefaultLayout } from "@/components/page-layouts";
 import {
@@ -60,9 +61,7 @@ function SiteDescription({
         {editSiteRoles.includes(role) && <EditSiteDescription site={site} />}
       </CardHeader>
       <CardContent>
-        <div className="px-4 whitespace-pre-line">
-          {desc}
-        </div>
+        <div className="px-4 whitespace-pre-line">{desc}</div>
       </CardContent>
     </Card>
   );
@@ -71,9 +70,7 @@ function SiteDescription({
 function SiteInfoBar({ site }: { site: SiteDetails }) {
   const country = useMemo(() => {
     const displayNames = new Intl.DisplayNames(["en"], { type: "region" });
-    return site.countryCode
-      ? displayNames.of(site.countryCode)
-      : undefined;
+    return site.countryCode ? displayNames.of(site.countryCode) : undefined;
   }, [site.countryCode]);
 
   return (
@@ -103,12 +100,9 @@ function SiteInfoBar({ site }: { site: SiteDetails }) {
 }
 
 function SiteInfoBar2({ site }: { site: SiteDetails }) {
-
   const country = useMemo(() => {
     const displayNames = new Intl.DisplayNames(["en"], { type: "region" });
-    return site.countryCode
-      ? displayNames.of(site.countryCode)
-      : undefined;
+    return site.countryCode ? displayNames.of(site.countryCode) : undefined;
   }, [site.countryCode]);
 
   const memberNames = [
@@ -379,7 +373,7 @@ export default async function Page(props: {
   // TODO custom site not found page
   if (!site) notFound();
 
-  const showProgressAndComplaints = false;
+  const showProgressAndComplaints = true;
   const showMemberDetails = false;
 
   return (
@@ -413,27 +407,52 @@ export default async function Page(props: {
         </Button>
       </div>
 
-      <SiteInfoBar site={site} />
-      <SiteMembersBar site={site} />
+      <Tabs className="w-full gap-4">
+        <Card className="mb-8 overflow-hidden">
+          <TabsList className="w-full h-12 [&_button]:h-12">
+            <TabsTrigger value="description">Description</TabsTrigger>
+            <TabsTrigger value="meetings">Meetings</TabsTrigger>
+            <TabsTrigger value="members">Members</TabsTrigger>
+            <TabsTrigger value="status">Status</TabsTrigger>
+            <TabsTrigger value="comments">Comments</TabsTrigger>
+          </TabsList>
+        </Card>
 
-      {showProgressAndComplaints && (
-        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-          <SiteProgress site={site} role={role} />
-          <SiteComplaints site={site} role={role} />
-        </div>
-      )}
+        <TabsContent value="description" className="space-y-4">
+          <SiteInfoBar site={site} />
+          {showMemberDetails ? (
+            <SiteMembersTable site={site} members={members} />
+          ) : (
+            <SiteMembersBar site={site} />
+          )}
 
-      <SiteMeetings site={site} members={members} />
+          <SiteDescription site={site} members={members} role={role} />
+        </TabsContent>
 
-      {showMemberDetails && <SiteMembersTable site={site} members={members} />}
+        <TabsContent value="meetings" className="space-y-4">
+          <SiteMeetings site={site} members={members} />
+        </TabsContent>
 
-      <SiteMembers site={site} members={members} />
+        <TabsContent value="members" className="space-y-4">
+          <SiteMembers site={site} members={members} />
+        </TabsContent>
 
-      <SiteDescription site={site} members={members} role={role} />
+        <TabsContent value="status" className="space-y-4">
+          {showProgressAndComplaints && (
+            <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+              <SiteProgress site={site} role={role} />
+              <SiteComplaints site={site} role={role} />
+            </div>
+          )}
+        </TabsContent>
 
-      {commentsSectionId && (
-        <CommentsSection commentsSectionId={commentsSectionId} />
-      )}
+        <TabsContent value="comments" className="space-y-4">
+          {commentsSectionId && (
+            <CommentsSection commentsSectionId={commentsSectionId} />
+          )}
+        </TabsContent>
+
+      </Tabs>
     </DefaultLayout>
   );
 }
