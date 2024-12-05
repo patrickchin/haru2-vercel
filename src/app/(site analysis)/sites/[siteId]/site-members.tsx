@@ -18,7 +18,7 @@ import { LucideLoader2, LucidePlus, LucideTrash } from "lucide-react";
 import { HaruUserAvatar } from "@/components/user-avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -190,7 +190,9 @@ export default function SiteMembers({
 
   return (
     <Card>
-      <CardHeader className="font-semibold">Member Permissions</CardHeader>
+      <CardHeader>
+        <CardTitle>Member Permissions</CardTitle>
+      </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div className="p-4 pt-0 text-base">
           <Collapsible>

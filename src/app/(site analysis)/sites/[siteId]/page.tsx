@@ -56,7 +56,7 @@ function SiteDescription({
   return (
     <Card id="description">
       <CardHeader className="flex flex-row font-semibold py-0 items-center">
-        <span className="grow py-6">Description</span>
+        <CardTitle className="grow py-6">Description</CardTitle>
         {editSiteRoles.includes(role) && <EditSiteDescription site={site} />}
       </CardHeader>
       <CardContent>
@@ -178,7 +178,7 @@ function SiteMembersTable({
   return (
     <Card id="members">
       <CardHeader className="font-semibold flex flex-row justify-between items-center py-0">
-        <span className="py-6">Project Member Details</span>
+        <CardTitle className="py-6">Project Member Details</CardTitle>
         <EditKeySiteMembers site={site} dialogName="editMembers" />
       </CardHeader>
       <CardContent>
@@ -237,7 +237,7 @@ async function SiteComplaints({
   return (
     <Card id="meetings">
       <CardHeader className="flex flex-row justify-between items-center py-0 space-y-0">
-        <CardTitle className="font-semibold text-base py-6">
+        <CardTitle className="py-6">
           Current Unresolved Issues at the Site
         </CardTitle>
         {role && editSiteRoles.includes(role) && (
@@ -315,9 +315,7 @@ function SiteProgress({
   return (
     <Card id="progress">
       <CardHeader className="flex flex-row justify-between items-center py-0 space-y-0">
-        <CardTitle className="font-semibold text-base py-6">
-          Supervision Schedule
-        </CardTitle>
+        <CardTitle className="py-6">Supervision Schedule</CardTitle>
         {role && editSiteRoles.includes(role) && (
           <EditSiteSchedule site={site} />
         )}

@@ -110,7 +110,7 @@ export default function CommentsSection({
 
   return (
     <Card id="meetings">
-      <CardHeader className="font-semibold">
+      <CardHeader>
         <CardTitle>Comments Section</CardTitle>
       </CardHeader>
       <CardContent className="space-y-8">

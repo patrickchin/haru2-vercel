@@ -54,9 +54,7 @@ function EditReportEstimates({
   return (
     <Card className="bg-yellow-50">
       <CardHeader className="flex flex-row justify-between">
-        <h2 className="text-lg font-bold">
-          Current Budget and Timeline Estimates
-        </h2>
+        <CardTitle>Current Budget and Timeline Estimates</CardTitle>
       </CardHeader>
 
       <CardContent className="p-4 pt-0">

@@ -74,9 +74,7 @@ function ReportBudget({ report }: { report?: SiteReportAll }) {
   return (
     <Card className="bg-yellow-50 hidden">
       <CardHeader className="flex flex-row justify-between">
-        <div className="text-lg font-bold">
-          Current Budget and Timeline Estimates
-        </div>
+        <CardTitle>Current Budget and Timeline Estimates</CardTitle>
       </CardHeader>
 
       <CardContent className="grid grid-cols-2 gap-4 p-4 pt-0">
@@ -115,7 +113,7 @@ function ReportActivities({ report }: { report?: SiteReportAll }) {
   return (
     <Card className="bg-cyan-50">
       <CardHeader className="flex flex-row justify-between">
-        <div className="text-lg font-bold">Current Construction Activites</div>
+        <CardTitle>Current Construction Activites</CardTitle>
       </CardHeader>
 
       {/* <CardContent className="flex flex-col gap-3 p-4 pt-0"> */}

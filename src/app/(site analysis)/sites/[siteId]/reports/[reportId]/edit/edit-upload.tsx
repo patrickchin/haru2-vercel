@@ -263,7 +263,7 @@ export function UploadAndManageFiles({ reportId }: { reportId: number }) {
   return (
     <Card className="bg-background border-2 p-4">
       {/* <CardHeader className="flex flex-row justify-between pb-0">
-        <h2 className="text-lg font-bold">Report Overview Files</h2>
+        <CardTitle className="text-lg font-bold">Report Overview Files</CardTitle>
       </CardHeader> */}
       {/* <CardContent className="grid grid-cols-4 gap-4 p-4"> */}
       <CardContent className="flex flex-col gap-8 p-4">

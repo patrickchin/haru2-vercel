@@ -51,7 +51,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { InfoBox } from "@/components/info-box";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { acceptMeetingRoles, editMeetingRoles } from "@/lib/permissions";
 
 function SiteCalendarForm({
@@ -207,9 +207,9 @@ export default function SiteMeetings({
   const canAcceptMeetings = role && acceptMeetingRoles.includes(role);
 
   return (
-    <Card id="meetings">
-      <CardHeader className="font-semibold">
-        Schedule a Zoom Meeting with the Team
+    <Card>
+      <CardHeader>
+        <CardTitle>Schedule a Meeting with the Team</CardTitle>
       </CardHeader>
       <CardContent className="space-y-8">
         {canEditMeetings ? (
@@ -233,7 +233,7 @@ export default function SiteMeetings({
               <TableHead>Date</TableHead>
               <TableHead>Time/Notes</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Zoom Link</TableHead>
+              <TableHead>Link</TableHead>
               <TableHead className="w-0"></TableHead>
             </TableRow>
           </TableHeader>
