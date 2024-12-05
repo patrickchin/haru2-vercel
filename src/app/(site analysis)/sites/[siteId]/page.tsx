@@ -327,7 +327,7 @@ function SiteProgress({
             update the site supervision schedule dates here.
           </InfoBox>
         )}
-        <Progress value={progressPct} indicatorClassName="bg-blue-400" />
+        <Progress value={progressPct} />
         <Table>
           <TableBody>
             <TableRow>
