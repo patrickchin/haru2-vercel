@@ -407,7 +407,7 @@ export default async function Page(props: {
         </Button>
       </div>
 
-      <Tabs className="w-full gap-4">
+      <Tabs defaultValue="description" className="w-full gap-4">
         <Card className="mb-8 overflow-hidden">
           <TabsList className="w-full h-12 [&_button]:h-12">
             <TabsTrigger value="description">Description</TabsTrigger>
@@ -451,7 +451,6 @@ export default async function Page(props: {
             <CommentsSection commentsSectionId={commentsSectionId} />
           )}
         </TabsContent>
-
       </Tabs>
     </DefaultLayout>
   );
