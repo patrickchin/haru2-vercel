@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import {
   LucideCheckCircle,
   LucideInfo,
@@ -6,71 +5,54 @@ import {
   LucideMessageCircleX,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { cva, type VariantProps } from "class-variance-authority";
 
-// TODO make only one component and use different variants for different styles
-// like the button component
-export function ErrorBox({ children }: { children?: ReactNode }) {
-  return (
-    <div className="flex gap-3 bg-red-100 border-2 p-4 rounded border-red-300">
-      <LucideMessageCircleX className="flex-none h-6 w-6" />
-      <p className="flex items-center text-sm font-semibold align-bottom">
-        {children}
-      </p>
-    </div>
-  );
-}
+const infoBoxVariants = cva(
+  "flex gap-3 text-foreground border-2 p-4 rounded text-sm text-foreground font-semibold",
+  {
+    variants: {
+      variant: {
+        good: "bg-green-50 border-green-200",
+        info: "bg-blue-50 border-blue-200",
+        warning: "bg-blue-50 border-blue-200",
+        error: "bg-red-100 border-red-300",
+      },
+    },
+    defaultVariants: {
+      variant: "info",
+    },
+  },
+);
 
-export function WarningBox({
-  children,
-  className,
-}: {
-  children?: ReactNode;
-  className?: string;
-}) {
+export interface InfoBoxProps
+  extends React.ButtonHTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof infoBoxVariants> {}
+
+const infoBoxIcons = {
+  good: LucideCheckCircle,
+  info: LucideInfo,
+  warning: LucideMessageCircleWarning,
+  error: LucideMessageCircleX,
+};
+
+export function InfoBox({ children, className, variant }: InfoBoxProps) {
+  const Icon = infoBoxIcons[variant || "info"];
   return (
-    <div
-      className={cn(
-        "flex gap-3 bg-yellow-50 border-2 p-4 rounded border-yellow-200",
-        "text-sm font-semibold",
-        className,
-      )}
-    >
-      <LucideMessageCircleWarning className="flex-none h-6 w-6" />
+    <div className={cn(infoBoxVariants({ variant, className }))}>
+      <Icon className="flex-none h-6 w-6" />
       <p className="align-bottom">{children}</p>
     </div>
   );
 }
 
-export function InfoBox({
-  children,
-  className,
-}: {
-  children?: ReactNode;
-  className?: string;
-}) {
-  return (
-    <div
-      className={cn(
-        "flex gap-3 bg-blue-50 border-2 p-4 rounded border-blue-200",
-        "text-sm font-semibold",
-        className,
-      )}
-    >
-      <LucideInfo className="flex-none h-6 w-6" />
-      <div className="align-bottom">
-        {children}
-      </div>
-    </div>
-  );
+export function ErrorBox(props: Omit<InfoBoxProps, "variant">) {
+  return <InfoBox {...props} variant="error" />;
 }
 
-export function GoodBox({ children }: { children?: ReactNode }) {
-  return (
-    <div className="flex gap-3 bg-green-50 border-2 p-4 rounded border-green-200">
-      <LucideCheckCircle className="flex-none h-5 w-5" />
-      <p className="flex items-center text-sm font-semibold align-bottom">
-        {children}
-      </p>
-    </div>
-  );
+export function WarningBox(props: Omit<InfoBoxProps, "variant">) {
+  return <InfoBox {...props} variant="warning" />;
+}
+
+export function GoodBox(props: Omit<InfoBoxProps, "variant">) {
+  return <InfoBox {...props} variant="good" />;
 }
