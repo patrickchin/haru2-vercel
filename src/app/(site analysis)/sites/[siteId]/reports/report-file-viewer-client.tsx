@@ -167,7 +167,7 @@ export function FileDisplayCarousel({
                   <FileDisplay
                     file={f}
                     allow3d={true}
-                    className={cn(largeView ? "h-svh" : "h-[36rem]")}
+                    className={cn(largeView ? "h-svh" : "aspect-video")}
                     controlsClassName="invisible group-hover:visible"
                   >
                     <Button
