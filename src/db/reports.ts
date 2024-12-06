@@ -1,7 +1,7 @@
 import "server-only";
 
 import { db } from "./_db";
-import { and, desc, eq, getTableColumns, isNotNull } from "drizzle-orm";
+import { and, desc, eq, getTableColumns, isNotNull, isNull } from "drizzle-orm";
 import {
   SiteMemberRole,
   SiteReport,
@@ -91,6 +91,7 @@ export async function listSiteReports(
         includeUnpublished
           ? undefined
           : isNotNull(Schemas.siteReports1.publishedAt),
+        isNull(Schemas.siteReports1.deletedAt),
       ),
     )
     .orderBy(desc(Schemas.siteReports1.id));

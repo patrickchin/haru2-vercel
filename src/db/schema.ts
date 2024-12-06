@@ -223,6 +223,10 @@ export const siteReports1 = pgTable("siteReports1", {
     mode: "date",
     withTimezone: true,
   }).defaultNow(),
+  deletedAt: timestamp("deletedAt", {
+    mode: "date",
+    withTimezone: true,
+  }),
   publishedAt: timestamp("publishedAt", {
     mode: "date",
     withTimezone: true,

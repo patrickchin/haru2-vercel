@@ -85,6 +85,13 @@
       "when": 1733312767241,
       "tag": "0011_big_blackheart",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1733476024405,
+      "tag": "0012_steady_sunfire",
+      "breakpoints": true
     }
   ]
 }

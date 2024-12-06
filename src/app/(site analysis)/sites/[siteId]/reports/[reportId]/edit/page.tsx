@@ -7,11 +7,12 @@ import * as Actions from "@/lib/actions";
 
 import { LucideMoveLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { WarningBox } from "@/components/info-box";
+import { ErrorBox, WarningBox } from "@/components/info-box";
 import { UploadAndManageFiles } from "./edit-upload";
 import { UpdateSiteReportSections } from "./edit-sections";
 import { EditReportDocument } from "./edit-details";
 import { PublishButton } from "./publish-button";
+import { DeleteButton } from "./delete-button";
 
 async function EditReportHeader({ report }: { report: SiteReport }) {
   return (
@@ -28,6 +29,11 @@ async function EditReportHeader({ report }: { report: SiteReport }) {
       <h1 className="font-semibold text-2xl grow">
         Editing Site Report #{report.id}: {report.createdAt?.toDateString()}
       </h1>
+      <DeleteButton
+        siteId={report.siteId}
+        reportId={report.id}
+        disabled={!!report.publishedAt}
+      />
       <PublishButton reportId={report.id} disabled={!!report.publishedAt} />
     </div>
   );
@@ -56,6 +62,12 @@ export default async function Page({
       </div>
 
       <div className="w-full max-w-5xl mx-auto flex flex-col gap-4">
+        {report?.deletedAt ? (
+          <ErrorBox className="w-full max-w-5xl mx-auto">
+            This report has been deleted.
+          </ErrorBox>
+        ) : null}
+
         {!report?.publishedAt ? (
           <>
             <UploadAndManageFiles reportId={reportId} />
@@ -63,7 +75,7 @@ export default async function Page({
             <UpdateSiteReportSections siteId={siteId} reportId={reportId} />
           </>
         ) : (
-          <WarningBox className="font-normal text-base">
+          <WarningBox>
             This report was published on{" "}
             <code className="bg-accent p-1">
               {report?.publishedAt?.toString() ?? "--"}

@@ -97,7 +97,6 @@ export async function signReport(reportId: number, buttonRole: SiteMemberRole) {
   const role = await getSiteMemberRole({ reportId }, session);
   if (role != buttonRole) return;
 
-
   const oldReport = await db.getSiteReportDetails(reportId);
   if (!oldReport.publishedAt) return;
 
@@ -132,10 +131,18 @@ export async function signReport(reportId: number, buttonRole: SiteMemberRole) {
   return report;
 }
 
-export async function deleteSiteReport(siteId: number) {
-  const role = await getSiteMemberRole({ siteId });
+export async function deleteSiteReport(reportId: number) {
+  const role = await getSiteMemberRole({ reportId });
   if (editReportRoles.includes(role)) {
-    return await db.deleteSiteReport(siteId);
+    const report = await db.getSiteReport(reportId);
+    if (!report.publishedAt) {
+      // const updatedReport = await db.deleteSiteReport(reportId);
+      const updatedReport = db.updateSiteReport(reportId, {
+        deletedAt: new Date(),
+      });
+      revalidatePath(`/sites/${report.siteId}/reports/${report.id}`);
+      return updatedReport;
+    }
   }
 }
 

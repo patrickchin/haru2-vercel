@@ -1,7 +1,17 @@
 import "server-only";
 
 import { db } from "./_db";
-import { and, count, desc, eq, getTableColumns, ne, sql } from "drizzle-orm";
+import {
+  and,
+  count,
+  desc,
+  eq,
+  getTableColumns,
+  isNotNull,
+  isNull,
+  ne,
+  sql,
+} from "drizzle-orm";
 import {
   Site,
   SiteAndExtra,
@@ -26,7 +36,10 @@ export async function getAllSites(userId?: number): Promise<SiteAndExtra[]> {
     .from(Schemas.sites1)
     .leftJoin(
       Schemas.siteReports1,
-      eq(Schemas.siteReports1.siteId, Schemas.sites1.id),
+      and(
+        eq(Schemas.siteReports1.siteId, Schemas.sites1.id),
+        isNull(Schemas.siteReports1.deletedAt),
+      ),
     )
     .leftJoin(
       Schemas.siteMembers1,
@@ -73,7 +86,11 @@ export async function getAllVisibleSites(
     .from(Schemas.sites1)
     .leftJoin(
       Schemas.siteReports1,
-      eq(Schemas.siteReports1.siteId, Schemas.sites1.id),
+      and(
+        isNull(Schemas.siteReports1.deletedAt),
+        isNotNull(Schemas.siteReports1.publishedAt),
+        eq(Schemas.siteReports1.siteId, Schemas.sites1.id),
+      ),
     )
     .leftJoin(
       Schemas.siteMembers1,

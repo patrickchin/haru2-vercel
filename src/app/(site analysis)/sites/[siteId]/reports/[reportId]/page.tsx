@@ -6,7 +6,7 @@ import { ReportFileDisplay } from "../report-file-viewer";
 import { ReportTitleBar } from "../report-title";
 
 import { FileDisplay } from "@/components/file-display";
-import { WarningBox } from "@/components/info-box";
+import { ErrorBox, WarningBox } from "@/components/info-box";
 import CommentsSection from "@/components/comments-section";
 import { ReportSignatureSection } from "../report-sign";
 
@@ -37,6 +37,12 @@ export default async function Page({
           {/* </Suspense> */}
         </div>
       </section>
+
+      {report?.deletedAt ? (
+        <ErrorBox className="w-full max-w-5xl mx-auto">
+          This report has been deleted.
+        </ErrorBox>
+      ) : null}
 
       {report?.publishedAt ? null : (
         <WarningBox className="w-full max-w-5xl mx-auto">

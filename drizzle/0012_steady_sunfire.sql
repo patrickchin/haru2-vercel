@@ -1,0 +1,1 @@
+ALTER TABLE "siteReports1" ADD COLUMN "deletedAt" timestamp with time zone;
