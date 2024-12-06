@@ -21,7 +21,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DefaultLayout } from "@/components/page-layouts";
 import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
 import {
   Select,
   SelectContent,
@@ -30,6 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { InfoBox } from "@/components/info-box";
+import { Card, CardContent } from "@/components/ui/card";
 
 function CountrySelectForm({ form }: { form: any }) {
   const displayNames = useMemo(() => {
@@ -220,8 +220,11 @@ function NewSiteForm() {
 export default function Page() {
   return (
     <DefaultLayout className="items-center max-w-3xl">
-      <NewSiteForm />
-      
+      <Card>
+        <CardContent className="p-6">
+          <NewSiteForm />
+        </CardContent>
+      </Card>
     </DefaultLayout>
   );
 }
