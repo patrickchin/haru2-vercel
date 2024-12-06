@@ -16,26 +16,33 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { UserAvatar } from "./user-avatar";
 
-const navigation = [{ name: "My Projects", href: "/sites" }];
-
 export function MainNav({ user }: { user?: User }) {
   const pathname = usePathname();
-  const firstPath = "/" + pathname.split("/", 2)[1]; // make sure length > 1 ?
+  const navigation = [
+    { name: "About", href: "/about", needLogin: false },
+    { name: "My Projects", href: "/sites", needLogin: true },
+  ];
 
   if (!user) return null;
 
   return (
     <div className="flex items-center mx-6">
-      {navigation.map((item, i) => (
-        <Button
-          key={i}
-          asChild
-          variant="link"
-          className={firstPath == item.href ? "underline" : ""}
-        >
-          <Link href={item.href}>{item.name}</Link>
-        </Button>
-      ))}
+      {navigation.map((item, i) => {
+        if (item.needLogin && !user) {
+          return null;
+        }
+
+        return (
+          <Button
+            key={i}
+            asChild
+            variant="link"
+            className={pathname == item.href ? "underline" : ""}
+          >
+            <Link href={item.href}>{item.name}</Link>
+          </Button>
+        );
+      })}
     </div>
   );
 }
@@ -102,7 +109,7 @@ export default function Header() {
       <div className="flex h-16 items-center px-8 mx-auto max-w-6xl">
         <Link href="/" className="mr-6 flex items-center space-x-2">
           <LucideConstruction className="h-6 w-6" />
-          <span className="hidden font-bold sm:inline-block">HarpaPro</span>
+          <span className="hidden font-bold sm:inline-block">Harpa Pro</span>
         </Link>
 
         <MainNav user={session?.user} />
