@@ -20,7 +20,8 @@ export function MainNav({ user }: { user?: User }) {
   const pathname = usePathname();
   const navigation = [
     // { name: "About", href: "/about", needLogin: false },
-    { name: "My Projects", href: "/sites", needLogin: true },
+    { name: "Feedback", href: "/feedback", needLogin: true, needAdmin: true },
+    { name: "My Projects", href: "/sites", needLogin: true, needAdmin: false },
   ];
 
   if (!user) return null;
@@ -28,10 +29,9 @@ export function MainNav({ user }: { user?: User }) {
   return (
     <div className="flex items-center mx-6">
       {navigation.map((item, i) => {
-        if (item.needLogin && !user) {
-          return null;
-        }
-
+        if (item.needLogin && !user) return null;
+        if (item.needAdmin && user.role !== "admin") return null;
+        
         return (
           <Button
             key={i}
