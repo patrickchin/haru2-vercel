@@ -191,7 +191,7 @@ function NewSiteForm() {
           />
         </div>
 
-        <InfoBox className="col-span-2 leading-6 font-normal">
+        <InfoBox className="col-span-2 leading-6">
           After submitting your project, you will be redirected to your project
           page. <br />
           From there you will be able to schedule a meeting with us and we will

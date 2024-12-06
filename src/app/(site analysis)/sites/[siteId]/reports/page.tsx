@@ -31,7 +31,7 @@ export default async function Page({
       </section>
 
       <div className="w-full max-w-5xl mx-auto">
-        <WarningBox className="font-semibold text-base">
+        <WarningBox className="text-base">
           This project does not have any published reports yet. <br />
           After scheduling a meeting with us, our supervisor will visit your
           site and publish reports on this page.
