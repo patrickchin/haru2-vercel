@@ -67,39 +67,7 @@ function SiteDescription({
   );
 }
 
-function SiteInfoBar({ site }: { site: SiteDetails }) {
-  const country = useMemo(() => {
-    const displayNames = new Intl.DisplayNames(["en"], { type: "region" });
-    return site.countryCode ? displayNames.of(site.countryCode) : undefined;
-  }, [site.countryCode]);
-
-  return (
-    <Card className="flex flex-col gap-4 px-6">
-      <ul className="flex flex-col sm:flex-row sm:inline-flex">
-        <li className="hover:bg-accent p-4 pl-0 space-x-1">
-          <span className="font-semibold">Project Id: </span>
-          <span className="">{site.id}</span>
-        </li>
-        <li className="hover:bg-accent py-4 px-4 space-x-1">
-          <span className="font-semibold">Country: </span>
-          <span className="">{country || "Unknown"}</span>
-        </li>
-        <li className="hover:bg-accent py-4 px-4 space-x-1">
-          <span className="font-semibold">Type: </span>
-          <span className="">{site.type || "Unknown"}</span>
-        </li>
-        <li className="hover:bg-accent py-4 px-4 space-x-1">
-          <span className="font-semibold">Created: </span>
-          <span className="">
-            {site.createdAt?.toDateString() || "Unknown"}
-          </span>
-        </li>
-      </ul>
-    </Card>
-  );
-}
-
-function SiteInfoBar2({ site }: { site: SiteDetails }) {
+function SiteInfo({ site }: { site: SiteDetails }) {
   const country = useMemo(() => {
     const displayNames = new Intl.DisplayNames(["en"], { type: "region" });
     return site.countryCode ? displayNames.of(site.countryCode) : undefined;
@@ -112,12 +80,15 @@ function SiteInfoBar2({ site }: { site: SiteDetails }) {
     { label: "Created", value: site.createdAt?.toDateString() },
   ];
   return (
-    <Card className="flex flex-col sm:flex-row sm:items-center gap-5 p-6">
-      <ul className="grow flex flex-col sm:flex-row gap-3 sm:gap-8">
+    <Card>
+      <ul className="grow flex flex-col py-3 text-sm">
         {memberNames.map((it, i) => (
-          <li key={i} className="inline-flex gap-1 items-baseline">
-            <p className="font-semibold">{it.label}:</p>
-            <p className="text-nowrap overflow-ellipsis">
+          <li
+            key={i}
+            className="flex gap-2 px-6 py-1.5 sm:justify-between hover:bg-muted"
+          >
+            <p className="font-semibold w-1/3 sm:w-auto">{it.label}:</p>
+            <p>
               {it.value?.length ? (
                 it.value
               ) : (
@@ -134,17 +105,20 @@ function SiteInfoBar2({ site }: { site: SiteDetails }) {
 function SiteMembersBar({ site }: { site: SiteDetails }) {
   const memberNames = [
     { label: "Site Owner", value: site.ownerName },
-    { label: "Project Manager", value: site.managerName },
+    { label: "Proj. Manager", value: site.managerName },
     { label: "Contractor", value: site.contractorName },
     { label: "Supervisor", value: site.supervisorName },
   ];
   return (
-    <Card className="flex flex-col sm:flex-row sm:items-center gap-5 p-6">
-      <ul className="grow flex flex-col sm:flex-row gap-3 sm:gap-8">
+    <Card className="flex flex-col py-3 gap-3">
+      <ul className="grow flex flex-col text-sm">
         {memberNames.map((it, i) => (
-          <li key={i} className="">
-            <p className="font-semibold text-sm">{it.label}:</p>
-            <p className="text-nowrap overflow-ellipsis">
+          <li
+            key={i}
+            className="flex gap-2 px-6 py-1.5 sm:justify-between hover:bg-muted"
+          >
+            <p className="font-semibold w-1/3 sm:w-auto">{it.label}:</p>
+            <p>
               {it.value?.length ? (
                 it.value
               ) : (
@@ -154,8 +128,9 @@ function SiteMembersBar({ site }: { site: SiteDetails }) {
           </li>
         ))}
       </ul>
-
-      <EditKeySiteMembers site={site} dialogName="editMembersBar" />
+      <div className="px-6 flex flex-col">
+        <EditKeySiteMembers site={site} dialogName="editMembersBar" />
+      </div>
     </Card>
   );
 }
@@ -419,14 +394,18 @@ export default async function Page(props: {
         </Card>
 
         <TabsContent value="description" className="space-y-4">
-          <SiteInfoBar site={site} />
-          {showMemberDetails ? (
-            <SiteMembersTable site={site} members={members} />
-          ) : (
-            <SiteMembersBar site={site} />
-          )}
-
-          <SiteDescription site={site} members={members} role={role} />
+          <div className="flex flex-col sm:flex-row-reverse gap-4">
+            <div className="flex flex-col gap-4 min-w-56 md:w-1/3 md:max-w-96 shrink-0">
+              <SiteInfo site={site} />
+              <SiteMembersBar site={site} />
+            </div>
+            <div>
+              <SiteDescription site={site} members={members} role={role} />
+              {showMemberDetails && (
+                <SiteMembersTable site={site} members={members} />
+              )}
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="meetings" className="space-y-4">
