@@ -7,6 +7,7 @@ import * as Actions from "@/lib/actions";
 
 import {
   LucideAlertTriangle,
+  LucideBookUser,
   LucideCheck,
   LucideEdit,
   LucideMoveLeft,
@@ -38,9 +39,16 @@ import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { TooltipTrigger } from "@radix-ui/react-tooltip";
 import CommentsSection from "@/components/comments-section";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 function SiteDescription({
   site,
@@ -128,36 +136,37 @@ function SiteMembersBar({ site }: { site: SiteDetails }) {
           </li>
         ))}
       </ul>
-      <div className="px-6 flex flex-col">
+      <div className="px-4 grid grid-cols-2 gap-2">
         <EditKeySiteMembers site={site} dialogName="editMembersBar" />
+        <Dialog>
+          <Button variant="outline" asChild>
+            <DialogTrigger>
+              Details <LucideBookUser />
+            </DialogTrigger>
+          </Button>
+          <DialogContent className="px-6 pt-0 max-w-4xl">
+            <SiteMembersTable site={site} />
+          </DialogContent>
+        </Dialog>
       </div>
     </Card>
   );
 }
 
-function SiteMembersTable({
-  site,
-  members,
-}: {
-  site: SiteDetails;
-  members: SiteMember[] | undefined;
-}) {
-  const owner = members?.find((m) => m.role === "owner");
-
+function SiteMembersTable({ site }: { site: SiteDetails }) {
   return (
-    <Card id="members">
-      <CardHeader className="font-semibold flex flex-row justify-between items-center py-0">
-        <CardTitle className="py-6">Project Member Details</CardTitle>
-        <EditKeySiteMembers site={site} dialogName="editMembers" />
-      </CardHeader>
-      <CardContent>
+    <>
+      <DialogHeader className="font-semibold flex flex-row justify-between items-center py-0">
+        <DialogTitle className="py-6">Project Member Details</DialogTitle>
+      </DialogHeader>
+      <div>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-48"></TableHead>
-              <TableHead className="w-48">Name</TableHead>
-              <TableHead className="w-48">Email</TableHead>
-              <TableHead className="w-48">Phone</TableHead>
+              <TableHead className="w-14"></TableHead>
+              <TableHead className="w-24">Name</TableHead>
+              <TableHead className="w-24">Email</TableHead>
+              <TableHead className="w-24">Phone</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -187,8 +196,8 @@ function SiteMembersTable({
             </TableRow>
           </TableBody>
         </Table>
-      </CardContent>
-    </Card>
+      </div>
+    </>
   );
 }
 
@@ -349,7 +358,6 @@ export default async function Page(props: {
   if (!site) notFound();
 
   const showProgressAndComplaints = true;
-  const showMemberDetails = false;
 
   return (
     <DefaultLayout>
@@ -399,11 +407,8 @@ export default async function Page(props: {
               <SiteInfo site={site} />
               <SiteMembersBar site={site} />
             </div>
-            <div>
+            <div className="grow">
               <SiteDescription site={site} members={members} role={role} />
-              {showMemberDetails && (
-                <SiteMembersTable site={site} members={members} />
-              )}
             </div>
           </div>
         </TabsContent>

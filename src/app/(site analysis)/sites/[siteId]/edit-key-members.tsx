@@ -165,7 +165,7 @@ export function EditKeySiteMembers({
     >
       <DialogTrigger asChild>
         <Button variant="outline">
-          Edit Members <LucideEdit />
+          Edit <LucideEdit />
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-svh overflow-y-auto gap-6">
