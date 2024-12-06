@@ -84,7 +84,7 @@ export default function Page() {
               <Skeleton className="h-60" />
               <p className="text-center px-1">
                 Right now, we provide expert site supervisors in Sierra Leone
-                and Kenya. If you're in another country, you can set up your own
+                and Kenya. If you&apos;re in another country, you can set up your own
                 site supervision team using our platform to oversee your
                 project.
               </p>
