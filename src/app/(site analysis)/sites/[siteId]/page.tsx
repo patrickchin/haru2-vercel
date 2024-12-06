@@ -412,7 +412,6 @@ export default async function Page(props: {
           <TabsList className="w-full h-12 [&_button]:h-12">
             <TabsTrigger value="description">Description</TabsTrigger>
             <TabsTrigger value="meetings">Meetings</TabsTrigger>
-            <TabsTrigger value="members">Members</TabsTrigger>
             <TabsTrigger value="status">Status</TabsTrigger>
             <TabsTrigger value="comments">Comments</TabsTrigger>
           </TabsList>
@@ -427,14 +426,11 @@ export default async function Page(props: {
           )}
 
           <SiteDescription site={site} members={members} role={role} />
+          <SiteMembers site={site} members={members} />
         </TabsContent>
 
         <TabsContent value="meetings" className="space-y-4">
           <SiteMeetings site={site} members={members} />
-        </TabsContent>
-
-        <TabsContent value="members" className="space-y-4">
-          <SiteMembers site={site} members={members} />
         </TabsContent>
 
         <TabsContent value="status" className="space-y-4">
