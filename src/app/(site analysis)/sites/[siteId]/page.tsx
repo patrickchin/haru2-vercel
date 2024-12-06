@@ -392,7 +392,7 @@ export default async function Page(props: {
 
       <Tabs defaultValue="description" className="w-full gap-4">
         <Card className="mb-8 overflow-hidden">
-          <TabsList className="w-full h-12 [&_button]:h-12">
+          <TabsList className="w-full h-auto p-1 [&_button]:h-12 justify-start">
             <TabsTrigger value="description">Description</TabsTrigger>
             <TabsTrigger value="meetings">Meetings</TabsTrigger>
             <TabsTrigger value="members">Members</TabsTrigger>
