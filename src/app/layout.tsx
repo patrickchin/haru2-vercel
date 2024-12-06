@@ -10,7 +10,7 @@ import { auth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { AddFeedback } from "@/components/feedback";
 
-let title = "HarpaPro";
+let title = "Harpa Pro";
 let description = "Plan and organise and your construction projects";
 
 export const metadata = {
