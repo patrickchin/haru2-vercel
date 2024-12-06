@@ -19,7 +19,7 @@ import { UserAvatar } from "./user-avatar";
 export function MainNav({ user }: { user?: User }) {
   const pathname = usePathname();
   const navigation = [
-    { name: "About", href: "/about", needLogin: false },
+    // { name: "About", href: "/about", needLogin: false },
     { name: "My Projects", href: "/sites", needLogin: true },
   ];
 
