@@ -202,8 +202,8 @@ importers:
         specifier: 19.0.0
         version: 19.0.0
       react-day-picker:
-        specifier: ^9.4.1
-        version: 9.4.1(react@19.0.0)
+        specifier: ^8.10.1
+        version: 8.10.1(date-fns@4.1.0)(react@19.0.0)
       react-dom:
         specifier: 19.0.0
         version: 19.0.0(react@19.0.0)
@@ -506,9 +506,6 @@ packages:
   '@babel/runtime@7.26.0':
     resolution: {integrity: sha512-FDSOghenHTiToteC/QRlv2q3DhPZ/oOXTBoirfWNx1Cx3TMVcGWQtMMmQcSvb/JjpNeGzx8Pq/b4fKEJuWm1sw==}
     engines: {node: '>=6.9.0'}
-
-  '@date-fns/tz@1.2.0':
-    resolution: {integrity: sha512-LBrd7MiJZ9McsOgxqWX7AaxrDjcFVjWH/tIKJd7pnR7McaslGYOP1QmmiBXdJH/H/yLCT+rcQ7FaPBUxRGUtrg==}
 
   '@drizzle-team/brocli@0.10.2':
     resolution: {integrity: sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w==}
@@ -3904,11 +3901,11 @@ packages:
     peerDependencies:
       react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
 
-  react-day-picker@9.4.1:
-    resolution: {integrity: sha512-eyNjKQ2lFHby42K2itlMNMSpp6+A5m+wbXB31xFaufnplpam274AZ1G2NuBjhnyiehpS+4gJZVILJN54e9Xvhw==}
-    engines: {node: '>=18'}
+  react-day-picker@8.10.1:
+    resolution: {integrity: sha512-TMx7fNbhLk15eqcMt+7Z7S2KF7mfTId/XJDjKE8f+IUcFn0l08/kI4FiYTL/0yuOLmEcbR4Fwe3GJf/NiiMnPA==}
     peerDependencies:
-      react: '>=16.8.0'
+      date-fns: ^2.28.0 || ^3.0.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
 
   react-dom@19.0.0:
     resolution: {integrity: sha512-4GV5sHFG0e/0AD4X+ySy6UJd3jVl1iNsNHdpad0qhABJ11twS3TTBnseqsKurKcsNqCEFeGL3uLpVChpIO3QfQ==}
@@ -5089,8 +5086,6 @@ snapshots:
   '@babel/runtime@7.26.0':
     dependencies:
       regenerator-runtime: 0.14.1
-
-  '@date-fns/tz@1.2.0': {}
 
   '@drizzle-team/brocli@0.10.2': {}
 
@@ -8474,9 +8469,8 @@ snapshots:
       prop-types: 15.8.1
       react: 19.0.0
 
-  react-day-picker@9.4.1(react@19.0.0):
+  react-day-picker@8.10.1(date-fns@4.1.0)(react@19.0.0):
     dependencies:
-      '@date-fns/tz': 1.2.0
       date-fns: 4.1.0
       react: 19.0.0
 
