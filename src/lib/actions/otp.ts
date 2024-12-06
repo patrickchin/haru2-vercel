@@ -113,8 +113,14 @@ export async function sendOtpViaEmail(email: string) {
     expiresAt.setMinutes(expiresAt.getMinutes() + 10); // OTP expires in 10 minutes
     await saveOtp(email, otp, expiresAt);
 
-    const subject = "Your OTP Code";
-    const text = `Your OTP is: ${otp}`;
+    const subject = "HarpaPro OTP";
+    const text = `
+Dear ${user.name},
+
+Your HarpaPro one time passcode is: ${otp}
+
+Kind Regards,
+The HarpaPro Team`;
 
     try {
       await sendEmail({
