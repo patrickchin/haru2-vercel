@@ -93,8 +93,10 @@ function CommentsSectionAdd({
 
 export default function CommentsSection({
   commentsSectionId,
+  titleClassName,
 }: {
   commentsSectionId: number;
+  titleClassName?: string;
 }) {
   const {
     data: comments,
@@ -111,7 +113,7 @@ export default function CommentsSection({
   return (
     <Card id="meetings">
       <CardHeader>
-        <CardTitle>Comments Section</CardTitle>
+        <CardTitle className={titleClassName}>Comments Section</CardTitle>
       </CardHeader>
       <CardContent className="space-y-8">
         <CommentsSectionAdd

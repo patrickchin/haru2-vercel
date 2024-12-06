@@ -27,7 +27,7 @@ async function ReportSiteDetails({ report }: { report?: SiteReportAll }) {
   return (
     <Card className="">
       <CardHeader className="flex flex-row justify-between">
-        <CardTitle>Site Project Details</CardTitle>
+        <CardTitle className="text-lg">Site Project Details</CardTitle>
       </CardHeader>
 
       <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 pt-0">
@@ -74,7 +74,7 @@ function ReportBudget({ report }: { report?: SiteReportAll }) {
   return (
     <Card className="bg-yellow-50 hidden">
       <CardHeader className="flex flex-row justify-between">
-        <CardTitle>Current Budget and Timeline Estimates</CardTitle>
+        <CardTitle className="text-lg">Current Budget and Timeline Estimates</CardTitle>
       </CardHeader>
 
       <CardContent className="grid grid-cols-2 gap-4 p-4 pt-0">
@@ -113,7 +113,7 @@ function ReportActivities({ report }: { report?: SiteReportAll }) {
   return (
     <Card className="bg-cyan-50">
       <CardHeader className="flex flex-row justify-between">
-        <CardTitle>Current Construction Activites</CardTitle>
+        <CardTitle className="text-lg">Current Construction Activites</CardTitle>
       </CardHeader>
 
       {/* <CardContent className="flex flex-col gap-3 p-4 pt-0"> */}
@@ -232,7 +232,7 @@ function ReportInventory({ report }: { report?: SiteReportAll }) {
   return (
     <Card className="bg-muted">
       <CardContent className="flex flex-col sm:flex-row justify-between items-center p-6">
-        <CardTitle className="text-lg font-semibold">
+        <CardTitle className="text-lg">
           Inventory and Storage
         </CardTitle>
         <Dialog>

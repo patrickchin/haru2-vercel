@@ -92,7 +92,7 @@ export async function ReportSections({
               <li key={section.id}>
                 <Card>
                   <CardHeader className="p-6 pb-3">
-                    <CardTitle>{section.title}</CardTitle>
+                    <CardTitle className="text-lg">{section.title}</CardTitle>
                   </CardHeader>
                   <CardContent className="p-6 pt-0 space-y-4">
                     <CardDescription className="text-base whitespace-pre-line">
@@ -108,7 +108,7 @@ export async function ReportSections({
       ) : (
         <Card className="">
           <CardHeader className="flex flex-row justify-between">
-            <CardTitle>Report Detail Sections</CardTitle>
+            <CardTitle className="text-lg">Report Detail Sections</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 pt-0">
             --

@@ -639,7 +639,7 @@ export function EditReportDocument({
     <>
       <Card className="bg-cyan-50">
         <CardHeader className="flex flex-row justify-between">
-          <CardTitle>Current Construction Activites</CardTitle>
+          <CardTitle className="text-lg">Current Construction Activites</CardTitle>
         </CardHeader>
 
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
@@ -656,7 +656,7 @@ export function EditReportDocument({
 
       <Card className="bg-muted">
         <CardContent className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-6">
-          <CardTitle className="text-base font-semibold grow text-left">
+          <CardTitle className="text-lg grow text-left">
             Inventory and Storage
           </CardTitle>
           <EditInventory report={report} mutate={mutate} />

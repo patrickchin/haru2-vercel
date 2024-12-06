@@ -67,7 +67,10 @@ export default async function Page({
       <section className="w-full max-w-5xl mx-auto">
         <Suspense fallback={<div>Loading comments ...</div>}>
           {commentsSectionId && (
-            <CommentsSection commentsSectionId={commentsSectionId} />
+            <CommentsSection
+              commentsSectionId={commentsSectionId}
+              titleClassName="text-lg"
+            />
           )}
         </Suspense>
       </section>

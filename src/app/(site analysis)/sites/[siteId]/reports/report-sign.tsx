@@ -80,7 +80,7 @@ export async function ReportSignatureSection({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Signatures</CardTitle>
+        <CardTitle className="text-lg">Signatures</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
         {report?.publishedAt ? (
