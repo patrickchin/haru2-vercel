@@ -244,7 +244,7 @@ async function SiteComplaints({
                   </Button>
                 </div>
               </TooltipTrigger>
-              <TooltipContent asChild>
+              <TooltipContent className="p-0">
                 <WarningBox>Coming Soon</WarningBox>
               </TooltipContent>
             </Tooltip>
@@ -389,7 +389,7 @@ export default async function Page(props: {
         {editSiteRoles.includes(role) ? (
           <EditSiteTitle site={site} />
         ) : (
-          <div className="grow flex gap-4">
+          <div className="grow">
             <h1 className="text-2xl font-semibold">
               Site {site.id}: {site?.title}
             </h1>
