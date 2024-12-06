@@ -239,8 +239,8 @@ async function SiteComplaints({
             <Tooltip>
               <TooltipTrigger asChild>
                 <div>
-                  <Button variant="outline" disabled>
-                    Edit <LucideEdit />
+                  <Button variant="outline" disabled size="icon">
+                    <LucideEdit />
                   </Button>
                 </div>
               </TooltipTrigger>

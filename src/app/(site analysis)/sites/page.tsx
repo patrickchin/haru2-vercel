@@ -80,7 +80,7 @@ export default async function Page() {
   return (
     <DefaultLayout>
       <div className="flex items-center">
-        <h1 className="grow text-3xl font-semibold">
+        <h1 className="grow text-2xl font-semibold">
           Site Supervision Projects
         </h1>
         <Button asChild>

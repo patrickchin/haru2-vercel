@@ -116,8 +116,8 @@ export function EditSiteSchedule({ site }: { site: SiteDetails }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          Edit <LucideEdit />
+        <Button variant="outline" size="icon">
+          <LucideEdit />
         </Button>
       </DialogTrigger>
       <DialogContent>

@@ -164,8 +164,8 @@ export function EditKeySiteMembers({
       }
     >
       <DialogTrigger asChild>
-        <Button variant="outline" className="">
-          Edit Members <LucideEdit className="ml-2 w-3.5" />
+        <Button variant="outline" size="icon">
+          <LucideEdit />
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-svh overflow-y-auto gap-6">

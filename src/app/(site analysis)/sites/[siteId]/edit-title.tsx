@@ -83,7 +83,7 @@ export function EditSiteTitle({ site }: { site: SiteDetails }) {
 
       <Dialog>
         <DialogTrigger asChild className="">
-          <Button variant="outline" size="icon">
+          <Button variant="outline" size="icon" className="opacity-50">
             <LucideEdit />
           </Button>
         </DialogTrigger>
