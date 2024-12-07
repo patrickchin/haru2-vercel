@@ -174,9 +174,7 @@ function EditEquipment({
           Equipment Used
         </h2>
         <DialogTrigger asChild>
-          <Button size="sm" variant="outline">
-            Open
-          </Button>
+          <Button variant="outline">Open</Button>
         </DialogTrigger>
       </div>
 
@@ -248,9 +246,7 @@ function EditMaterials({
           Materials Used
         </h2>
         <DialogTrigger asChild>
-          <Button size="sm" variant="outline">
-            Open
-          </Button>
+          <Button variant="outline">Open</Button>
         </DialogTrigger>
       </div>
 
@@ -505,9 +501,7 @@ function EditInventory({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="sm" variant="outline">
-          Open
-        </Button>
+        <Button variant="outline">Open</Button>
       </DialogTrigger>
 
       <DialogContent
@@ -639,7 +633,9 @@ export function EditReportDocument({
     <>
       <Card className="bg-cyan-50">
         <CardHeader className="flex flex-row justify-between">
-          <CardTitle className="text-lg">Current Construction Activites</CardTitle>
+          <CardTitle className="text-lg">
+            Current Construction Activites
+          </CardTitle>
         </CardHeader>
 
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">

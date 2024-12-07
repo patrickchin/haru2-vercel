@@ -20,9 +20,10 @@ import {
 } from "@/components/ui/dialog";
 
 async function ReportSiteDetails({ report }: { report?: SiteReportAll }) {
-
   const site =
-    report && report.siteId ? await Actions.getSiteDetails(report.siteId) : undefined;
+    report && report.siteId
+      ? await Actions.getSiteDetails(report.siteId)
+      : undefined;
 
   return (
     <Card className="">
@@ -74,7 +75,9 @@ function ReportBudget({ report }: { report?: SiteReportAll }) {
   return (
     <Card className="bg-yellow-50 hidden">
       <CardHeader className="flex flex-row justify-between">
-        <CardTitle className="text-lg">Current Budget and Timeline Estimates</CardTitle>
+        <CardTitle className="text-lg">
+          Current Budget and Timeline Estimates
+        </CardTitle>
       </CardHeader>
 
       <CardContent className="grid grid-cols-2 gap-4 p-4 pt-0">
@@ -113,7 +116,9 @@ function ReportActivities({ report }: { report?: SiteReportAll }) {
   return (
     <Card className="bg-cyan-50">
       <CardHeader className="flex flex-row justify-between">
-        <CardTitle className="text-lg">Current Construction Activites</CardTitle>
+        <CardTitle className="text-lg">
+          Current Construction Activites
+        </CardTitle>
       </CardHeader>
 
       {/* <CardContent className="flex flex-col gap-3 p-4 pt-0"> */}
@@ -141,9 +146,7 @@ function ReportActivities({ report }: { report?: SiteReportAll }) {
             <h2 className="text-base font-semibold">Materials Used</h2>
             <Dialog>
               <DialogTrigger asChild>
-                <Button size="sm" variant="outline">
-                  Open
-                </Button>
+                <Button variant="outline">Open</Button>
               </DialogTrigger>
               <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] flex flex-col p-4 gap-4">
                 <DialogTitle className="text-lg font-semibold">
@@ -166,9 +169,7 @@ function ReportActivities({ report }: { report?: SiteReportAll }) {
             <h2 className="text-base font-semibold">Equipment Used</h2>
             <Dialog>
               <DialogTrigger asChild>
-                <Button size="sm" variant="outline">
-                  Open
-                </Button>
+                <Button variant="outline">Open</Button>
               </DialogTrigger>
               <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] flex flex-col p-4 gap-4">
                 <DialogTitle className="text-lg font-semibold">
@@ -232,9 +233,7 @@ function ReportInventory({ report }: { report?: SiteReportAll }) {
   return (
     <Card className="bg-muted">
       <CardContent className="flex flex-col sm:flex-row justify-between items-center p-6">
-        <CardTitle className="text-lg">
-          Inventory and Storage
-        </CardTitle>
+        <CardTitle className="text-lg">Inventory and Storage</CardTitle>
         <Dialog>
           <DialogTrigger asChild>
             <Button size="default" variant="outline">
