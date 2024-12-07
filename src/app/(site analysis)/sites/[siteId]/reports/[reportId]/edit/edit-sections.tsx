@@ -13,6 +13,7 @@ import * as Schemas from "@/db/schema";
 
 import Image from "next/image";
 import {
+  LucideChevronDown,
   LucideLoader2,
   LucidePlus,
   LucideTrash2,
@@ -22,7 +23,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/lib/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { createInsertSchema } from "drizzle-zod";
 import {
   Form,
@@ -54,11 +55,27 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import prettyBytes from "pretty-bytes";
 import { SaveRevertForm } from "@/components/save-revert-form";
 import { Separator } from "@/components/ui/separator";
 import { InfoBox } from "@/components/info-box";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // DUPLICATED FROM edit-upload.tsx can be improved
 function FileListTable({
@@ -285,6 +302,25 @@ function UpdateSiteReportSection({
     },
   });
 
+  const sectioniTitles = [
+    "Site Layout and Access",
+    "Current Construction Activities",
+    "Health and Safety",
+    "Site Personnel",
+    "Site Conditions",
+    null,
+
+    "Materials Quality Check",
+    "Materials and Equipment",
+    "Security",
+    "Environment",
+    null,
+
+    "Work Quality",
+    "Visitor and Public Interaction",
+    "Legal and Compliance",
+  ];
+
   return (
     <Card>
       <CardContent className="p-6 flex flex-col gap-4">
@@ -306,13 +342,36 @@ function UpdateSiteReportSection({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Section Title</FormLabel>
-                  <FormControl>
-                    <Input
-                      name={field.name}
-                      onChange={field.onChange}
-                      value={field.value || ""}
-                    />
-                  </FormControl>
+                  <div className="flex flex-row gap-4">
+                    <FormControl>
+                      <Input
+                        className="grow max-w-[30rem]"
+                        name={field.name}
+                        onChange={field.onChange}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <DropdownMenu modal={false}>
+                      <Button asChild variant="outline">
+                        <DropdownMenuTrigger>
+                          Select Default Title <LucideChevronDown />
+                        </DropdownMenuTrigger>
+                      </Button>
+                      <DropdownMenuContent className="p-4">
+                        {sectioniTitles.map((t) =>
+                          t ? (
+                            <DropdownMenuItem
+                              onSelect={() => form.setValue(field.name, t)}
+                            >
+                              {t}
+                            </DropdownMenuItem>
+                          ) : (
+                            <DropdownMenuSeparator />
+                          ),
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
