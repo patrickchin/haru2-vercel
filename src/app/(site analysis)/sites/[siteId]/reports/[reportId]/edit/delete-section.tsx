@@ -1,5 +1,3 @@
-"use client";
-
 import * as Actions from "@/lib/actions";
 import { LucideLoader2, LucideTrash2 } from "lucide-react";
 import {
@@ -18,14 +16,14 @@ import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
 
-export function DeleteButton({
-  siteId,
-  reportId,
+export function DeleteSectionButton({
+  sectionId,
   disabled,
+  onSubmit,
 }: {
-  siteId: number | null; // .. tbh it should never be null
-  reportId: number;
+  sectionId: number;
   disabled: boolean;
+  onSubmit: () => void;
 }) {
   const form = useForm();
   const router = useRouter();
@@ -38,14 +36,18 @@ export function DeleteButton({
           disabled={disabled}
           className="flex gap-2"
         >
-          Delete Report
-          <LucideTrash2 className="h-4 w-4" />
+          Delete Section
+          {form.formState.isSubmitting ? (
+            <LucideLoader2 className="animate-spin" />
+          ) : (
+            <LucideTrash2 className="h-4 w-4" />
+          )}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Are you sure you would like to delete this report?
+            Are you sure you would like to delete this section?
           </AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone.
@@ -57,13 +59,13 @@ export function DeleteButton({
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(async () => {
-                await Actions.deleteSiteReport(reportId);
-                router.push(`/sites/${siteId}/reports`);
+                await Actions.deleteSiteReportSection(sectionId);
+                onSubmit();
               })}
             >
               <Button variant="destructive" asChild>
                 <AlertDialogAction type="submit">
-                  Yes, Delete Report
+                  Yes, Delete Section
                   {form.formState.isSubmitting && (
                     <LucideLoader2 className="animate-spin h-4" />
                   )}

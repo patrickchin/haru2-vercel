@@ -12,7 +12,7 @@ import { UploadAndManageFiles } from "./edit-upload";
 import { UpdateSiteReportSections } from "./edit-sections";
 import { EditReportDocument } from "./edit-details";
 import { PublishButton } from "./publish-button";
-import { DeleteButton } from "./delete-button";
+import { DeleteReportButton } from "./delete-report";
 
 async function EditReportHeader({ report }: { report: SiteReport }) {
   return (
@@ -29,7 +29,7 @@ async function EditReportHeader({ report }: { report: SiteReport }) {
       <h1 className="font-semibold text-2xl grow whitespace-nowrap">
         Editing Site Report #{report.id}: {report.createdAt?.toDateString()}
       </h1>
-      <DeleteButton
+      <DeleteReportButton
         siteId={report.siteId}
         reportId={report.id}
         disabled={!!report.publishedAt}

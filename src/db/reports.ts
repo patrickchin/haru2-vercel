@@ -328,3 +328,22 @@ export async function updateSiteReportSection(
     .returning()
     .then((r) => r[0]);
 }
+
+export async function deleteSiteReportSection(sectionId: number) {
+  return db.transaction(async (tx) => {
+    const section = await tx
+      .delete(Schemas.siteReportSections1)
+      .where(eq(Schemas.siteReportSections1.id, sectionId))
+      .returning()
+      .then((r) => r[0]);
+
+    if (section.fileGroupId) {
+      const fileGroup = await tx
+        .update(Schemas.fileGroups1)
+        .set({ deletedAt: new Date() })
+        .where(eq(Schemas.fileGroups1.id, section.fileGroupId))
+        .returning()
+        .then((r) => r[0]);
+    }
+  });
+}

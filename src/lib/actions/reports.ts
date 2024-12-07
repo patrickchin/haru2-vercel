@@ -232,6 +232,13 @@ export async function updateSiteReportSection(
   }
 }
 
+export async function deleteSiteReportSection(sectionId: number) {
+  const role = await getSiteMemberRole({ sectionId });
+  if (editReportRoles.includes(role)) {
+    db.deleteSiteReportSection(sectionId);
+  }
+}
+
 export async function addSiteReportSectionFile(
   sectionId: number,
   fileInfo: HaruFileNew,

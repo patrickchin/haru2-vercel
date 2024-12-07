@@ -55,19 +55,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import prettyBytes from "pretty-bytes";
 import { SaveRevertForm } from "@/components/save-revert-form";
-import { Separator } from "@/components/ui/separator";
 import { InfoBox } from "@/components/info-box";
 import {
   DropdownMenu,
@@ -76,6 +66,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { DeleteSectionButton } from "./delete-section";
 
 // DUPLICATED FROM edit-upload.tsx can be improved
 function FileListTable({
@@ -246,7 +237,7 @@ function UpdateSiteReportSectionFiles({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4">
-        <h3 className="font-semibold">Section Files</h3>
+        <h3 className="font-medium">Section Files</h3>
         <Button asChild>
           <Label
             htmlFor={`upload-file-section-${section.id}`}
@@ -269,11 +260,13 @@ function UpdateSiteReportSectionFiles({
           </Label>
         </Button>
       </div>
-      <FileListTable
-        files={files}
-        handleFileDelete={handleFileDelete}
-        type={"image"}
-      />
+      {files && files.length > 0 && (
+        <FileListTable
+          files={files}
+          handleFileDelete={handleFileDelete}
+          type={"image"}
+        />
+      )}
     </div>
   );
 }
@@ -336,16 +329,27 @@ function UpdateSiteReportSection({
             })}
             className="flex flex-col gap-4"
           >
+            <div className="flex gap-2">
+              <h3 className="grow text-lg font-semibold">
+                Detailed Report Section
+              </h3>
+              <DeleteSectionButton
+                sectionId={section.id}
+                disabled={false}
+                onSubmit={sectionsMutate}
+              />
+              <SaveRevertForm form={form} />
+            </div>
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Section Title</FormLabel>
+                  <FormLabel className="text-base">Section Title</FormLabel>
                   <div className="flex flex-row gap-4">
                     <FormControl>
                       <Input
-                        className="grow max-w-[30rem]"
+                        className="grow max-w-[30rem] md:text-base"
                         name={field.name}
                         onChange={field.onChange}
                         value={field.value || ""}
@@ -358,15 +362,16 @@ function UpdateSiteReportSection({
                         </DropdownMenuTrigger>
                       </Button>
                       <DropdownMenuContent className="p-4">
-                        {sectioniTitles.map((t) =>
+                        {sectioniTitles.map((t, i) =>
                           t ? (
                             <DropdownMenuItem
+                              key={i}
                               onSelect={() => form.setValue(field.name, t)}
                             >
                               {t}
                             </DropdownMenuItem>
                           ) : (
-                            <DropdownMenuSeparator />
+                            <DropdownMenuSeparator key={i} />
                           ),
                         )}
                       </DropdownMenuContent>
@@ -382,7 +387,7 @@ function UpdateSiteReportSection({
               name="content"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Section Content</FormLabel>
+                  <FormLabel className="text-base">Section Content</FormLabel>
                   <FormControl>
                     <Textarea
                       name={field.name}
@@ -395,14 +400,8 @@ function UpdateSiteReportSection({
                 </FormItem>
               )}
             />
-
-            <div className="col-span-2 flex justify-end">
-              <SaveRevertForm form={form} />
-            </div>
           </form>
         </Form>
-
-        <Separator />
 
         <UpdateSiteReportSectionFiles
           siteId={siteId}
@@ -443,7 +442,7 @@ export function UpdateSiteReportSections({
           />
         ))
       ) : (
-        <InfoBox className="text-base p-6 rounded-lg">
+        <InfoBox className="text-base p-6 rounded-lg hidden">
           You can create a more detailed site report by adding new sections and
           attaching photos.
         </InfoBox>
