@@ -47,7 +47,7 @@ export default function Page() {
           />
         </div>
 
-        <div className="flex flex-col gap-8 max-w-[72rem] w-full justify-end transition-all">
+        <div className="flex flex-col gap-8 max-w-[86rem] w-full justify-end transition-all">
           <div className="justify-end flex -mt-32">
             <div
               className={cn(
@@ -59,7 +59,7 @@ export default function Page() {
                 Supervise Your Construction Projects
               </h1>
               <h2 className="text-xl font-extrabold">
-                Remote Site Monitoring and Management Services
+                Online Site Monitoring and Management Services
               </h2>
             </div>
           </div>
@@ -73,7 +73,7 @@ export default function Page() {
             >
               <p className="font-extrabold">
                 <span className="pr-2 text-xl">
-                  Setup your own team or hire our experts
+                  Setup your own team or Hire our experts
                 </span>
                 <Button
                   asChild
@@ -87,7 +87,6 @@ export default function Page() {
               </p>
             </div>
           </div>
-
         </div>
       </main>
       {/* <Footer /> */}
