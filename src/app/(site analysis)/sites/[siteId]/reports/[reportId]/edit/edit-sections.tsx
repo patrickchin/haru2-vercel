@@ -448,16 +448,18 @@ export function UpdateSiteReportSections({
           attaching photos.
         </InfoBox>
       )}
-      <div>
-        <Button
-          onClick={async () => {
-            await Actions.addSiteReportSection(reportId, {});
-            await mutate();
-          }}
-        >
-          Add Section
-        </Button>
-      </div>
+      <Card>
+        <CardContent className="p-6 py-12 flex flex-col gap-4 items-center">
+          <Button
+            onClick={async () => {
+              await Actions.addSiteReportSection(reportId, {});
+              await mutate();
+            }}
+          >
+            Add Section <LucidePlus />
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
