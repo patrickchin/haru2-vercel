@@ -76,6 +76,7 @@ export const files1 = pgTable("files1", {
 
 export const fileGroups1 = pgTable("fileGroups1", {
   id: serial("id").primaryKey(),
+  deletedAt: timestamp("deletedAt", { mode: "date", withTimezone: true }),
 });
 
 export const fileGroupFiles1 = pgTable(

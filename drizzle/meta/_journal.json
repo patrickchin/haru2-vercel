@@ -92,6 +92,13 @@
       "when": 1733476024405,
       "tag": "0012_steady_sunfire",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1733577393101,
+      "tag": "0013_silent_vulcan",
+      "breakpoints": true
     }
   ]
 }
