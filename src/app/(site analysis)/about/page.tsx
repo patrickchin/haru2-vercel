@@ -44,13 +44,13 @@ export default function Page() {
                   Currently a researcher at Zhejiang University, he earned his
                   bachelor&apos;s degree in Civil Engineering from Fourah Bay
                   College, University of Sierra Leone. He went on to pursue a
-                  Master&apos;s degree in Structural Engineering at Chang'an
-                  University, China. Worked for two years as a building design
-                  engineer at ChengXian Prefabricated Building Company in
-                  Qingzhou, Shandong, where he contributed to innovative
-                  building projects, focusing on optimization and enhancing
-                  flexibility in fabricating structural components for modular
-                  buildings.
+                  Master&apos;s degree in Structural Engineering at
+                  Chang&apos;An University, China. Worked for two years as a
+                  building design engineer at ChengXian Prefabricated Building
+                  Company in Qingzhou, Shandong, where he contributed to
+                  innovative building projects, focusing on optimization and
+                  enhancing flexibility in fabricating structural components for
+                  modular buildings.
                 </p>
               </div>
             </Card>
