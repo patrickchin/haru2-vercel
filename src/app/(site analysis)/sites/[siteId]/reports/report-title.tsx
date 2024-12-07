@@ -100,9 +100,9 @@ export async function ReportTitleBarDisplay({
           <PopoverTrigger asChild disabled={!report}>
             <Button
               variant="secondary"
-              className="items-center gap-4 border-2 rounded border-primary"
+              className="items-center gap-4 border-2 rounded border-primary grow"
             >
-              <h1 className="text-xl sm:text-2xl font-semibold grow text-center">
+              <h1 className="text-xl sm:text-2xl font-semibold grow text-start">
                 {report
                   ? `Site Report #${report.id} - ${report.createdAt?.toDateString()}`
                   : "This site has no reports yet"}

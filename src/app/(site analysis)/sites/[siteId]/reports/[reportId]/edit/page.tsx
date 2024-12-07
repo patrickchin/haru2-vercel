@@ -26,7 +26,7 @@ async function EditReportHeader({ report }: { report: SiteReport }) {
           Back To Report
         </Link>
       </Button>
-      <h1 className="font-semibold text-2xl grow">
+      <h1 className="font-semibold text-2xl grow whitespace-nowrap">
         Editing Site Report #{report.id}: {report.createdAt?.toDateString()}
       </h1>
       <DeleteButton
