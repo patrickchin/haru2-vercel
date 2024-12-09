@@ -65,6 +65,10 @@ export default async function Page({
       </section>
 
       <section className="w-full max-w-5xl mx-auto">
+        <ReportSignatureSection {...props} />
+      </section>
+
+      <section className="w-full max-w-5xl mx-auto">
         <Suspense fallback={<div>Loading comments ...</div>}>
           {commentsSectionId && (
             <CommentsSection
@@ -73,10 +77,6 @@ export default async function Page({
             />
           )}
         </Suspense>
-      </section>
-
-      <section className="w-full max-w-5xl mx-auto">
-        <ReportSignatureSection {...props} />
       </section>
     </DefaultLayout>
   );
