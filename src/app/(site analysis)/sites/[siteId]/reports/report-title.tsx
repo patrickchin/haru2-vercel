@@ -100,7 +100,7 @@ export async function ReportTitleBarDisplay({
           <PopoverTrigger asChild disabled={!report}>
             <Button
               variant="secondary"
-              className="items-center gap-4 border-2 rounded border-primary grow"
+              className="items-center gap-4 border-2 rounded border-primary"
             >
               <h1 className="text-xl sm:text-2xl font-semibold grow text-start">
                 {report
