@@ -8,14 +8,14 @@ import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const infoBoxVariants = cva(
-  cn("flex gap-3 border-2 p-4 rounded text-sm text-foreground", "items-center"),
+  cn("flex gap-3 border-2 p-4 rounded text-sm dark:text-white", "items-center"),
   {
     variants: {
       variant: {
-        good: "bg-green-50 border-green-200",
-        info: "bg-blue-50 border-blue-200",
-        warning: "bg-yellow-50 border-yellow-200",
-        error: "bg-red-100 border-red-300",
+        good: "bg-green-100 border-green-300      dark:bg-green-950",
+        info: "bg-blue-50 border-blue-200         dark:bg-blue-950",
+        warning: "bg-yellow-100 border-yellow-400 dark:bg-yellow-500/40",
+        error: "bg-destructive/20 border-red-400  dark:bg-red-950",
       },
     },
     defaultVariants: {
