@@ -18,6 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { LucideMaximize2 } from "lucide-react";
 
 async function ReportSiteDetails({ report }: { report?: SiteReportAll }) {
   const site =
@@ -146,7 +147,9 @@ function ReportActivities({ report }: { report?: SiteReportAll }) {
             <h2 className="text-base font-semibold">Materials Used</h2>
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="outline">Open</Button>
+                <Button variant="outline">
+                  Open <LucideMaximize2 />
+                </Button>
               </DialogTrigger>
               <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] flex flex-col p-4 gap-4">
                 <DialogTitle className="text-lg font-semibold">
@@ -169,7 +172,10 @@ function ReportActivities({ report }: { report?: SiteReportAll }) {
             <h2 className="text-base font-semibold">Equipment Used</h2>
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="outline">Open</Button>
+                <Button variant="outline">
+                  Open
+                  <LucideMaximize2 />
+                </Button>
               </DialogTrigger>
               <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] flex flex-col p-4 gap-4">
                 <DialogTitle className="text-lg font-semibold">
@@ -231,15 +237,19 @@ function ReportActivities({ report }: { report?: SiteReportAll }) {
 
 function ReportInventory({ report }: { report?: SiteReportAll }) {
   return (
-    <Card className="bg-muted">
-      <CardContent className="flex flex-col sm:flex-row justify-between items-center p-6">
-        <CardTitle className="text-lg">Inventory and Storage</CardTitle>
-        <Dialog>
-          <DialogTrigger asChild>
+    <Card className="">
+      <Dialog>
+        <DialogTrigger asChild>
+          <CardHeader className="flex flex-col sm:flex-row justify-between items-center px-6 py-0 hover:bg-accent">
+            <CardTitle className="text-lg py-6">
+              Inventory and Storage
+            </CardTitle>
             <Button size="default" variant="outline">
-              Open
+              Open <LucideMaximize2 />
             </Button>
-          </DialogTrigger>
+          </CardHeader>
+        </DialogTrigger>
+        <CardContent className="flex flex-col sm:flex-row justify-between items-center p-0">
           <DialogContent
             className={cn(
               "min-h-96 max-h-[90svh] h-[50rem]",
@@ -276,8 +286,8 @@ function ReportInventory({ report }: { report?: SiteReportAll }) {
               </ol>
             </div>
           </DialogContent>
-        </Dialog>
-      </CardContent>
+        </CardContent>
+      </Dialog>
     </Card>
   );
 }

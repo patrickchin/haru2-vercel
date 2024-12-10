@@ -1,15 +1,15 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { HaruFile } from "@/lib/types";
+import { HaruFile, SiteReportSection } from "@/lib/types";
 import * as Actions from "@/lib/actions";
 
+import { LucideChevronsUpDown } from "lucide-react";
 import { FileDisplay } from "@/components/file-display";
-import { SiteReportSection } from "@/lib/types/site";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardHeader,
   CardContent,
-  CardDescription,
   CardTitle,
 } from "@/components/ui/card";
 import {
@@ -25,6 +25,11 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 async function ReportSectionFiles({ section }: { section: SiteReportSection }) {
   const files = await Actions.getSiteReportSectionFiles(section.id);
@@ -86,25 +91,42 @@ export async function ReportSections({
   return (
     <>
       {sections && sections.length > 0 ? (
-        <ol className="flex flex-col gap-4">
-          {sections?.map((section) => {
-            return (
-              <li key={section.id}>
-                <Card>
-                  <CardHeader className="p-6 pb-3">
-                    <CardTitle className="text-lg">{section.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6 pt-0 space-y-4">
-                    <CardDescription className="text-base whitespace-pre-line">
-                      {section.content}
-                    </CardDescription>
-                    <ReportSectionFiles section={section} />
-                  </CardContent>
-                </Card>
-              </li>
-            );
-          })}
-        </ol>
+        <Card className="overflow-hidden">
+          <Collapsible defaultOpen={true}>
+            <CollapsibleTrigger asChild>
+              <CardHeader className="flex flex-row justify-between items-center bg-green-100 hover:bg-green-200 py-0">
+                <CardTitle className="text-lg py-6">
+                  Report Detail Sections
+                </CardTitle>
+                <Button variant="outline">
+                  Collapse <LucideChevronsUpDown />
+                </Button>
+              </CardHeader>
+            </CollapsibleTrigger>
+
+            <CollapsibleContent>
+              <CardContent className="flex flex-col p-6 border-t">
+                <ol className="flex flex-col gap-6">
+                  {sections?.map((section) => {
+                    return (
+                      <li key={section.id}>
+                        <h3 className="text-base font-bold leading-8">
+                          {section.title}
+                        </h3>
+                        <div className="space-y-4">
+                          <p className="text-base text-justify whitespace-pre-line">
+                            {section.content}
+                          </p>
+                          <ReportSectionFiles section={section} />
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ol>
+              </CardContent>
+            </CollapsibleContent>
+          </Collapsible>
+        </Card>
       ) : (
         <Card className="">
           <CardHeader className="flex flex-row justify-between">
