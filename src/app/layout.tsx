@@ -36,9 +36,7 @@ export default async function RootLayout({
         <SpeedInsights />
         <Analytics />
         <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="light"
           disableTransitionOnChange
         >
           <SessionProvider session={session}>{children}</SessionProvider>
