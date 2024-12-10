@@ -432,10 +432,7 @@ export default async function Page(props: {
 
         <TabsContent value="comments" className="space-y-4">
           {commentsSectionId && (
-            <CommentsSection
-              commentsSectionId={commentsSectionId}
-              titleClassName="text-lg"
-            />
+            <CommentsSection commentsSectionId={commentsSectionId} />
           )}
         </TabsContent>
       </Tabs>

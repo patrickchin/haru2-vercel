@@ -30,6 +30,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { Fragment } from "react";
+import { Separator } from "@/components/ui/separator";
 
 async function ReportSectionFiles({ section }: { section: SiteReportSection }) {
   const files = await Actions.getSiteReportSectionFiles(section.id);
@@ -105,21 +107,24 @@ export async function ReportSections({
             </CollapsibleTrigger>
 
             <CollapsibleContent>
-              <CardContent className="flex flex-col p-6 border-t">
-                <ol className="flex flex-col gap-6">
+              <CardContent className="flex flex-col p-0 border-t">
+                <ol className="flex flex-col">
                   {sections?.map((section) => {
                     return (
-                      <li key={section.id}>
-                        <h3 className="text-base font-bold leading-8">
-                          {section.title}
-                        </h3>
-                        <div className="space-y-4">
-                          <p className="text-base text-justify whitespace-pre-line">
-                            {section.content}
-                          </p>
-                          <ReportSectionFiles section={section} />
-                        </div>
-                      </li>
+                      <Fragment key={section.id}>
+                        <Separator />
+                        <li key={section.id} className="py-8 px-12 space-y-4 hover:bg-muted">
+                          <h3 className="text-xl font-semibold underline">
+                            {section.title}
+                          </h3>
+                          <div className="space-y-4">
+                            <p className="text-base text-pretty whitespace-pre-line">
+                              {section.content}
+                            </p>
+                            <ReportSectionFiles section={section} />
+                          </div>
+                        </li>
+                      </Fragment>
                     );
                   })}
                 </ol>
