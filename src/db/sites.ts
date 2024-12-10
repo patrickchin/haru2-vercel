@@ -32,6 +32,8 @@ import {
   siteMeetings1,
   siteNotices1,
   commentsSections1,
+  siteInvitations1,
+  accounts1,
 } from "./schema";
 
 export async function getAllSites(userId?: number): Promise<SiteAndExtra[]> {
@@ -379,4 +381,76 @@ export async function getSiteRole({
     )
     .limit(1)
     .then((r) => (r && r.length ? r[0].role : null));
+}
+
+export async function addSiteInvitation(
+  siteId: number,
+  values: { email?: string },
+) {
+  return db
+    .insert(siteInvitations1)
+    .values({
+      siteId,
+      ...values,
+    })
+    .returning()
+    .then((i) => i[0]);
+}
+
+export async function listSiteInvitations(siteId: number) {
+  return db
+    .select()
+    .from(siteInvitations1)
+    .where(eq(siteInvitations1.siteId, siteId));
+}
+
+export async function deleteSiteInvitation(invitationId: number) {
+  return db
+    .delete(siteInvitations1)
+    .where(eq(siteInvitations1.id, invitationId))
+    .returning()
+    .then((i) => i[0]);
+}
+
+export async function acceptSiteInvitation({
+  invitationId,
+  userId,
+}: {
+  invitationId: number;
+  userId: number;
+}) {
+  return db.transaction(async (tx) => {
+    const inv = await deleteSiteInvitation(invitationId);
+    if (inv.siteId)
+      return addSiteMember({ siteId: inv.siteId, userId, role: "member" });
+  });
+}
+
+export async function acceptAllUserInvitations({ userId }: { userId: number }) {
+  return db.transaction(async (tx) => {
+    const account = await tx
+      .select()
+      .from(accounts1)
+      .where(eq(accounts1.id, userId))
+      .then((r) => r[0]);
+    if (!account.email) return;
+
+    const invitations = await tx
+      .delete(siteInvitations1)
+      .where(eq(siteInvitations1.email, account.email))
+      .returning();
+
+    console.log(
+      `User ${userId} (${account.email}) accepting ${invitations.length} invitations.`,
+    );
+
+    const memberships = invitations.map((inv) => ({
+      siteId: inv.siteId,
+      memberId: userId,
+      role: "member" as SiteMemberRole,
+    }));
+    if (memberships.length < 1) return;
+
+    return await db.insert(siteMembers1).values(memberships).returning();
+  });
 }

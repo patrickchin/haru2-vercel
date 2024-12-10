@@ -4,6 +4,7 @@ import useSWR, { KeyedMutator } from "swr";
 import {
   allSiteMemberRoles,
   SiteDetails,
+  SiteInvitation,
   SiteMember,
   SiteMemberRole,
 } from "@/lib/types";
@@ -53,7 +54,7 @@ function SiteSearchAddMember({
   mutate,
 }: {
   siteId: number;
-  mutate: KeyedMutator<SiteMember[] | undefined>;
+  mutate: () => void;
 }) {
   const memberFormSchema = z.object({
     email: z.string().email(),
@@ -69,7 +70,7 @@ function SiteSearchAddMember({
       <form
         onSubmit={form.handleSubmit(async (data: MemberFormType) => {
           await Actions.addSiteMemberByEmail({ siteId, email: data.email });
-          mutate();
+          await mutate();
         })}
         className="flex gap-4 items-end"
       >
@@ -120,7 +121,7 @@ function SiteMemberSelectRole({
 }: {
   siteId: number;
   member: SiteMember;
-  mutate: KeyedMutator<SiteMember[] | undefined>;
+  mutate: () => void;
   disabled: boolean;
 }) {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -173,20 +174,29 @@ export default function SiteMembers({
   site: SiteDetails;
   members: SiteMember[] | undefined;
 }) {
-  const {
-    data: members,
-    mutate: mutateMembers,
-    isLoading,
-    isValidating,
-  } = useSWR<SiteMember[] | undefined>(
+
+  const { data: members, mutate: mutateMembers } = useSWR<
+    SiteMember[] | undefined
+  >(
     `/api/sites/${site.id}/members`, // api route doesn't really exist
     async () => Actions.listSiteMembers(site.id),
     { fallbackData: origMembers },
   );
+
+  const { data: invitations, mutate: mutateInvitations } = useSWR<
+    SiteInvitation[] | undefined
+  >(
+    `/api/sites/${site.id}/invitations`, // api route doesn't really exist
+    async () => Actions.listSiteInvitations(site.id),
+  );
+
+  const mutateBoth = () => Promise.all([mutateMembers(), mutateInvitations()]);
+
   const [isRemoving, setIsRemoving] = useState(false);
   const { data: session } = useSession();
   const role = members?.find((m) => m.id === session?.user?.idn)?.role;
   const canEditSite = role && editSiteRoles.includes(role);
+
 
   return (
     <Card>
@@ -263,8 +273,25 @@ export default function SiteMembers({
           </Collapsible>
         </div>
         {canEditSite && (
-          <SiteSearchAddMember siteId={site.id} mutate={mutateMembers} />
+          <SiteSearchAddMember siteId={site.id} mutate={mutateBoth} />
         )}
+        {invitations && invitations.length > 0 ? (
+          <ul className="border rounded overflow-hidden">
+            {invitations?.map((i) => {
+              return (
+                <li
+                  key={i.id}
+                  className="flex flex-col sm:flex-row gap-4 p-4 bg-background justify-between [&:not(:last-child)]:border-b"
+                >
+                  <div className="flex gap-3 items-center">
+                    <HaruUserAvatar className="w-8 h-8" />
+                    <p>{i.email}</p>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        ) : null}
         <ul className="border rounded overflow-hidden">
           {members?.map((m) => {
             return (
