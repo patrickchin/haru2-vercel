@@ -33,7 +33,12 @@ export default function Page() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="grow flex flex-col justify-center items-center relative overflow-auto">
+      <main
+        className={cn(
+          "grow flex flex-col justify-center items-center relative overflow-auto dark:",
+          "text-slate-900",
+        )}
+      >
         <div className="grid grid-cols-1 absolute h-full w-full -z-10">
           {/* <div className="h-full bg-gradient-to-br from-cyan-100 to-indigo-200 hover:bg-none"></div> */}
           <Image
@@ -53,7 +58,7 @@ export default function Page() {
             <div
               className={cn(
                 "flex flex-col gap-5 justify-end lg:text-right p-8 rounded",
-                "bg-background/50 backdrop-blur-md",
+                "bg-white/50 backdrop-blur-md",
               )}
             >
               <h1 className="text-4xl lg:text-4xl font-extrabold">
@@ -69,7 +74,7 @@ export default function Page() {
             <div
               className={cn(
                 "flex flex-col gap-5 justify-end lg:text-right p-8 rounded",
-                "bg-background/50 backdrop-blur-md",
+                "bg-white/50 backdrop-blur-md",
               )}
             >
               <p className="font-extrabold">

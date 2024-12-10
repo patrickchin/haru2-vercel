@@ -74,7 +74,7 @@ async function ReportSiteDetails({ report }: { report?: SiteReportAll }) {
 
 function ReportBudget({ report }: { report?: SiteReportAll }) {
   return (
-    <Card className="bg-yellow-50 hidden">
+    <Card className="bg-yellow-50 dark:bg-yellow-500/50 hidden">
       <CardHeader className="flex flex-row justify-between">
         <CardTitle className="text-lg">
           Current Budget and Timeline Estimates
@@ -115,7 +115,7 @@ function ReportBudget({ report }: { report?: SiteReportAll }) {
 
 function ReportActivities({ report }: { report?: SiteReportAll }) {
   return (
-    <Card className="bg-cyan-50">
+    <Card className="bg-cyan-50 dark:bg-cyan-950">
       <CardHeader className="flex flex-row justify-between">
         <CardTitle className="text-lg">
           Current Construction Activites

@@ -157,6 +157,7 @@ export function FileDisplayCarousel({
           largeView
             ? "rounded border-none outline-none bg-zinc-800"
             : "bg-gradient-to-r from-cyan-100 to-blue-100",
+            "dark:bg-gradient-to-r dark:from-cyan-700/50 dark:to-blue-950",
         )}
       >
         {files && files.length > 0 ? (

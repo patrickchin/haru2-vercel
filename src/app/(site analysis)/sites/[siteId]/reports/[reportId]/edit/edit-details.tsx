@@ -52,7 +52,7 @@ function EditReportEstimates({
   });
 
   return (
-    <Card className="bg-yellow-50">
+    <Card className="bg-yellow-50 dark:bg-yellow-400/20">
       <CardHeader className="flex flex-row justify-between">
         <CardTitle>Current Budget and Timeline Estimates</CardTitle>
       </CardHeader>
@@ -631,7 +631,7 @@ export function EditReportDocument({
 
   return (
     <>
-      <Card className="bg-cyan-50">
+      <Card className="bg-cyan-50 dark:bg-background">
         <CardHeader className="flex flex-row justify-between">
           <CardTitle className="text-lg">
             Current Construction Activites
