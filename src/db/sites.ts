@@ -136,7 +136,7 @@ export async function updateSiteDetails(
 }
 
 // basically because the joins get really confusing,
-export async function getSiteMembers(
+export async function listSiteMembers(
   siteId: number,
   includeBasicMembers: boolean = true,
 ): Promise<SiteMember[]> {

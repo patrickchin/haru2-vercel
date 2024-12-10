@@ -74,21 +74,22 @@ export async function updateSiteDetails(
   }
 }
 
-export async function getSiteMembers(siteId: number) {
+export async function listSiteMembers(siteId: number) {
   const session = await auth();
   const role = await getSiteMemberRole({ siteId }, session);
   if (demoSiteIds.includes(siteId)) {
-    if (session?.user?.role === "admin") return db.getSiteMembers(siteId, true);
-    return db.getSiteMembers(siteId, false);
+    if (session?.user?.role === "admin")
+      return db.listSiteMembers(siteId, true);
+    return db.listSiteMembers(siteId, false);
   }
   if (editSiteRoles.includes(role)) {
-    return db.getSiteMembers(siteId, true);
+    return db.listSiteMembers(siteId, true);
   }
 
   if (viewSiteRoles.includes(role)) {
     // don't show all members in demo site project
     const includeBasicMembers = !demoSiteIds.includes(siteId);
-    return db.getSiteMembers(siteId, includeBasicMembers);
+    return db.listSiteMembers(siteId, includeBasicMembers);
   }
 }
 
@@ -236,8 +237,7 @@ export async function getSiteMemberRole(
     role = await db.getCommentsSectionRole({ commentsSectionId, userId });
   }
   if (!role) {
-    if (s.user.role === "admin")
-      return "supervisor";
+    if (s.user.role === "admin") return "supervisor";
   }
   return role;
 }

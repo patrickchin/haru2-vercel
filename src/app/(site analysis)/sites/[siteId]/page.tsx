@@ -349,7 +349,7 @@ export default async function Page(props: {
   const siteId = Number((await props.params).siteId);
   const [site, members, role, commentsSectionId] = await Promise.all([
     Actions.getSiteDetails(siteId),
-    Actions.getSiteMembers(siteId),
+    Actions.listSiteMembers(siteId),
     Actions.getSiteMemberRole({ siteId }),
     Actions.getSiteCommentsSection(siteId),
   ]);
