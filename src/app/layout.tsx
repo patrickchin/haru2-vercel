@@ -9,6 +9,7 @@ import { GeistSans } from "geist/font/sans";
 import { auth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { AddFeedback } from "@/components/feedback";
+import { ThemeProvider } from "@/components/theme-provider";
 
 let title = "Harpa Pro";
 let description = "Plan and organise and your construction projects";
@@ -34,7 +35,14 @@ export default async function RootLayout({
       <body className={cn("overflow-y-scroll", GeistSans.variable)}>
         <SpeedInsights />
         <Analytics />
-        <SessionProvider session={session}>{children}</SessionProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SessionProvider session={session}>{children}</SessionProvider>
+        </ThemeProvider>
         <AddFeedback />
         <Toaster />
       </body>

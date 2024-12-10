@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getSession, signOut, useSession } from "next-auth/react";
 import { User } from "next-auth";
 
-import { LucideConstruction, LucideSettings, LucideLogOut } from "lucide-react";
+import { LucideConstruction, LucideSettings, LucideLogOut, LucideSun, LucideMoon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,6 +15,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { UserAvatar } from "./user-avatar";
+import { useTheme } from "next-themes";
 
 export function MainNav({ user }: { user?: User }) {
   const pathname = usePathname();
@@ -98,6 +99,22 @@ function LoginSignup() {
   );
 }
 
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  // const [theme, setTheme] = useState("");
+  return (
+    <Button
+      variant="secondary"
+      size="icon"
+      className="rounded-full"
+      onClick={() => setTheme((cur) => (cur === "dark" ? "light" : "dark"))}
+    >
+      <LucideSun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+      <LucideMoon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+    </Button>
+  );
+}
+
 export default function Header() {
   const { data: session, status } = useSession();
   useEffect(() => {
@@ -112,14 +129,18 @@ export default function Header() {
           <span className="hidden font-bold sm:inline-block">Harpa Pro</span>
         </Link>
 
-        <MainNav user={session?.user} />
+        <div className="grow flex flex-row gap-4 items-center justify-end">
+          <MainNav user={session?.user} />
 
-        <div className="ml-auto flex items-center space-x-4">
-          {status === "authenticated" ? (
-            <UserNav user={session?.user} />
-          ) : (
-            <LoginSignup />
-          )}
+          <ThemeToggle />
+
+          <div className="flex items-center space-x-4">
+            {status === "authenticated" ? (
+              <UserNav user={session?.user} />
+            ) : (
+              <LoginSignup />
+            )}
+          </div>
         </div>
       </div>
     </div>
