@@ -19,6 +19,7 @@ import {
   SiteNew,
 } from "@/lib/types";
 import { Session } from "next-auth";
+import { sendEmail } from "../email";
 
 export async function addSite(data: zSiteNewBothType) {
   const session = await auth();
@@ -156,6 +157,7 @@ export async function deleteSiteMeetingReturnAllMeetings(meetingId: number) {
     return meeting.siteId ? db.listSiteMeetings(meeting.siteId) : [meeting];
   }
 }
+
 export async function addSiteMemberByEmail({
   siteId,
   email,
@@ -163,11 +165,36 @@ export async function addSiteMemberByEmail({
   siteId: number;
   email: string;
 }) {
-  const role = await getSiteMemberRole({ siteId });
+  const session = await auth();
+  const role = await getSiteMemberRole({ siteId }, session);
   if (editSiteRoles.includes(role)) {
     const user = await db.getUserByEmail(email);
-    if (!user) return;
-    return db.addSiteMember({ siteId, userId: user.id, role: "member" });
+    if (user) {
+      return db.addSiteMember({ siteId, userId: user.id, role: "member" });
+    } else {
+
+      const inv = db.addSiteInvitation(siteId, { email });
+      const sendInvitationEmail = false;
+
+      if (sendInvitationEmail && session?.user?.name) {
+        const name = session.user.name;
+        const cutName = name.length > 20 ? name.substring(0, 20) + "..." : name;
+        sendEmail({
+          from: "noreply@harpapro.com",
+          to: email,
+          subject: `${name} has invited you to Harpa Pro`,
+          body: `Dear Sir/Madam,
+
+${cutName} has registered his/her construction project on Harpa Pro (https://harpapro.com) and invites you to join the platform to recieve updates on the project's progress!
+
+Kind Regards,
+The Harpa Pro Team.
+`,
+        });
+      }
+
+      return inv;
+    }
   }
 }
 
@@ -210,12 +237,14 @@ export async function getSiteMemberRole(
     reportId,
     sectionId,
     meetingId,
+    invitationId,
     commentsSectionId,
   }: {
     siteId?: number;
     reportId?: number;
     sectionId?: number;
     meetingId?: number;
+    invitationId?: number;
     commentsSectionId?: number;
   },
   session?: Session | null,
@@ -235,9 +264,27 @@ export async function getSiteMemberRole(
     role = await db.getMeetingRole({ meetingId, userId });
   } else if (commentsSectionId) {
     role = await db.getCommentsSectionRole({ commentsSectionId, userId });
+  } else if (invitationId) {
+    role = await db.getInvitationRole({ invitationId, userId });
   }
   if (!role) {
     if (s.user.role === "admin") return "supervisor";
   }
   return role;
+}
+
+export async function listSiteInvitations(siteId: number) {
+  const session = await auth();
+  const role = await getSiteMemberRole({ siteId }, session);
+  if (editSiteRoles.includes(role)) {
+    return db.listSiteInvitations(siteId);
+  }
+}
+
+export async function deleteSiteInvitation(invitationId: number) {
+  const session = await auth();
+  const role = await getSiteMemberRole({ invitationId }, session);
+  if (editSiteRoles.includes(role)) {
+    return db.deleteSiteInvitation(invitationId);
+  }
 }

@@ -63,6 +63,8 @@ export async function registerUser(data: RegisterSchemaType) {
         );
       }
     }
+
+    db.acceptAllUserInvitations({ userId: newUser.id });
   }
 
   redirect("/login");

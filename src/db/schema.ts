@@ -180,12 +180,18 @@ export const siteMembers1 = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (t) => {
-    return {
-      pk: primaryKey({ columns: [t.siteId, t.memberId] }),
-    };
-  },
+  (t) => [primaryKey({ columns: [t.siteId, t.memberId] })],
 );
+
+export const siteInvitations1 = pgTable("siteInvitations1", {
+  id: serial("id").unique(),
+  siteId: integer("siteId").references(() => sites1.id),
+  email: varchar("email"),
+
+  dateAdded: timestamp("dateAdded", { mode: "date", withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
 
 export const siteMeetingStatus = pgEnum("siteMeetingStatus", [
   "pending",

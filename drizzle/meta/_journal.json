@@ -99,6 +99,13 @@
       "when": 1733577393101,
       "tag": "0013_silent_vulcan",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1733864980120,
+      "tag": "0014_loose_warlock",
+      "breakpoints": true
     }
   ]
 }
