@@ -24,7 +24,7 @@ export function HaruUserAvatar({
           backgroundColor: bgCol,
           backgroundImage: `radial-gradient(circle at top left, ${bgCol2}, ${bgCol})`,
         }}
-        className="text-lg text-align-center"
+        className="text-lg text-align-center text-foreground dark:text-background"
       >
         {getAvatarInitials(user?.name ?? undefined)}
       </AvatarFallback>
