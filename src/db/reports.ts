@@ -347,3 +347,27 @@ export async function deleteSiteReportSection(sectionId: number) {
     }
   });
 }
+
+export async function getInvitationRole({
+  invitationId,
+  userId,
+}: {
+  invitationId: number;
+  userId: number;
+}): Promise<SiteMemberRole> {
+  return db
+    .select({ role: Schemas.siteMembers1.role })
+    .from(Schemas.siteMembers1)
+    .leftJoin(
+      Schemas.siteInvitations1,
+      eq(Schemas.siteInvitations1.siteId, Schemas.siteMembers1.siteId),
+    )
+    .where(
+      and(
+        eq(Schemas.siteInvitations1.id, invitationId),
+        eq(Schemas.siteMembers1.memberId, userId),
+      ),
+    )
+    .limit(1)
+    .then((r) => (r && r.length ? r[0].role : null));
+}

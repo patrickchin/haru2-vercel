@@ -6,6 +6,7 @@ export type SiteDetails = Site & typeof Schemas.siteDetails1.$inferSelect;
 export type SiteMemberRole = typeof Schemas.siteMembers1.$inferSelect.role;
 export type SiteAndExtra = Site & { myRole?: SiteMemberRole; lastReportDate?: Date | null };
 export type SiteMember = typeof Schemas.siteMembers1.$inferSelect & HaruUserBasic;
+export type SiteInvitation = typeof Schemas.siteInvitations1.$inferSelect;
 export type SiteMeeting = typeof Schemas.siteMeetings1.$inferSelect;
 export type SiteNotice = typeof Schemas.siteNotices1.$inferSelect;
 export type SiteReport = typeof Schemas.siteReports1.$inferSelect & { reporter?: HaruUserBasic | null; };
