@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const infoBoxVariants = cva(
-  cn("flex gap-3 border-2 p-4 rounded text-sm dark:text-white", "items-center"),
+  cn("flex gap-3 border-2 p-4 rounded text-sm text-foreground", "items-center"),
   {
     variants: {
       variant: {
