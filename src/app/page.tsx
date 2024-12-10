@@ -42,7 +42,8 @@ export default function Page() {
             loading="eager"
             blurDataURL={bgblur}
             placeholder="blur"
-            fill={true}
+            width={4459}
+            height={2973}
             className="object-cover object-center"
           />
         </div>
