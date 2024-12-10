@@ -10,7 +10,6 @@ import {
   isNotNull,
   isNull,
   ne,
-  sql,
 } from "drizzle-orm";
 import {
   Site,
@@ -24,53 +23,53 @@ import {
   SiteNew,
   SiteNoticeNew,
 } from "@/lib/types/site";
-import * as Schemas from "@/db/schema";
+import {
+  sites1,
+  siteMembers1,
+  siteReports1,
+  users1,
+  siteDetails1,
+  siteMeetings1,
+  siteNotices1,
+  commentsSections1,
+} from "./schema";
 
 export async function getAllSites(userId?: number): Promise<SiteAndExtra[]> {
   return await db
-    .selectDistinctOn([Schemas.sites1.id], {
-      ...getTableColumns(Schemas.sites1),
-      myRole: Schemas.siteMembers1.role,
-      lastReportDate: Schemas.siteReports1.createdAt,
+    .selectDistinctOn([sites1.id], {
+      ...getTableColumns(sites1),
+      myRole: siteMembers1.role,
+      lastReportDate: siteReports1.createdAt,
     })
-    .from(Schemas.sites1)
+    .from(sites1)
     .leftJoin(
-      Schemas.siteReports1,
-      and(
-        eq(Schemas.siteReports1.siteId, Schemas.sites1.id),
-        isNull(Schemas.siteReports1.deletedAt),
-      ),
+      siteReports1,
+      and(eq(siteReports1.siteId, sites1.id), isNull(siteReports1.deletedAt)),
     )
     .leftJoin(
-      Schemas.siteMembers1,
+      siteMembers1,
       and(
-        eq(Schemas.siteMembers1.siteId, Schemas.sites1.id),
-        userId ? eq(Schemas.siteMembers1.memberId, userId) : undefined,
+        eq(siteMembers1.siteId, sites1.id),
+        userId ? eq(siteMembers1.memberId, userId) : undefined,
       ),
     )
-    .orderBy(desc(Schemas.sites1.id));
+    .orderBy(desc(sites1.id));
 }
 
 // get all the sites that userId is the owner of
 export async function getMySites(userId: number): Promise<Site[]> {
   return await db
     .select({
-      ...getTableColumns(Schemas.sites1),
+      ...getTableColumns(sites1),
     })
-    .from(Schemas.sites1)
+    .from(sites1)
     .leftJoin(
-      Schemas.siteMembers1,
-      and(
-        eq(Schemas.siteMembers1.siteId, Schemas.sites1.id),
-        eq(Schemas.siteMembers1.role, "owner"),
-      ),
+      siteMembers1,
+      and(eq(siteMembers1.siteId, sites1.id), eq(siteMembers1.role, "owner")),
     )
-    .leftJoin(
-      Schemas.users1,
-      eq(Schemas.users1.id, Schemas.siteMembers1.memberId),
-    )
-    .where(eq(Schemas.siteMembers1.memberId, userId))
-    .orderBy(desc(Schemas.sites1.id));
+    .leftJoin(users1, eq(users1.id, siteMembers1.memberId))
+    .where(eq(siteMembers1.memberId, userId))
+    .orderBy(desc(sites1.id));
 }
 
 // get all the sites that userId is a member of
@@ -78,30 +77,24 @@ export async function getAllVisibleSites(
   userId: number,
 ): Promise<SiteAndExtra[]> {
   return await db
-    .selectDistinctOn([Schemas.sites1.id], {
-      ...getTableColumns(Schemas.sites1),
-      myRole: Schemas.siteMembers1.role,
-      lastReportDate: Schemas.siteReports1.createdAt,
+    .selectDistinctOn([sites1.id], {
+      ...getTableColumns(sites1),
+      myRole: siteMembers1.role,
+      lastReportDate: siteReports1.createdAt,
     })
-    .from(Schemas.sites1)
+    .from(sites1)
     .leftJoin(
-      Schemas.siteReports1,
+      siteReports1,
       and(
-        isNull(Schemas.siteReports1.deletedAt),
-        isNotNull(Schemas.siteReports1.publishedAt),
-        eq(Schemas.siteReports1.siteId, Schemas.sites1.id),
+        isNull(siteReports1.deletedAt),
+        isNotNull(siteReports1.publishedAt),
+        eq(siteReports1.siteId, sites1.id),
       ),
     )
-    .leftJoin(
-      Schemas.siteMembers1,
-      eq(Schemas.siteMembers1.siteId, Schemas.sites1.id),
-    )
-    .leftJoin(
-      Schemas.users1,
-      eq(Schemas.users1.id, Schemas.siteMembers1.memberId),
-    )
-    .where(eq(Schemas.siteMembers1.memberId, userId))
-    .orderBy(desc(Schemas.sites1.id));
+    .leftJoin(siteMembers1, eq(siteMembers1.siteId, sites1.id))
+    .leftJoin(users1, eq(users1.id, siteMembers1.memberId))
+    .where(eq(siteMembers1.memberId, userId))
+    .orderBy(desc(sites1.id));
 }
 
 export async function getSiteDetails({
@@ -111,24 +104,21 @@ export async function getSiteDetails({
 }): Promise<SiteDetails> {
   return await db
     .select({
-      ...getTableColumns(Schemas.sites1),
-      ...getTableColumns(Schemas.siteDetails1),
+      ...getTableColumns(sites1),
+      ...getTableColumns(siteDetails1),
     })
-    .from(Schemas.sites1)
-    .innerJoin(
-      Schemas.siteDetails1,
-      eq(Schemas.siteDetails1.id, Schemas.sites1.id),
-    )
-    .where(eq(Schemas.siteDetails1.id, siteId))
+    .from(sites1)
+    .innerJoin(siteDetails1, eq(siteDetails1.id, sites1.id))
+    .where(eq(siteDetails1.id, siteId))
     .limit(1)
     .then((r) => r[0]);
 }
 
 export async function updateSite(siteId: number, values: SiteNew) {
   return await db
-    .update(Schemas.sites1)
+    .update(sites1)
     .set(values)
-    .where(eq(Schemas.sites1.id, siteId))
+    .where(eq(sites1.id, siteId))
     .returning()
     .then((r) => r[0]);
 }
@@ -138,9 +128,9 @@ export async function updateSiteDetails(
   values: SiteDetailsNew,
 ) {
   return await db
-    .update(Schemas.siteDetails1)
+    .update(siteDetails1)
     .set(values)
-    .where(eq(Schemas.siteDetails1.id, siteId))
+    .where(eq(siteDetails1.id, siteId))
     .returning()
     .then((r) => r[0]);
 }
@@ -152,42 +142,33 @@ export async function getSiteMembers(
 ): Promise<SiteMember[]> {
   return await db
     .select({
-      ...getTableColumns(Schemas.siteMembers1),
-      ...getTableColumns(Schemas.users1),
+      ...getTableColumns(siteMembers1),
+      ...getTableColumns(users1),
     })
-    .from(Schemas.siteMembers1)
-    .innerJoin(
-      Schemas.users1,
-      eq(Schemas.users1.id, Schemas.siteMembers1.memberId),
-    )
+    .from(siteMembers1)
+    .innerJoin(users1, eq(users1.id, siteMembers1.memberId))
     .where(
       and(
-        eq(Schemas.siteMembers1.siteId, siteId),
-        includeBasicMembers
-          ? undefined
-          : ne(Schemas.siteMembers1.role, "member"),
+        eq(siteMembers1.siteId, siteId),
+        includeBasicMembers ? undefined : ne(siteMembers1.role, "member"),
       ),
     )
-    .orderBy(
-      Schemas.siteMembers1.role,
-      Schemas.siteMembers1.dateAdded,
-      Schemas.siteMembers1.id,
-    );
+    .orderBy(siteMembers1.role, siteMembers1.dateAdded, siteMembers1.id);
 }
 
 export async function listSiteMeetings(siteId: number): Promise<SiteMeeting[]> {
   return await db
     .select()
-    .from(Schemas.siteMeetings1)
-    .where(eq(Schemas.siteMeetings1.siteId, siteId))
-    .orderBy(Schemas.siteMeetings1.date);
+    .from(siteMeetings1)
+    .where(eq(siteMeetings1.siteId, siteId))
+    .orderBy(siteMeetings1.date);
 }
 
 export async function getSiteMeeting(meetingId: number): Promise<SiteMeeting> {
   return await db
     .select()
-    .from(Schemas.siteMeetings1)
-    .where(eq(Schemas.siteMeetings1.id, meetingId))
+    .from(siteMeetings1)
+    .where(eq(siteMeetings1.id, meetingId))
     .then((r) => r[0]);
 }
 
@@ -196,7 +177,7 @@ export async function addSiteMeeting(
   values: SiteMeetingNew,
 ): Promise<SiteMeeting> {
   return await db
-    .insert(Schemas.siteMeetings1)
+    .insert(siteMeetings1)
     .values({ ...values, siteId, userId })
     .returning()
     .then((r) => r[0]);
@@ -207,9 +188,9 @@ export async function updateSiteMeeting(
   values: SiteMeetingNew,
 ): Promise<SiteMeeting> {
   return await db
-    .update(Schemas.siteMeetings1)
+    .update(siteMeetings1)
     .set(values)
-    .where(eq(Schemas.siteMeetings1.id, meetingId))
+    .where(eq(siteMeetings1.id, meetingId))
     .returning()
     .then((r) => r[0]);
 }
@@ -218,8 +199,8 @@ export async function deleteSiteMeeting(
   meetingId: number,
 ): Promise<SiteMeeting> {
   return await db
-    .delete(Schemas.siteMeetings1)
-    .where(eq(Schemas.siteMeetings1.id, meetingId))
+    .delete(siteMeetings1)
+    .where(eq(siteMeetings1.id, meetingId))
     .returning()
     .then((r) => r[0]);
 }
@@ -227,13 +208,13 @@ export async function deleteSiteMeeting(
 export async function getSiteNotices(siteId: number) {
   return await db
     .select()
-    .from(Schemas.siteNotices1)
-    .where(eq(Schemas.siteNotices1.siteId, siteId));
+    .from(siteNotices1)
+    .where(eq(siteNotices1.siteId, siteId));
 }
 
 export async function addSiteNotice(siteId: number, description: string) {
   return await db
-    .insert(Schemas.siteNotices1)
+    .insert(siteNotices1)
     .values({ siteId, description })
     .returning()
     .then((n) => n[0]);
@@ -241,9 +222,9 @@ export async function addSiteNotice(siteId: number, description: string) {
 
 export async function updateSiteNotice(siteId: number, values: SiteNoticeNew) {
   return await db
-    .update(Schemas.siteNotices1)
+    .update(siteNotices1)
     .set(values)
-    .where(eq(Schemas.siteNotices1.siteId, siteId))
+    .where(eq(siteNotices1.siteId, siteId))
     .returning()
     .then((n) => n[0]);
 }
@@ -257,7 +238,7 @@ export async function addSite(
 ): Promise<Site> {
   return db.transaction(async (tx) => {
     const site = await tx
-      .insert(Schemas.sites1)
+      .insert(sites1)
       .values({
         title: args.title,
         type: args.type,
@@ -267,13 +248,13 @@ export async function addSite(
       .then((r) => r[0]);
 
     const commentsSection = await tx
-      .insert(Schemas.commentsSections1)
+      .insert(commentsSections1)
       .values({})
       .returning()
       .then((r) => r[0]);
 
     const details = await tx
-      .insert(Schemas.siteDetails1)
+      .insert(siteDetails1)
       .values({
         id: site.id,
         address: args.address,
@@ -284,7 +265,7 @@ export async function addSite(
       .then((r) => r[0]);
 
     const member = await tx
-      .insert(Schemas.siteMembers1)
+      .insert(siteMembers1)
       .values({ siteId: site.id, memberId: ownerId, role: "owner" })
       .returning()
       .then((r) => r[0]);
@@ -296,23 +277,23 @@ export async function addSite(
 export async function ensureSiteCommentsSection(siteId: number) {
   return db.transaction(async (tx) => {
     const { commentsSectionId } = await tx
-      .select({ commentsSectionId: Schemas.siteDetails1.commentsSectionId })
-      .from(Schemas.siteDetails1)
-      .where(eq(Schemas.siteDetails1.id, siteId))
+      .select({ commentsSectionId: siteDetails1.commentsSectionId })
+      .from(siteDetails1)
+      .where(eq(siteDetails1.id, siteId))
       .then((r) => r[0]);
 
     if (commentsSectionId) return commentsSectionId;
 
     const commentsSection = await tx
-      .insert(Schemas.commentsSections1)
+      .insert(commentsSections1)
       .values({})
       .returning()
       .then((r) => r[0]);
 
     const { commentsSectionId: commentsSectionId2 } = await tx
-      .update(Schemas.siteDetails1)
+      .update(siteDetails1)
       .set({ commentsSectionId: commentsSection.id })
-      .where(eq(Schemas.siteDetails1.id, siteId))
+      .where(eq(siteDetails1.id, siteId))
       .returning()
       .then((r) => r[0]);
 
@@ -330,7 +311,7 @@ export async function addSiteMember({
   role: SiteMemberRole;
 }) {
   return await db
-    .insert(Schemas.siteMembers1)
+    .insert(siteMembers1)
     .values({ siteId, memberId: userId, role })
     .returning()
     .then((r) => r[0]);
@@ -339,8 +320,8 @@ export async function addSiteMember({
 export async function countSiteMembers(siteId: number) {
   return await db
     .select({ count: count() })
-    .from(Schemas.siteMembers1)
-    .where(eq(Schemas.siteMembers1.siteId, siteId))
+    .from(siteMembers1)
+    .where(eq(siteMembers1.siteId, siteId))
     .then((r) => r[0].count);
 }
 
@@ -354,13 +335,10 @@ export async function updateSiteMemberRole({
   role: SiteMemberRole;
 }) {
   return await db
-    .update(Schemas.siteMembers1)
+    .update(siteMembers1)
     .set({ role })
     .where(
-      and(
-        eq(Schemas.siteMembers1.siteId, siteId),
-        eq(Schemas.siteMembers1.memberId, userId),
-      ),
+      and(eq(siteMembers1.siteId, siteId), eq(siteMembers1.memberId, userId)),
     )
     .returning()
     .then((r) => r[0]);
@@ -374,12 +352,12 @@ export async function removeSiteMember({
   userId: number;
 }) {
   return await db
-    .delete(Schemas.siteMembers1)
+    .delete(siteMembers1)
     .where(
       and(
-        eq(Schemas.siteMembers1.siteId, siteId),
-        eq(Schemas.siteMembers1.memberId, userId),
-        ne(Schemas.siteMembers1.role, "owner"),
+        eq(siteMembers1.siteId, siteId),
+        eq(siteMembers1.memberId, userId),
+        ne(siteMembers1.role, "owner"),
       ),
     )
     .returning()
@@ -394,13 +372,10 @@ export async function getSiteRole({
   userId: number;
 }) {
   return db
-    .select({ role: Schemas.siteMembers1.role })
-    .from(Schemas.siteMembers1)
+    .select({ role: siteMembers1.role })
+    .from(siteMembers1)
     .where(
-      and(
-        eq(Schemas.siteMembers1.siteId, siteId),
-        eq(Schemas.siteMembers1.memberId, userId),
-      ),
+      and(eq(siteMembers1.siteId, siteId), eq(siteMembers1.memberId, userId)),
     )
     .limit(1)
     .then((r) => (r && r.length ? r[0].role : null));
