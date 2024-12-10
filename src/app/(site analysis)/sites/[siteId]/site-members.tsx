@@ -180,7 +180,7 @@ export default function SiteMembers({
     isValidating,
   } = useSWR<SiteMember[] | undefined>(
     `/api/sites/${site.id}/members`, // api route doesn't really exist
-    async () => Actions.getSiteMembers(site.id),
+    async () => Actions.listSiteMembers(site.id),
     { fallbackData: origMembers },
   );
   const [isRemoving, setIsRemoving] = useState(false);

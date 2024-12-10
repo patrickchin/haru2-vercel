@@ -13,8 +13,8 @@ function EmptySitesList() {
 }
 
 async function SiteItem({ site }: { site?: SiteAndExtra }) {
-  // const members = await Actions.getSiteMembers(site.id);
-  // const reports = await Actions.getSiteReports(site.id);
+  // const members = await Actions.listSiteMembers(site.id);
+  // const reports = await Actions.listSiteReports(site.id);
   if (!site) return <div>Invalid Site Project</div>;
   return (
     <Card className="hover:bg-accent ">
@@ -94,8 +94,8 @@ export default async function Page() {
       <div className="whitespace-pre-line text-base font-normal leading-7 mx-auto text-muted-foreground">
         <ul className="list-inside list-disc">
           <li className="hidden">
-            All site projects you&apos;ve created, or site projects that you are a
-            member of, will appear here.
+            All site projects you&apos;ve created, or site projects that you are
+            a member of, will appear here.
           </li>
           <li>
             If you are the owner of a site that needs supervision, please first

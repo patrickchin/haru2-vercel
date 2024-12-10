@@ -200,7 +200,7 @@ function UpdateSiteReportSectionFiles({
   const { data: files, mutate: mutateFiles } = useSWR<HaruFile[]>(
     `/api/report/${reportId}/sections/${section.id}/files`, // api route doesn't really exist
     async () => {
-      const files = await Actions.getSiteReportSectionFiles(section.id);
+      const files = await Actions.listSiteReportSectionFiles(section.id);
       return files || [];
     },
   );

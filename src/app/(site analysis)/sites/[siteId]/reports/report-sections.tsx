@@ -6,12 +6,7 @@ import * as Actions from "@/lib/actions";
 import { LucideChevronsUpDown } from "lucide-react";
 import { FileDisplay } from "@/components/file-display";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -34,7 +29,7 @@ import { Fragment } from "react";
 import { Separator } from "@/components/ui/separator";
 
 async function ReportSectionFiles({ section }: { section: SiteReportSection }) {
-  const files = await Actions.getSiteReportSectionFiles(section.id);
+  const files = await Actions.listSiteReportSectionFiles(section.id);
   if (!files || files.length == 0) return null;
 
   return (
@@ -113,7 +108,10 @@ export async function ReportSections({
                     return (
                       <Fragment key={section.id}>
                         <Separator />
-                        <li key={section.id} className="py-8 px-12 space-y-4 hover:bg-muted">
+                        <li
+                          key={section.id}
+                          className="py-8 px-12 space-y-4 hover:bg-muted"
+                        >
                           <h3 className="text-xl font-semibold underline">
                             {section.title}
                           </h3>

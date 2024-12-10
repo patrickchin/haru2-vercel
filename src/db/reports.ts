@@ -282,7 +282,7 @@ export async function listSiteReportSections(
     .orderBy(Schemas.siteReportSections1.id);
 }
 
-export async function getSiteReportSection(
+export async function listSiteReportSection(
   sectionId: number,
 ): Promise<SiteReportSection> {
   return db

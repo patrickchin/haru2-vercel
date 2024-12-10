@@ -201,12 +201,12 @@ export async function listSiteReportSections(reportId: number) {
   if (viewSiteRoles.includes(role)) return db.listSiteReportSections(reportId);
 }
 
-export async function getSiteReportSection(sectionId: number) {
+export async function listSiteReportSection(sectionId: number) {
   const role = await getSiteMemberRole({ sectionId });
   // TODO inlcude/exclude unpublished reports
   // if (editReportRoles.includes(role))
-  //   return db.getSiteReportSection(reportId, true);
-  if (viewSiteRoles.includes(role)) return db.getSiteReportSection(sectionId);
+  //   return db.listSiteReportSection(reportId, true);
+  if (viewSiteRoles.includes(role)) return db.listSiteReportSection(sectionId);
 }
 
 export async function addSiteReportSection(
@@ -246,7 +246,7 @@ export async function addSiteReportSectionFile(
   const session = await auth();
   const role = await getSiteMemberRole({ sectionId });
   if (editReportRoles.includes(role)) {
-    let section = await db.getSiteReportSection(sectionId);
+    let section = await db.listSiteReportSection(sectionId);
     if (section.fileGroupId) {
       return db.addFileToGroup(section.fileGroupId, {
         ...fileInfo,
@@ -262,7 +262,7 @@ export async function getSiteReportCommentsSectionId(reportId: number) {
   }
 }
 
-export async function getSiteReportSectionFiles(sectionId: number) {
+export async function listSiteReportSectionFiles(sectionId: number) {
   const role = await getSiteMemberRole({ sectionId });
   if (editReportRoles.includes(role))
     return db.getFilesForReportSection(sectionId, true);

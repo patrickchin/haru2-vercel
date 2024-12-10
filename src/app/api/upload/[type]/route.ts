@@ -29,7 +29,7 @@ async function getReportSectionFilePath(
   filename: string,
 ) {
   if (!params.sectionId) return;
-  const section = await Actions.getSiteReportSection(Number(params.sectionId));
+  const section = await Actions.listSiteReportSection(Number(params.sectionId));
   if (!section) return;
   return `section/${section.id}/${filename}`;
 }
