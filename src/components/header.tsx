@@ -20,9 +20,9 @@ import { useTheme } from "next-themes";
 export function MainNav({ user }: { user?: User }) {
   const pathname = usePathname();
   const navigation = [
-    { name: "About", href: "/about", needLogin: false },
-    { name: "Feedback", href: "/feedback", needLogin: true, needAdmin: true },
+    { name: "About Us", href: "/about", needLogin: false },
     { name: "My Sites", href: "/sites", needLogin: true, needAdmin: false },
+    { name: "Feedback", href: "/feedback", needLogin: true, needAdmin: true },
   ];
 
   return (

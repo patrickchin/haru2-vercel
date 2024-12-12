@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
 
 function Description() {
   return (
@@ -225,13 +226,19 @@ export default function Page() {
         <Description />
       </section>
 
+      <Separator />
+
       <section>
         <Team />
       </section>
 
+      <Separator />
+
       <section>
         <Services />
       </section>
+
+      <Separator />
 
       <section className="bg-yellow-400/65 relative overflow-hidden">
         <Benefits />
