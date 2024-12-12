@@ -1,6 +1,6 @@
 "use client";
 
-import useSWR, { KeyedMutator } from "swr";
+import useSWR from "swr";
 import {
   allSiteMemberRoles,
   SiteDetails,
@@ -15,7 +15,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { cn } from "@/lib/utils";
-import { LucideLoader2, LucidePlus, LucideTrash } from "lucide-react";
+import {
+  LucideLoader2,
+  LucidePlus,
+  LucideTrash,
+  LucideTrash2,
+} from "lucide-react";
 import { HaruUserAvatar } from "@/components/user-avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -174,7 +179,6 @@ export default function SiteMembers({
   site: SiteDetails;
   members: SiteMember[] | undefined;
 }) {
-
   const { data: members, mutate: mutateMembers } = useSWR<
     SiteMember[] | undefined
   >(
@@ -196,7 +200,6 @@ export default function SiteMembers({
   const { data: session } = useSession();
   const role = members?.find((m) => m.id === session?.user?.idn)?.role;
   const canEditSite = role && editSiteRoles.includes(role);
-
 
   return (
     <Card>
@@ -276,75 +279,101 @@ export default function SiteMembers({
           <SiteSearchAddMember siteId={site.id} mutate={mutateBoth} />
         )}
         {invitations && invitations.length > 0 ? (
-          <ul className="border rounded overflow-hidden">
-            {invitations?.map((i) => {
-              return (
+          <div className="space-y-2">
+            <div>
+              <div className="font-semibold">Invited</div>
+              <div className="text-sm">
+                These users will be added to this project once they register.
+              </div>
+            </div>
+            <ul className="border rounded overflow-hidden">
+              {invitations?.map((i) => (
                 <li
                   key={i.id}
                   className="flex flex-col sm:flex-row gap-4 p-4 bg-background justify-between [&:not(:last-child)]:border-b"
                 >
-                  <div className="flex gap-3 items-center">
+                  <div className="flex gap-3 items-center grow">
                     <HaruUserAvatar className="w-8 h-8" />
                     <p>{i.email}</p>
                   </div>
+                  <Button
+                    variant="outline"
+                    disabled={isRemoving}
+                    onClick={async () => {
+                      try {
+                        setIsRemoving(true);
+                        await Actions.deleteSiteInvitation(i.id);
+                        await mutateInvitations();
+                      } finally {
+                        setIsRemoving(false);
+                      }
+                    }}
+                  >
+                    Remove Invitation <LucideTrash2 />
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+        <div className="space-y-2">
+          <div className="font-semibold">Members</div>
+          <ul className="border rounded overflow-hidden">
+            {members?.map((m) => {
+              return (
+                <li
+                  key={m.id}
+                  className="flex flex-col sm:flex-row gap-4 p-4 bg-background justify-between [&:not(:last-child)]:border-b"
+                >
+                  <div className="flex gap-3 items-center">
+                    <HaruUserAvatar user={m} className="w-8 h-8" />
+                    <p>{m.name}</p>
+                  </div>
+                  {canEditSite ? (
+                    <div className="flex flex-row gap-3 sm:items-center">
+                      <SiteMemberSelectRole
+                        siteId={site.id}
+                        member={m}
+                        mutate={mutateMembers}
+                        disabled={isRemoving}
+                      />
+                      <Button
+                        disabled={m.role === "owner" || isRemoving}
+                        variant="outline"
+                        className="flex gap-2"
+                        onClick={async () => {
+                          try {
+                            setIsRemoving(true);
+                            await Actions.removeSiteMember({
+                              siteId: site.id,
+                              userId: m.id,
+                            });
+                            await mutateMembers();
+                          } finally {
+                            setIsRemoving(false);
+                          }
+                        }}
+                      >
+                        Remove Member
+                        {isRemoving ? (
+                          <LucideLoader2
+                            className={cn("animate-spin w-4 h-4")}
+                          />
+                        ) : (
+                          <LucideTrash className="w-3.5 h-3.5" />
+                        )}
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-3 items-center">
+                      <p className="capitalize">{m.role}</p>
+                    </div>
+                  )}
                 </li>
               );
             })}
           </ul>
-        ) : null}
-        <ul className="border rounded overflow-hidden">
-          {members?.map((m) => {
-            return (
-              <li
-                key={m.id}
-                className="flex flex-col sm:flex-row gap-4 p-4 bg-background justify-between [&:not(:last-child)]:border-b"
-              >
-                <div className="flex gap-3 items-center">
-                  <HaruUserAvatar user={m} className="w-8 h-8" />
-                  <p>{m.name}</p>
-                </div>
-                {canEditSite ? (
-                  <div className="flex flex-row gap-3 sm:items-center">
-                    <SiteMemberSelectRole
-                      siteId={site.id}
-                      member={m}
-                      mutate={mutateMembers}
-                      disabled={isRemoving}
-                    />
-                    <Button
-                      disabled={m.role === "owner" || isRemoving}
-                      variant="outline"
-                      className="flex gap-2"
-                      onClick={async () => {
-                        try {
-                          setIsRemoving(true);
-                          await Actions.removeSiteMember({
-                            siteId: site.id,
-                            userId: m.id,
-                          });
-                          await mutateMembers();
-                        } finally {
-                          setIsRemoving(false);
-                        }
-                      }}
-                    >
-                      Remove Member
-                      {isRemoving ? (
-                        <LucideLoader2 className={cn("animate-spin w-4 h-4")} />
-                      ) : (
-                        <LucideTrash className="w-3.5 h-3.5" />
-                      )}
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="flex gap-3 items-center">
-                    <p className="capitalize">{m.role}</p>
-                  </div>
-                )}
-              </li>
-            );
-          })}
-        </ul>
+        </div>
       </CardContent>
     </Card>
   );
