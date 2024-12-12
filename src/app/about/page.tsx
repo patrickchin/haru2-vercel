@@ -7,9 +7,14 @@ import { cn } from "@/lib/utils";
 function Description() {
   return (
     <div className="flex flex-col items-start max-w-6xl mx-auto text-pretty py-10 min-h-[60svh]">
-      <h1 className={cn("text-4xl font-extrabold mb-20 p-8 rounded-lg",
-        "bg-background/30 backdrop-blur-md"
-      )}>Harpa Pro</h1>
+      <h1
+        className={cn(
+          "text-4xl font-extrabold mb-20 p-8 rounded-lg",
+          "bg-background/30 backdrop-blur-md",
+        )}
+      >
+        Harpa Pro
+      </h1>
       <div
         className={cn(
           "flex flex-col gap-4 text-pretty text-lg p-8 rounded-lg ",
@@ -33,59 +38,58 @@ function Description() {
 }
 
 function Team() {
-  return (
-    <div className="flex flex-col gap-8 max-w-7xl mx-auto text-pretty py-10">
-      <h2 className="text-4xl text-center font-bold">Meet the Team</h2>
-
-      <div className="grid grid-cols-3 gap-5">
-        <Card className="flex flex-col gap-4 items-center justify-start py-8">
-          <Avatar className="h-24 w-24">
-            <AvatarImage src="" />
-            <AvatarFallback />
-          </Avatar>
-          <div className="flex flex-col gap-2 items-center justify-center">
-            <h3 className="font-semibold">Haruna Bayoh</h3>
-            <p className="text-muted-foreground text-justify p-8">
+  const members = [
+    {
+      avatar: "/about/haruna.jpg",
+      name: "Haruna Bayoh",
+      description: `
               Currently a researcher at Zhejiang University, he earned his
-              bachelor&apos;s degree in Civil Engineering from Fourah Bay
+              bachelor's degree in Civil Engineering from Fourah Bay
               College, University of Sierra Leone. He went on to pursue a
-              Master&apos;s degree in Structural Engineering at Chang&apos;An
+              Master's degree in Structural Engineering at Chang'An
               University, China. Worked for two years as a building design
               engineer at Cheng Xian Prefabricated Building Company in Qingzhou,
               Shandong, where he contributed to innovative building projects,
               focusing on optimization and enhancing flexibility in fabricating
               structural components for modular buildings.
-            </p>
-          </div>
-        </Card>
-        <Card className="flex flex-col gap-4 items-center justify-start py-8">
-          <Avatar className="h-24 w-24">
-            <AvatarImage src="" />
-            <AvatarFallback />
-          </Avatar>
-          <div className="flex flex-col gap-2 items-center justify-center">
-            <h3 className="font-semibold">Patrick Chin</h3>
-            <p className="text-muted-foreground text-justify p-8">
-              Patrick is a software engineer with nearing a decade of experience
+    `,
+    },
+    {
+      avatar: "/about/patrick.jpg",
+      name: "Patrick Chin",
+      description: `
+              A software engineer with nearing a decade of experience
               in developing large-scale, real-time software systems, having
-              worked across the full software stack. He holds a Master&apos;s
+              worked across the full software stack. He holds a Master's
               degree in Physics from University College London. His expertise
-              spans front-end development, research and integration of
-              algorithms, platform development, and integration of machine
-              learning models.
-            </p>
+              spans both front-end and back-end development, research and
+              integration of algorithms, platform development, and integration
+              of machine learning models.
+      `,
+    },
+  ];
+
+  return (
+    <div className="flex flex-col items-center gap-12 mx-auto text-pretty py-10">
+      <h2 className="text-4xl text-center font-bold">Meet the Team</h2>
+
+      <div className="grid grid-cols-2 gap-12 max-w-5xl">
+        {members.map((mem, i) => (
+          <div key={i}>
+            <Card className="flex flex-col gap-4 items-center justify-start p-12">
+              <Avatar className="h-40 w-40">
+                <AvatarImage src={mem.avatar} />
+                <AvatarFallback>{mem.name}</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col gap-2 items-center justify-center">
+                <h3 className="font-semibold text-lg">{mem.name}</h3>
+                <p className="text-muted-foreground text-justify">
+                  {mem.description}
+                </p>
+              </div>
+            </Card>
           </div>
-        </Card>
-        <Card className="flex flex-col gap-4 items-center justify-start py-8">
-          <Avatar className="h-24 w-24">
-            <AvatarImage src="" />
-            <AvatarFallback />
-          </Avatar>
-          <div className="flex flex-col gap-2 items-center justify-center">
-            <h3 className="font-semibold">Saffa Salieu</h3>
-            <h4 className="text-muted-foreground"></h4>
-          </div>
-        </Card>
+        ))}
       </div>
     </div>
   );
@@ -93,7 +97,7 @@ function Team() {
 
 function Services() {
   return (
-    <div className="flex flex-col gap-8 max-w-6xl mx-auto text-pretty py-10">
+    <div className="flex flex-col gap-12 max-w-6xl mx-auto text-pretty py-10">
       <h2 className="flex text-4xl font-bold justify-center">
         Service We Provide
       </h2>
@@ -166,7 +170,7 @@ function Benefits() {
             className="object-contain"
           />
         </div>
-        <div className="flex flex-col gap-4 font-medium text-md">
+        <div className="flex flex-col gap-4 font-medium">
           <p>
             Log in from anywhere in the world to monitor your construction site.
           </p>
@@ -205,12 +209,14 @@ function Benefits() {
 export default function Page() {
   return (
     <DefaultLayout className="max-w-none p-0 gap-0 [&_section]:py-16">
-      <section className="bg-sky-300 relative">
+      <section className="bg-sky-300 relative overflow-hidden">
         <Image
           src="/about/sky.jpg"
           alt="sky background"
-          fill={true}
-          className="object-cover"
+          // fill={true}
+          width={7762}
+          height={5177}
+          className="absolute min-w-full min-h-full top-0"
         />
         <Description />
       </section>
