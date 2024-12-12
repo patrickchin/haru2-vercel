@@ -13,7 +13,7 @@ function Description() {
           "bg-background/30 backdrop-blur-md",
         )}
       >
-        Harpa Pro
+        About Us
       </h1>
       <div
         className={cn(
@@ -22,16 +22,22 @@ function Description() {
         )}
       >
         <p>
-          Our company specializes in digital platforms for building
-          construction. We focus on simplifying collaboration in building design
-          and construction management. We aim to close the gaps between design,
-          material procurement, and construction.
+          We are a start-up company that specializes in digital platforms for
+          building construction. We focus on simplifying collaboration in
+          building design and construction management. We aim to close the gaps
+          between design, material procurement, and construction.
         </p>
+
         <p>
-          The Site Supervision App is the first of many online tools we plan to
+          Site supervision is the first of many online services we plan to
           launch.
         </p>
-        <p>At the moment, we only offer site supervision services.</p>
+
+        <p>
+          We are introducing new technologies in residential, commercial, and
+          industrial projects with a reputation for delivering quality and
+          innovative solutions.
+        </p>
       </div>
     </div>
   );
