@@ -63,12 +63,12 @@ function Team() {
       avatar: "/about/patrick.jpg",
       name: "Patrick Chin",
       description: `
-        A software engineer with nearing a decade of experience in developing
-        large-scale, real-time software systems, having worked across the full
-        software stack. He holds a Master's degree in Physics from University
-        College London. His expertise spans both front-end and back-end
-        development, research and integration of algorithms, platform
-        development, and integration of machine learning models.
+        A senior software engineer with nearing a decade of industry experience
+        in developing large-scale, real-time software systems. He holds a
+        Master's degree in Physics from University College London and his
+        software expertise spans both front-end and back-end development, which
+        includes research and integration of algorithms, platform development,
+        and integration of machine learning models.
       `,
     },
   ];
@@ -85,9 +85,9 @@ function Team() {
                 <AvatarImage src={mem.avatar} />
                 <AvatarFallback>{mem.name}</AvatarFallback>
               </Avatar>
-              <div className="flex flex-col gap-2 items-center justify-center">
+              <div className="flex flex-col gap-8 items-center justify-center">
                 <h3 className="font-semibold text-lg">{mem.name}</h3>
-                <p className="text-muted-foreground text-justify">
+                <p className="text-muted-foreground text-justify leading-7">
                   {mem.description}
                 </p>
               </div>
@@ -213,7 +213,7 @@ function Benefits() {
 export default function Page() {
   return (
     <DefaultLayout className="max-w-none p-0 gap-0 [&_section]:py-16">
-      <section className="bg-sky-300 relative overflow-hidden">
+      <section className="bg-sky-500 relative overflow-hidden">
         <Image
           src="/about/sky.jpg"
           alt="sky background"
@@ -233,7 +233,7 @@ export default function Page() {
         <Services />
       </section>
 
-      <section className="bg-yellow-400 relative overflow-hidden">
+      <section className="bg-yellow-400/65 relative overflow-hidden">
         <Benefits />
       </section>
     </DefaultLayout>
