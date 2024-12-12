@@ -11,7 +11,7 @@ import {
   viewSiteRoles,
   acceptMeetingRoles,
 } from "@/lib/permissions";
-import { demoSiteIds } from "@/lib/constants";
+import { demoSiteIds, maxSiteInvitations } from "@/lib/constants";
 import {
   SiteDetailsNew,
   SiteMeetingNew,
@@ -20,6 +20,7 @@ import {
 } from "@/lib/types";
 import { Session } from "next-auth";
 import { sendEmail } from "../email";
+import { SiteInvitationLimitReached } from "../errors";
 
 export async function addSite(data: zSiteNewBothType) {
   const session = await auth();
@@ -158,6 +159,48 @@ export async function deleteSiteMeetingReturnAllMeetings(meetingId: number) {
   }
 }
 
+async function addSiteMemberInvite({
+  siteId,
+  email,
+  name,
+}: {
+  siteId: number;
+  email?: string;
+  name?: string | null;
+}) {
+  const maxNameLen = 20;
+  const cutName =
+    name && name.length > maxNameLen
+      ? name.substring(0, maxNameLen - 3) + "..."
+      : name;
+  const emailBody = `Dear Sir/Madam,
+
+${cutName} has registered his/her construction project on Harpa Pro
+(https://harpapro.com) and invites you to join the platform to recieve updates
+on the project's progress!
+
+Kind Regards,
+The Harpa Pro Team.
+`;
+
+  const nInv = await db.countSiteInvitations(siteId);
+  if (nInv < maxSiteInvitations) {
+    await db.addSiteInvitation(siteId, { email });
+    const sendInvitationEmail = false;
+
+    if (sendInvitationEmail && email && name) {
+      sendEmail({
+        from: "noreply@harpapro.com",
+        to: email,
+        subject: `${name} has invited you to Harpa Pro`,
+        body: emailBody,
+      });
+    }
+  } else {
+    return SiteInvitationLimitReached;
+  }
+}
+
 export async function addSiteMemberByEmail({
   siteId,
   email,
@@ -170,30 +213,9 @@ export async function addSiteMemberByEmail({
   if (editSiteRoles.includes(role)) {
     const user = await db.getUserByEmail(email);
     if (user) {
-      return db.addSiteMember({ siteId, userId: user.id, role: "member" });
+      db.addSiteMember({ siteId, userId: user.id, role: "member" });
     } else {
-
-      const inv = db.addSiteInvitation(siteId, { email });
-      const sendInvitationEmail = false;
-
-      if (sendInvitationEmail && session?.user?.name) {
-        const name = session.user.name;
-        const cutName = name.length > 20 ? name.substring(0, 20) + "..." : name;
-        sendEmail({
-          from: "noreply@harpapro.com",
-          to: email,
-          subject: `${name} has invited you to Harpa Pro`,
-          body: `Dear Sir/Madam,
-
-${cutName} has registered his/her construction project on Harpa Pro (https://harpapro.com) and invites you to join the platform to recieve updates on the project's progress!
-
-Kind Regards,
-The Harpa Pro Team.
-`,
-        });
-      }
-
-      return inv;
+      return addSiteMemberInvite({ siteId, email, name: session?.user?.name });
     }
   }
 }
