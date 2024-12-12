@@ -22,16 +22,14 @@ export function MainNav({ user }: { user?: User }) {
   const navigation = [
     { name: "About", href: "/about", needLogin: false },
     { name: "Feedback", href: "/feedback", needLogin: true, needAdmin: true },
-    { name: "My Projects", href: "/sites", needLogin: true, needAdmin: false },
+    { name: "My Sites", href: "/sites", needLogin: true, needAdmin: false },
   ];
-
-  if (!user) return null;
 
   return (
     <div className="flex items-center mx-6 grow">
       {navigation.map((item, i) => {
         if (item.needLogin && !user) return null;
-        if (item.needAdmin && user.role !== "admin") return null;
+        if (item.needAdmin && user?.role !== "admin") return null;
         
         return (
           <Button
