@@ -85,12 +85,7 @@ export const fileGroupFiles1 = pgTable(
     fileGroupId: integer("fileGroupId").references(() => fileGroups1.id),
     fileId: integer("fileId").references(() => files1.id),
   },
-  (t) => {
-    return {
-      uniq: unique().on(t.fileGroupId, t.fileId),
-      // pk: primaryKey({ columns: [t.fileGroupId, t.fileId] }),
-    };
-  },
+  (t) => [unique().on(t.fileGroupId, t.fileId)],
 );
 
 export const otps1 = pgTable("otps1", {
@@ -183,15 +178,19 @@ export const siteMembers1 = pgTable(
   (t) => [primaryKey({ columns: [t.siteId, t.memberId] })],
 );
 
-export const siteInvitations1 = pgTable("siteInvitations1", {
-  id: serial("id").unique(),
-  siteId: integer("siteId").references(() => sites1.id),
-  email: varchar("email"),
+export const siteInvitations1 = pgTable(
+  "siteInvitations1",
+  {
+    id: serial("id").unique(),
+    siteId: integer("siteId").references(() => sites1.id),
+    email: varchar("email"),
 
-  dateAdded: timestamp("dateAdded", { mode: "date", withTimezone: true })
-    .notNull()
-    .defaultNow(),
-});
+    dateAdded: timestamp("dateAdded", { mode: "date", withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [unique().on(t.siteId, t.email)],
+);
 
 export const siteMeetingStatus = pgEnum("siteMeetingStatus", [
   "pending",

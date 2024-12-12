@@ -1,5 +1,5 @@
 {
-  "id": "0198a1d7-cd4f-4755-a6bf-60154bf023a0",
+  "id": "53a1930e-e65e-4116-b639-3eba9ae1f0a6",
   "prevId": "e9fac52e-1175-4926-ab0b-2085b8534b8b",
   "version": "7",
   "dialect": "postgresql",
@@ -705,6 +705,14 @@
           "nullsNotDistinct": false,
           "columns": [
             "id"
+          ]
+        },
+        "siteInvitations1_siteId_email_unique": {
+          "name": "siteInvitations1_siteId_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "siteId",
+            "email"
           ]
         }
       },

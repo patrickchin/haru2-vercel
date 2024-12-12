@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS "siteInvitations1" (
 	"siteId" integer,
 	"email" varchar,
 	"dateAdded" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "siteInvitations1_id_unique" UNIQUE("id")
+	CONSTRAINT "siteInvitations1_id_unique" UNIQUE("id"),
+	CONSTRAINT "siteInvitations1_siteId_email_unique" UNIQUE("siteId","email")
 );
 --> statement-breakpoint
 DO $$ BEGIN
