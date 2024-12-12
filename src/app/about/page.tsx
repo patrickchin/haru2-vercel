@@ -6,9 +6,16 @@ import { cn } from "@/lib/utils";
 
 function Description() {
   return (
-    <div className="flex flex-col gap-8 max-w-6xl mx-auto text-pretty py-10">
-      <h1 className="text-4xl font-bold">Harpa Pro</h1>
-      <div className="flex flex-col gap-4 py-24">
+    <div className="flex flex-col items-start max-w-6xl mx-auto text-pretty py-10 min-h-[60svh]">
+      <h1 className={cn("text-4xl font-extrabold mb-20 p-8 rounded-lg",
+        "bg-background/30 backdrop-blur-md"
+      )}>Harpa Pro</h1>
+      <div
+        className={cn(
+          "flex flex-col gap-4 text-pretty text-lg p-8 rounded-lg ",
+          "bg-background/50 backdrop-blur-md",
+        )}
+      >
         <p>
           Our company specializes in digital platforms for building
           construction. We focus on simplifying collaboration in building design
@@ -38,7 +45,7 @@ function Team() {
           </Avatar>
           <div className="flex flex-col gap-2 items-center justify-center">
             <h3 className="font-semibold">Haruna Bayoh</h3>
-            <p className="text-muted-foreground text-pretty p-8 text-sm">
+            <p className="text-muted-foreground text-justify p-8">
               Currently a researcher at Zhejiang University, he earned his
               bachelor&apos;s degree in Civil Engineering from Fourah Bay
               College, University of Sierra Leone. He went on to pursue a
@@ -58,7 +65,7 @@ function Team() {
           </Avatar>
           <div className="flex flex-col gap-2 items-center justify-center">
             <h3 className="font-semibold">Patrick Chin</h3>
-            <p className="text-muted-foreground text-pretty p-8 text-sm">
+            <p className="text-muted-foreground text-justify p-8">
               Patrick is a software engineer with nearing a decade of experience
               in developing large-scale, real-time software systems, having
               worked across the full software stack. He holds a Master&apos;s
@@ -76,7 +83,7 @@ function Team() {
           </Avatar>
           <div className="flex flex-col gap-2 items-center justify-center">
             <h3 className="font-semibold">Saffa Salieu</h3>
-            <h4 className="text-muted-foreground">COO</h4>
+            <h4 className="text-muted-foreground"></h4>
           </div>
         </Card>
       </div>
@@ -198,7 +205,13 @@ function Benefits() {
 export default function Page() {
   return (
     <DefaultLayout className="max-w-none p-0 gap-0 [&_section]:py-16">
-      <section className="bg-blue-300">
+      <section className="bg-sky-300 relative">
+        <Image
+          src="/about/sky.jpg"
+          alt="sky background"
+          fill={true}
+          className="object-cover"
+        />
         <Description />
       </section>
 
