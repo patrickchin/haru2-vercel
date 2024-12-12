@@ -20,7 +20,7 @@ import { useTheme } from "next-themes";
 export function MainNav({ user }: { user?: User }) {
   const pathname = usePathname();
   const navigation = [
-    // { name: "About", href: "/about", needLogin: false },
+    { name: "About", href: "/about", needLogin: false },
     { name: "Feedback", href: "/feedback", needLogin: true, needAdmin: true },
     { name: "My Projects", href: "/sites", needLogin: true, needAdmin: false },
   ];
@@ -28,7 +28,7 @@ export function MainNav({ user }: { user?: User }) {
   if (!user) return null;
 
   return (
-    <div className="flex items-center mx-6">
+    <div className="flex items-center mx-6 grow">
       {navigation.map((item, i) => {
         if (item.needLogin && !user) return null;
         if (item.needAdmin && user.role !== "admin") return null;
