@@ -43,28 +43,26 @@ function Team() {
       avatar: "/about/haruna.jpg",
       name: "Haruna Bayoh",
       description: `
-              Currently a researcher at Zhejiang University, he earned his
-              bachelor's degree in Civil Engineering from Fourah Bay
-              College, University of Sierra Leone. He went on to pursue a
-              Master's degree in Structural Engineering at Chang'An
-              University, China. Worked for two years as a building design
-              engineer at Cheng Xian Prefabricated Building Company in Qingzhou,
-              Shandong, where he contributed to innovative building projects,
-              focusing on optimization and enhancing flexibility in fabricating
-              structural components for modular buildings.
+        A researcher at Zhejiang University, earned his bachelor's degree in
+        Civil Engineering from Fourah Bay College, University of Sierra Leone.
+        He went on to pursue a Master's degree in Structural Engineering at
+        Chang'An University, China. Worked as a building design engineer at
+        Cheng Xian Prefabricated Building Company in Qingzhou, Shandong, where
+        he made contributions in innovative building designs, focused on
+        optimization and flexibility in the use of fabricated structural
+        components for modular buildings.
     `,
     },
     {
       avatar: "/about/patrick.jpg",
       name: "Patrick Chin",
       description: `
-              A software engineer with nearing a decade of experience
-              in developing large-scale, real-time software systems, having
-              worked across the full software stack. He holds a Master's
-              degree in Physics from University College London. His expertise
-              spans both front-end and back-end development, research and
-              integration of algorithms, platform development, and integration
-              of machine learning models.
+        A software engineer with nearing a decade of experience in developing
+        large-scale, real-time software systems, having worked across the full
+        software stack. He holds a Master's degree in Physics from University
+        College London. His expertise spans both front-end and back-end
+        development, research and integration of algorithms, platform
+        development, and integration of machine learning models.
       `,
     },
   ];
