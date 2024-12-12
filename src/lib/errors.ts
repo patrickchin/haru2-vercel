@@ -7,3 +7,7 @@ export const FailedToSendWhatsappOTP = {
 } as const;
 
 export const CredentialsSigninError = { error: "CredentialsSignin" } as const;
+
+export const SiteInvitationLimitReached = {
+  error: "SiteInvitationLimitReached",
+} as const;

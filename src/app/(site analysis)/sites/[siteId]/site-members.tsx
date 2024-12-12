@@ -53,6 +53,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { maxSiteInvitations } from "@/lib/constants";
+import { SiteInvitationLimitReached } from "@/lib/errors";
 
 function SiteSearchAddMember({
   siteId,
@@ -74,7 +76,15 @@ function SiteSearchAddMember({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(async (data: MemberFormType) => {
-          await Actions.addSiteMemberByEmail({ siteId, email: data.email });
+          const ret = await Actions.addSiteMemberByEmail({
+            siteId,
+            email: data.email,
+          });
+          if (typeof ret === typeof SiteInvitationLimitReached) {
+            form.setError("email", {
+              message: `User not found, site invitation limit (${maxSiteInvitations}) reached`,
+            });
+          }
           await mutate();
         })}
         className="flex gap-4 items-end"
@@ -284,6 +294,7 @@ export default function SiteMembers({
               <div className="font-semibold">Invited</div>
               <div className="text-sm">
                 These users will be added to this project once they register.
+                You can have a maximum of {maxSiteInvitations} site invitations.
               </div>
             </div>
             <ul className="border rounded overflow-hidden">

@@ -393,8 +393,17 @@ export async function addSiteInvitation(
       siteId,
       ...values,
     })
+    .onConflictDoNothing()
     .returning()
     .then((i) => i[0]);
+}
+
+export async function countSiteInvitations(siteId: number) {
+  return db
+    .select({ count: count() })
+    .from(siteInvitations1)
+    .where(eq(siteInvitations1.siteId, siteId))
+    .then((r) => r[0].count);
 }
 
 export async function listSiteInvitations(siteId: number) {
