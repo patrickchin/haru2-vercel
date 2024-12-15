@@ -1,8 +1,5 @@
-import { z, ZodType } from "zod";
+import { z } from "zod";
 import { isPossiblePhoneNumber } from "libphonenumber-js";
-import { createInsertSchema } from "drizzle-zod";
-import { SiteDetailsNew, SiteNew } from "./types";
-import * as Schemas from "@/db/schema";
 
 function allFilesSmall(list: FileList | undefined) {
   if (list === undefined) return true;
@@ -17,15 +14,16 @@ export const otpZod = z
   .min(6, "Passcode must be 6 digits long")
   .max(6, "Passcode must be 6 digits long")
   .regex(/^\d+$/, "Passcode must be digits only");
+export const passwordZod = z
+  .string()
+  .min(7, { message: "Password must contain at least 8 characters" });
 
 export const RegisterSchema = z
   .object({
     name: z.string().trim().min(0, { message: "Name is required" }),
     phone: phoneNumberZod.optional().or(z.literal("")),
     email: z.string().min(0, { message: "Email is required" }).email(),
-    password: z
-      .string()
-      .min(7, { message: "Password must contain at least 8 characters" }),
+    password: passwordZod,
     confirmPassword: z.string(),
   })
   .refine((schema) => schema.confirmPassword === schema.password, {
@@ -89,7 +87,7 @@ const registerPasswordSchema = z
   .object({
     name: z.string().trim().min(0, { message: "Name is required" }),
     email: z.string().email("Invalid email address"),
-    password: z.string().min(7).max(100),
+    password: passwordZod,
     confirmPassword: z.string(),
   })
   .refine((schema) => schema.confirmPassword === schema.password, {
@@ -102,11 +100,16 @@ export const registerZodSchemas = {
   password: registerPasswordSchema,
 };
 
-export const changePasswordSchema = z.object({
-  password: z.string(),
-  passwordConfirm: z.string(),
-  newPassword: z.string(),
-});
+export const changePasswordSchema = z
+  .object({
+    oldPassword: z.string(),
+    newPassword: passwordZod,
+    newPasswordConfirm: z.string(),
+  })
+  .refine((schema) => schema.newPassword === schema.newPasswordConfirm, {
+    message: "Oops! Passwords don't match. Try again.",
+    path: ["newPasswordConfirm"],
+  });
 export type ChangePasswordType = z.infer<typeof changePasswordSchema>;
 
 export const zSiteNewBoth = z.object({
@@ -115,5 +118,5 @@ export const zSiteNewBoth = z.object({
   countryCode: z.string().min(2).max(2),
   address: z.string().optional(),
   description: z.string().min(1),
-})
+});
 export type zSiteNewBothType = z.infer<typeof zSiteNewBoth>;
