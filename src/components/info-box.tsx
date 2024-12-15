@@ -14,7 +14,7 @@ const infoBoxVariants = cva(
       variant: {
         good: "bg-green-100 border-green-300      dark:bg-green-950",
         info: "bg-blue-50 border-blue-200         dark:bg-blue-950",
-        warning: "bg-yellow-100 border-yellow-200 dark:bg-yellow-500/40",
+        warning: "bg-yellow-200/50 border-yellow-200 dark:bg-yellow-500/40",
         error: "bg-destructive/20 border-red-400  dark:bg-red-950",
       },
     },
