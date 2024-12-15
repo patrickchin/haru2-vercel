@@ -35,7 +35,11 @@ export default async function RootLayout({
       <body className={cn("overflow-y-scroll", GeistSans.variable)}>
         <SpeedInsights />
         <Analytics />
-        <ThemeProvider defaultTheme="light" disableTransitionOnChange>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          disableTransitionOnChange
+        >
           <SessionProvider session={session}>{children}</SessionProvider>
         </ThemeProvider>
         <AddFeedback />
