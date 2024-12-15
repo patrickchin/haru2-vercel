@@ -78,22 +78,23 @@ function Team() {
     <div className="flex flex-col items-center gap-12 mx-auto text-pretty py-10">
       <h2 className="text-4xl text-center font-bold">Meet the Team</h2>
 
-      <div className="grid grid-cols-2 gap-12 max-w-5xl">
+      <div className="flex flex-col lg:grid lg:grid-cols-2 gap-12 max-w-xl lg:max-w-5xl">
         {members.map((mem, i) => (
-          <div key={i}>
-            <Card className="flex flex-col gap-4 items-center justify-start p-12">
-              <Avatar className="h-40 w-40">
-                <AvatarImage src={mem.avatar} />
-                <AvatarFallback>{mem.name}</AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col gap-8 items-center justify-center">
-                <h3 className="font-semibold text-lg">{mem.name}</h3>
-                <p className="text-muted-foreground text-justify leading-7">
-                  {mem.description}
-                </p>
-              </div>
-            </Card>
-          </div>
+          <Card
+            key={i}
+            className="flex flex-col gap-4 items-center justify-start p-12"
+          >
+            <Avatar className="h-40 w-40">
+              <AvatarImage src={mem.avatar} />
+              <AvatarFallback>{mem.name}</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col gap-8 items-center justify-center">
+              <h3 className="font-semibold text-lg">{mem.name}</h3>
+              <p className="text-muted-foreground text-justify leading-7">
+                {mem.description}
+              </p>
+            </div>
+          </Card>
         ))}
       </div>
     </div>
@@ -218,10 +219,10 @@ export default function Page() {
         <Image
           src="/about/sky.jpg"
           alt="sky background"
-          // fill={true}
-          width={7762}
-          height={5177}
-          className="absolute min-w-full min-h-full top-0"
+          fill={true}
+          // width={7762}
+          // height={5177}
+          className="absolute object-cover object-bottom"
         />
         <Description />
       </section>
