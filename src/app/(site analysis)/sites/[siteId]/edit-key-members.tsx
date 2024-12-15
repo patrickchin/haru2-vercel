@@ -7,7 +7,7 @@ import { SiteDetails, SiteDetailsNew, SiteMember } from "@/lib/types";
 import * as Actions from "@/lib/actions";
 import * as Schemas from "@/db/schema";
 
-import { LucideEdit } from "lucide-react";
+import { LucideArrowRight, LucideEdit } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -31,7 +31,13 @@ import { z, ZodType } from "zod";
 import { useCallback } from "react";
 import { InfoBox } from "@/components/info-box";
 
-function SiteMemberFields({ form, prefix }: { form: any; prefix: string }) {
+export function SiteMemberFields({
+  form,
+  prefix,
+}: {
+  form: any;
+  prefix: string;
+}) {
   return (
     <div className="flex flex-col">
       <h3 className="capitalize text-base font-semibold">
@@ -90,7 +96,14 @@ function SiteMemberFields({ form, prefix }: { form: any; prefix: string }) {
   );
 }
 
-function EditSiteMembersForm({ site }: { site: SiteDetails }) {
+export function EditSiteMembersForm({
+  site,
+  continueAndRedirect,
+}: {
+  site: SiteDetails;
+  continueAndRedirect?: boolean;
+}) {
+  const router = useRouter();
   const schema = createInsertSchema(Schemas.siteDetails1).pick({
     ownerName: true,
     ownerPhone: true,
@@ -109,7 +122,20 @@ function EditSiteMembersForm({ site }: { site: SiteDetails }) {
 
   const form = useForm<SchemaType>({
     resolver: zodResolver(schema),
-    defaultValues: { ...site },
+    defaultValues: {
+      ownerName: "",
+      ownerPhone: "",
+      ownerEmail: "",
+      managerName: "",
+      managerPhone: "",
+      managerEmail: "",
+      contractorName: "",
+      contractorPhone: "",
+      contractorEmail: "",
+      supervisorName: "",
+      supervisorPhone: "",
+      supervisorEmail: "",
+    },
   });
 
   return (
@@ -118,6 +144,7 @@ function EditSiteMembersForm({ site }: { site: SiteDetails }) {
         onSubmit={form.handleSubmit(async (d) => {
           const newDetails = await Actions.updateSiteDetails(site.id, d);
           form.reset(newDetails);
+          if (continueAndRedirect) router.push(`/sites/${site.id}`);
         })}
         className="flex flex-col gap-4"
       >
@@ -127,7 +154,23 @@ function EditSiteMembersForm({ site }: { site: SiteDetails }) {
         <SiteMemberFields form={form} prefix="supervisor" />
 
         <div className="flex gap-3 justify-end pt-4">
-          <SaveRevertForm form={form} />
+          {continueAndRedirect ? (
+            <>
+              <Button type="submit" variant="link">
+                Skip
+              </Button>
+              <Button
+                type="submit"
+                disabled={
+                  !form.formState.isDirty || form.formState.isSubmitting
+                }
+              >
+                Continue <LucideArrowRight />
+              </Button>
+            </>
+          ) : (
+            <SaveRevertForm form={form} />
+          )}
         </div>
       </form>
     </Form>

@@ -145,6 +145,9 @@ function SiteMembersBar({ site }: { site: SiteDetails }) {
             </DialogTrigger>
           </Button>
           <DialogContent className="px-6 pt-0 max-w-4xl">
+            <DialogHeader className="font-semibold flex flex-row justify-between items-center py-0">
+              <DialogTitle className="py-6">Project Member Details</DialogTitle>
+            </DialogHeader>
             <SiteMembersTable site={site} />
           </DialogContent>
         </Dialog>
@@ -155,49 +158,42 @@ function SiteMembersBar({ site }: { site: SiteDetails }) {
 
 function SiteMembersTable({ site }: { site: SiteDetails }) {
   return (
-    <>
-      <DialogHeader className="font-semibold flex flex-row justify-between items-center py-0">
-        <DialogTitle className="py-6">Project Member Details</DialogTitle>
-      </DialogHeader>
-      <div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-14"></TableHead>
-              <TableHead className="w-24">Name</TableHead>
-              <TableHead className="w-24">Email</TableHead>
-              <TableHead className="w-24">Phone</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableHead className="font-medium">Owner</TableHead>
-              <TableCell>{site.ownerName}</TableCell>
-              <TableCell>{site.ownerEmail}</TableCell>
-              <TableCell>{site.ownerPhone}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableHead className="font-medium">Project Manager</TableHead>
-              <TableCell>{site.managerName}</TableCell>
-              <TableCell>{site.managerEmail}</TableCell>
-              <TableCell>{site.managerPhone}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableHead className="font-medium">Contractor</TableHead>
-              <TableCell>{site.contractorName}</TableCell>
-              <TableCell>{site.contractorEmail}</TableCell>
-              <TableCell>{site.contractorPhone}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableHead className="font-medium">Supervisor</TableHead>
-              <TableCell>{site.supervisorName}</TableCell>
-              <TableCell>{site.supervisorEmail}</TableCell>
-              <TableCell>{site.supervisorPhone}</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </div>
-    </>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead className="w-14"></TableHead>
+          <TableHead className="w-24">Name</TableHead>
+          <TableHead className="w-24">Email</TableHead>
+          <TableHead className="w-24">Phone</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableHead className="font-medium">Owner</TableHead>
+          <TableCell>{site.ownerName}</TableCell>
+          <TableCell>{site.ownerEmail}</TableCell>
+          <TableCell>{site.ownerPhone}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableHead className="font-medium">Project Manager</TableHead>
+          <TableCell>{site.managerName}</TableCell>
+          <TableCell>{site.managerEmail}</TableCell>
+          <TableCell>{site.managerPhone}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableHead className="font-medium">Contractor</TableHead>
+          <TableCell>{site.contractorName}</TableCell>
+          <TableCell>{site.contractorEmail}</TableCell>
+          <TableCell>{site.contractorPhone}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableHead className="font-medium">Supervisor</TableHead>
+          <TableCell>{site.supervisorName}</TableCell>
+          <TableCell>{site.supervisorEmail}</TableCell>
+          <TableCell>{site.supervisorPhone}</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
   );
 }
 
@@ -414,7 +410,7 @@ export default async function Page(props: {
         </TabsContent>
 
         <TabsContent value="meetings" className="space-y-4">
-          <SiteMeetings site={site} members={members} />
+          <SiteMeetings site={site} role={role} />
         </TabsContent>
 
         <TabsContent value="members" className="space-y-4">
