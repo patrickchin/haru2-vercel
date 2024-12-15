@@ -1,17 +1,15 @@
 "use client";
 
 import { useMemo } from "react";
-import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { zSiteNewBoth, zSiteNewBothType } from "@/lib/forms";
 import * as Actions from "@/lib/actions";
 
-import { LucideLoader2 } from "lucide-react";
+import { LucideArrowRight, LucideLoader2 } from "lucide-react";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -30,6 +28,7 @@ import {
 } from "@/components/ui/select";
 import { InfoBox } from "@/components/info-box";
 import { Card, CardContent } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
 
 function CountrySelectForm({ form }: { form: any }) {
   const displayNames = useMemo(() => {
@@ -67,6 +66,7 @@ function CountrySelectForm({ form }: { form: any }) {
 }
 
 function NewSiteForm() {
+  const router = useRouter();
   const form = useForm<zSiteNewBothType>({
     resolver: zodResolver(zSiteNewBoth),
   });
@@ -191,7 +191,7 @@ function NewSiteForm() {
           />
         </div>
 
-        <InfoBox className="col-span-2 leading-6">
+        <InfoBox className="col-span-2 leading-6 hidden">
           After submitting your project, you will be redirected to your project
           page. <br />
           From there you will be able to schedule a meeting with us and we will
@@ -201,15 +201,14 @@ function NewSiteForm() {
           <Button
             type="submit"
             className="flex gap-2"
-            // disabled={form.formState.isSubmitting}
+            disabled={form.formState.isSubmitting}
           >
-            Next
-            <LucideLoader2
-              className={cn(
-                "animate-spin w-4 h-4",
-                form.formState.isSubmitting ? "" : "hidden",
-              )}
-            />
+            Submit
+            {form.formState.isSubmitting ? (
+              <LucideLoader2 className="animate-spin" />
+            ) : (
+              <LucideArrowRight />
+            )}
           </Button>
         </div>
       </form>
@@ -219,7 +218,7 @@ function NewSiteForm() {
 
 export default function Page() {
   return (
-    <DefaultLayout className="items-center max-w-3xl">
+    <DefaultLayout className="max-w-4xl">
       <Card>
         <CardContent className="p-6">
           <NewSiteForm />

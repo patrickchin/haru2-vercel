@@ -24,11 +24,11 @@ import { SiteInvitationLimitReached } from "../errors";
 
 export async function addSite(data: zSiteNewBothType) {
   const session = await auth();
-  if (!session?.user) return;
+  if (!session?.user) return; // unauthorized();
   const parsed = zSiteNewBoth.safeParse(data);
   if (!parsed.success) return;
   const site = await db.addSite(session.user.idn, parsed.data);
-  redirect(`/sites/${site.id}?dialog=editMembersBar`);
+  redirect(`/sites/${site.id}/edit/choose`);
 }
 
 export async function getMySites() {
