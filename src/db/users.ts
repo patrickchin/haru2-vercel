@@ -178,6 +178,15 @@ export async function updateUserAvatar(
   });
 }
 
+export async function updateUserPassword(userId: number, password: string) {
+  return db
+    .update(accounts1)
+    .set({ password })
+    .where(eq(accounts1.id, userId))
+    .returning()
+    .then((r) => r[0]);
+}
+
 export async function deleteUserAvatar(uploaderId: number) {
   return await db.transaction(async (tx) => {
     const oldUser = await tx

@@ -2,7 +2,8 @@
 
 import * as db from "@/db";
 import { signIn, auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { redirect, unauthorized } from "next/navigation";
+import { compare, genSaltSync, hashSync } from "bcrypt-ts";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { deleteFileFromS3 } from "@/lib/s3";
 import {
@@ -109,5 +110,33 @@ export async function updateAvatarForUser(fileUrl: string | null) {
   } catch (error) {
     console.error("Failed to update avatar:", error);
     throw error;
+  }
+}
+
+export async function updateUserPassword({
+  oldPassword,
+  newPassword,
+  newPasswordConfirm,
+}: {
+  oldPassword: string;
+  newPassword: string;
+  newPasswordConfirm: string;
+}) {
+  const session = await auth();
+  if (!session?.user) unauthorized();
+  if (newPassword != newPasswordConfirm)
+    return { error: "Passwords do not match." };
+  const userId = session.user.idn;
+  const account = await db.getUserAccount(userId);
+  const passwordsMatch =
+    account.password === null || (await compare(oldPassword, account.password));
+  if (passwordsMatch === true) {
+    const salt = genSaltSync(10);
+    const hash = hashSync(newPassword, salt);
+    await db.updateUserPassword(userId, hash);
+    console.log(`User ${userId}: changed password successfully`);
+  } else {
+    console.log(`User ${userId}: failed to change password`);
+    return { error: "Failed to update password" };
   }
 }

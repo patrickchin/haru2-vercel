@@ -12,7 +12,7 @@ export function SaveRevertForm({
   form,
   onSaveClick,
 }: {
-  form: UseFormReturn;
+  form: UseFormReturn<any>;
   onSaveClick?: MouseEventHandler;
 }) {
   return (

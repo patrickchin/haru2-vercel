@@ -6,7 +6,6 @@ import useSWR from "swr";
 import { useForm } from "react-hook-form";
 import { changePasswordSchema, ChangePasswordType } from "@/lib/forms";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HaruUserAccount } from "@/lib/types";
 import { uploadAvatarFile } from "@/lib/utils/upload";
 import * as Actions from "@/lib/actions";
 
@@ -44,33 +43,39 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
-import { WarningBox } from "@/components/info-box";
+import { SaveRevertForm } from "@/components/save-revert-form";
 
 function ChangePassword() {
   const form = useForm<ChangePasswordType>({
     resolver: zodResolver(changePasswordSchema),
+    defaultValues: {
+      oldPassword: "",
+      newPassword: "",
+      newPasswordConfirm: "",
+    },
   });
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((d) => {
-          // TODO
+        onSubmit={form.handleSubmit(async (d) => {
+          const ret = await Actions.updateUserPassword(d);
+          if (ret?.error) {
+            form.setError("root", { message: ret.error });
+          } else {
+            form.reset();
+          }
         })}
         className="w-full max-w-md space-y-4"
       >
-        <WarningBox>
-          Changing passwords has not been implemented yet.
-        </WarningBox>
-
         <FormField
           control={form.control}
-          name="password"
+          name="oldPassword"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Current Password</FormLabel>
               <FormControl>
-                <Input {...field} type="password" disabled />
+                <Input {...field} type="password" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -84,7 +89,7 @@ function ChangePassword() {
             <FormItem>
               <FormLabel>New Password</FormLabel>
               <FormControl>
-                <Input {...field} type="password" disabled />
+                <Input {...field} type="password" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -93,24 +98,26 @@ function ChangePassword() {
 
         <FormField
           control={form.control}
-          name="passwordConfirm"
+          name="newPasswordConfirm"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Confirm New Password</FormLabel>
               <FormControl>
-                <Input {...field} type="password" disabled />
+                <Input {...field} type="password" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
+        <FormMessage>{form.formState.errors.root?.message}</FormMessage>
+
         <div className="col-span-2 flex justify-end">
+          <SaveRevertForm form={form} />
           <Button
             type="submit"
-            className="flex gap-2"
-            disabled
-            // disabled={form.formState.isSubmitting}
+            className="flex gap-2 hidden"
+            disabled={form.formState.isSubmitting}
           >
             Confirm
             <LucideLoader2
