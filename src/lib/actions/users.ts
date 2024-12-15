@@ -3,7 +3,7 @@
 import * as db from "@/db";
 import { signIn, auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { isRedirectError } from "next/dist/client/components/redirect";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { deleteFileFromS3 } from "@/lib/s3";
 import {
   LoginTypesEmail,
