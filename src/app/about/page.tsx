@@ -103,14 +103,14 @@ function Team() {
 
 function Services() {
   return (
-    <div className="flex flex-col gap-12 max-w-6xl mx-auto text-pretty py-10">
+    <div className="flex flex-col items-center gap-12 max-w-6xl mx-auto text-pretty py-10">
       <h2 className="flex text-4xl font-bold justify-center">
         Service We Provide
       </h2>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="flex flex-col max-w-lg lg:max-w-none lg:grid lg:grid-cols-3 gap-6">
         <div className="flex flex-col gap-6">
-          <div className="h-60 rounded-lg overflow-hidden relative">
+          <div className="aspect-video rounded-lg overflow-hidden relative">
             <Image
               src="/about/online-platform.webp"
               alt="online platform"
@@ -125,7 +125,7 @@ function Services() {
         </div>
 
         <div className="flex flex-col gap-6">
-          <div className="h-60 rounded-lg overflow-hidden relative">
+          <div className="aspect-video rounded-lg overflow-hidden relative">
             <Image
               src="/about/site-supervisor.jpg"
               alt="online platform"
@@ -145,7 +145,7 @@ function Services() {
         </div>
 
         <div className="flex flex-col gap-6">
-          <div className="h-60 rounded-lg overflow-hidden relative">
+          <div className="aspect-video rounded-lg overflow-hidden relative">
             <Image
               src="/about/support-size.jpg"
               alt="online platform"
