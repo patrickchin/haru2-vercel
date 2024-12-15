@@ -71,10 +71,12 @@ function NewSiteForm() {
     resolver: zodResolver(zSiteNewBoth),
   });
 
-  const descriptionPlaceholder =
-    "e.g.\n" +
-    "I'm building a hospital, it is a large-scale development ...\n" +
-    "The construction is expected to be completed within the next two years ...\n";
+  const shortDescriptionPlaceholder = true;
+  const descriptionPlaceholder = shortDescriptionPlaceholder
+    ? "Your project description ..."
+    : "e.g.\n" +
+      "I'm building a hospital, it is a large-scale development ...\n" +
+      "The construction is expected to be completed within the next two years ...\n";
 
   return (
     <Form {...form}>
