@@ -31,14 +31,11 @@ export default async function RootLayout({
 }) {
   const session = await auth();
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={cn("overflow-y-scroll", GeistSans.variable)}>
         <SpeedInsights />
         <Analytics />
-        <ThemeProvider
-          defaultTheme="light"
-          disableTransitionOnChange
-        >
+        <ThemeProvider defaultTheme="light" disableTransitionOnChange>
           <SessionProvider session={session}>{children}</SessionProvider>
         </ThemeProvider>
         <AddFeedback />
