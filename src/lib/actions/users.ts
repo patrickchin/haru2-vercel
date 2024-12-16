@@ -74,6 +74,7 @@ export async function registerUser(data: RegisterSchemaType) {
 export async function signInFromLogin(
   data: LoginTypesPhone | LoginTypesEmail | LoginTypesPassword,
 ) {
+  const username = "phone" in data ? data.phone : data.email;
   try {
     await signIn("credentials", {
       ...data,
@@ -82,8 +83,10 @@ export async function signInFromLogin(
     });
   } catch (error: unknown) {
     if (isRedirectError(error)) {
+      db.addlogMessage({ message: `Successfull login: ${username}` });
       throw error;
     } else if (error instanceof AuthError) {
+      db.addlogMessage({ message: `Failed to login: ${username}` });
       // is there any need to distinguish further?
       // e.g. CredentialsSignin error
       return CredentialsSigninError;
@@ -134,9 +137,9 @@ export async function updateUserPassword({
     const salt = genSaltSync(10);
     const hash = hashSync(newPassword, salt);
     await db.updateUserPassword(userId, hash);
-    console.log(`User ${userId}: changed password successfully`);
+    db.addlogMessage({ message: "Changed password successfully" });
   } else {
-    console.log(`User ${userId}: failed to change password`);
+    db.addlogMessage({ message: "Failed to update password"} );
     return { error: "Failed to update password" };
   }
 }

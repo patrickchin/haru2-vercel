@@ -37,10 +37,13 @@ export async function getSiteReportDetails(reportId: number) {
 export async function addSiteReport(siteId: number) {
   const session = await auth();
   if (editReportRoles.includes(await getSiteMemberRole({ siteId }, session))) {
-    return await db.addSiteReport({
+    const report = await db.addSiteReport({
       reporterId: session?.user?.idn ?? null,
       siteId: siteId,
     });
+    const reportId = report.id;
+    db.addlogMessage({ message: "Site report added", reportId });
+    return report;
   }
 }
 
@@ -50,6 +53,7 @@ export async function updateSiteReport(
 ) {
   if (editReportRoles.includes(await getSiteMemberRole({ reportId }))) {
     const report = await db.updateSiteReport(reportId, values);
+    db.addlogMessage({ message: "Site report updated", reportId });
     revalidatePath(`/sites/${report.siteId}/reports/${report.id}`);
     return report;
   }
@@ -75,6 +79,7 @@ export async function updateSiteReportDetails(
       db.updateSiteReportDetails(reportId, values),
       db.getSiteReport(reportId),
     ]);
+    db.addlogMessage({ message: "Site report details updated", reportId });
     revalidatePath(`/sites/${report.siteId}/reports/${report.id}`);
     return { ...report, ...details };
   }
@@ -86,6 +91,7 @@ export async function publishReport(reportId: number) {
     const report = await db.updateSiteReport(reportId, {
       publishedAt: new Date(),
     });
+    db.addlogMessage({ message: "Site report published", reportId });
     revalidatePath(`/sites/${report.siteId}/reports/${report.id}`);
     return report;
   }
@@ -125,7 +131,7 @@ export async function signReport(reportId: number, buttonRole: SiteMemberRole) {
 
   if (!signArgs) return;
   const report = await db.updateSiteReportDetails(reportId, signArgs);
-  if (!report) return;
+  db.addlogMessage({ message: `Site report signed by ${role}`, reportId });
 
   revalidatePath(`/sites/${oldReport.siteId}/reports/${report.id}`);
   return report;
@@ -140,6 +146,7 @@ export async function deleteSiteReport(reportId: number) {
       const updatedReport = db.updateSiteReport(reportId, {
         deletedAt: new Date(),
       });
+      db.addlogMessage({ message: "Site report deleted", reportId });
       revalidatePath(`/sites/${report.siteId}/reports/${report.id}`);
       return updatedReport;
     }
@@ -170,10 +177,16 @@ export async function addSiteReportFile(
   if (editReportRoles.includes(role)) {
     let report = await db.getSiteReport(reportId);
     if (report.fileGroupId) {
-      return db.addFileToGroup(report.fileGroupId, {
+      const file = await db.addFileToGroup(report.fileGroupId, {
         ...fileInfo,
         uploaderId: session?.user?.idn,
       });
+      db.addlogMessage({
+        message: "Site report file added",
+        reportId,
+        fileId: file.id,
+      });
+      return file;
     }
   }
 }
@@ -187,7 +200,13 @@ export async function deleteSiteReportFile({
 }) {
   const role = await getSiteMemberRole({ reportId });
   if (editReportRoles.includes(role)) {
-    return db.updateFile(fileId, { deletedAt: new Date() });
+    const file = db.updateFile(fileId, { deletedAt: new Date() });
+    db.addlogMessage({
+      message: "Site report file deleted",
+      reportId,
+      fileId,
+    });
+    return file;
   }
 }
 
