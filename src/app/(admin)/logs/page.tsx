@@ -26,6 +26,7 @@ export default async function Page() {
       <Table className="border rounded">
         <TableHeader>
           <TableRow className="[&>th]:border-r [&>th]:whitespace-nowrap">
+            <TableHead className="w-1">Log Id</TableHead>
             <TableHead className="w-1">Time</TableHead>
             <TableHead className="w-1">User Id</TableHead>
             <TableHead className="w-full">Message</TableHead>
@@ -38,6 +39,7 @@ export default async function Page() {
         <TableBody>
           {logs?.map((l, i) => (
             <TableRow key={l.id} className="[&>td]:border-r ">
+              <TableCell>{l.id}</TableCell>
               <TableCell className="whitespace-nowrap">
                 {l.createdAt.toISOString()}
               </TableCell>
