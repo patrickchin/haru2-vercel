@@ -50,7 +50,7 @@ async function sendEmailResend({
     from,
     to,
     subject,
-    html: body,
+    text: body,
   });
   if (error) throw error;
 }
