@@ -23,6 +23,7 @@ export function MainNav({ user }: { user?: User }) {
     { name: "About Us", href: "/about", needLogin: false },
     { name: "My Sites", href: "/sites", needLogin: true, needAdmin: false },
     { name: "Feedback", href: "/feedback", needLogin: true, needAdmin: true },
+    { name: "Logs", href: "/logs", needLogin: true, needAdmin: true },
   ];
 
   return (

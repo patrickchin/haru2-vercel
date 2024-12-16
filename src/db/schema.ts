@@ -328,3 +328,24 @@ export const comments1 = pgTable("comments1", {
     .defaultNow(),
   comment: varchar("comment"),
 });
+
+export const logs1 = pgTable("logs1", {
+  id: serial("id").primaryKey(),
+  createdAt: timestamp("createdAt", { mode: "date", withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  message: varchar("message"),
+
+  userId: integer("userId"),
+  siteId: integer("siteId"),
+  reportId: integer("reportId"),
+
+  noticeId: integer("noticeId"),
+  meetingId: integer("meetingId"),
+  invitationId: integer("invitationId"),
+
+  commentId: integer("commentId"),
+  commentsSectionId: integer("commentsSectionId"),
+  fileGroupId: integer("fileGroupId"),
+  fileId: integer("fileId"),
+});
