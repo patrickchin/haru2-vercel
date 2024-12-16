@@ -114,19 +114,6 @@ function ChangePassword() {
 
         <div className="col-span-2 flex justify-end">
           <SaveRevertForm form={form} />
-          <Button
-            type="submit"
-            className="flex gap-2 hidden"
-            disabled={form.formState.isSubmitting}
-          >
-            Confirm
-            <LucideLoader2
-              className={cn(
-                "animate-spin w-4 h-4",
-                form.formState.isSubmitting ? "" : "hidden",
-              )}
-            />
-          </Button>
         </div>
       </form>
     </Form>
