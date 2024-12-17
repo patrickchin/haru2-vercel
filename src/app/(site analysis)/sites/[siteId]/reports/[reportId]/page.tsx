@@ -5,7 +5,6 @@ import { ReportDocument } from "../report-document";
 import { ReportFileDisplay } from "../report-file-viewer";
 import { ReportTitleBar } from "../report-title";
 
-import { FileDisplay } from "@/components/file-display";
 import { ErrorBox, WarningBox } from "@/components/info-box";
 import CommentsSection from "@/components/comments-section";
 import { ReportSignatureSection } from "../report-sign";
@@ -53,9 +52,7 @@ export default async function Page({
       )}
 
       <section className="w-full mx-auto">
-        <Suspense fallback={<FileDisplay />}>
-          <ReportFileDisplay {...props} />
-        </Suspense>
+        <ReportFileDisplay {...props} />
       </section>
 
       <section className="w-full max-w-5xl mx-auto">
