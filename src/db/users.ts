@@ -3,7 +3,7 @@ import "server-only";
 import { db } from "./_db";
 import { eq, getTableColumns } from "drizzle-orm";
 import { genSaltSync, hashSync } from "bcrypt-ts";
-import { parsePhoneNumber } from "libphonenumber-js";
+import parsePhoneNumberFromString from "libphonenumber-js";
 import { HaruUserBasic } from "@/lib/types";
 import { users1, accounts1, siteMembers1 } from "./schema";
 
@@ -16,7 +16,7 @@ export async function getUserAccount(userId: number) {
     .from(accounts1)
     .leftJoin(users1, eq(users1.id, accounts1.id))
     .where(eq(accounts1.id, userId))
-    .then((r) => r[0]);
+    .then((r) => (r.length > 0 ? r[0] : null));
 }
 
 export async function getUserAccountByEmail(email: string) {
@@ -28,11 +28,12 @@ export async function getUserAccountByEmail(email: string) {
     .from(accounts1)
     .leftJoin(users1, eq(users1.id, accounts1.id))
     .where(eq(accounts1.email, email))
-    .then((r) => r[0]);
+    .then((r) => (r.length > 0 ? r[0] : null));
 }
 
 export async function getUserAccountByPhone(phone: string) {
-  const phoneURI = parsePhoneNumber(phone).getURI();
+  const phoneURI = parsePhoneNumberFromString(phone)?.getURI();
+  if (!phoneURI) return;
   return db
     .select({
       ...getTableColumns(users1),
@@ -41,7 +42,7 @@ export async function getUserAccountByPhone(phone: string) {
     .from(accounts1)
     .leftJoin(users1, eq(users1.id, accounts1.id))
     .where(eq(accounts1.phone, phoneURI))
-    .then((r) => r[0]);
+    .then((r) => (r.length > 0 ? r[0] : null));
 }
 
 export async function getUserInternal(userId: number) {
@@ -49,7 +50,7 @@ export async function getUserInternal(userId: number) {
     .select()
     .from(users1)
     .where(eq(users1.id, userId))
-    .then((r) => r.at(0));
+    .then((r) => (r.length > 0 ? r[0] : null));
 }
 
 export async function getUser(userId: number, requestinUserId: number) {
@@ -77,7 +78,7 @@ export async function getUser(userId: number, requestinUserId: number) {
       eq(requestUserSiteMembers.memberId, users1.id),
     )
     .where(eq(requestUserSiteMembers.memberId, userId))
-    .then((r) => r.at(0));
+    .then((r) => (r.length > 0 ? r[0] : null));
 }
 
 export async function getUserByEmail(email: string) {
@@ -88,11 +89,12 @@ export async function getUserByEmail(email: string) {
     .from(users1)
     .leftJoin(accounts1, eq(accounts1.id, users1.id))
     .where(eq(accounts1.email, email))
-    .then((r) => r.at(0));
+    .then((r) => (r.length > 0 ? r[0] : null));
 }
 
 export async function getUserByPhone(phone: string) {
-  const phoneURI = parsePhoneNumber(phone).getURI();
+  const phoneURI = parsePhoneNumberFromString(phone)?.getURI();
+  if (!phoneURI) return;
   return await db
     .select({
       ...getTableColumns(users1),
@@ -100,7 +102,7 @@ export async function getUserByPhone(phone: string) {
     .from(users1)
     .leftJoin(accounts1, eq(accounts1.id, users1.id))
     .where(eq(accounts1.phone, phoneURI))
-    .then((r) => r.at(0));
+    .then((r) => (r.length > 0 ? r[0] : null));
 }
 
 export async function getAllUsers() {
@@ -126,7 +128,9 @@ export async function createUserIfNotExists({
 }) {
   const salt = genSaltSync(10);
   const hash = hashSync(password, salt);
-  const phoneURI = phone ? parsePhoneNumber(phone).getURI() : undefined;
+  const phoneURI = phone
+    ? parsePhoneNumberFromString(phone)?.getURI()
+    : undefined;
 
   return db.transaction(async (tx) => {
     console.log(`createUserIfNotExists phone: ${phoneURI} , email: ${email}`);

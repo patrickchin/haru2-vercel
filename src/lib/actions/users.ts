@@ -75,6 +75,11 @@ export async function signInFromLogin(
   data: LoginTypesPhone | LoginTypesEmail | LoginTypesPassword,
 ) {
   const username = "phone" in data ? data.phone : data.email;
+  const user =
+    "phone" in data
+      ? db.getUserByPhone(data.phone)
+      : db.getUserByEmail(data.email);
+
   try {
     await signIn("credentials", {
       ...data,
@@ -83,10 +88,16 @@ export async function signInFromLogin(
     });
   } catch (error: unknown) {
     if (isRedirectError(error)) {
-      db.addlogMessage({ message: `Successfull login: ${username}` });
+      db.addlogMessage({
+        message: `Successfull login: ${username}`,
+        userId: (await user)?.id,
+      });
       throw error;
     } else if (error instanceof AuthError) {
-      db.addlogMessage({ message: `Failed to login: ${username}` });
+      db.addlogMessage({
+        message: `Failed to login: ${username}`,
+        userId: (await user)?.id,
+      });
       // is there any need to distinguish further?
       // e.g. CredentialsSignin error
       return CredentialsSigninError;
@@ -128,9 +139,10 @@ export async function updateUserPassword({
   const session = await auth();
   if (!session?.user) unauthorized();
   if (newPassword != newPasswordConfirm)
-    return { error: "Passwords do not match." };
+    return { error: "Passwords do not match" };
   const userId = session.user.idn;
   const account = await db.getUserAccount(userId);
+  if (!account) return { error: "Account not found" };
   const passwordsMatch =
     account.password === null || (await compare(oldPassword, account.password));
   if (passwordsMatch === true) {
@@ -139,7 +151,7 @@ export async function updateUserPassword({
     await db.updateUserPassword(userId, hash);
     db.addlogMessage({ message: "Changed password successfully" });
   } else {
-    db.addlogMessage({ message: "Failed to update password"} );
+    db.addlogMessage({ message: "Failed to update password" });
     return { error: "Failed to update password" };
   }
 }
