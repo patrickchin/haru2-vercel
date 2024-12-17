@@ -102,13 +102,11 @@ function FileDisplayCarouselItems({
           className={cn(
             "p-0 max-w-none max-h-none overflow-hidden",
             "border-none bg-zinc-700",
+            "group",
           )}
         >
           <DialogTitle className="hidden">Section File Viewer</DialogTitle>
-          <Carousel
-            className="group"
-            opts={{ startIndex: i, watchDrag: false }}
-          >
+          <Carousel opts={{ startIndex: i, watchDrag: false }}>
             <CarouselContent>
               {files?.map((f2) => (
                 <CarouselItem key={f2.id}>
