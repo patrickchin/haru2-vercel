@@ -34,7 +34,7 @@ const DialogClose2 = React.forwardRef<
     </Button>
   </DialogPrimitive.Close>
 ));
-DialogClose.displayName = DialogPrimitive.Close.displayName;
+DialogClose2.displayName = "DialogClose2"; // DialogPrimitive.Close.displayName;
 
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
