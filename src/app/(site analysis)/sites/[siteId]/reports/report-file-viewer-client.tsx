@@ -68,7 +68,7 @@ function FileDisplayCarouselItems({
   if (!files || files.length < 1)
     return (
       <CarouselItem className="grid grid-cols-1 items-center justify-center text-center">
-        This report has no overview images.
+        This report has no overview {type}s.
       </CarouselItem>
     );
 
