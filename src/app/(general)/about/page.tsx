@@ -5,6 +5,15 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 
+import ImageHaruna from "./images/haruna.jpg";
+import ImagePatrick from "./images/patrick.jpg";
+import ImageSky from "./images/sky.jpg";
+import ImageBenefit1 from "./images/benefit-1.png";
+import ImageBenefit2 from "./images/benefit-2.png";
+import ImageSupport from "./images/support-size.jpg";
+import ImageSupervisor from "./images/site-supervisor.jpg";
+import ImageOnline from "./images/online-platform.webp";
+
 function Description() {
   return (
     <div className="flex flex-col items-start max-w-6xl mx-auto text-pretty py-10 min-h-[60svh]">
@@ -47,7 +56,7 @@ function Description() {
 function Team() {
   const members = [
     {
-      avatar: "/about/haruna.jpg",
+      avatar: ImageHaruna,
       name: "Haruna Bayoh",
       description: `
         A researcher at Zhejiang University, earned his bachelor's degree in
@@ -61,7 +70,7 @@ function Team() {
     `,
     },
     {
-      avatar: "/about/patrick.jpg",
+      avatar: ImagePatrick,
       name: "Patrick Chin",
       description: `
         A senior software engineer with nearing a decade of industry experience
@@ -85,7 +94,9 @@ function Team() {
             className="flex flex-col gap-4 items-center justify-start p-12"
           >
             <Avatar className="h-40 w-40">
-              <AvatarImage src={mem.avatar} />
+              <AvatarImage asChild src="/1x1.png">
+                <Image src={mem.avatar} alt={mem.name} />
+              </AvatarImage>
               <AvatarFallback>{mem.name}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col gap-8 items-center justify-center">
@@ -112,7 +123,7 @@ function Services() {
         <div className="flex flex-col gap-6">
           <div className="aspect-video rounded-lg overflow-hidden relative">
             <Image
-              src="/about/online-platform.webp"
+              src={ImageOnline}
               alt="online platform"
               fill={true}
               className="object-cover"
@@ -127,7 +138,7 @@ function Services() {
         <div className="flex flex-col gap-6">
           <div className="aspect-video rounded-lg overflow-hidden relative">
             <Image
-              src="/about/site-supervisor.jpg"
+              src={ImageSupervisor}
               alt="online platform"
               fill={true}
               className="object-cover"
@@ -147,8 +158,8 @@ function Services() {
         <div className="flex flex-col gap-6">
           <div className="aspect-video rounded-lg overflow-hidden relative">
             <Image
-              src="/about/support-size.jpg"
-              alt="online platform"
+              src={ImageSupport}
+              alt="support"
               fill={true}
               className="object-cover"
             />
@@ -170,7 +181,7 @@ function Benefits() {
       <div className="flex flex-row gap-3">
         <div className="overflow-hidden relative w-72">
           <Image
-            src="/about/benefit-1.png"
+            src={ImageBenefit1}
             alt="online platform"
             fill={true}
             className="object-contain"
@@ -200,7 +211,7 @@ function Benefits() {
           </p>
 
           <Image
-            src="/about/benefit-2.png"
+            src={ImageBenefit2}
             alt="benefit 2"
             width={360}
             height={360}
@@ -217,11 +228,9 @@ export default function Page() {
     <DefaultLayout className="max-w-none p-0 gap-0 [&_section]:py-16">
       <section className="bg-sky-500 relative overflow-hidden">
         <Image
-          src="/about/sky.jpg"
+          src={ImageSky}
           alt="sky background"
           fill={true}
-          // width={7762}
-          // height={5177}
           className="absolute object-cover object-bottom"
         />
         <Description />
