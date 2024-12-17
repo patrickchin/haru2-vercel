@@ -133,6 +133,7 @@ export {
   DialogOverlay,
   DialogTrigger,
   DialogClose,
+  DialogClose2,
   DialogContent,
   DialogHeader,
   DialogFooter,
