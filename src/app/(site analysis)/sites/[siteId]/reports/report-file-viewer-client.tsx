@@ -5,14 +5,11 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { HaruFile } from "@/lib/types";
 
-import { FileDisplay } from "@/components/file-display";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  LucideCamera,
   LucideVideo,
   LucideFileText,
   LucideMaximize2,
-  LucideMinimize2,
   LucideCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,6 +27,17 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  DisplayImage360,
+  Image360,
+  Image360Toggle,
+} from "@/components/display-image-360";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export function FileSelector({
   files,
@@ -119,6 +127,114 @@ export function FileSelector({
   );
 }
 
+function DialogTrigger2({ className }: { className?: string }) {
+  return (
+    <DialogTrigger asChild>
+      <Button
+        variant="outline"
+        size="icon"
+        className={cn(
+          "absolute h-8 w-8 rounded-full",
+          "top-4 right-4",
+          className,
+        )}
+      >
+        <LucideMaximize2 className="h-4 w-4" />
+        <span className="sr-only">Open Dialog</span>
+      </Button>
+    </DialogTrigger>
+  );
+}
+
+function FileDisplayCarouselItems({
+  files,
+  type,
+}: {
+  files?: HaruFile[];
+  type: "image" | "video";
+}) {
+  if (!files || files.length < 1)
+    return (
+      <CarouselItem className="grid grid-cols-1 items-center justify-center text-center">
+        This report has no overview images.
+      </CarouselItem>
+    );
+
+  return files.map((f, i) => (
+    <CarouselItem key={f.id} className="relative">
+      <Dialog>
+        {type === "image" && (
+          <DisplayImage360>
+            <Image360
+              src={f.url || ""}
+              alt={f.filename || "invalid image src"}
+              fill={true}
+              unoptimized={true}
+              className="object-contain"
+            />
+            <Image360Toggle className="mr-10 invisible group-hover:visible" />
+          </DisplayImage360>
+        )}
+        {type === "video" && (
+          <video
+            controls
+            className="max-w-full max-h-full w-full h-full bg-zinc-800"
+            preload="metadata"
+          >
+            <source src={f.url || ""} type={f.type || ""} />
+          </video>
+        )}
+        <DialogTrigger2 className="invisible group-hover:visible" />
+
+        <DialogContent
+          className={cn(
+            "p-0 max-w-none max-h-none overflow-hidden",
+            "border-none bg-zinc-700",
+          )}
+        >
+          <DialogTitle className="hidden">Section File Viewer</DialogTitle>
+          <Carousel
+            className="group"
+            opts={{ startIndex: i, watchDrag: false }}
+          >
+            <CarouselContent>
+              {files?.map((f2) => (
+                <CarouselItem key={f2.id}>
+                  <div className="relative w-full h-svh flex flex-row">
+                    {type === "image" && (
+                      <DisplayImage360>
+                        <Image360
+                          src={f2.url || ""}
+                          alt={f2.filename || "invalid image src"}
+                          fill={true}
+                          unoptimized={true}
+                          className="object-contain"
+                        />
+                        <Image360Toggle className="mr-10 invisible group-hover:visible" />
+                      </DisplayImage360>
+                    )}
+                    {type === "video" && (
+                      <video
+                        controls
+                        className="h-full w-full"
+                        preload="metadata"
+                      >
+                        <source src={f2.url || ""} type={f2.type || ""} />
+                      </video>
+                    )}
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="left-4 invisible group-hover:visible" />
+            <CarouselNext className="right-4 invisible group-hover:visible" />
+          </Carousel>
+        </DialogContent>
+      </Dialog>
+    </CarouselItem>
+  ));
+}
+
 export function FileDisplayCarousel({
   className,
   fileList,
@@ -135,71 +251,32 @@ export function FileDisplayCarousel({
     return fileList?.filter((f) => !f.type?.startsWith("video/"));
   }, [fileList]);
 
-  const [largeView, setLargeView] = useState(false);
   const [videosView, setVideosView] = useState(
     videoFiles && videoFiles?.length > 0,
   );
 
-  const files = videosView ? videoFiles : imageFiles;
-
   return (
-    <div
-      className={cn(
-        "w-full mx-auto",
-        largeView ? "fixed w-svw top-0 z-30" : "max-w-5xl",
-        className,
-      )}
-    >
-      <div
+    <div className={cn("w-full mx-auto", "max-w-5xl aspect-video", className)}>
+      <Carousel
         className={cn(
-          "grow flex flex-col items-center justify-center relative",
+          "grow grid grid-cols-1 h-full",
+          "group",
           "outline outline-4 rounded",
-          largeView
-            ? "rounded border-none outline-none bg-zinc-800"
-            : "bg-gradient-to-r from-cyan-100 to-blue-100",
+          "bg-gradient-to-r from-cyan-100 to-blue-100",
+          // "bg-gradient-to-r from-slate-900 to-slate-950",
         )}
+        opts={{ watchDrag: false }}
       >
-        {files && files.length > 0 ? (
-          <Carousel className="w-full h-full group" opts={{ watchDrag: false }}>
-            <CarouselContent>
-              {files?.map((f) => (
-                <CarouselItem key={f.id} className="">
-                  <FileDisplay
-                    file={f}
-                    allow3d={true}
-                    className={cn(largeView ? "h-svh" : "aspect-video")}
-                    controlsClassName="invisible group-hover:visible"
-                  >
-                    <Button
-                      className="rounded-full w-8 h-8"
-                      variant="outline"
-                      size="icon"
-                      onClick={() => setLargeView((w) => !w)}
-                    >
-                      {largeView ? (
-                        <LucideMinimize2 className="w-4 h-4 rotate-90" />
-                      ) : (
-                        <LucideMaximize2 className="w-4 h-4 rotate-90" />
-                      )}
-                    </Button>
-                  </FileDisplay>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="invisible group-hover:visible left-4" />
-            <CarouselNext className="invisible group-hover:visible right-4" />
-          </Carousel>
-        ) : (
-          <div
-            className={cn(
-              "flex items-center justify-center align-middle",
-              largeView ? "h-[56rem]" : "h-[36rem]",
-            )}
-          >
-            This report has no overview {videosView ? "videos" : "images"}
-          </div>
-        )}
-      </div>
+        <CarouselContent className="h-full carouselcontent">
+          <FileDisplayCarouselItems
+            type={videosView ? "video" : "image"}
+            files={videosView ? videoFiles : imageFiles}
+          />
+        </CarouselContent>
+        <CarouselPrevious className="invisible group-hover:visible left-4" />
+        <CarouselNext className="invisible group-hover:visible right-4" />
+      </Carousel>
+
       {/* <FileSelector fileList={files} file={file} /> */}
 
       <div className="flex justify-center w-full p-3">
