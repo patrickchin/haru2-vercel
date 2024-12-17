@@ -26,7 +26,7 @@ function useDisplayImage360() {
 }
 
 export function DisplayImage360({ children }: { children?: ReactNode }) {
-  const [is360Enabled, set360Enabled] = useState(true);
+  const [is360Enabled, set360Enabled] = useState(false);
   return (
     <DisplayImage360Context.Provider
       value={{ toggle360: () => set360Enabled((b) => !b), is360Enabled }}
