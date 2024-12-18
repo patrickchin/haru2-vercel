@@ -91,19 +91,19 @@ export async function ReportSections({
   return (
     <Card className="overflow-hidden">
       <Collapsible defaultOpen={true}>
-        <CardHeader className="flex flex-row justify-between items-center bg-green-100 hover:bg-green-200 py-0">
+        <CardHeader className="flex flex-row justify-between items-center bg-green-100 py-0">
           <CardTitle className="text-lg py-6">Report Detail Sections</CardTitle>
           <div>
-            <CollapsibleTrigger asChild className="data-[state=closed]:hidden">
-              <Button variant="outline">
-                Collapse <LucideChevronsDownUp />
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleTrigger asChild className="data-[state=open]:hidden">
-              <Button variant="outline">
-                Expand <LucideChevronsUpDown />
-              </Button>
-            </CollapsibleTrigger>
+            <Button variant="outline" asChild>
+              <CollapsibleTrigger className="first:*:data-[state=closed]:hidden last:*:data-[state=open]:hidden">
+                <div className="flex gap-1 items-center">
+                  Collapse <LucideChevronsDownUp />
+                </div>
+                <div className="flex gap-1 items-center">
+                  Expand <LucideChevronsUpDown />
+                </div>
+              </CollapsibleTrigger>
+            </Button>
           </div>
         </CardHeader>
 

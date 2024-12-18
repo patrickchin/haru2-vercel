@@ -239,16 +239,14 @@ function ReportInventory({ report }: { report?: SiteReportAll }) {
   return (
     <Card className="">
       <Dialog>
-        <DialogTrigger asChild>
-          <CardHeader className="flex flex-col sm:flex-row justify-between items-center px-6 py-0 hover:bg-accent">
-            <CardTitle className="text-lg py-6">
-              Inventory and Storage
-            </CardTitle>
+        <CardHeader className="flex flex-col sm:flex-row justify-between items-center px-6 py-0">
+          <CardTitle className="text-lg py-6">Inventory and Storage</CardTitle>
+          <DialogTrigger asChild>
             <Button size="default" variant="outline">
               Open <LucideMaximize2 />
             </Button>
-          </CardHeader>
-        </DialogTrigger>
+          </DialogTrigger>
+        </CardHeader>
         <CardContent className="flex flex-col sm:flex-row justify-between items-center p-0">
           <DialogContent
             className={cn(
