@@ -56,7 +56,7 @@ function UserNav({ user }: { user?: User }) {
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger className="items-center cursor-pointer">
         <UserAvatar user={user} />
       </DropdownMenuTrigger>
