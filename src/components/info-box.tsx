@@ -39,8 +39,10 @@ export function InfoBox({ children, className, variant }: InfoBoxProps) {
   const Icon = infoBoxIcons[variant || "info"];
   return (
     <div className={cn(infoBoxVariants({ variant, className }))}>
-      <Icon className="flex-none h-6 w-6" />
-      <p className="align-bottom">{children}</p>
+      <div className="align-baseline">
+        <Icon className="flex-none h-6 w-6" />
+      </div>
+      <div className="align-bottom">{children}</div>
     </div>
   );
 }

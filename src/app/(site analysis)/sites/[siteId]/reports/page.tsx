@@ -1,12 +1,10 @@
 import { redirect } from "next/navigation";
 import * as Actions from "@/lib/actions";
 
-import { ReportDocument } from "./report-document";
-import { ReportFileDisplay } from "./report-file-viewer";
 import { ReportTitleBar } from "./report-title";
 
 import { DefaultLayout } from "@/components/page-layouts";
-import { WarningBox } from "@/components/info-box";
+import { InfoBox } from "@/components/info-box";
 
 export default async function Page({
   params,
@@ -30,21 +28,15 @@ export default async function Page({
         </div>
       </section>
 
-      <div className="w-full max-w-5xl mx-auto">
-        <WarningBox className="text-base">
-          This project does not have any published reports yet. <br />
-          After scheduling a meeting with us, our supervisor will visit your
-          site and publish reports on this page.
-        </WarningBox>
+      <div className="w-full max-w-5xl mx-auto mt-4">
+        <InfoBox className="text-base">
+          <p>This project does not have any published reports yet.</p>
+          <p>
+            After scheduling a meeting with us, our supervisor will visit your
+            site and publish reports on this page.
+          </p>
+        </InfoBox>
       </div>
-
-      <section className="w-full max-w-5xl mx-auto">
-        <ReportFileDisplay {...props} />
-      </section>
-
-      <section className="w-full max-w-5xl mx-auto">
-        <ReportDocument />
-      </section>
     </DefaultLayout>
   );
 }
