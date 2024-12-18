@@ -306,14 +306,8 @@ export async function ReportDocument({
     reportId ? Actions.listSiteReportSections(reportId) : undefined,
     // Actions.getFilesForReport(reportId),
   ]);
-  const props = { site, report, sections };
   return (
-    <div
-      className={cn(
-        "flex flex-col gap-4",
-        site && report ? "" : "brightness-95",
-      )}
-    >
+    <div className="flex flex-col gap-4">
       <ReportSiteDetails report={report} />
       <ReportBudget report={report} />
       <ReportActivities report={report} />
