@@ -49,6 +49,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { TabsTriggerSearchParams } from "@/components/tabs-trigger-search-params";
 
 function SiteDescription({
   site,
@@ -353,6 +354,10 @@ export default async function Page(props: {
   // TODO custom site not found page
   if (!site) notFound();
 
+  const tab =
+    typeof searchParams["tab"] === "string"
+      ? searchParams["tab"]
+      : "description";
   const showProgressAndComplaints = true;
 
   return (
@@ -386,14 +391,24 @@ export default async function Page(props: {
         </Button>
       </div>
 
-      <Tabs defaultValue="description" className="w-full gap-4">
+      <Tabs defaultValue={tab} className="w-full gap-4">
         <Card className="mb-8 overflow-hidden">
           <TabsList className="w-full h-auto p-1 [&_button]:h-12 justify-start">
-            <TabsTrigger value="description">Description</TabsTrigger>
-            <TabsTrigger value="meetings">Meetings</TabsTrigger>
-            <TabsTrigger value="members">Members</TabsTrigger>
-            <TabsTrigger value="status">Status</TabsTrigger>
-            <TabsTrigger value="comments">Comments</TabsTrigger>
+            <TabsTriggerSearchParams searchParamsKey="tab" value="description">
+              Description
+            </TabsTriggerSearchParams>
+            <TabsTriggerSearchParams searchParamsKey="tab" value="meetings">
+              Meetings
+            </TabsTriggerSearchParams>
+            <TabsTriggerSearchParams searchParamsKey="tab" value="members">
+              Members
+            </TabsTriggerSearchParams>
+            <TabsTriggerSearchParams searchParamsKey="tab" value="status">
+              Status
+            </TabsTriggerSearchParams>
+            <TabsTriggerSearchParams searchParamsKey="tab" value="comments">
+              Comments
+            </TabsTriggerSearchParams>
           </TabsList>
         </Card>
 
