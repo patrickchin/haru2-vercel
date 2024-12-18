@@ -53,7 +53,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { maxSiteInvitations } from "@/lib/constants";
+import { getRoleName, maxSiteInvitations } from "@/lib/constants";
 import { SiteInvitationLimitReached } from "@/lib/errors";
 
 function SiteSearchAddMember({
@@ -159,7 +159,7 @@ function SiteMemberSelectRole({
       }}
     >
       <SelectTrigger className="w-48 capitalize">
-        <SelectValue placeholder={member.role} />
+        <SelectValue placeholder={getRoleName(member.role)} />
         {isUpdating && <LucideLoader2 className="animate-spin h-4" />}
       </SelectTrigger>
       <SelectContent>
@@ -172,7 +172,7 @@ function SiteMemberSelectRole({
                 className="capitalize"
                 disabled={r === member.role}
               >
-                {r}
+                {getRoleName(r)}
               </SelectItem>
             )
           );
@@ -239,7 +239,7 @@ export default function SiteMembers({
                 <li>
                   The{" "}
                   <code className="inline-block bg-slate-100 text-inherit px-1">
-                    {editSiteRoles.join(", ")}
+                    {editSiteRoles.map(getRoleName).join(", ")}
                   </code>{" "}
                   {editSiteRoles.length == 1 ? "has" : "have"} permissions to
                   add new members and change their roles.
@@ -247,7 +247,7 @@ export default function SiteMembers({
                 <li>
                   The{" "}
                   <code className="inline-block bg-slate-100 text-inherit px-1">
-                    {editSiteRoles.join(", ")}
+                    {editSiteRoles.map(getRoleName).join(", ")}
                   </code>{" "}
                   {editSiteRoles.length == 1 ? "has" : "have"} permissions to
                   edit details about the site. e.g. title, description, contact
@@ -256,7 +256,7 @@ export default function SiteMembers({
                 <li>
                   The{" "}
                   <code className="inline-block bg-slate-100 text-inherit px-1">
-                    {editMeetingRoles.join(", ")}
+                    {editMeetingRoles.map(getRoleName).join(", ")}
                   </code>{" "}
                   {editMeetingRoles.length == 1 ? "has" : "have"} permissions to
                   create, schedule, and delete meetings.
@@ -264,7 +264,7 @@ export default function SiteMembers({
                 <li>
                   And the{" "}
                   <code className="inline-block bg-slate-100 text-inherit px-1">
-                    {acceptMeetingRoles.join(", ")}
+                    {acceptMeetingRoles.map(getRoleName).join(", ")}
                   </code>{" "}
                   {acceptMeetingRoles.length == 1 ? "has" : "have"} permissions
                   to accept or decline meetings.
@@ -272,7 +272,7 @@ export default function SiteMembers({
                 <li>
                   Finally the{" "}
                   <code className="inline-block bg-slate-100 text-inherit px-1">
-                    {editReportRoles.join(", ")}
+                    {editReportRoles.map(getRoleName).join(", ")}
                   </code>{" "}
                   {editReportRoles.length == 1 ? "has" : "have"} permissions to
                   create, edit and publish site reports.
@@ -377,7 +377,7 @@ export default function SiteMembers({
                     </div>
                   ) : (
                     <div className="flex gap-3 items-center">
-                      <p className="capitalize">{m.role}</p>
+                      {getRoleName(m.role)}
                     </div>
                   )}
                 </li>
