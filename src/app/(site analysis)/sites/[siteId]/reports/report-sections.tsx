@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { HaruFile, SiteReportSection } from "@/lib/types";
 import * as Actions from "@/lib/actions";
 
-import { LucideChevronsUpDown } from "lucide-react";
+import { LucideChevronsDownUp, LucideChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import {
@@ -91,41 +91,54 @@ export async function ReportSections({
   return (
     <Card className="overflow-hidden">
       <Collapsible defaultOpen={true}>
-        <CollapsibleTrigger asChild>
-          <CardHeader className="flex flex-row justify-between items-center bg-green-100 hover:bg-green-200 py-0">
-            <CardTitle className="text-lg py-6">
-              Report Detail Sections
-            </CardTitle>
-            <Button variant="outline">
-              Collapse <LucideChevronsUpDown />
-            </Button>
-          </CardHeader>
-        </CollapsibleTrigger>
+        <CardHeader className="flex flex-row justify-between items-center bg-green-100 hover:bg-green-200 py-0">
+          <CardTitle className="text-lg py-6">Report Detail Sections</CardTitle>
+          <div>
+            <CollapsibleTrigger asChild className="data-[state=closed]:hidden">
+              <Button variant="outline">
+                Collapse <LucideChevronsDownUp />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleTrigger asChild className="data-[state=open]:hidden">
+              <Button variant="outline">
+                Expand <LucideChevronsUpDown />
+              </Button>
+            </CollapsibleTrigger>
+          </div>
+        </CardHeader>
 
         <CollapsibleContent>
           <CardContent className="flex flex-col p-0">
             <ol className="flex flex-col">
-              {sections?.map((section) => {
-                return (
-                  <Fragment key={section.id}>
-                    <Separator />
-                    <li
-                      key={section.id}
-                      className="py-8 px-12 space-y-4 hover:bg-muted"
-                    >
-                      <h3 className="text-xl font-semibold underline">
-                        {section.title}
-                      </h3>
-                      <div className="space-y-4">
-                        <p className="text-base text-pretty whitespace-pre-line">
-                          {section.content}
-                        </p>
-                        <ReportSectionFiles section={section} />
-                      </div>
-                    </li>
-                  </Fragment>
-                );
-              })}
+              {sections && sections.length > 0 ? (
+                sections.map((section) => {
+                  return (
+                    <Fragment key={section.id}>
+                      <Separator />
+                      <li
+                        key={section.id}
+                        className="py-8 px-12 space-y-4 hover:bg-muted"
+                      >
+                        <h3 className="text-xl font-semibold underline">
+                          {section.title}
+                        </h3>
+                        <div className="space-y-4">
+                          <p className="text-base text-pretty whitespace-pre-line">
+                            {section.content}
+                          </p>
+                          <ReportSectionFiles section={section} />
+                        </div>
+                      </li>
+                    </Fragment>
+                  );
+                })
+              ) : (
+                <li className="py-8 px-12 space-y-4 hover:bg-muted">
+                  <p className="text-base text-pretty whitespace-pre-line">
+                    No detailed sections in this report.
+                  </p>
+                </li>
+              )}
             </ol>
           </CardContent>
         </CollapsibleContent>
