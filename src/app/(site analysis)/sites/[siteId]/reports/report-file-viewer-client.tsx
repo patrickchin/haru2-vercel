@@ -73,74 +73,76 @@ function FileDisplayCarouselItems({
     );
 
   return files.map((f, i) => (
-    <CarouselItem key={f.id} className="relative">
-      <Dialog>
-        {type === "image" && (
-          <DisplayImage360>
-            <Image360
-              src={f.url || ""}
-              alt={f.filename || "invalid image src"}
-              fill={true}
-              unoptimized={true}
-              className="object-contain"
-            />
-            <Image360Toggle className="mr-10 invisible group-hover:visible" />
-          </DisplayImage360>
-        )}
-        {type === "video" && (
-          <video
-            controls
-            className="max-w-full max-h-full w-full h-full bg-zinc-800"
-            preload="metadata"
-          >
-            <source src={f.url || ""} type={f.type || ""} />
-          </video>
-        )}
-        <DialogTrigger2 className="invisible group-hover:visible" />
-
-        <DialogContent
-          className={cn(
-            "p-0 max-w-none max-h-none overflow-hidden",
-            "border-none bg-zinc-700",
-            "group",
+    <CarouselItem key={f.id}>
+      <div className="relative w-full h-full">
+        <Dialog>
+          {type === "image" && (
+            <DisplayImage360>
+              <Image360
+                src={f.url || ""}
+                alt={f.filename || "invalid image src"}
+                fill={true}
+                unoptimized={true}
+                className="object-contain w-full h-full"
+              />
+              <Image360Toggle className="mr-10 invisible group-hover:visible" />
+            </DisplayImage360>
           )}
-        >
-          <DialogTitle className="hidden">Section File Viewer</DialogTitle>
-          <Carousel opts={{ startIndex: i, watchDrag: false }}>
-            <CarouselContent>
-              {files?.map((f2) => (
-                <CarouselItem key={f2.id}>
-                  <div className="relative w-full h-svh flex flex-row">
-                    {type === "image" && (
-                      <DisplayImage360>
-                        <Image360
-                          src={f2.url || ""}
-                          alt={f2.filename || "invalid image src"}
-                          fill={true}
-                          unoptimized={true}
-                          className="object-contain"
-                        />
-                        <Image360Toggle className="mr-10 invisible group-hover:visible" />
-                      </DisplayImage360>
-                    )}
-                    {type === "video" && (
-                      <video
-                        controls
-                        className="h-full w-full"
-                        preload="metadata"
-                      >
-                        <source src={f2.url || ""} type={f2.type || ""} />
-                      </video>
-                    )}
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="left-4 invisible group-hover:visible" />
-            <CarouselNext className="right-4 invisible group-hover:visible" />
-          </Carousel>
-        </DialogContent>
-      </Dialog>
+          {type === "video" && (
+            <video
+              controls
+              className="max-w-full max-h-full w-full h-full bg-zinc-800"
+              preload="metadata"
+            >
+              <source src={f.url || ""} type={f.type || ""} />
+            </video>
+          )}
+          <DialogTrigger2 className="invisible group-hover:visible" />
+
+          <DialogContent
+            className={cn(
+              "p-0 max-w-none max-h-none overflow-hidden",
+              "border-none bg-zinc-700",
+              "group",
+            )}
+          >
+            <DialogTitle className="hidden">Section File Viewer</DialogTitle>
+            <Carousel opts={{ startIndex: i, watchDrag: false }}>
+              <CarouselContent>
+                {files?.map((f2) => (
+                  <CarouselItem key={f2.id}>
+                    <div className="relative w-full h-svh flex flex-row items-center justify-center">
+                      {type === "image" && (
+                        <DisplayImage360>
+                          <Image360
+                            src={f2.url || ""}
+                            alt={f2.filename || "invalid image src"}
+                            fill={true}
+                            unoptimized={true}
+                            className="object-contain"
+                          />
+                          <Image360Toggle className="mr-10 invisible group-hover:visible" />
+                        </DisplayImage360>
+                      )}
+                      {type === "video" && (
+                        <video
+                          controls
+                          className="h-full w-full"
+                          preload="metadata"
+                        >
+                          <source src={f2.url || ""} type={f2.type || ""} />
+                        </video>
+                      )}
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-4 invisible group-hover:visible" />
+              <CarouselNext className="right-4 invisible group-hover:visible" />
+            </Carousel>
+          </DialogContent>
+        </Dialog>
+      </div>
     </CarouselItem>
   ));
 }

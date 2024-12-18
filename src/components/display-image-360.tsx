@@ -54,13 +54,13 @@ export function Image360(
 
   return (
     <>
-      <LucideLoader2
-        className={cn("animate-spin w-4 h-4", isLoading ? "" : "hidden")}
-      />
+      <div className={cn(isLoading ? "" : "hidden", props.className, "flex items-center justify-center")}>
+        <LucideLoader2 className={cn("animate-spin w-8 h-8")} />
+      </div>
       <Image
         {...props}
         onLoad={() => setIsLoading(false)}
-        className={cn(props.className, isLoading ? "invisible" : "")}
+        className={cn(isLoading ? "invisible" : "", props.className)}
       />
     </>
   );
