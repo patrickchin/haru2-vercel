@@ -30,15 +30,13 @@ export function DefaultLayout({
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="grow flex flex-col bg-muted/20">
-        <div
-          className={cn(
-            "grow flex flex-col gap-4 py-8 w-full mx-auto max-w-5xl",
-            className,
-          )}
-        >
-          {children}
-        </div>
+      <main
+        className={cn(
+          "grow flex flex-col gap-4 py-8 w-full mx-auto max-w-5xl bg-muted/20 ",
+          className,
+        )}
+      >
+        {children}
       </main>
       <Footer />
     </div>
