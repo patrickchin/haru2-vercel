@@ -44,8 +44,8 @@ async function ReportSectionFiles({ section }: { section: SiteReportSection }) {
               <Image
                 src={f.url || ""}
                 alt={f.filename || "unknown image"}
-                width={200}
-                height={90}
+                width={128}
+                height={128}
                 className="object-cover absolute h-full w-full"
               />
             </DialogTrigger>
