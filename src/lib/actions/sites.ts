@@ -213,7 +213,7 @@ async function addSiteMemberInvite({
   const emailBody = `Dear Sir/Madam,
 
 ${cutName} has registered his/her construction project on Harpa Pro
-(https://harpapro.com) and invites you to join the platform to recieve updates
+(https://www.harpapro.com) and invites you to join the platform to recieve updates
 on the project's progress!
 
 Kind Regards,
