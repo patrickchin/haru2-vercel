@@ -365,7 +365,7 @@ export default async function Page(props: {
           </Link>
         </Button>
 
-        {editSiteRoles.includes(role) ? (
+        {role && editSiteRoles.includes(role) ? (
           <EditSiteTitle site={site} />
         ) : (
           <div className="grow">

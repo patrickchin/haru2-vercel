@@ -1,18 +1,16 @@
 import { allSiteMemberRoles, SiteMemberRole } from "@/lib/types";
 
-type SiteMemberRoleNonNullable = NonNullable<SiteMemberRole>;
-
-export const viewSiteRoles: SiteMemberRoleNonNullable[] = allSiteMemberRoles;
-export const editSiteRoles: SiteMemberRoleNonNullable[] = [
+export const viewSiteRoles: SiteMemberRole[] = allSiteMemberRoles;
+export const editSiteRoles: SiteMemberRole[] = [
   "supervisor",
   "owner",
   "manager",
 ];
 
-export const editMeetingRoles: SiteMemberRoleNonNullable[] = ["owner"];
-export const acceptMeetingRoles: SiteMemberRoleNonNullable[] = ["supervisor"];
+export const editMeetingRoles: SiteMemberRole[] = ["owner"];
+export const acceptMeetingRoles: SiteMemberRole[] = ["supervisor"];
 
-export const editReportRoles: SiteMemberRoleNonNullable[] = [
+export const editReportRoles: SiteMemberRole[] = [
   "supervisor",
   "owner",
 ];

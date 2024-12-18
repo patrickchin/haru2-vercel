@@ -59,6 +59,7 @@ export function Image360(
       </div>
       <Image
         {...props}
+        alt={props.alt} // to please the linter ..
         onLoad={() => setIsLoading(false)}
         className={cn(isLoading ? "invisible" : "", props.className)}
       />
