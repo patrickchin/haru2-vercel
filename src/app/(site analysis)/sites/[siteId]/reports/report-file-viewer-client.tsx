@@ -156,7 +156,9 @@ export function FileDisplayDialogCarouselClient({
             "absolute h-8 w-8 rounded-full",
             "top-4 right-4",
             "invisible group-hover:visible",
-            filter === "video" ? "hidden" : "",
+            filter === "video" || (imageFiles && imageFiles?.length < 1)
+              ? "hidden"
+              : "",
           )}
           onClick={() => {
             if (isFullscreen) document.exitFullscreen();
