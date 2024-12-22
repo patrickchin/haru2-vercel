@@ -155,7 +155,7 @@ export async function ReportTitleBarDisplay({
                         side="bottom"
                         sideOffset={10}
                         align="end"
-                        className="p-0"
+                        className="p-0 bg-transparent"
                       >
                         <WarningBox>
                           This report has already been published and can no
