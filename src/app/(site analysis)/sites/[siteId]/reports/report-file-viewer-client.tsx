@@ -138,9 +138,10 @@ export function FileDisplayDialogCarouselClient({
           "grow grid grid-cols-1 h-full",
           "group relative",
           "outline outline-4 rounded",
-          "bg-gradient-to-r from-cyan-100 to-blue-100",
-          "overflow-hidden"
-          // "bg-gradient-to-r from-slate-900 to-slate-950",
+          "overflow-hidden",
+          isFullscreen
+            ? "to-zinc-900"
+            : "bg-gradient-to-r from-cyan-100 to-blue-100",
         )}
       >
         <Carousel opts={{ watchDrag: false }} className="h-full">
