@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import * as Actions from "@/lib/actions";
 import { DefaultLayout } from "@/components/page-layouts";
 import { ReportDocument } from "../report-document";
-import { ReportFileDisplay } from "../report-file-viewer";
+import { FileDisplayDialogCarousel } from "../report-file-viewer";
 import { ReportTitleBar } from "../report-title";
 
 import { ErrorBox, WarningBox } from "@/components/info-box";
@@ -52,7 +52,7 @@ export default async function Page({
       )}
 
       <section className="w-full mx-auto">
-        <ReportFileDisplay {...props} />
+        <FileDisplayDialogCarousel {...props} />
       </section>
 
       <section className="w-full max-w-5xl mx-auto">
