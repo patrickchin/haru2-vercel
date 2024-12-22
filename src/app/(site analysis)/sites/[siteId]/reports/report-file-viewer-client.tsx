@@ -83,7 +83,7 @@ function FileDisplayCarouselItems({
             alt={f.filename || "invalid image src"}
             fill={true}
             unoptimized={true}
-            className="object-contain w-full h-full"
+            className="object-contain"
           />
           <Image360Toggle className="mr-10 invisible group-hover:visible" />
         </DisplayImage360>
@@ -91,7 +91,7 @@ function FileDisplayCarouselItems({
       {f.type?.startsWith("video/") && (
         <video
           controls
-          className="max-w-full max-h-full w-full h-full bg-zinc-800"
+          className="bg-zinc-800 aspect-video"
           preload="metadata"
         >
           <source src={f.url || ""} type={f.type || ""} />
@@ -139,6 +139,7 @@ export function FileDisplayDialogCarouselClient({
           "group relative",
           "outline outline-4 rounded",
           "bg-gradient-to-r from-cyan-100 to-blue-100",
+          "overflow-hidden"
           // "bg-gradient-to-r from-slate-900 to-slate-950",
         )}
       >
@@ -161,7 +162,7 @@ export function FileDisplayDialogCarouselClient({
             "absolute h-8 w-8 rounded-full",
             "top-4 right-4",
             "invisible group-hover:visible",
-            // hideExpand ? "hidden" : "",
+            filter === "video" ? "hidden" : "",
           )}
           onClick={() => {
             if (isFullscreen) document.exitFullscreen();
