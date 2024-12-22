@@ -45,6 +45,7 @@ export function Image360(
   if (is360Enabled) {
     return (
       <ReactPhotoSphereViewer
+        navbar={["zoom"]}
         src={props.src}
         height={"100%"}
         width={"100%"}
