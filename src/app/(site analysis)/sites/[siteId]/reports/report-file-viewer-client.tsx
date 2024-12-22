@@ -61,11 +61,9 @@ function FileImageVideoToggle({
 function FileDisplayCarouselItems({
   files,
   filter,
-  hideExpand,
 }: {
   files?: HaruFile[];
   filter: FilterTypes;
-  hideExpand?: boolean;
 }) {
   if (!files || files.length < 1)
     return (
@@ -83,17 +81,13 @@ function FileDisplayCarouselItems({
             alt={f.filename || "invalid image src"}
             fill={true}
             unoptimized={true}
-            className="object-contain"
+            className="object-contain object-center h-full w-full"
           />
           <Image360Toggle className="mr-10 invisible group-hover:visible" />
         </DisplayImage360>
       )}
       {f.type?.startsWith("video/") && (
-        <video
-          controls
-          className="bg-zinc-800 aspect-video"
-          preload="metadata"
-        >
+        <video controls className="bg-zinc-800 h-full aspect-video" preload="metadata">
           <source src={f.url || ""} type={f.type || ""} />
         </video>
       )}
@@ -149,7 +143,6 @@ export function FileDisplayDialogCarouselClient({
             <FileDisplayCarouselItems
               filter={filter}
               files={filter === "video" ? videoFiles : imageFiles}
-              hideExpand={isFullscreen}
             />
           </CarouselContent>
           <CarouselPrevious className="invisible group-hover:visible left-4" />
