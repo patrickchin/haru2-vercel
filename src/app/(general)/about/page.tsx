@@ -226,12 +226,12 @@ function Benefits() {
 export default function Page() {
   return (
     <DefaultLayout className="max-w-none p-0 gap-0 [&_section]:py-16">
-      <section className="bg-sky-500 relative overflow-hidden">
+      <section className="relative overflow-hidden">
         <Image
           src={ImageSky}
           alt="sky background"
           fill={true}
-          className="absolute object-cover object-bottom"
+          className="absolute object-cover object-top opacity-90"
         />
         <Description />
       </section>
