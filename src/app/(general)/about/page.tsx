@@ -179,7 +179,7 @@ function Benefits() {
       <h2 className="text-4xl font-bold">The Benefits of using Harpa Pro</h2>
 
       <div className="flex flex-row gap-3">
-        <div className="overflow-hidden relative w-72">
+        <div className="overflow-hidden relative w-80 -ml-24">
           <Image
             src={ImageBenefit1}
             alt="online platform"
@@ -231,7 +231,7 @@ export default function Page() {
           src={ImageSky}
           alt="sky background"
           fill={true}
-          className="absolute object-cover object-top opacity-90"
+          className="absolute object-cover object-top opacity-80"
         />
         <Description />
       </section>
