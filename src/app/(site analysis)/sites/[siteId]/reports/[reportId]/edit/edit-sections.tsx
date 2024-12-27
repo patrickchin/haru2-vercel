@@ -246,6 +246,7 @@ function UpdateSiteReportSectionFiles({
             <Input
               type="file"
               id={`upload-file-section-${section.id}`}
+              accept="image/*"
               className="hidden"
               onChange={onChangeUploadFile}
               disabled={isUploading}
