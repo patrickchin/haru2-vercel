@@ -8,6 +8,7 @@ export function getRoleName(role: SiteMemberRole) {
   if (!role) return role;
   const roleNames: Record<NonNullable<SiteMemberRole>, string> = {
     manager: "Project Manager",
+    architect: "Architect",
     supervisor: "Supervisor",
     owner: "Owner",
     contractor: "Contractor",

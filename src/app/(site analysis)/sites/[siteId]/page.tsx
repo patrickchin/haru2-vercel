@@ -50,6 +50,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { TabsTriggerSearchParams } from "@/components/tabs-trigger-search-params";
+import { getRoleName } from "@/lib/constants";
 
 function SiteDescription({
   site,
@@ -112,11 +113,12 @@ function SiteInfo({ site }: { site: SiteDetails }) {
 }
 
 function SiteMembersBar({ site }: { site: SiteDetails }) {
-  const memberNames = [
-    { label: "Site Owner", value: site.ownerName },
-    { label: "Proj. Manager", value: site.managerName },
-    { label: "Contractor", value: site.contractorName },
-    { label: "Supervisor", value: site.supervisorName },
+  const memberNames: { role: SiteMemberRole; name: string | null }[] = [
+    { role: "owner", name: site.ownerName },
+    { role: "architect", name: site.architectName },
+    { role: "manager", name: site.managerName },
+    { role: "contractor", name: site.contractorName },
+    { role: "supervisor", name: site.supervisorName },
   ];
   return (
     <Card className="flex flex-col py-3 gap-3">
@@ -126,10 +128,12 @@ function SiteMembersBar({ site }: { site: SiteDetails }) {
             key={i}
             className="flex gap-2 px-6 py-1.5 sm:justify-between hover:bg-muted"
           >
-            <p className="font-semibold w-1/3 sm:w-auto">{it.label}:</p>
+            <p className="font-semibold w-1/3 sm:w-auto">
+              {getRoleName(it.role)}:
+            </p>
             <p>
-              {it.value?.length ? (
-                it.value
+              {it.name?.length ? (
+                it.name
               ) : (
                 <span className="text-muted-foreground">--</span>
               )}
@@ -174,6 +178,12 @@ function SiteMembersTable({ site }: { site: SiteDetails }) {
           <TableCell>{site.ownerName}</TableCell>
           <TableCell>{site.ownerEmail}</TableCell>
           <TableCell>{site.ownerPhone}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableHead className="font-medium">Architect</TableHead>
+          <TableCell>{site.architectName}</TableCell>
+          <TableCell>{site.architectEmail}</TableCell>
+          <TableCell>{site.architectPhone}</TableCell>
         </TableRow>
         <TableRow>
           <TableHead className="font-medium">Project Manager</TableHead>

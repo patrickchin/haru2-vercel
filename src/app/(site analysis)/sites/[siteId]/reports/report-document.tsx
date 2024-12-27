@@ -36,6 +36,10 @@ async function ReportSiteDetails({ report }: { report?: SiteReportAll }) {
         <Table>
           <TableBody>
             <TableRow>
+              <TableHead>Site Title</TableHead>
+              <TableCell>{site?.title ?? "--"}</TableCell>
+            </TableRow>
+            <TableRow>
               <TableHead>Site Address</TableHead>
               <TableCell>{site?.address ?? "--"}</TableCell>
             </TableRow>
@@ -56,6 +60,14 @@ async function ReportSiteDetails({ report }: { report?: SiteReportAll }) {
             <TableRow>
               <TableHead>Owner</TableHead>
               <TableCell>{site?.ownerName ?? "--"}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableHead>Architect</TableHead>
+              <TableCell>{site?.architectName ?? "--"}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableHead>Project Manger</TableHead>
+              <TableCell>{site?.managerName ?? "--"}</TableCell>
             </TableRow>
             <TableRow>
               <TableHead>Contractor</TableHead>

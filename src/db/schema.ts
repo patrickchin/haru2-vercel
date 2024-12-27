@@ -144,6 +144,9 @@ export const siteDetails1 = pgTable("siteDetails1", {
   ownerName: varchar("ownerName"),
   ownerPhone: varchar("ownerPhone"),
   ownerEmail: varchar("ownerEmail"),
+  architectName: varchar("architectName"),
+  architectPhone: varchar("architectPhone"),
+  architectEmail: varchar("architectEmail"),
   managerName: varchar("managerName"),
   managerPhone: varchar("managerPhone"),
   managerEmail: varchar("managerEmail"),
@@ -157,6 +160,7 @@ export const siteDetails1 = pgTable("siteDetails1", {
 
 export const siteMemberRole = pgEnum("siteMemberRole", [
   "owner",
+  "architect",
   "manager",
   "contractor",
   "supervisor",
@@ -254,6 +258,7 @@ export const siteReportDetails1 = pgTable("siteReportDetails1", {
 
   ownerId: integer("ownerId").references(() => users1.id),
   supervisorId: integer("supervisorId").references(() => users1.id),
+  architectId: integer("architectId").references(() => users1.id),
   managerId: integer("managerId").references(() => users1.id),
   contractorId: integer("contractorId").references(() => users1.id),
 
@@ -262,6 +267,10 @@ export const siteReportDetails1 = pgTable("siteReportDetails1", {
     withTimezone: true,
   }),
   supervisorSignDate: timestamp("supervisorSignDate", {
+    mode: "date",
+    withTimezone: true,
+  }),
+  architectSignDate: timestamp("architectSignDate", {
     mode: "date",
     withTimezone: true,
   }),
