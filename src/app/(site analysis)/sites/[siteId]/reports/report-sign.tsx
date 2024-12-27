@@ -5,6 +5,7 @@ import { ReportSignButton } from "./report-sign.button";
 import { cn } from "@/lib/utils";
 import { SiteMemberRole } from "@/lib/types";
 import { WarningBox } from "@/components/info-box";
+import { getRoleName } from "@/lib/constants";
 
 async function ReportSignature({
   reportId,
@@ -22,17 +23,10 @@ async function ReportSignature({
   disabled?: boolean;
 }) {
   const signedBy = signUserId ? await Actions.getUser(signUserId) : undefined;
-  const roleTitlesMap = {
-    supervisor: "Site Supervisor",
-    manager: "Project Manager",
-    contractor: "Contractor",
-    owner: "Owner",
-    member: "Member",
-  };
   return (
     <div>
       <h4 className="text-sm font-semibold mb-2">
-        {buttonRole && roleTitlesMap[buttonRole]}
+        {buttonRole && getRoleName(buttonRole)}
       </h4>
       <div
         className={cn(
@@ -93,7 +87,7 @@ export async function ReportSignatureSection({
             they can no longer be edited.
           </WarningBox>
         )}
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           <ReportSignature
             reportId={reportId}
             buttonRole="owner"
@@ -108,6 +102,14 @@ export async function ReportSignatureSection({
             role={role}
             signDate={report?.supervisorSignDate}
             signUserId={report?.supervisorId}
+            disabled={!report?.publishedAt}
+          />
+          <ReportSignature
+            reportId={reportId}
+            buttonRole="architect"
+            role={role}
+            signDate={report?.architectSignDate}
+            signUserId={report?.architectId}
             disabled={!report?.publishedAt}
           />
           <ReportSignature

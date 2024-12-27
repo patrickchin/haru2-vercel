@@ -108,6 +108,9 @@ export function EditSiteMembersForm({
     ownerName: true,
     ownerPhone: true,
     ownerEmail: true,
+    architectName: true,
+    architectPhone: true,
+    architectEmail: true,
     managerName: true,
     managerPhone: true,
     managerEmail: true,
@@ -126,6 +129,9 @@ export function EditSiteMembersForm({
       ownerName: "",
       ownerPhone: "",
       ownerEmail: "",
+      architectName: "",
+      architectPhone: "",
+      architectEmail: "",
       managerName: "",
       managerPhone: "",
       managerEmail: "",
@@ -149,6 +155,7 @@ export function EditSiteMembersForm({
         className="flex flex-col gap-4"
       >
         <SiteMemberFields form={form} prefix="owner" />
+        <SiteMemberFields form={form} prefix="architect" />
         <SiteMemberFields form={form} prefix="manager" />
         <SiteMemberFields form={form} prefix="contractor" />
         <SiteMemberFields form={form} prefix="supervisor" />
@@ -213,7 +220,7 @@ export function EditKeySiteMembers({
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-svh overflow-y-auto gap-6">
         <DialogHeader className="py-2">
-          <DialogTitle>Edit Key Site Member Information</DialogTitle>
+          <DialogTitle>Edit Project Member Details</DialogTitle>
         </DialogHeader>
         <InfoBox>
           Here you can optionally fill out the information of existing members
