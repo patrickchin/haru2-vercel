@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { registerUser } from "@/lib/actions";
 import { GradientLayout } from "@/components/page-layouts";
 import { Input } from "@/components/ui/input";
@@ -44,7 +43,7 @@ export default function Page() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col gap-y-4 bg-gray-50 px-16 py-6"
+            className="flex flex-col gap-y-4 bg-muted px-16 py-6"
           >
             <FormField
               control={form.control}
@@ -165,7 +164,7 @@ export default function Page() {
               />
             </Button>
 
-            <p className="text-center text-sm text-gray-600">
+            <p className="text-center text-sm text-muted-foreground">
               {"Already have an account? "}
               <Link href="/login" className="font-bold hover:underline">
                 {"Login"}

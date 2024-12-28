@@ -84,7 +84,7 @@ function FormFooter({
         </Button>
       </div>
 
-      <p className="text-center text-sm text-gray-600">
+      <p className="text-center text-sm text-muted-foreground">
         {" Don't have an account? "}
         <Link href="/register" className="font-bold hover:underline">
           {"Sign up"}
@@ -188,7 +188,7 @@ function PhoneLogin() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-auto bg-green-50 text-green-600 border-green-600"
+                  className="w-auto bg-green-400/35 text-green-600 dark:text-green-400 border-green-600"
                   onClick={() => handleSendOtpClick(form.getValues("phone"))}
                   disabled={sendingOTP || resendOtpTimer > 0}
                 >
@@ -196,7 +196,7 @@ function PhoneLogin() {
                 </Button>
               </div>
               {resendOtpTimer > 0 && (
-                <p className="text-xs text-gray-600 mt-2">
+                <p className="text-xs text-muted mt-2">
                   Resend OTP in {resendOtpTimer} seconds
                 </p>
               )}
@@ -304,7 +304,7 @@ function EmailLogin() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-auto bg-blue-50 text-blue-600 border-blue-600"
+                  className="w-auto bg-blue-500/35 text-blue-600 dark:text-blue-400 border-blue-600"
                   onClick={() => handleSendOtpClick(form.getValues("email"))}
                   disabled={sendingOTP || resendOtpTimer > 0}
                 >
@@ -403,20 +403,20 @@ function LoginCard() {
           <TabsList className="grid grid-cols-3 gap-2">
             <TabsTrigger
               value="phone"
-              className="data-[state=active]:text-green-400 data-[state=active]:bg-green-50 "
+              className="data-[state=active]:text-green-400 data-[state=active]:bg-green-400/35"
             >
               Whatsapp
             </TabsTrigger>
             <TabsTrigger
               value="email"
-              className="data-[state=active]:text-blue-400 data-[state=active]:bg-blue-100 "
+              className="data-[state=active]:text-blue-400 data-[state=active]:bg-blue-400/35"
             >
               Email
             </TabsTrigger>
             <TabsTrigger value="password">Password</TabsTrigger>
           </TabsList>
         </CardHeader>
-        <CardContent className="bg-gray-50 p-12 pt-2 border-t">
+        <CardContent className="bg-muted p-12 pt-2 border-t">
           <TabsContent value="phone" className="space-y-4">
             <PhoneLogin />
           </TabsContent>

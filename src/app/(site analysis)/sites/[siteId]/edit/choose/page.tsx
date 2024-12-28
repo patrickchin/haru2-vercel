@@ -16,6 +16,7 @@ function ProjectTypeSelection({ siteId }: { siteId: number }) {
         className={cn(
           "flex flex-col",
           "h-72 text-lg font-normal",
+          "bg-background",
           "bg-gradient-to-r from-sky-400/35 to-indigo-300/35 hover:to-sky-400/35",
           "[&_svg]:size-7",
         )}
@@ -67,7 +68,7 @@ export default async function Page(props: {
   return (
     <DefaultLayout className="max-w-4xl">
       <Card className="overflow-hidden">
-        <CardHeader className="bg-green-200">
+        <CardHeader className="bg-green-200 dark:bg-green-900">
           <div>Site Created Successfully</div>
         </CardHeader>
       </Card>

@@ -133,9 +133,10 @@ export function FileDisplayDialogCarouselClient({
           "group relative",
           "outline outline-4 rounded",
           "overflow-hidden",
+          "bg-background",
           isFullscreen
-            ? "to-zinc-900"
-            : "bg-gradient-to-r from-cyan-100 to-blue-100",
+            ? "bg-zinc-900"
+            : "bg-gradient-to-r from-cyan-400/35 to-blue-400/35",
         )}
       >
         <Carousel opts={{ watchDrag: false }} className="h-full">

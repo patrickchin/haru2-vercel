@@ -10,7 +10,8 @@ export function GradientLayout({ children }: { children?: React.ReactNode }) {
       <main
         className={cn(
           "grow flex flex-col justify-center items-center",
-          "bg-gradient-to-br from-cyan-100 to-indigo-200",
+          "bg-backgroud",
+          "bg-gradient-to-br from-cyan-400/20 to-indigo-600/20",
         )}
       >
         {children}
