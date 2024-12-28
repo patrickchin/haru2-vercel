@@ -107,7 +107,30 @@ export async function addSiteFile({
         uploaderId: session?.user?.idn,
       });
       db.addlogMessage({
-        message: "Site report file added",
+        message: "Site file added",
+        siteId,
+        fileId: file.id,
+      });
+      return file;
+    }
+  }
+}
+
+export async function deleteSiteFile({
+  siteId,
+  fileId,
+}: {
+  siteId: number;
+  fileId: number;
+}) {
+  const session = await auth();
+  const role = await getSiteMemberRole({ siteId }, session);
+  if (editSiteRoles.includes(role)) {
+    const fileGroupId = await db.ensureSiteFilesSection(siteId);
+    if (fileGroupId) {
+      const file = await db.updateFile({ fileId }, { deletedAt: new Date() });
+      db.addlogMessage({
+        message: "Site file deleted",
         siteId,
         fileId: file.id,
       });

@@ -38,7 +38,10 @@ export async function addFileToGroup(groupId: number, values: HaruFileNew) {
   return getFile(newFile.id);
 }
 
-export async function updateFile(fileId: number, values: HaruFileNew) {
+export async function updateFile(
+  { fileId }: { fileId: number },
+  values: HaruFileNew,
+) {
   return await db
     .update(Schemas.files1)
     .set(values)
