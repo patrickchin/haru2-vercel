@@ -74,7 +74,8 @@ export default function Page() {
                   <FormLabel className="text-left">Phone Number</FormLabel>
                   <FormControl className="w-full">
                     <PhoneInput
-                      placeholder="+234-803-4444 4444"
+                      defaultCountry="KE"
+                      placeholder="+254 123 456789"
                       onChange={field.onChange}
                       name={field.name}
                     />
