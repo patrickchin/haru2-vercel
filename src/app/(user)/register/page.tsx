@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterSchema, RegisterSchemaType } from "@/lib/forms";
-import { PhoneInput } from "@/components/ui/phone-input";
+import { PhoneInput } from "@/components/phone-input";
 import {
   Form,
   FormControl,
