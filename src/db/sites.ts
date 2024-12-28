@@ -34,6 +34,7 @@ import {
   commentsSections1,
   siteInvitations1,
   accounts1,
+  fileGroups1,
 } from "./schema";
 
 export async function getAllSites(userId?: number): Promise<SiteAndExtra[]> {
@@ -300,6 +301,33 @@ export async function ensureSiteCommentsSection(siteId: number) {
       .then((r) => r[0]);
 
     return commentsSectionId2;
+  });
+}
+
+export async function ensureSiteFilesSection(siteId: number) {
+  return db.transaction(async (tx) => {
+    const { fileGroupId } = await tx
+      .select({ fileGroupId: siteDetails1.fileGroupId })
+      .from(siteDetails1)
+      .where(eq(siteDetails1.id, siteId))
+      .then((r) => r[0]);
+
+    if (fileGroupId) return fileGroupId;
+
+    const fileGroup = await tx
+      .insert(fileGroups1)
+      .values({})
+      .returning()
+      .then((r) => r[0]);
+
+    const { fileGroupId: fileGroupId2 } = await tx
+      .update(siteDetails1)
+      .set({ fileGroupId: fileGroup.id })
+      .where(eq(siteDetails1.id, siteId))
+      .returning()
+      .then((r) => r[0]);
+
+    return fileGroupId2;
   });
 }
 

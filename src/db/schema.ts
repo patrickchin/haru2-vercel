@@ -128,6 +128,7 @@ export const siteDetails1 = pgTable("siteDetails1", {
   commentsSectionId: integer("commentsSectionId").references(
     () => commentsSections1.id,
   ),
+  fileGroupId: integer("fileGroupId").references(() => fileGroups1.id),
 
   startDate: timestamp("startDate", { mode: "date", withTimezone: true }),
   endDate: timestamp("endDate", { mode: "date", withTimezone: true }),

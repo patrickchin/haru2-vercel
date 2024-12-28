@@ -14,6 +14,16 @@ function getAvatarPath(session: Session, filename: string) {
   return `user/${userId}/${filename}`;
 }
 
+async function getSiteFilePath(
+  params: Record<string, string>,
+  filename: string,
+) {
+  if (!params.siteId) return;
+  const site = await Actions.getSiteDetails(Number(params.siteId));
+  if (!site) return;
+  return `site/${site.id}/${filename}`;
+}
+
 async function getReportFilePath(
   params: Record<string, string>,
   filename: string,
@@ -50,6 +60,8 @@ async function getPath(
 
   if (type === "avatar") {
     return getAvatarPath(session, filename);
+  } else if (type === "site") {
+    return getSiteFilePath(params, filename);
   } else if (type === "report") {
     return getReportFilePath(params, filename);
   } else if (type === "section") {
