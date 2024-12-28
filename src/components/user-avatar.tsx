@@ -17,7 +17,7 @@ export function HaruUserAvatar({
   const bgCol: string = `hsl(${randomHue} 100 75)`;
   const bgCol2: string = `hsl(${randomHue + 60} 100 90)`;
   return (
-    <Avatar className={cn("border border-foreground", className)}>
+    <Avatar className={cn("border dark:border-none border-foreground", className)}>
       <AvatarImage src={user?.avatarUrl ?? undefined} />
       <AvatarFallback
         style={{
