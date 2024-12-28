@@ -23,7 +23,7 @@ export function SaveRevertForm({
         disabled={!form.formState.isDirty || form.formState.isSubmitting}
         onClick={() => form.reset()}
       >
-        Revert Changes
+        Revert
         <LucideUndo2 className="w-3.5 h-3.5" />
       </Button>
       <Button

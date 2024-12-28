@@ -133,12 +133,12 @@ function FileListTable({
               <TableCell className="overflow-ellipsis overflow-hidden text-nowrap">
                 {file.filename}
               </TableCell>
-              {/* <TableCell className="w-24 whitespace-nowrap bg-red-">
-                {file.uploadedAt?.toDateString() ?? "unkonwn"}
-              </TableCell> */}
-              {/* <TableCell className="w-24 whitespace-nowrap bg-red-">
-                {file.uploader?.name ?? "unkonwn"}
-              </TableCell> */}
+              <TableCell className="w-24 whitespace-nowrap bg-red-">
+                {file.uploadedAt?.toDateString() ?? "--"}
+              </TableCell>
+              <TableCell className="w-24 whitespace-nowrap bg-red-">
+                {file.uploader?.name ?? "--"}
+              </TableCell>
               <TableCell className="w-24 whitespace-nowrap bg-red-">
                 {file.filesize && prettyBytes(file.filesize)}
               </TableCell>
@@ -330,10 +330,52 @@ function UpdateSiteReportSection({
             })}
             className="flex flex-col gap-4"
           >
-            <div className="flex gap-2">
-              <h3 className="grow text-lg font-semibold">
-                Detailed Report Section
-              </h3>
+            <div className="flex gap-2 items-end">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem className="grow">
+                    <div className="flex flex-row gap-4">
+                      <FormControl>
+                        <Input
+                          className="grow max-w-[30rem] md:text-base"
+                          placeholder="Enter a Section Title ..."
+                          name={field.name}
+                          onChange={field.onChange}
+                          value={field.value || ""}
+                        />
+                      </FormControl>
+                      <DropdownMenu modal={false}>
+                        <Button asChild variant="outline">
+                          <DropdownMenuTrigger>
+                            Select Default Title <LucideChevronDown />
+                          </DropdownMenuTrigger>
+                        </Button>
+                        <DropdownMenuContent className="p-4">
+                          {sectioniTitles.map((t, i) =>
+                            t ? (
+                              <DropdownMenuItem
+                                key={i}
+                                onSelect={() =>
+                                  form.setValue(field.name, t, {
+                                    shouldDirty: true,
+                                  })
+                                }
+                              >
+                                {t}
+                              </DropdownMenuItem>
+                            ) : (
+                              <DropdownMenuSeparator key={i} />
+                            ),
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <DeleteSectionButton
                 sectionId={section.id}
                 disabled={false}
@@ -341,64 +383,20 @@ function UpdateSiteReportSection({
               />
               <SaveRevertForm form={form} />
             </div>
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-base">Section Title</FormLabel>
-                  <div className="flex flex-row gap-4">
-                    <FormControl>
-                      <Input
-                        className="grow max-w-[30rem] md:text-base"
-                        name={field.name}
-                        onChange={field.onChange}
-                        value={field.value || ""}
-                      />
-                    </FormControl>
-                    <DropdownMenu modal={false}>
-                      <Button asChild variant="outline">
-                        <DropdownMenuTrigger>
-                          Select Default Title <LucideChevronDown />
-                        </DropdownMenuTrigger>
-                      </Button>
-                      <DropdownMenuContent className="p-4">
-                        {sectioniTitles.map((t, i) =>
-                          t ? (
-                            <DropdownMenuItem
-                              key={i}
-                              onSelect={() =>
-                                form.setValue(field.name, t, {
-                                  shouldDirty: true,
-                                })
-                              }
-                            >
-                              {t}
-                            </DropdownMenuItem>
-                          ) : (
-                            <DropdownMenuSeparator key={i} />
-                          ),
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             <FormField
               control={form.control}
               name="content"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base">Section Content</FormLabel>
                   <FormControl>
                     <Textarea
                       name={field.name}
                       onChange={field.onChange}
                       value={field.value || ""}
+                      className="min-h-36"
                       autoResize={true}
+                      placeholder="Enter section details ..."
                     />
                   </FormControl>
                   <FormMessage />
