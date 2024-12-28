@@ -402,6 +402,7 @@ function LoginCard() {
           </CardDescription>
           <TabsList className="grid grid-cols-3 gap-2">
             <TabsTrigger
+              disabled
               value="phone"
               className="data-[state=active]:text-green-400 data-[state=active]:bg-green-400/35"
             >
