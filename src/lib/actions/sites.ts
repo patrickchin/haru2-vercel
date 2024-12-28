@@ -13,6 +13,7 @@ import {
 } from "@/lib/permissions";
 import { demoSiteIds, maxSiteInvitations } from "@/lib/constants";
 import {
+  HaruFileNew,
   SiteDetailsNew,
   SiteMeetingNew,
   SiteMemberRole,
@@ -76,6 +77,42 @@ export async function updateSiteDetails(
     db.addlogMessage({ message: "Site details updated", siteId });
     revalidatePath(`/sites/${siteId}`);
     return updated;
+  }
+}
+
+export async function listSiteFiles({ siteId }: { siteId: number }) {
+  const role = await getSiteMemberRole({ siteId });
+  if (viewSiteRoles.includes(role)) {
+    const fileGroupId = await db.ensureSiteFilesSection(siteId);
+    if (fileGroupId) { // TODO log on error?
+      return db.getFilesFromGroup(fileGroupId);
+    }
+  }
+}
+
+export async function addSiteFile({
+  siteId,
+  fileInfo,
+}: {
+  siteId: number;
+  fileInfo: HaruFileNew;
+}) {
+  const session = await auth();
+  const role = await getSiteMemberRole({ siteId }, session);
+  if (editSiteRoles.includes(role)) {
+    const fileGroupId = await db.ensureSiteFilesSection(siteId);
+    if (fileGroupId) {
+      const file = await db.addFileToGroup(fileGroupId, {
+        ...fileInfo,
+        uploaderId: session?.user?.idn,
+      });
+      db.addlogMessage({
+        message: "Site report file added",
+        siteId,
+        fileId: file.id,
+      });
+      return file;
+    }
   }
 }
 

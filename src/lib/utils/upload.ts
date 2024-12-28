@@ -38,6 +38,29 @@ export async function uploadAvatarFile(file: File) {
   return await Actions.updateAvatarForUser(fileUrl);
 }
 
+// TODO can be merged into one function
+export async function uploadSiteFile({
+  siteId,
+  file,
+}: {
+  siteId: number;
+  file: File;
+}) {
+  const params = {
+    filename: file.name,
+    contentType: file.type,
+    siteId,
+  };
+  const fileUrl = await doUpload("site", params, file);
+  const fileInfo: HaruFileNew = {
+    type: file.type,
+    filename: file.name,
+    filesize: file.size,
+    url: fileUrl,
+  };
+  return Actions.addSiteFile({ siteId, fileInfo });
+}
+
 export async function uploadReportFile(reportId: number, file: File) {
   const params = {
     filename: file.name,

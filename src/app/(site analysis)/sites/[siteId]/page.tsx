@@ -51,6 +51,7 @@ import {
 } from "@/components/ui/dialog";
 import { TabsTriggerSearchParams } from "@/components/tabs-trigger-search-params";
 import { getRoleName } from "@/lib/constants";
+import { SiteFiles } from "./site-files";
 
 function SiteDescription({
   site,
@@ -419,6 +420,9 @@ export default async function Page(props: {
             <TabsTriggerSearchParams searchParamsKey="tab" value="comments">
               Comments
             </TabsTriggerSearchParams>
+            <TabsTriggerSearchParams searchParamsKey="tab" value="files">
+              Files
+            </TabsTriggerSearchParams>
           </TabsList>
         </Card>
 
@@ -456,6 +460,11 @@ export default async function Page(props: {
             <CommentsSection commentsSectionId={commentsSectionId} />
           )}
         </TabsContent>
+
+        <TabsContent value="files" className="space-y-4">
+          <SiteFiles site={site} role={role} />
+        </TabsContent>
+
       </Tabs>
     </DefaultLayout>
   );
