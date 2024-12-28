@@ -17,17 +17,42 @@ import {
 import { UserAvatar } from "./user-avatar";
 import { useTheme } from "next-themes";
 
-export function MainNav({ user }: { user?: User }) {
+export function MainNav() {
   const pathname = usePathname();
   const navigation = [
-    { name: "About Us", href: "/about", needLogin: false },
+    { name: "About Us", href: "/about", },
+    { name: "Contact Us", href: "/contact", },
+    { name: "Docs", href: "/docs", },
+  ];
+
+  return (
+    <div className="flex items-center mx-6 grow">
+      {navigation.map((item, i) => {
+        return (
+          <Button
+            key={i}
+            asChild
+            variant="link"
+            className={pathname == item.href ? "underline" : ""}
+          >
+            <Link href={item.href}>{item.name}</Link>
+          </Button>
+        );
+      })}
+    </div>
+  );
+}
+
+export function UserNav({ user }: { user?: User }) {
+  const pathname = usePathname();
+  const navigation = [
     { name: "My Sites", href: "/sites", needLogin: true, needAdmin: false },
     { name: "Feedback", href: "/feedback", needLogin: true, needAdmin: true },
     { name: "Logs", href: "/logs", needLogin: true, needAdmin: true },
   ];
 
   return (
-    <div className="flex items-center mx-6 grow">
+    <div className="flex items-center">
       {navigation.map((item, i) => {
         if (item.needLogin && !user) return null;
         if (item.needAdmin && user?.role !== "admin") return null;
@@ -47,7 +72,7 @@ export function MainNav({ user }: { user?: User }) {
   );
 }
 
-function UserNav({ user }: { user?: User }) {
+function UserMenu({ user }: { user?: User }) {
   const signOutAction = async () => {
     await signOut({
       redirect: true,
@@ -129,13 +154,14 @@ export default function Header() {
         </Link>
 
         <div className="grow flex flex-row gap-4 items-center justify-end">
-          <MainNav user={session?.user} />
+          <MainNav />
 
+          <UserNav user={session?.user} />
           <ThemeToggle />
 
           <div className="flex items-center space-x-4">
             {status === "authenticated" ? (
-              <UserNav user={session?.user} />
+              <UserMenu user={session?.user} />
             ) : (
               <LoginSignup />
             )}
