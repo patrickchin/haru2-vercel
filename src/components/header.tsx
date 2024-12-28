@@ -21,7 +21,7 @@ export function MainNav() {
   const pathname = usePathname();
   const navigation = [
     { name: "About Us", href: "/about", },
-    { name: "Contact Us", href: "/contact", },
+    // { name: "Contact Us", href: "/contact", },
     { name: "Docs", href: "/docs", },
   ];
 
