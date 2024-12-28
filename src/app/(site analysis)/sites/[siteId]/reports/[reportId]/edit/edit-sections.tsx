@@ -367,7 +367,11 @@ function UpdateSiteReportSection({
                           t ? (
                             <DropdownMenuItem
                               key={i}
-                              onSelect={() => form.setValue(field.name, t)}
+                              onSelect={() =>
+                                form.setValue(field.name, t, {
+                                  shouldDirty: true,
+                                })
+                              }
                             >
                               {t}
                             </DropdownMenuItem>
