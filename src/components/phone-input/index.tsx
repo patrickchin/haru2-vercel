@@ -29,7 +29,6 @@ import * as React from "react";
 import { countries } from "./countries";
 import { useStateHistory } from "./use-state-history";
 
-import * as RPNInput from "react-phone-number-input"
 import flags from "react-phone-number-input/flags"
 
 export type Country = (typeof countries)[number];
@@ -72,11 +71,17 @@ export function getPhoneData(phone: string): PhoneData {
 	};
 }
 
-const FlagComponent = ({ country, countryName }: RPNInput.FlagProps) => {
+const FlagComponent = ({
+  country,
+  countryName,
+}: {
+  country: CountryCode;
+  countryName: string;
+}) => {
   const Flag = flags[country]
 
   return (
-    <span className="flex justify-center items-center h-4 w-6 [&_svg]:size-6 overflow-hidden rounded-sm bg-red-400">
+    <span className="flex justify-center items-center h-4 w-6 [&_svg]:size-6 overflow-hidden rounded-sm">
       {Flag && <Flag title={countryName} />}
     </span>
   )
@@ -123,7 +128,7 @@ export function PhoneInput({
 		asYouType.reset();
 
 		let value = event.currentTarget.value;
-		if (!value.startsWith("+")) {
+		if (value.length > 0 && !value.startsWith("+")) {
 			value = `+${value}`;
 		}
 
@@ -164,6 +169,16 @@ export function PhoneInput({
 		}
 	};
 
+	const onSelect = React.useCallback((country: Country) => {
+		if (inputRef.current) {
+			inputRef.current.value = `+${country.phone_code}`;
+			handlers.set(`+${country.phone_code}`);
+			inputRef.current.focus();
+		}
+		setCountryCode(country.iso2 as CountryCode);
+		setOpenCommand(false);
+	}, [inputRef]);
+
 	return (
     <div className={cn("flex gap-2", className)}>
       <Popover open={openCommand} onOpenChange={setOpenCommand} modal={true}>
@@ -202,15 +217,7 @@ export function PhoneInput({
                       <CommandItem
                         key={country.iso3}
                         value={`${country.name} (+${country.phone_code})`}
-                        onSelect={() => {
-                          if (inputRef.current) {
-                            inputRef.current.value = `+${country.phone_code}`;
-                            handlers.set(`+${country.phone_code}`);
-                            inputRef.current.focus();
-                          }
-                          setCountryCode(country.iso2 as CountryCode);
-                          setOpenCommand(false);
-                        }}
+                        onSelect={(value: string) => onSelect(country)}
                       >
                         <Check
                           className={cn(
@@ -238,7 +245,6 @@ export function PhoneInput({
         </PopoverContent>
       </Popover>
       <Input
-        ref={inputRef}
         type="text"
         pattern="^(\+)?[0-9\s]*$"
         name="phone"
@@ -251,6 +257,7 @@ export function PhoneInput({
         required={required}
         aria-required={required}
         {...rest}
+        ref={inputRef}
       />
     </div>
   );
