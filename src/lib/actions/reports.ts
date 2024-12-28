@@ -200,7 +200,7 @@ export async function deleteSiteReportFile({
 }) {
   const role = await getSiteMemberRole({ reportId });
   if (editReportRoles.includes(role)) {
-    const file = db.updateFile(fileId, { deletedAt: new Date() });
+    const file = db.updateFile({ fileId }, { deletedAt: new Date() });
     db.addlogMessage({
       message: "Site report file deleted",
       reportId,

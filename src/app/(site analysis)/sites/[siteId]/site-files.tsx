@@ -1,22 +1,96 @@
 "use client";
 
-import {
-    HaruFile,
-  SiteDetails,
-  SiteMemberRole,
-} from "@/lib/types";
+import { ChangeEvent, ReactNode, useState } from "react";
+import useSWR from "swr";
+import Link from "next/link";
+import { HaruFile, SiteDetails, SiteMemberRole } from "@/lib/types";
+import { uploadSiteFile } from "@/lib/utils/upload";
+import prettyBytes from "pretty-bytes";
 import * as Actions from "@/lib/actions";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import useSWR from "swr";
+import { toast } from "@/lib/hooks/use-toast";
+import {
+  LucideDownload,
+  LucideLoader2,
+  LucidePlus,
+  LucideTrash2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LucideLoader2, LucidePlus } from "lucide-react";
+import { Form } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { ChangeEvent, useState } from "react";
-import { uploadSiteFile } from "@/lib/utils/upload";
-import { toast } from "@/lib/hooks/use-toast";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+function DeleteFileButton({
+  children,
+  siteId,
+  fileId,
+  onDelete,
+}: {
+  children?: ReactNode;
+  siteId: number;
+  fileId: number;
+  onDelete?: () => void;
+}) {
+  const form = useForm();
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>
+            Are you sure you would like to delete this file?
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(async () => {
+                await Actions.deleteSiteFile({ siteId, fileId });
+                console.log("xxx");
+                onDelete && onDelete();
+              })}
+            >
+              <Button asChild variant="destructive">
+                <AlertDialogAction type="submit">
+                  Yes, Delete File
+                  {form.formState.isSubmitting && (
+                    <LucideLoader2 className="animate-spin h-4" />
+                  )}
+                </AlertDialogAction>
+              </Button>
+            </form>
+          </Form>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
 
 export function SiteFiles({
   site,
@@ -25,20 +99,14 @@ export function SiteFiles({
   site: SiteDetails;
   role: SiteMemberRole;
 }) {
-  const { data: files, mutate: mutateFiles } = useSWR<HaruFile[]>(
+  const {
+    data: files,
+    mutate: mutateFiles,
+    isLoading,
+  } = useSWR<HaruFile[]>(
     `/api/site/${site.id}/files`,
     async () => (await Actions.listSiteFiles({ siteId: site.id })) ?? [],
   );
-
-//   async function handleFileDelete(file: HaruFile) {
-//     try {
-//       await Actions.deleteSiteFile({ siteId, fileId: file.id });
-//       await mutateFiles(); // Refresh the file list after deletion
-//       toast({ description: `File deleted successfully: ${file.filename}` });
-//     } catch (e) {
-//       toast({ description: `Delete Error: ${e}` });
-//     }
-//   }
 
   const [isUploading, setIsUploading] = useState(false);
 
@@ -62,7 +130,7 @@ export function SiteFiles({
   return (
     <Card>
       <CardHeader className="flex flex-row py-0 items-baseline gap-4">
-        <CardTitle className="py-6">Site Documents and other Files</CardTitle>
+        <CardTitle className="py-6">Site Documents and Other Files</CardTitle>
         <Button asChild disabled={isUploading} variant="default">
           <Label
             htmlFor={`upload-file-site-${site.id}`}
@@ -89,20 +157,54 @@ export function SiteFiles({
         <div>
           <Table className="border rounded">
             <TableHeader>
-              <TableRow className="[&>th]:border-r [&>th]:whitespace-nowrap">
-                <TableHead className="w-1">File Id</TableHead>
-                <TableHead className="w-1">Filename</TableHead>
+              <TableRow className="[&>th]:px-3 [&>th]:border-r [&>th]:whitespace-nowrap">
+                <TableHead className="w-1">Id</TableHead>
+                <TableHead className="w-full">Filename</TableHead>
+                <TableHead className="w-1">Size</TableHead>
+                <TableHead className="w-1">Uploader</TableHead>
+                <TableHead className="w-1">Date</TableHead>
+                <TableHead className="w-1"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {files?.map((f) => (
-                <TableRow key={f.id} className="[&>td]:border-r ">
-                  <TableCell>{f.id}</TableCell>
-                  <TableCell className="whitespace-nowrap">
-                    {f.filename}
+              {files && files.length > 0 ? (
+                files.map((f) => (
+                  <TableRow
+                    key={f.id}
+                    className="[&>td]:px-3 [&>td]:border-r whitespace-nowrap"
+                  >
+                    <TableCell>{f.id}</TableCell>
+                    <TableCell>{f.filename}</TableCell>
+                    <TableCell>
+                      {f.filesize ? prettyBytes(f.filesize) : "--"}
+                    </TableCell>
+                    <TableCell>{f.uploader?.name ?? "--"}</TableCell>
+                    <TableCell>{f.uploadedAt.toDateString()}</TableCell>
+                    <TableCell className="text-center space-x-2">
+                      <Button variant="outline" size="icon" asChild>
+                        <Link href={f.url || "/not-found"} target="_blank">
+                          <LucideDownload />
+                        </Link>
+                      </Button>
+                      <DeleteFileButton
+                        onDelete={() => mutateFiles()}
+                        siteId={site.id}
+                        fileId={f.id}
+                      >
+                        <Button variant="outline" size="icon">
+                          <LucideTrash2 />
+                        </Button>
+                      </DeleteFileButton>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={999} className="p-8 bg-muted text-center">
+                    {isLoading ? "Loading ..." : "No uploaded files"}
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </div>
@@ -110,4 +212,3 @@ export function SiteFiles({
     </Card>
   );
 }
-
