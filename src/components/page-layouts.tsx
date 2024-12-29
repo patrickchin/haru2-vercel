@@ -33,7 +33,7 @@ export function DefaultLayout({
       <Header />
       <main
         className={cn(
-          "grow flex flex-col gap-4 py-8 w-full mx-auto max-w-5xl",
+          "grow flex flex-col gap-4 py-8 w-full mx-auto max-w-6xl",
           className,
         )}
       >

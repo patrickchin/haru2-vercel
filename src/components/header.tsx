@@ -1,12 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getSession, signOut, useSession } from "next-auth/react";
 import { User } from "next-auth";
 
-import { LucideConstruction, LucideSettings, LucideLogOut, LucideSun, LucideMoon } from "lucide-react";
+import {
+  LucideConstruction,
+  LucideSettings,
+  LucideLogOut,
+  LucideSun,
+  LucideMoon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,53 +22,52 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { UserAvatar } from "./user-avatar";
 import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
 
-export function MainNav() {
+export function MainNav({ className, user }: { className?: string; user?: User }) {
   const pathname = usePathname();
-  const navigation = [
-    { name: "About Us", href: "/about", },
+  const globalNav = [
+    { name: "About Us", href: "/about" },
     // { name: "Contact Us", href: "/contact", },
-    { name: "Docs", href: "/docs", },
+    { name: "Docs", href: "/docs" },
   ];
 
+  const userNav = [
+    { name: "My Sites", href: "/sites", needLogin: true, needAdmin: false },
+    { name: "Feedback", href: "/feedback", needLogin: true, needAdmin: true },
+    { name: "Logs", href: "/logs", needLogin: true, needAdmin: true },
+  ];
   return (
-    <div className="flex items-center mx-6 grow">
-      {navigation.map((item, i) => {
+    <div
+      className={cn(
+        "flex flex-col md:flex-row justify-between grow",
+        className,
+      )}
+    >
+      {globalNav.map((item, i) => {
         return (
           <Button
             key={i}
             asChild
             variant="link"
-            className={pathname == item.href ? "underline" : ""}
+            className={cn("px-3", pathname == item.href ? "underline" : "")}
           >
             <Link href={item.href}>{item.name}</Link>
           </Button>
         );
       })}
-    </div>
-  );
-}
 
-export function UserNav({ user }: { user?: User }) {
-  const pathname = usePathname();
-  const navigation = [
-    { name: "My Sites", href: "/sites", needLogin: true, needAdmin: false },
-    { name: "Feedback", href: "/feedback", needLogin: true, needAdmin: true },
-    { name: "Logs", href: "/logs", needLogin: true, needAdmin: true },
-  ];
+      <div className="grow"></div>
 
-  return (
-    <div className="flex items-center">
-      {navigation.map((item, i) => {
+      {userNav.map((item, i) => {
         if (item.needLogin && !user) return null;
         if (item.needAdmin && user?.role !== "admin") return null;
-        
         return (
           <Button
             key={i}
             asChild
             variant="link"
-            className={pathname == item.href ? "underline" : ""}
+            className={cn("px-3", pathname == item.href ? "underline" : "")}
           >
             <Link href={item.href}>{item.name}</Link>
           </Button>
@@ -147,19 +152,19 @@ export default function Header() {
 
   return (
     <div className="border-b bg-background w-full">
-      <div className="flex h-16 items-center px-8 mx-auto max-w-6xl">
-        <Link href="/" className="mr-6 flex items-center space-x-2">
+      <div className="flex min-h-16 md:h-16 items-start px-8 mx-auto max-w-7xl">
+        <Link href="/" className="mr-4 flex items-center space-x-2 h-16">
           <LucideConstruction className="h-6 w-6" />
-          <span className="hidden font-bold sm:inline-block">Harpa Pro</span>
+          <span className="font-bold whitespace-nowrap">
+            Harpa Pro
+          </span>
         </Link>
 
-        <div className="grow flex flex-row gap-4 items-center justify-end">
-          <MainNav />
+        <MainNav user={session?.user} className="md:inline-flex md:h-16 items-center" />
 
-          <UserNav user={session?.user} />
+        <div className="inline-flex flex-row gap-2 items-center h-16">
           <ThemeToggle />
-
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 ml-1">
             {status === "authenticated" ? (
               <UserMenu user={session?.user} />
             ) : (
@@ -167,6 +172,9 @@ export default function Header() {
             )}
           </div>
         </div>
+
+        {/* <MainNav user={session?.user} className="" /> */}
+
       </div>
     </div>
   );

@@ -372,7 +372,7 @@ export default async function Page(props: {
   const showProgressAndComplaints = true;
 
   return (
-    <DefaultLayout>
+    <DefaultLayout className="px-8">
       <div className="flex flex-col sm:flex-row gap-4 sm:items-center pb-3">
         <Button variant="secondary" asChild>
           <Link href={`/sites`} className="flex items-center gap-2">
@@ -404,7 +404,7 @@ export default async function Page(props: {
 
       <Tabs defaultValue={tab} className="w-full gap-4">
         <Card className="mb-8 overflow-hidden">
-          <TabsList className="w-full h-auto p-1 [&_button]:h-12 justify-start">
+          <TabsList className="w-full h-auto p-1 [&_button]:h-12 justify-start overflow-x-auto">
             <TabsTriggerSearchParams searchParamsKey="tab" value="description">
               Description
             </TabsTriggerSearchParams>
