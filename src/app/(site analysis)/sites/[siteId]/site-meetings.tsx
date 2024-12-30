@@ -226,10 +226,10 @@ export function SiteMeetingsFormAndTable({
                   className={cn(
                     "capitalize",
                     m.status === "pending" && "bg-none",
-                    m.status === "rejected" && "bg-red-100",
-                    m.status === "cancelled" && "bg-red-100",
-                    m.status === "confirmed" && "bg-green-100",
-                    // m.status === "completed" && "bg-blue-100",
+                    m.status === "rejected" && "bg-red-100 dark:bg-red-900",
+                    m.status === "cancelled" && "bg-red-100 dark:bg-red-900",
+                    m.status === "confirmed" && "bg-green-100 dark:bg-green-900",
+                    // m.status === "completed" && "bg-blue-100 dark:bg-blue-900",
                   )}
                 >
                   {m.status}
