@@ -40,7 +40,7 @@ export function MainNav({ className, user }: { className?: string; user?: User }
   return (
     <div
       className={cn(
-        "flex flex-col md:flex-row justify-between grow",
+        "flex flex-col md:flex-row grow",
         className,
       )}
     >
@@ -50,7 +50,7 @@ export function MainNav({ className, user }: { className?: string; user?: User }
             key={i}
             asChild
             variant="link"
-            className={cn("px-3", pathname == item.href ? "underline" : "")}
+            className={cn(pathname == item.href ? "underline" : "")}
           >
             <Link href={item.href}>{item.name}</Link>
           </Button>
@@ -67,7 +67,7 @@ export function MainNav({ className, user }: { className?: string; user?: User }
             key={i}
             asChild
             variant="link"
-            className={cn("px-3", pathname == item.href ? "underline" : "")}
+            className={cn(pathname == item.href ? "underline" : "")}
           >
             <Link href={item.href}>{item.name}</Link>
           </Button>
@@ -152,7 +152,7 @@ export default function Header() {
 
   return (
     <div className="border-b bg-background w-full">
-      <div className="flex min-h-16 md:h-16 items-start px-8 mx-auto max-w-7xl">
+      <div className="flex gap-2 min-h-16 md:h-16 items-start px-8 mx-auto max-w-7xl">
         <Link href="/" className="mr-4 flex items-center space-x-2 h-16">
           <LucideConstruction className="h-6 w-6" />
           <span className="font-bold whitespace-nowrap">
@@ -162,7 +162,7 @@ export default function Header() {
 
         <MainNav user={session?.user} className="md:inline-flex md:h-16 items-center" />
 
-        <div className="inline-flex flex-row gap-2 items-center h-16">
+        <div className="inline-flex flex-row gap-3 items-center h-16">
           <ThemeToggle />
           <div className="flex items-center space-x-4 ml-1">
             {status === "authenticated" ? (
