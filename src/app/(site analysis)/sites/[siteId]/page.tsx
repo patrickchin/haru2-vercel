@@ -84,8 +84,9 @@ function SiteInfo({ site }: { site: SiteDetails }) {
     return site.countryCode ? displayNames.of(site.countryCode) : undefined;
   }, [site.countryCode]);
 
-  const memberNames = [
+  const info = [
     { label: "Project Id", value: site.id.toString() },
+    { label: "Address", value: site.address },
     { label: "Country", value: country },
     { label: "Site Type", value: site.type },
     { label: "Created", value: site.createdAt?.toDateString() },
@@ -93,15 +94,15 @@ function SiteInfo({ site }: { site: SiteDetails }) {
   return (
     <Card>
       <ul className="grow flex flex-col py-3 text-sm">
-        {memberNames.map((it, i) => (
+        {info.map((x, i) => (
           <li
             key={i}
-            className="flex gap-2 px-6 py-1.5 sm:justify-between hover:bg-muted"
+            className="grid grid-cols-[5rem_1fr] gap-2 px-6 py-1.5 sm:justify-between hover:bg-muted"
           >
-            <p className="font-semibold w-1/3 sm:w-auto">{it.label}:</p>
-            <p>
-              {it.value?.length ? (
-                it.value
+            <p className="font-semibold sm:w-auto">{x.label}:</p>
+            <p className="text-end">
+              {x.value?.length ? (
+                x.value
               ) : (
                 <span className="text-muted-foreground">--</span>
               )}
@@ -464,7 +465,6 @@ export default async function Page(props: {
         <TabsContent value="files" className="space-y-4">
           <SiteFiles site={site} role={role} />
         </TabsContent>
-
       </Tabs>
     </DefaultLayout>
   );
