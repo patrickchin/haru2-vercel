@@ -1,6 +1,6 @@
 import { SessionProvider } from "next-auth/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Analytics } from "@vercel/analytics/react";
+import { Analytics, BeforeSendEvent } from "@vercel/analytics/react";
 
 import "./globals.css";
 
@@ -34,7 +34,10 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={cn("overflow-y-scroll", GeistSans.variable)}>
         <SpeedInsights />
-        <Analytics />
+        <Analytics beforeSend={(event: BeforeSendEvent) => {
+          if (session?.user?.role === "admin") return null;
+          return event;
+        }} />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
