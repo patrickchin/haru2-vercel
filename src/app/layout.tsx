@@ -1,6 +1,5 @@
 import { SessionProvider } from "next-auth/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Analytics, BeforeSendEvent } from "@vercel/analytics/react";
 
 import "./globals.css";
 
@@ -10,6 +9,7 @@ import { auth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { AddFeedback } from "@/components/feedback";
 import { ThemeProvider } from "@/components/theme-provider";
+import { VercelAnalytics } from "./vercel-analytics";
 
 let title = "Harpa Pro";
 let description = "Plan and organise and your construction projects";
@@ -34,10 +34,7 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={cn("overflow-y-scroll", GeistSans.variable)}>
         <SpeedInsights />
-        <Analytics beforeSend={(event: BeforeSendEvent) => {
-          if (session?.user?.role === "admin") return null;
-          return event;
-        }} />
+        <VercelAnalytics />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
