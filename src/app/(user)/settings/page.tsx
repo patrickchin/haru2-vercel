@@ -204,23 +204,23 @@ function SettingsPage() {
               </AlertDialogContent>
             </AlertDialog>
 
-            <Label
-              htmlFor="select-avatar"
-              className="cursor-pointer inline-flex"
-            >
-              <Input
-                type="file"
-                className="hidden"
-                id="select-avatar"
-                onChange={onChangeAvatar}
-                accept="image/*"
-                disabled={isUploading}
-              />
-              <Button variant="outline" disabled={isUploading}>
+            <Button variant="outline" disabled={isUploading} asChild>
+              <Label
+                htmlFor="select-avatar"
+                className="cursor-pointer inline-flex"
+              >
+                <Input
+                  type="file"
+                  className="hidden"
+                  id="select-avatar"
+                  onChange={onChangeAvatar}
+                  accept="image/*"
+                  disabled={isUploading}
+                />
                 Select New Photo
                 {isUploading && <LucideLoader2 className="animate-spin" />}
-              </Button>
-            </Label>
+              </Label>
+            </Button>
           </div>
         </CardContent>
       </Card>
