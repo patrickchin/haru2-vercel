@@ -33,14 +33,16 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn("overflow-y-scroll", GeistSans.variable)}>
-        <SpeedInsights />
-        <VercelAnalytics />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
           disableTransitionOnChange
         >
-          <SessionProvider session={session}>{children}</SessionProvider>
+          <SessionProvider session={session}>
+            {children}
+            <SpeedInsights />
+            <VercelAnalytics />
+          </SessionProvider>
         </ThemeProvider>
         <AddFeedback />
         <Toaster />

@@ -1,12 +1,15 @@
 "use client";
 import { Analytics } from "@vercel/analytics/react";
-import { Session } from "next-auth";
+import { useSession } from "next-auth/react";
 
-export const VercelAnalytics = ({ session }: { session?: Session | null }) => {
+export const VercelAnalytics = () => {
+  const { data: session } = useSession();
   return (
     <Analytics
       beforeSend={(event) => {
-        if (session?.user?.role === "admin") return null;
+        if (session?.user?.role === "admin") {
+          return null;
+        }
         return event;
       }}
     />
