@@ -177,7 +177,7 @@ export function PhoneInput({
 		}
 		setCountryCode(country.iso2 as CountryCode);
 		setOpenCommand(false);
-	}, [inputRef]);
+	}, [inputRef, handlers]);
 
 	return (
     <div className={cn("flex gap-2", className)}>
