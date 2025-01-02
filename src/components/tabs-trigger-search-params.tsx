@@ -18,7 +18,7 @@ export function TabsTriggerSearchParams({
     const params = new URLSearchParams(searchParams);
     params.set(searchParamsKey, props.value);
     return params.toString();
-  }, [searchParams]);
+  }, [searchParams, searchParamsKey, props.value]);
 
   return (
     <TabsTrigger
