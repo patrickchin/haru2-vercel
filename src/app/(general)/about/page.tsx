@@ -226,13 +226,18 @@ function Benefits() {
 export default function Page() {
   return (
     <DefaultLayout className="max-w-none p-0 gap-0 [&_section]:py-16">
-      <section className="relative overflow-hidden">
-        <Image
+      <section
+        className={cn(
+          "relative overflow-hidden",
+          "bg-gradient-to-br from-sky-500/30 to-indigo-600/30",
+        )}
+      >
+        {/* <Image
           src={ImageSky}
           alt="sky background"
           fill={true}
           className="absolute object-cover object-top opacity-80"
-        />
+        /> */}
         <Description />
       </section>
 
@@ -250,7 +255,13 @@ export default function Page() {
 
       <Separator />
 
-      <section className="bg-yellow-400/65 relative overflow-hidden">
+      <section
+
+        className={cn(
+          "relative overflow-hidden",
+          "bg-gradient-to-br from-amber-500/30 to-yellow-300/30",
+        )}
+        >
         <Benefits />
       </section>
     </DefaultLayout>
