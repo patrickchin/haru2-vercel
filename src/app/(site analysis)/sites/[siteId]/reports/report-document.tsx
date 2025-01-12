@@ -3,13 +3,14 @@ import * as Actions from "@/lib/actions";
 import { ReportSections } from "./report-sections";
 
 import { Button } from "@/components/ui/button";
-import { SiteReportAll } from "@/lib/types/site";
+import { SiteReportAll, SiteMaterial } from "@/lib/types/site";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
+  TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import {
@@ -19,6 +20,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { LucideMaximize2 } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 async function ReportSiteDetails({ report }: { report?: SiteReportAll }) {
   const site =
@@ -125,7 +127,11 @@ function ReportBudget({ report }: { report?: SiteReportAll }) {
   );
 }
 
-function ReportActivities({ report }: { report?: SiteReportAll }) {
+async function ReportActivities({ report }: { report?: SiteReportAll }) {
+  const materials: SiteMaterial[] = report
+    ? await Actions.listSiteReportUsedMaterials(report.id) ?? []
+    : [];
+
   return (
     <Card className="bg-cyan-50 dark:bg-cyan-950">
       <CardHeader className="flex flex-row justify-between">
@@ -134,10 +140,7 @@ function ReportActivities({ report }: { report?: SiteReportAll }) {
         </CardTitle>
       </CardHeader>
 
-      {/* <CardContent className="flex flex-col gap-3 p-4 pt-0"> */}
       <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 pt-0">
-        {/* <CardContent className="flex p-3 pt-0"> */}
-
         <div className="flex flex-col gap-3">
           <div className="p-3 bg-background space-y-2 rounded border">
             <h2 className="text-base font-semibold">Site Activity</h2>
@@ -163,19 +166,36 @@ function ReportActivities({ report }: { report?: SiteReportAll }) {
                   Open <LucideMaximize2 />
                 </Button>
               </DialogTrigger>
-              <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] flex flex-col p-4 gap-4">
+              <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] w-[50rem] max-w-full flex flex-col p-4 gap-4">
                 <DialogTitle className="text-lg font-semibold">
                   Materials Used
                 </DialogTitle>
-                <ol className="overflow-y-auto border rounded grow">
-                  {report?.materialsUsed?.split("\n").map((eq, i) => {
-                    return (
-                      <li key={i} className="hover:bg-accent px-3 py-2">
-                        {eq}
-                      </li>
-                    );
-                  })}
-                </ol>
+                <ScrollArea className="grow h-1 border rounded-md">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-1/4">Name</TableHead>
+                        <TableHead>Quantity</TableHead>
+                        <TableHead>Quantity Unit</TableHead>
+                        <TableHead>Cost</TableHead>
+                        <TableHead>Cost Units</TableHead>
+                        <TableHead>Condition</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {materials.map((material, i) => (
+                        <TableRow key={i}>
+                          <TableCell>{material.name}</TableCell>
+                          <TableCell>{material.quantity}</TableCell>
+                          <TableCell>{material.quantityUnit}</TableCell>
+                          <TableCell>{material.cost}</TableCell>
+                          <TableCell>{material.costUnits}</TableCell>
+                          <TableCell>{material.condition}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </ScrollArea>
               </DialogContent>
             </Dialog>
           </div>
@@ -292,7 +312,7 @@ function ReportInventory({ report }: { report?: SiteReportAll }) {
                       {eq}
                     </li>
                   );
-                })}
+                  })}
               </ol>
             </div>
           </DialogContent>
