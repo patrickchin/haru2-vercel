@@ -1,8 +1,18 @@
 import "server-only";
 
 import { db } from "./_db";
-import { and, desc, eq, getTableColumns, isNotNull, isNull } from "drizzle-orm";
 import {
+  and,
+  desc,
+  eq,
+  getTableColumns,
+  isNotNull,
+  isNull,
+  sql,
+} from "drizzle-orm";
+import {
+  SiteMaterial,
+  SiteMaterialNew,
   SiteMemberRole,
   SiteReport,
   SiteReportAll,
@@ -13,6 +23,7 @@ import {
   SiteReportSectionNew,
 } from "@/lib/types/site";
 import * as Schemas from "@/db/schema";
+import { Schema } from "zod";
 
 const SiteReportColumns = {
   ...getTableColumns(Schemas.siteReports1),
@@ -370,4 +381,54 @@ export async function getInvitationRole({
     )
     .limit(1)
     .then((r) => (r && r.length ? r[0].role : null));
+}
+
+export async function listSiteReportUsedMaterials(reportId: number) {
+  return db
+    .select()
+    .from(Schemas.materials1)
+    .innerJoin(
+      Schemas.siteReportDetails1,
+      eq(
+        Schemas.siteReportDetails1.usedMaterialsListId,
+        Schemas.materials1.materialsListId,
+      ),
+    )
+    .where(eq(Schemas.siteReportDetails1.id, reportId))
+    .then((r) => r.map((m) => m.materials1));
+}
+
+export async function updateSiteReportUsedMaterials(
+  reportId: number,
+  materials: SiteMaterialNew[],
+) {
+  return await db.transaction(async (tx) => {
+
+    let usedMaterialsListId = await tx
+      .select({ id: Schemas.siteReportDetails1.usedMaterialsListId })
+      .from(Schemas.siteReportDetails1)
+      .where(eq(Schemas.siteReportDetails1.id, reportId))
+      .limit(1)
+      .then((r) => r[0].id);
+
+    if (usedMaterialsListId) {
+      await tx
+        .delete(Schemas.materials1)
+        .where(eq(Schemas.materials1.materialsListId, usedMaterialsListId));
+    } else {
+      usedMaterialsListId = await tx
+        .update(Schemas.siteReportDetails1)
+        .set({ usedMaterialsListId: usedMaterialsListId })
+        .where(eq(Schemas.siteReportDetails1.id, reportId))
+        .returning()
+        .then((r) => r[0].usedMaterialsListId);
+    }
+
+    return tx
+      .insert(Schemas.materials1)
+      .values(
+        materials.map((m) => ({ ...m, materialsListId: usedMaterialsListId })),
+      )
+      .returning();
+  });
 }
