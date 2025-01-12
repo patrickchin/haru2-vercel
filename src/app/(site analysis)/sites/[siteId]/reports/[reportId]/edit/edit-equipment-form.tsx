@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { z } from "zod";
 import { useEffect } from "react";
 import { createInsertSchema } from "drizzle-zod";
-import { materials1 } from "@/db/schema";
+import { equipment1 } from "@/db/schema";
 import * as Actions from "@/lib/actions";
 
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
@@ -29,24 +29,24 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { LucideLoaderCircle } from "lucide-react";
 
-export function EditMaterialsForm({
+export function EditEquipmentForm({
   reportId,
 }: {
-  reportId: number; // might be nicer to pass in materialsListId instead
+  reportId: number; // might be nicer to pass in equipmentListId instead
 }) {
   const {
-    data: materials,
+    data: equipment,
     mutate,
     isLoading,
   } = useSWR(
-    `/api/report/${reportId}/usedMaterialsList`, // api route doesn't really exist
-    async () => Actions.listSiteReportUsedMaterials(reportId),
+    `/api/report/${reportId}/usedEquipmentList`, // api route doesn't really exist
+    async () => Actions.listSiteReportUsedEquipment(reportId),
   );
 
   const schema = z.object({
-    materials: z.array(
-      createInsertSchema(materials1)
-        .omit({ id: true, materialsListId: true })
+    equipment: z.array(
+      createInsertSchema(equipment1)
+        .omit({ id: true, equipmentListId: true })
         .extend({
           quantity: z.coerce.number().nullable(),
         }),
@@ -55,16 +55,16 @@ export function EditMaterialsForm({
   type SchemaType = z.infer<typeof schema>;
   const form = useForm<SchemaType>({
     resolver: zodResolver(schema),
-    defaultValues: materials && { materials: materials },
+    defaultValues: equipment && { equipment: equipment },
   });
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "materials",
+    name: "equipment",
   });
 
   useEffect(() => {
-    form.reset({ materials: materials }, {});
+    form.reset({ equipment: equipment }, {});
   }, [isLoading]);
 
   if (isLoading) {
@@ -81,12 +81,11 @@ export function EditMaterialsForm({
         className="flex flex-col gap-4 grow"
         onSubmit={form.handleSubmit(
           async (data: SchemaType) => {
-            console.log(data);
-            const newMaterials = await mutate(
-              Actions.updateSiteReportUsedMaterials(reportId, data.materials),
+            const newEquipment = await mutate(
+              Actions.updateSiteReportUsedEquipment(reportId, data.equipment),
               { revalidate: false },
             );
-            form.reset({ materials: newMaterials });
+            form.reset({ equipment: newEquipment });
           },
           (errors) => {
             console.log(errors);
@@ -99,10 +98,8 @@ export function EditMaterialsForm({
               <TableRow>
                 <TableHead className="w-1/4">Name</TableHead>
                 <TableHead className="w-1/12">Quantity</TableHead>
-                <TableHead className="w-1/12">Quantity Unit</TableHead>
                 <TableHead className="w-1/12">Cost</TableHead>
                 <TableHead className="w-1/12">Cost Units</TableHead>
-                <TableHead className="w-1/12">Condition</TableHead>
                 <TableHead className="w-1/12">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -111,7 +108,7 @@ export function EditMaterialsForm({
                 <TableRow key={field.id}>
                   <TableCell>
                     <FormField
-                      name={`materials.${index}.name`}
+                      name={`equipment.${index}.name`}
                       control={form.control}
                       render={({ field }) => (
                         <FormItem>
@@ -123,7 +120,7 @@ export function EditMaterialsForm({
                   </TableCell>
                   <TableCell>
                     <FormField
-                      name={`materials.${index}.quantity`}
+                      name={`equipment.${index}.quantity`}
                       control={form.control}
                       render={({ field }) => (
                         <FormItem>
@@ -139,19 +136,7 @@ export function EditMaterialsForm({
                   </TableCell>
                   <TableCell>
                     <FormField
-                      name={`materials.${index}.quantityUnit`}
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem>
-                          <Input {...field} value={field.value ?? ""} />
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <FormField
-                      name={`materials.${index}.cost`}
+                      name={`equipment.${index}.cost`}
                       control={form.control}
                       render={({ field }) => (
                         <FormItem>
@@ -168,7 +153,7 @@ export function EditMaterialsForm({
                   </TableCell>
                   <TableCell>
                     <FormField
-                      name={`materials.${index}.costUnits`}
+                      name={`equipment.${index}.costUnits`}
                       control={form.control}
                       render={({ field }) => (
                         <FormItem>
@@ -195,18 +180,6 @@ export function EditMaterialsForm({
                     />
                   </TableCell>
                   <TableCell>
-                    <FormField
-                      name={`materials.${index}.condition`}
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem>
-                          <Input {...field} value={field.value ?? ""} />
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </TableCell>
-                  <TableCell>
                     <Button type="button" onClick={() => remove(index)}>
                       Remove
                     </Button>
@@ -224,14 +197,12 @@ export function EditMaterialsForm({
               append({
                 name: null,
                 quantity: null,
-                quantityUnit: null,
                 cost: null,
                 costUnits: null,
-                condition: null,
               })
             }
           >
-            Add Material
+            Add Equipment
           </Button>
         </div>
         <FormMessage>{form.formState.errors.root?.message}</FormMessage>

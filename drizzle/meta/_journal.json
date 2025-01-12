@@ -134,6 +134,13 @@
       "when": 1736711309518,
       "tag": "0018_omniscient_starbolt",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1736715098572,
+      "tag": "0019_last_talkback",
+      "breakpoints": true
     }
   ]
 }

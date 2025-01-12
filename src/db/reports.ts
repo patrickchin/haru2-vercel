@@ -3,6 +3,7 @@ import "server-only";
 import { db } from "./_db";
 import { and, desc, eq, getTableColumns, isNotNull, isNull } from "drizzle-orm";
 import {
+  SiteEquipmentNew,
   SiteMaterialNew,
   SiteMemberRole,
   SiteReport,
@@ -425,6 +426,62 @@ export async function updateSiteReportUsedMaterials(
       .insert(Schemas.materials1)
       .values(
         materials.map((m) => ({ ...m, materialsListId: usedMaterialsListId })),
+      )
+      .returning();
+  });
+}
+
+export async function listSiteReportUsedEquipment(reportId: number) {
+  return db
+    .select()
+    .from(Schemas.equipment1)
+    .innerJoin(
+      Schemas.siteReportDetails1,
+      eq(
+        Schemas.siteReportDetails1.usedEquipmentListId,
+        Schemas.equipment1.equipmentListId,
+      ),
+    )
+    .where(eq(Schemas.siteReportDetails1.id, reportId))
+    .then((r) => r.map((m) => m.equipments1));
+}
+
+export async function updateSiteReportUsedEquipment(
+  reportId: number,
+  equipment: SiteEquipmentNew[],
+) {
+  return await db.transaction(async (tx) => {
+    let usedEquipmentListId = await tx
+      .select({ id: Schemas.siteReportDetails1.usedEquipmentListId })
+      .from(Schemas.siteReportDetails1)
+      .where(eq(Schemas.siteReportDetails1.id, reportId))
+      .limit(1)
+      .then((r) => r[0].id);
+
+    if (usedEquipmentListId) {
+      await tx
+        .delete(Schemas.equipment1)
+        .where(eq(Schemas.equipment1.equipmentListId, usedEquipmentListId));
+    } else {
+      usedEquipmentListId = await tx
+        .insert(Schemas.equipmentList1)
+        .values({})
+        .returning()
+        .then((r) => r[0].id);
+      usedEquipmentListId = await tx
+        .update(Schemas.siteReportDetails1)
+        .set({ usedEquipmentListId: usedEquipmentListId })
+        .where(eq(Schemas.siteReportDetails1.id, reportId))
+        .returning()
+        .then((r) => r[0].usedEquipmentListId);
+    }
+
+    assert(usedEquipmentListId);
+
+    return tx
+      .insert(Schemas.equipment1)
+      .values(
+        equipment.map((m) => ({ ...m, equipmentListId: usedEquipmentListId })),
       )
       .returning();
   });

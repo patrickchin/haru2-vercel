@@ -25,6 +25,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { EditMaterialsForm } from "./edit-materials-form";
+import { EditEquipmentForm } from "./edit-equipment-form";
 
 const reportFormSchema = createInsertSchema(Schemas.siteReportDetails1);
 type ReportFormType = z.infer<typeof reportFormSchema>;
@@ -152,22 +153,7 @@ function EditReportEstimates({
   );
 }
 
-function EditEquipment({
-  report,
-  mutate,
-}: {
-  report: SiteReportAll;
-  mutate: KeyedMutator<SiteReportAll | undefined>;
-}) {
-  const schema = reportFormSchema.pick({ equipmentUsed: true });
-  const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
-    defaultValues: { equipmentUsed: report.equipmentUsed || "" },
-  });
-
-  const placeholder =
-    "e.g.\nSand - 10kg bags x 10\nGravel - 10kg bags x 8\nCrushed Stone ...";
-
+function EditEquipment({ report }: { report: SiteReportAll }) {
   return (
     <Dialog>
       <div className="flex gap-4 items-center p-4 rounded border bg-background">
@@ -180,58 +166,20 @@ function EditEquipment({
       </div>
 
       <DialogContent
-        className="max-h-[90svh] h-[50rem] flex flex-col p-4 gap-4"
+        className="max-h-[90svh] h-[50rem] w-[70rem] max-w-full flex flex-col p-4 gap-4"
         id="edit-equipment-used-dialog-content"
       >
         <DialogTitle className="text-lg font-semibold">
           Equipment Used
         </DialogTitle>
 
-        <Form {...form}>
-          <form
-            className="flex flex-col gap-4 grow"
-            onSubmit={form.handleSubmit(async (data: ReportFormType) => {
-              const newReport = await mutate(
-                Actions.updateSiteReportDetails(report.id, data),
-                { revalidate: false },
-              );
-              form.reset(newReport);
-            })}
-          >
-            <FormField
-              control={form.control}
-              name="equipmentUsed"
-              render={({ field }) => (
-                <FormItem className="grow">
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      value={field.value ?? undefined}
-                      className="h-full text-base leading-8 resize-none"
-                      placeholder={placeholder}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <div className="flex gap-2 justify-end">
-              <SaveRevertForm form={form} />
-            </div>
-          </form>
-        </Form>
+        <EditEquipmentForm reportId={report.id} />
       </DialogContent>
     </Dialog>
   );
 }
 
-function EditMaterials({
-  report,
-  mutate,
-}: {
-  report: SiteReportAll;
-  mutate: KeyedMutator<SiteReportAll | undefined>;
-}) {
+function EditMaterials({ report }: { report: SiteReportAll }) {
   return (
     <Dialog>
       <div className="flex gap-4 items-center p-4 rounded border bg-background">
@@ -604,8 +552,8 @@ export function EditReportDocument({
           {/* <EditReportDetails report={report} mutate={mutate} /> */}
           <div className="flex flex-col gap-4">
             <EditSiteActivities report={report} mutate={mutate} />
-            <EditMaterials report={report} mutate={mutate} />
-            <EditEquipment report={report} mutate={mutate} />
+            <EditMaterials report={report} />
+            <EditEquipment report={report} />
           </div>
           <EditSitePersonel report={report} mutate={mutate} />
         </CardContent>
