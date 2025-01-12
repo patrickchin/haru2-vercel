@@ -262,7 +262,7 @@ export const materials1 = pgTable("materials1", {
     () => materialsList1.id,
     { onDelete: "cascade" },
   ).notNull(),
-  name: varchar("name").notNull(),
+  name: varchar("name"),
   quantity: integer("quantity"),
   quantityUnit: varchar("quantityUnit"),
   cost: numeric("cost"),
