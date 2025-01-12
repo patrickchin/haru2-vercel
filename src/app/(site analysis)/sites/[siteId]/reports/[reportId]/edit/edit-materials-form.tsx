@@ -7,10 +7,17 @@ import * as Actions from "@/lib/actions";
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { SaveRevertForm } from "@/components/save-revert-form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { createInsertSchema } from "drizzle-zod";
 import { materials1 } from "@/db/schema";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export function EditMaterialsForm({
   reportId,
@@ -61,84 +68,111 @@ export function EditMaterialsForm({
           },
         )}
       >
-        {fields.map((field, index) => (
-          <div key={field.id} className="flex flex-row gap-2 items-center">
-            <FormField
-              name={`materials.${index}.name`}
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <Label>Name</Label>
-                  <Input {...field} value={field.value ?? ""} />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name={`materials.${index}.quantity`}
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <Label>Quantity</Label>
-                  <Input type="number" {...field} value={field.value ?? ""} />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name={`materials.${index}.quantityUnit`}
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <Label>Quantity Unit</Label>
-                  <Input {...field} />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name={`materials.${index}.cost`}
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <Label>Cost</Label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    {...field}
-                    value={field.value ?? ""}
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-1/4">Name</TableHead>
+              <TableHead className="w-1/12">Quantity</TableHead>
+              <TableHead className="w-1/12">Quantity Unit</TableHead>
+              <TableHead className="w-1/12">Cost</TableHead>
+              <TableHead className="w-1/12">Cost Units</TableHead>
+              <TableHead className="w-1/12">Condition</TableHead>
+              <TableHead className="w-1/12">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {fields.map((field, index) => (
+              <TableRow key={field.id}>
+                <TableCell>
+                  <FormField
+                    name={`materials.${index}.name`}
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <Input {...field} value={field.value ?? ""} />
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name={`materials.${index}.costUnits`}
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <Label>Cost Units</Label>
-                  <Input {...field} value={field.value ?? ""} />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name={`materials.${index}.condition`}
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <Label>Condition</Label>
-                  <Input {...field} value={field.value ?? ""} />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="button" onClick={() => remove(index)}>
-              Remove
-            </Button>
-          </div>
-        ))}
+                </TableCell>
+                <TableCell>
+                  <FormField
+                    name={`materials.${index}.quantity`}
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <Input
+                          type="number"
+                          {...field}
+                          value={field.value ?? ""}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </TableCell>
+                <TableCell>
+                  <FormField
+                    name={`materials.${index}.quantityUnit`}
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <Input {...field} value={field.value ?? ""} />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </TableCell>
+                <TableCell>
+                  <FormField
+                    name={`materials.${index}.cost`}
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          {...field}
+                          value={field.value ?? ""}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </TableCell>
+                <TableCell>
+                  <FormField
+                    name={`materials.${index}.costUnits`}
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <Input {...field} value={field.value ?? ""} />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </TableCell>
+                <TableCell>
+                  <FormField
+                    name={`materials.${index}.condition`}
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <Input {...field} value={field.value ?? ""} />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </TableCell>
+                <TableCell>
+                  <Button type="button" onClick={() => remove(index)}>
+                    Remove
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
 
         <Button
           type="button"
