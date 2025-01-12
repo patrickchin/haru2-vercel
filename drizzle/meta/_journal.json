@@ -127,6 +127,13 @@
       "when": 1735342871846,
       "tag": "0017_public_bishop",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1736705656306,
+      "tag": "0018_milky_namorita",
+      "breakpoints": true
     }
   ]
 }

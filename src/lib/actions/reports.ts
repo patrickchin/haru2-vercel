@@ -5,6 +5,7 @@ import * as db from "@/db";
 import { auth } from "@/lib/auth";
 import { HaruFileNew } from "@/lib/types/common";
 import {
+  SiteMaterialNew,
   SiteMemberRole,
   SiteReportDetailsNew,
   SiteReportNew,
@@ -287,4 +288,22 @@ export async function listSiteReportSectionFiles(sectionId: number) {
     return db.getFilesForReportSection(sectionId, true);
   if (viewSiteRoles.includes(role))
     return db.getFilesForReportSection(sectionId, false);
+}
+
+export async function listSiteReportUsedMaterials(reportId: number) {
+  const role = await getSiteMemberRole({ reportId });
+  if (viewSiteRoles.includes(role)) {
+    return db.listSiteReportUsedMaterials(reportId);
+  }
+}
+
+export async function updateSiteReportUsedMaterials(
+  reportId: number,
+  materials: SiteMaterialNew[],
+) {
+  console.log("updateSiteReportUsedMaterials");
+  const role = await getSiteMemberRole({ reportId });
+  if (editReportRoles.includes(role)) {
+    return db.updateSiteReportUsedMaterials(reportId, materials);
+  }
 }

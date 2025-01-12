@@ -252,6 +252,24 @@ export const siteReports1 = pgTable("siteReports1", {
   ),
 });
 
+export const materialsList1 = pgTable("materialsList1", {
+  id: serial("id").primaryKey(),
+});
+
+export const materials1 = pgTable("materials1", {
+  id: serial("id").primaryKey(),
+  materialsListId: integer("materialsListId").references(
+    () => materialsList1.id,
+    { onDelete: "cascade" },
+  ).notNull(),
+  name: varchar("name").notNull(),
+  quantity: integer("quantity"),
+  quantityUnit: varchar("quantityUnit"),
+  cost: numeric("cost"),
+  costUnits: varchar("costUnits"),
+  condition: varchar("condition"),
+});
+
 export const siteReportDetails1 = pgTable("siteReportDetails1", {
   id: serial("id")
     .primaryKey()
@@ -291,10 +309,16 @@ export const siteReportDetails1 = pgTable("siteReportDetails1", {
   workers: varchar("workers"),
   visitors: varchar("visitors"),
 
+  // deprecated
   materialsUsed: varchar("materialsUsed"),
   equipmentUsed: varchar("equipmentUsed"),
   materialsInventory: varchar("materialsInventory"),
   equipmentInventory: varchar("equipmentInventory"),
+
+  usedMaterialsListId: integer("usedMaterialsListId").references(() => materialsList1.id),
+  // inventoryMaterialsListId: integer("inventoryMaterialsListId").references(() => materialsList1.id),
+  // usedEquipmentListId: integer("usedEquipmentListId").references(() => equipmentList1.id),
+  // inventoryEquipmentListId: integer("inventoryEquipmentListId").references(() => equipmentList1.id),
 
   budget: varchar("budget"),
   spent: varchar("spent"),
