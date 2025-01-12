@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS "materials1" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"materialsListId" integer NOT NULL,
-	"name" varchar NOT NULL,
+	"name" varchar,
 	"quantity" integer,
 	"quantityUnit" varchar,
 	"cost" numeric,
