@@ -14,6 +14,7 @@ export type SiteReportDetails = typeof Schemas.siteReportDetails1.$inferSelect;
 export type SiteReportAll = SiteReport & SiteReportDetails;
 export type SiteReportSection = typeof Schemas.siteReportSections1.$inferSelect;
 export type SiteMaterial = typeof Schemas.materials1.$inferSelect;
+export type SiteEquipment = typeof Schemas.equipment1.$inferInsert;
 
 export const allSiteMemberRoles = Schemas.siteMemberRole.enumValues;
 
@@ -25,3 +26,4 @@ export type SiteReportNew = Omit<typeof Schemas.siteReports1.$inferInsert, "id" 
 export type SiteReportDetailsNew = Omit<typeof Schemas.siteReportDetails1.$inferInsert, "id">;
 export type SiteReportSectionNew = Omit<typeof Schemas.siteReportSections1.$inferInsert, "id" | "reportId" | "fileGroupId">;
 export type SiteMaterialNew = Omit<typeof Schemas.materials1.$inferInsert, "id"| "materialsListId">;
+export type SiteEquipmentNew = Omit<typeof Schemas.equipment1.$inferInsert, "id"| "equipmentListId">;

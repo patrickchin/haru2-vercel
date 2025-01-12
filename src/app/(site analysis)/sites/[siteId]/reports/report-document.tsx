@@ -3,7 +3,7 @@ import * as Actions from "@/lib/actions";
 import { ReportSections } from "./report-sections";
 
 import { Button } from "@/components/ui/button";
-import { SiteReportAll, SiteMaterial } from "@/lib/types/site";
+import { SiteReportAll, SiteMaterial, SiteEquipment } from "@/lib/types/site";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -131,6 +131,9 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
   const materials: SiteMaterial[] = report
     ? await Actions.listSiteReportUsedMaterials(report.id) ?? []
     : [];
+  const equipment: SiteEquipment[] = report
+    ? await Actions.listSiteReportUsedEquipment(report.id) ?? []
+    : [];
 
   return (
     <Card className="bg-cyan-50 dark:bg-cyan-950">
@@ -173,7 +176,7 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
                 <ScrollArea className="grow h-1 border rounded-md">
                   <Table>
                     <TableHeader>
-                      <TableRow>
+                      <TableRow className="first:[&_th]:pl-4">
                         <TableHead className="w-1/4">Name</TableHead>
                         <TableHead>Quantity</TableHead>
                         <TableHead>Quantity Unit</TableHead>
@@ -184,7 +187,7 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
                     </TableHeader>
                     <TableBody>
                       {materials.map((material, i) => (
-                        <TableRow key={i}>
+                        <TableRow key={i} className="first:[&_td]:pl-4">
                           <TableCell>{material.name}</TableCell>
                           <TableCell>{material.quantity}</TableCell>
                           <TableCell>{material.quantityUnit}</TableCell>
@@ -205,23 +208,35 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="outline">
-                  Open
-                  <LucideMaximize2 />
+                  Open <LucideMaximize2 />
                 </Button>
               </DialogTrigger>
-              <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] flex flex-col p-4 gap-4">
+              <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] w-[50rem] max-w-full flex flex-col p-4 gap-4">
                 <DialogTitle className="text-lg font-semibold">
                   Equipment Used
                 </DialogTitle>
-                <ol className="overflow-y-auto border rounded grow">
-                  {report?.equipmentUsed?.split("\n").map((eq, i) => {
-                    return (
-                      <li key={i} className="hover:bg-accent px-3 py-2">
-                        {eq}
-                      </li>
-                    );
-                  })}
-                </ol>
+                <ScrollArea className="grow h-1 border rounded-md">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="first:[&_th]:pl-4">
+                        <TableHead className="w-1/4">Name</TableHead>
+                        <TableHead className="w-1/12">Quantity</TableHead>
+                        <TableHead className="w-1/12">Cost</TableHead>
+                        <TableHead className="w-1/12">Cost Units</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {equipment.map((eq, i) => (
+                        <TableRow key={i} className="first:[&_td]:pl-4">
+                          <TableCell>{eq.name}</TableCell>
+                          <TableCell>{eq.quantity}</TableCell>
+                          <TableCell>{eq.cost}</TableCell>
+                          <TableCell>{eq.costUnits}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </ScrollArea>
               </DialogContent>
             </Dialog>
           </div>
@@ -312,7 +327,7 @@ function ReportInventory({ report }: { report?: SiteReportAll }) {
                       {eq}
                     </li>
                   );
-                  })}
+                })}
               </ol>
             </div>
           </DialogContent>
