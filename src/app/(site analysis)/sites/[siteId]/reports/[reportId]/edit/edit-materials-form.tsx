@@ -2,6 +2,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import useSWR from "swr";
 import { z } from "zod";
+import { useEffect } from "react";
+import { createInsertSchema } from "drizzle-zod";
+import { materials1 } from "@/db/schema";
 import * as Actions from "@/lib/actions";
 
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
@@ -15,8 +18,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { createInsertSchema } from "drizzle-zod";
-import { materials1 } from "@/db/schema";
 import {
   Table,
   TableBody,
@@ -26,13 +27,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { LucideLoaderCircle } from "lucide-react";
 
 export function EditMaterialsForm({
   reportId,
 }: {
   reportId: number; // might be nicer to pass in materialsListId instead
 }) {
-  const { data: materials, mutate } = useSWR(
+  const {
+    data: materials,
+    mutate,
+    isLoading,
+  } = useSWR(
     `/api/report/${reportId}/usedMaterialsList`, // api route doesn't really exist
     async () => Actions.listSiteReportUsedMaterials(reportId),
   );
@@ -42,7 +48,6 @@ export function EditMaterialsForm({
       createInsertSchema(materials1)
         .omit({ id: true, materialsListId: true })
         .extend({
-          name: z.string().min(1),
           quantity: z.coerce.number().nullable(),
         }),
     ),
@@ -50,13 +55,25 @@ export function EditMaterialsForm({
   type SchemaType = z.infer<typeof schema>;
   const form = useForm<SchemaType>({
     resolver: zodResolver(schema),
-    defaultValues: { materials: materials || [] },
+    defaultValues: materials && { materials: materials },
   });
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "materials",
   });
+
+  useEffect(() => {
+    form.reset({ materials: materials }, {});
+  }, [materials, isLoading]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center grow">
+        <LucideLoaderCircle className="animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <Form {...form}>
