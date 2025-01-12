@@ -1,17 +1,8 @@
 import "server-only";
 
 import { db } from "./_db";
+import { and, desc, eq, getTableColumns, isNotNull, isNull } from "drizzle-orm";
 import {
-  and,
-  desc,
-  eq,
-  getTableColumns,
-  isNotNull,
-  isNull,
-  sql,
-} from "drizzle-orm";
-import {
-  SiteMaterial,
   SiteMaterialNew,
   SiteMemberRole,
   SiteReport,
@@ -23,7 +14,7 @@ import {
   SiteReportSectionNew,
 } from "@/lib/types/site";
 import * as Schemas from "@/db/schema";
-import { Schema } from "zod";
+import assert from "assert";
 
 const SiteReportColumns = {
   ...getTableColumns(Schemas.siteReports1),
@@ -403,7 +394,6 @@ export async function updateSiteReportUsedMaterials(
   materials: SiteMaterialNew[],
 ) {
   return await db.transaction(async (tx) => {
-
     let usedMaterialsListId = await tx
       .select({ id: Schemas.siteReportDetails1.usedMaterialsListId })
       .from(Schemas.siteReportDetails1)
@@ -417,12 +407,19 @@ export async function updateSiteReportUsedMaterials(
         .where(eq(Schemas.materials1.materialsListId, usedMaterialsListId));
     } else {
       usedMaterialsListId = await tx
+        .insert(Schemas.materialsList1)
+        .values({})
+        .returning()
+        .then((r) => r[0].id);
+      usedMaterialsListId = await tx
         .update(Schemas.siteReportDetails1)
         .set({ usedMaterialsListId: usedMaterialsListId })
         .where(eq(Schemas.siteReportDetails1.id, reportId))
         .returning()
         .then((r) => r[0].usedMaterialsListId);
     }
+
+    assert(usedMaterialsListId);
 
     return tx
       .insert(Schemas.materials1)
