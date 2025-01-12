@@ -87,7 +87,7 @@ function FileDisplayCarouselItems({
         </DisplayImage360>
       )}
       {f.type?.startsWith("video/") && (
-        <video controls className="bg-zinc-800 h-full aspect-video" preload="metadata">
+        <video controls className="bg-zinc-800 h-full max-h-full aspect-video" preload="metadata">
           <source src={f.url || ""} type={f.type || ""} />
         </video>
       )}
