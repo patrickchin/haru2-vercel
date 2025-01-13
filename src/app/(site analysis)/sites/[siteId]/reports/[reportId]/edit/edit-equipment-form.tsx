@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import useSWR from "swr";
 import { z } from "zod";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { createInsertSchema } from "drizzle-zod";
 import { equipment1 } from "@/db/schema";
 import * as Actions from "@/lib/actions";
@@ -63,9 +63,13 @@ export function EditEquipmentForm({
     name: "equipment",
   });
 
+  const wasLoadingRef = useRef(isLoading);
   useEffect(() => {
-    form.reset({ equipment: equipment }, {});
-  }, [isLoading]);
+    if (wasLoadingRef.current && !isLoading) {
+      form.reset({ equipment: equipment }, {});
+    }
+    wasLoadingRef.current = isLoading;
+  }, [equipment, isLoading, form]);
 
   if (isLoading) {
     return (
