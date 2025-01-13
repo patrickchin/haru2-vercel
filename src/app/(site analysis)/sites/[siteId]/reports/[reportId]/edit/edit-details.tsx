@@ -11,6 +11,7 @@ import { SiteReportAll } from "@/lib/types/site";
 import * as Actions from "@/lib/actions";
 import * as Schemas from "@/db/schema";
 
+import { LucideLoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormField, FormItem } from "@/components/ui/form";
@@ -535,9 +536,6 @@ export function EditReportDocument({
     async () => Actions.getSiteReportDetails(reportId),
   );
 
-  if (isLoading) return <p>loading...</p>;
-  if (!report) notFound();
-
   return (
     <>
       <Card className="bg-cyan-50 dark:bg-cyan-950">
@@ -550,12 +548,24 @@ export function EditReportDocument({
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
           {/* <EditReportEstimates report={report} mutate={mutate} /> */}
           {/* <EditReportDetails report={report} mutate={mutate} /> */}
-          <div className="flex flex-col gap-4">
-            <EditSiteActivities report={report} mutate={mutate} />
-            <EditMaterials report={report} />
-            <EditEquipment report={report} />
-          </div>
-          <EditSitePersonel report={report} mutate={mutate} />
+          {isLoading ? (
+            <div className="flex items-center justify-center grow col-span-2">
+              <LucideLoaderCircle className="animate-spin" />
+            </div>
+          ) : !report ? (
+            <div className="flex items-center justify-center grow col-span-2">
+              Error loading report
+            </div>
+          ) : (
+            <>
+              <div className="flex flex-col gap-4">
+                <EditSiteActivities report={report} mutate={mutate} />
+                <EditMaterials report={report} />
+                <EditEquipment report={report} />
+              </div>
+              <EditSitePersonel report={report} mutate={mutate} />
+            </>
+          )}
         </CardContent>
       </Card>
 
@@ -564,7 +574,17 @@ export function EditReportDocument({
           <CardTitle className="text-lg grow text-left">
             Inventory and Storage
           </CardTitle>
-          <EditInventory report={report} mutate={mutate} />
+          {isLoading ? (
+            <div className="flex items-center justify-center grow">
+              <LucideLoaderCircle className="animate-spin" />
+            </div>
+          ) : !report ? (
+            <div className="flex items-center justify-center grow">
+              Error loading report
+            </div>
+          ) : (
+            <EditInventory report={report} mutate={mutate} />
+          )}
         </CardContent>
       </Card>
     </>
