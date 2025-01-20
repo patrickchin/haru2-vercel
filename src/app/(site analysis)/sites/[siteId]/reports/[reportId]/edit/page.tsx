@@ -13,6 +13,7 @@ import { UpdateSiteReportSections } from "./edit-sections";
 import { EditReportDocument } from "./edit-details";
 import { PublishButton } from "./publish-button";
 import { DeleteReportButton } from "./delete-report";
+import { auth } from "@/lib/auth";
 
 async function EditReportHeader({ report }: { report: SiteReport }) {
   return (
@@ -44,6 +45,7 @@ export default async function Page({
 }: {
   params: Promise<{ siteId: string; reportId: string }>;
 }) {
+  const session = await auth();
   const siteId = Number((await params).siteId);
   const reportId = Number((await params).reportId);
   const [report, memberRole] = await Promise.all([
@@ -68,7 +70,7 @@ export default async function Page({
           </ErrorBox>
         ) : null}
 
-        {!report?.publishedAt ? (
+        {!report?.publishedAt || session?.user?.role === "admin" ? (
           <>
             <UploadAndManageFiles reportId={reportId} />
             <EditReportDocument reportId={reportId} />
