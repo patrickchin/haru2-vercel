@@ -36,7 +36,6 @@ export const columns: ColumnDef<SiteMaterial>[] = [
     size: 75,
     cell: ({ row }) => {
       const quantity = row.getValue("quantity") as string;
-      const units = row.original.quantityUnit;
       return <div className="text-right font-medium">{quantity}</div>;
     },
   },
@@ -54,11 +53,13 @@ export const columns: ColumnDef<SiteMaterial>[] = [
     header: () => <div className="text-right">Unit Cost</div>,
     size: 150,
     cell: ({ row }) => {
-      const amount = row.original.unitCost ?? "-";
+      const amount = row.original.unitCost
+        ? parseFloat(row.original.unitCost)
+        : 0;
       const currency = row.original.unitCostCurrency;
       return (
         <div className="text-right font-medium">
-          {amount} {currency}
+          {amount ? amount.toLocaleString() : "-"} {currency ?? "-"}
         </div>
       );
     },
@@ -68,11 +69,15 @@ export const columns: ColumnDef<SiteMaterial>[] = [
     header: () => <div className="text-right">Total Cost</div>,
     size: 150,
     cell: ({ row }) => {
-      const amount = row.original.totalCost ?? "-";
+      const quantity = row.original.quantity ?? 0;
+      const cost = row.original.unitCost
+        ? parseFloat(row.original.unitCost)
+        : 0;
       const currency = row.original.unitCostCurrency;
+      const total = quantity * cost;
       return (
         <div className="text-right font-medium">
-          {amount} {currency}
+          {total ? total.toLocaleString() : "-"} {currency ?? "-"}
         </div>
       );
     },
