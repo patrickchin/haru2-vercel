@@ -32,13 +32,26 @@ export const columns: ColumnDef<SiteMaterial>[] = [
   {
     accessorKey: "quantity",
     header: () => <div className="text-right">Quantity</div>,
-    size: 100,
+    size: 75,
     cell: ({ row }) => {
       const quantity = row.getValue("quantity") as string;
       const units = row.original.quantityUnit;
       return (
         <div className="text-right font-medium">
-          {quantity} {units}
+          {quantity}
+        </div>
+      );
+    } ,
+  },
+  {
+    accessorKey: "quantityUnit",
+    header: () => <div className="text-left">Unit</div>,
+    size: 75,
+    cell: ({ row }) => {
+      const units = row.getValue("quantityUnit") as string;
+      return (
+        <div className="text-left font-medium">
+          {units}
         </div>
       );
     } ,
