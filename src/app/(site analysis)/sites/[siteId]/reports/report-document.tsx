@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { LucideMaximize2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { MaterialsTable } from "./report-materials-table";
 
 async function ReportSiteDetails({ report }: { report?: SiteReportAll }) {
   const site =
@@ -128,9 +129,6 @@ function ReportBudget({ report }: { report?: SiteReportAll }) {
 }
 
 async function ReportActivities({ report }: { report?: SiteReportAll }) {
-  const materials: SiteMaterial[] = report
-    ? await Actions.listSiteReportUsedMaterials(report.id) ?? []
-    : [];
   const equipment: SiteEquipment[] = report
     ? await Actions.listSiteReportUsedEquipment(report.id) ?? []
     : [];
@@ -139,7 +137,7 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
     <Card className="bg-cyan-50 dark:bg-cyan-950">
       <CardHeader className="flex flex-row justify-between">
         <CardTitle className="text-lg">
-          Current Construction Activites
+          Current Construction Activities
         </CardTitle>
       </CardHeader>
 
@@ -173,31 +171,8 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
                 <DialogTitle className="text-lg font-semibold">
                   Materials Used
                 </DialogTitle>
-                <ScrollArea className="grow h-1 border rounded-md">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="first:[&_th]:pl-4">
-                        <TableHead className="w-1/4">Name</TableHead>
-                        <TableHead>Quantity</TableHead>
-                        <TableHead>Quantity Unit</TableHead>
-                        <TableHead>Cost</TableHead>
-                        <TableHead>Cost Units</TableHead>
-                        <TableHead>Condition</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {materials.map((material, i) => (
-                        <TableRow key={i} className="first:[&_td]:pl-4">
-                          <TableCell>{material.name}</TableCell>
-                          <TableCell>{material.quantity}</TableCell>
-                          <TableCell>{material.quantityUnit}</TableCell>
-                          <TableCell>{material.cost}</TableCell>
-                          <TableCell>{material.costUnits}</TableCell>
-                          <TableCell>{material.condition}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                <ScrollArea className="grow h-1">
+                  <MaterialsTable reportId={report?.id} />
                 </ScrollArea>
               </DialogContent>
             </Dialog>
