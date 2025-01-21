@@ -4,6 +4,8 @@ export const demoSiteIds: number[] = [21];
 
 export const maxSiteInvitations = 5;
 
+export const supportedCountries = ["NG", "SL", "GH", "KE", "ZM"];
+
 export function getRoleName(role: SiteMemberRole) {
   if (!role) return role;
   const roleNames: Record<NonNullable<SiteMemberRole>, string> = {

@@ -29,6 +29,7 @@ import {
 import { InfoBox } from "@/components/info-box";
 import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
+import { supportedCountries } from "@/lib/constants";
 
 function CountrySelectForm({ form }: { form: any }) {
   const displayNames = useMemo(() => {
@@ -49,7 +50,7 @@ function CountrySelectForm({ form }: { form: any }) {
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {["NG", "SL", "GH", "KE"].map((c) => {
+              {supportedCountries.map((c) => {
                 return (
                   <SelectItem value={c} key={c}>
                     {displayNames.of(c)} ({c})
