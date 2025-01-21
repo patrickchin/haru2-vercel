@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createInsertSchema } from "drizzle-zod";
-import { SiteReportAll } from "@/lib/types/site";
+import { SiteDetails, SiteReportAll } from "@/lib/types/site";
 import * as Actions from "@/lib/actions";
 import * as Schemas from "@/db/schema";
 
@@ -180,7 +180,13 @@ function EditEquipment({ report }: { report: SiteReportAll }) {
   );
 }
 
-function EditMaterials({ report }: { report: SiteReportAll }) {
+function EditMaterials({
+  site,
+  report,
+}: {
+  site: SiteDetails;
+  report: SiteReportAll;
+}) {
   return (
     <Dialog>
       <div className="flex gap-4 items-center p-4 rounded border bg-background">
@@ -200,7 +206,7 @@ function EditMaterials({ report }: { report: SiteReportAll }) {
           Materials Used
         </DialogTitle>
 
-        <EditMaterialsForm reportId={report.id} />
+        <EditMaterialsForm site={site} reportId={report.id} />
       </DialogContent>
     </Dialog>
   );
@@ -521,11 +527,9 @@ function EditInventory({
 export function EditReportDocument({
   siteId,
   reportId,
-  sections,
 }: {
-  siteId?: number;
+  siteId: number;
   reportId: number;
-  sections?: string[];
 }) {
   const {
     data: report,
@@ -535,20 +539,24 @@ export function EditReportDocument({
     `/api/reports/${reportId}/details`, // api route doesn't really exist
     async () => Actions.getSiteReportDetails(reportId),
   );
+  const { data: site, isLoading: siteLoading } = useSWR(
+    `/api/site/${siteId}/details`, // api route doesn't really exist
+    async () => Actions.getSiteDetails(siteId),
+  );
 
   return (
     <>
       <Card className="bg-cyan-50 dark:bg-cyan-950">
         <CardHeader className="flex flex-row justify-between">
           <CardTitle className="text-lg">
-            Current Construction Activites
+            Current Construction Activities
           </CardTitle>
         </CardHeader>
 
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
           {/* <EditReportEstimates report={report} mutate={mutate} /> */}
           {/* <EditReportDetails report={report} mutate={mutate} /> */}
-          {isLoading ? (
+          {isLoading || siteLoading ? (
             <div className="flex items-center justify-center grow col-span-2">
               <LucideLoaderCircle className="animate-spin" />
             </div>
@@ -556,11 +564,15 @@ export function EditReportDocument({
             <div className="flex items-center justify-center grow col-span-2">
               Error loading report
             </div>
+          ) : !site ? (
+            <div className="flex items-center justify-center grow col-span-2">
+              Error loading site
+            </div>
           ) : (
             <>
               <div className="flex flex-col gap-4">
                 <EditSiteActivities report={report} mutate={mutate} />
-                <EditMaterials report={report} />
+                <EditMaterials site={site} report={report} />
                 <EditEquipment report={report} />
               </div>
               <EditSitePersonel report={report} mutate={mutate} />

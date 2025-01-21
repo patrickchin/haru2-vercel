@@ -28,10 +28,14 @@ import {
 } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { LucideLoaderCircle, LucideX } from "lucide-react";
+import { SiteDetails } from "@/lib/types";
+import { getCountryCurrency } from "@/lib/constants";
 
 export function EditMaterialsForm({
+  site,
   reportId,
 }: {
+  site: SiteDetails;
   reportId: number; // might be nicer to pass in materialsListId instead
 }) {
   const {
@@ -79,6 +83,8 @@ export function EditMaterialsForm({
     );
   }
 
+  const defaultCurrency = getCountryCurrency(site.countryCode);
+
   return (
     <Form {...form}>
       <form
@@ -97,9 +103,9 @@ export function EditMaterialsForm({
           },
         )}
       >
-        <ScrollArea className="grow h-1 border rounded-md">
+        <ScrollArea className="grow h-1 border rounded-md relative">
           <Table>
-            <TableHeader>
+            <TableHeader className="sticky top-0">
               <TableRow>
                 <TableHead className="w-3/12">Name</TableHead>
                 <TableHead className="w-1/12">Quantity</TableHead>
@@ -227,7 +233,7 @@ export function EditMaterialsForm({
                               defaultValue={field.value ?? ""}
                             >
                               <SelectTrigger className="rounded-l-none border-l-0">
-                                <SelectValue defaultValue="USD" />
+                                <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectItem value="USD">USD</SelectItem>
@@ -258,7 +264,11 @@ export function EditMaterialsForm({
                     />
                   </TableCell>
                   <TableCell>
-                    <Button type="button" size="icon" onClick={() => remove(index)}>
+                    <Button
+                      type="button"
+                      size="icon"
+                      onClick={() => remove(index)}
+                    >
                       <LucideX />
                     </Button>
                   </TableCell>
@@ -277,9 +287,9 @@ export function EditMaterialsForm({
                 quantity: null,
                 quantityUnit: null,
                 unitCost: null,
-                unitCostCurrency: null,
+                unitCostCurrency: defaultCurrency,
                 totalCost: null,
-                totalCostCurrency: null,
+                totalCostCurrency: defaultCurrency,
                 condition: null,
               })
             }
