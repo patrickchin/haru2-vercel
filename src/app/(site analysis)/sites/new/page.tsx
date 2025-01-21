@@ -110,7 +110,7 @@ function NewSiteForm() {
           name="type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Type of Construciton Project (Optional)</FormLabel>
+              <FormLabel>Type of Construction Project (Optional)</FormLabel>
               <FormControl>
                 <Input
                   onChange={field.onChange}
