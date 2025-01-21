@@ -16,6 +16,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -171,6 +172,9 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
                 <DialogTitle className="text-lg font-semibold">
                   Materials Used
                 </DialogTitle>
+                <DialogDescription className="sr-only">
+                  Materials Used List
+                </DialogDescription>
                 <ScrollArea className="grow h-1">
                   <MaterialsTable reportId={report?.id} />
                 </ScrollArea>

@@ -73,7 +73,7 @@ export default async function Page({
         {!report?.publishedAt || session?.user?.role === "admin" ? (
           <>
             <UploadAndManageFiles reportId={reportId} />
-            <EditReportDocument reportId={reportId} />
+            <EditReportDocument siteId={siteId} reportId={reportId} />
             <UpdateSiteReportSections siteId={siteId} reportId={reportId} />
           </>
         ) : (
