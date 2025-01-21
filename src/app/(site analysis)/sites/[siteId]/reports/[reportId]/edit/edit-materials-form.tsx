@@ -27,7 +27,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { LucideLoaderCircle } from "lucide-react";
+import { LucideLoaderCircle, LucideX } from "lucide-react";
 
 export function EditMaterialsForm({
   reportId,
@@ -101,13 +101,13 @@ export function EditMaterialsForm({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-1/4">Name</TableHead>
+                <TableHead className="w-3/12">Name</TableHead>
                 <TableHead className="w-1/12">Quantity</TableHead>
-                <TableHead className="w-1/12">Quantity Unit</TableHead>
-                <TableHead className="w-1/12">Cost</TableHead>
-                <TableHead className="w-1/12">Cost Units</TableHead>
-                <TableHead className="w-1/12">Condition</TableHead>
-                <TableHead className="w-1/12">Actions</TableHead>
+                <TableHead className="w-1/12">Unit</TableHead>
+                <TableHead className="w-2/12">Unit Cost</TableHead>
+                <TableHead className="w-2/12">Total Cost</TableHead>
+                <TableHead className="w-2/12">Condition</TableHead>
+                <TableHead className="w-px"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -154,49 +154,96 @@ export function EditMaterialsForm({
                     />
                   </TableCell>
                   <TableCell>
-                    <FormField
-                      name={`materials.${index}.cost`}
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem>
-                          <Input
-                            type="number"
-                            step="0.01"
-                            {...field}
-                            value={field.value ?? ""}
-                          />
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <div className="flex">
+                      <FormField
+                        name={`materials.${index}.unitCost`}
+                        control={form.control}
+                        render={({ field }) => (
+                          <FormItem className="flex-grow">
+                            <Input
+                              type="number"
+                              step="0.01"
+                              {...field}
+                              value={field.value ?? ""}
+                              className="rounded-r-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        name={`materials.${index}.unitCostCurrency`}
+                        control={form.control}
+                        render={({ field }) => (
+                          <FormItem>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value ?? ""}
+                            >
+                              <SelectTrigger className="rounded-l-none border-l-0">
+                                <SelectValue defaultValue="USD" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="USD">USD</SelectItem>
+                                <SelectItem value="EUR">EUR</SelectItem>
+                                <SelectItem value="GBP">GBP</SelectItem>
+                                <SelectItem value="CNY">CNY</SelectItem>
+                                <SelectItem value="SLL">SLL</SelectItem>
+                                <SelectItem value="NGN">NGN</SelectItem>
+                                <SelectItem value="KES">KES</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </TableCell>
                   <TableCell>
-                    <FormField
-                      name={`materials.${index}.costUnits`}
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value ?? ""}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select currency" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="USD">USD</SelectItem>
-                              <SelectItem value="EUR">EUR</SelectItem>
-                              <SelectItem value="GBP">GBP</SelectItem>
-                              <SelectItem value="CNY">CNY</SelectItem>
-                              <SelectItem value="SLL">SLL</SelectItem>
-                              <SelectItem value="NGN">NGN</SelectItem>
-                              <SelectItem value="KES">KES</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <div className="flex">
+                      <FormField
+                        name={`materials.${index}.totalCost`}
+                        control={form.control}
+                        render={({ field }) => (
+                          <FormItem className="flex-grow">
+                            <Input
+                              type="number"
+                              step="0.01"
+                              {...field}
+                              value={field.value ?? ""}
+                              className="rounded-r-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        name={`materials.${index}.totalCostCurrency`}
+                        control={form.control}
+                        render={({ field }) => (
+                          <FormItem>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value ?? ""}
+                            >
+                              <SelectTrigger className="rounded-l-none border-l-0">
+                                <SelectValue defaultValue="USD" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="USD">USD</SelectItem>
+                                <SelectItem value="EUR">EUR</SelectItem>
+                                <SelectItem value="GBP">GBP</SelectItem>
+                                <SelectItem value="CNY">CNY</SelectItem>
+                                <SelectItem value="SLL">SLL</SelectItem>
+                                <SelectItem value="NGN">NGN</SelectItem>
+                                <SelectItem value="KES">KES</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </TableCell>
                   <TableCell>
                     <FormField
@@ -211,8 +258,8 @@ export function EditMaterialsForm({
                     />
                   </TableCell>
                   <TableCell>
-                    <Button type="button" onClick={() => remove(index)}>
-                      Remove
+                    <Button type="button" size="icon" onClick={() => remove(index)}>
+                      <LucideX />
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -229,8 +276,10 @@ export function EditMaterialsForm({
                 name: null,
                 quantity: null,
                 quantityUnit: null,
-                cost: null,
-                costUnits: null,
+                unitCost: null,
+                unitCostCurrency: null,
+                totalCost: null,
+                totalCostCurrency: null,
                 condition: null,
               })
             }
