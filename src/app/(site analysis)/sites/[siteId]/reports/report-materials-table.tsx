@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import * as Actions from "@/lib/actions";
-import { SiteMaterial } from "@/lib/types";
+import { SiteMaterial, SiteReport } from "@/lib/types";
 import useSWR from "swr";
 
 import {
@@ -21,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 export const columns: ColumnDef<SiteMaterial>[] = [
   {
@@ -36,12 +37,8 @@ export const columns: ColumnDef<SiteMaterial>[] = [
     cell: ({ row }) => {
       const quantity = row.getValue("quantity") as string;
       const units = row.original.quantityUnit;
-      return (
-        <div className="text-right font-medium">
-          {quantity}
-        </div>
-      );
-    } ,
+      return <div className="text-right font-medium">{quantity}</div>;
+    },
   },
   {
     accessorKey: "quantityUnit",
@@ -49,12 +46,8 @@ export const columns: ColumnDef<SiteMaterial>[] = [
     size: 75,
     cell: ({ row }) => {
       const units = row.getValue("quantityUnit") as string;
-      return (
-        <div className="text-left font-medium">
-          {units}
-        </div>
-      );
-    } ,
+      return <div className="text-left font-medium">{units}</div>;
+    },
   },
   {
     accessorKey: "unitCost",
@@ -75,7 +68,7 @@ export const columns: ColumnDef<SiteMaterial>[] = [
     header: () => <div className="text-right">Total Cost</div>,
     size: 150,
     cell: ({ row }) => {
-      const amount = row.original.totalCost ?? "-"
+      const amount = row.original.totalCost ?? "-";
       const currency = row.original.unitCostCurrency;
       return (
         <div className="text-right font-medium">
@@ -96,9 +89,11 @@ export const columns: ColumnDef<SiteMaterial>[] = [
   },
 ];
 
-export function MaterialsTable({ reportId }: { reportId?: number }) {
-  const { data: materials } = useSWR(`/api/report/${reportId}/materials`, () =>
-    reportId ? Actions.listSiteReportUsedMaterials(reportId) : undefined,
+export function MaterialsTable({ report }: { report?: SiteReport }) {
+  const { data: materials } = useSWR(
+    `/api/report/${report?.id}/materials`,
+    () =>
+      report?.id ? Actions.listSiteReportUsedMaterials(report.id) : undefined,
   );
 
   const table = useReactTable({
@@ -110,7 +105,7 @@ export function MaterialsTable({ reportId }: { reportId?: number }) {
 
   return (
     <div className="w-full pl-1">
-      <div className="flex items-center py-4">
+      <div className="flex items-center justify-between py-4">
         <Input
           placeholder="Filter material names..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -119,6 +114,32 @@ export function MaterialsTable({ reportId }: { reportId?: number }) {
           }
           className="max-w-sm"
         />
+        <Button
+          variant="default"
+          onClick={() => {
+            if (!materials) return;
+            if (!report) return;
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += Object.keys(materials[0]).join(",");
+            csvContent += "\n";
+            csvContent += materials
+              .map((e) => Object.values(e).join(","))
+              .join("\n");
+
+            var encodedUri = encodeURI(csvContent);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute(
+              "download",
+              `harpapro-report-#${report.id}-${report.createdAt?.toDateString()}-materials.csv`,
+            );
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }}
+        >
+          Export CSV
+        </Button>
       </div>
       <div className="rounded-md border">
         <Table>

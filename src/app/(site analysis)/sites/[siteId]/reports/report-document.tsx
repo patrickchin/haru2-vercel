@@ -168,15 +168,15 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
                   Open <LucideMaximize2 />
                 </Button>
               </DialogTrigger>
-              <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] w-[50rem] max-w-full flex flex-col p-4 gap-4">
+              <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] w-[55rem] max-w-full flex flex-col p-4 gap-4">
                 <DialogTitle className="text-lg font-semibold">
                   Materials Used
                 </DialogTitle>
                 <DialogDescription className="sr-only">
                   Materials Used List
                 </DialogDescription>
-                <ScrollArea className="grow h-1">
-                  <MaterialsTable reportId={report?.id} />
+                <ScrollArea className="grow h-1 pr-3">
+                  <MaterialsTable report={report} />
                 </ScrollArea>
               </DialogContent>
             </Dialog>
@@ -190,7 +190,7 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
                   Open <LucideMaximize2 />
                 </Button>
               </DialogTrigger>
-              <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] w-[50rem] max-w-full flex flex-col p-4 gap-4">
+              <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] w-[55rem] max-w-full flex flex-col p-4 gap-4">
                 <DialogTitle className="text-lg font-semibold">
                   Equipment Used
                 </DialogTitle>
