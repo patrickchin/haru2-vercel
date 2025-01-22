@@ -1,10 +1,9 @@
 "use client";
 
-import { notFound } from "next/navigation";
 import useSWR, { KeyedMutator } from "swr";
 import { cn } from "@/lib/utils";
-import { number, z } from "zod";
-import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createInsertSchema } from "drizzle-zod";
 import { SiteDetails, SiteReportAll } from "@/lib/types/site";
@@ -260,6 +259,21 @@ function EditSitePersonnel({
     },
   });
 
+  const numberOfWorkers = useWatch({
+    control: form.control,
+    name: "numberOfWorkers",
+  });
+  const workersHours = useWatch({
+    control: form.control,
+    name: "workersHours",
+  });
+  const workersCost = useWatch({ control: form.control, name: "workersCost" });
+
+  const totalCost =
+    (numberOfWorkers ?? 0) *
+    (workersHours ? parseFloat(workersHours) : 0) *
+    (workersCost ? parseFloat(workersCost) : 0);
+
   return (
     <Form {...form}>
       <form
@@ -403,6 +417,10 @@ function EditSitePersonnel({
                 )}
               />
             </div>
+          </div>
+          <div className="text-sm">
+            Total Cost: {totalCost.toLocaleString()}{" "}
+            {form.getValues("workersCostCurrency")}
           </div>
         </div>
 

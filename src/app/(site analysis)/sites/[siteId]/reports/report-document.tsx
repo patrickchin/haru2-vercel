@@ -132,7 +132,7 @@ function ReportBudget({ report }: { report?: SiteReportAll }) {
 
 async function ReportActivities({ report }: { report?: SiteReportAll }) {
   const equipment: SiteEquipment[] = report
-    ? await Actions.listSiteReportUsedEquipment(report.id) ?? []
+    ? ((await Actions.listSiteReportUsedEquipment(report.id)) ?? [])
     : [];
 
   return (
@@ -225,20 +225,46 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableHead>Workers</TableHead>
-                    <TableCell className="whitespace-pre-line">
-                      {report
-                        ? `${report.numberOfWorkers} workers\n` +
-                          `${report.workersHours} hours per day\n` +
-                          `${report.workersCost} ${report.workersCostCurrency} per hour\n` +
-                          `${((report.numberOfWorkers ?? 0) * parseFloat(report.workersHours ?? "0") * parseFloat(report.workersCost ?? "0")).toLocaleString()} ${report.workersCostCurrency} total cost`
-                        : "--"}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
                     <TableHead>Visitors</TableHead>
                     <TableCell className="whitespace-pre-line">
                       {report?.visitors ?? "--"}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableHead rowSpan={5}>Workers</TableHead>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="text-right">
+                      {report?.numberOfWorkers ?? "--"}
+                    </TableCell>
+                    <TableCell>workers</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="text-right">
+                      {report?.workersHours ?? "--"}
+                    </TableCell>
+                    <TableCell>total hours</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="text-right">
+                      {report?.workersCost ?? "--"}
+                    </TableCell>
+                    <TableCell>
+                      {report?.workersCostCurrency ?? "--"} per hour
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="text-right">
+                      {report
+                        ? (
+                            (report.numberOfWorkers ?? 0) *
+                            parseFloat(report.workersHours ?? "0") *
+                            parseFloat(report.workersCost ?? "0")
+                          ).toLocaleString()
+                        : "--"}
+                    </TableCell>
+                    <TableCell className="whitespace-pre-line">
+                      {report?.workersCostCurrency ?? "--"} total cost
                     </TableCell>
                   </TableRow>
                 </TableBody>
