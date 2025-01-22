@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { zSiteNewBoth, zSiteNewBothType } from "@/lib/forms";
@@ -19,55 +18,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DefaultLayout } from "@/components/page-layouts";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { InfoBox } from "@/components/info-box";
 import { Card, CardContent } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
-import { supportedCountries } from "@/lib/constants";
-
-function CountrySelectForm({ form }: { form: any }) {
-  const displayNames = useMemo(() => {
-    return new Intl.DisplayNames(["en"], { type: "region" });
-  }, []);
-
-  return (
-    <FormField
-      control={form.control}
-      name="countryCode"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Country</FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
-            <FormControl>
-              <SelectTrigger>
-                <SelectValue placeholder="Select the country of your site" />
-              </SelectTrigger>
-            </FormControl>
-            <SelectContent>
-              {supportedCountries.map((c) => {
-                return (
-                  <SelectItem value={c} key={c}>
-                    {displayNames.of(c)} ({c})
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
-  );
-}
+import { SelectCountryFormField } from "@/components/select-country-form-field";
 
 function NewSiteForm() {
-  const router = useRouter();
   const form = useForm<zSiteNewBothType>({
     resolver: zodResolver(zSiteNewBoth),
   });
@@ -127,7 +82,7 @@ function NewSiteForm() {
           control={form.control}
           name="address"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="flex flex-col justify-begin">
               <FormLabel>Site Address (Optional)</FormLabel>
               <FormControl>
                 <Input
@@ -141,25 +96,13 @@ function NewSiteForm() {
           )}
         />
 
-        {/* <FormField
+        <FormField
           control={form.control}
-          name="postcode"
+          name="countryCode"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Site Postcode</FormLabel>
-              <FormControl>
-                <Input
-                  onChange={field.onChange}
-                  name={field.name}
-                  placeholder="123 123"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+            <SelectCountryFormField form={form} field={field} />
           )}
-        /> */}
-
-        <CountrySelectForm form={form} />
+        />
 
         <div className="sm:col-span-2 space-y-4">
           <FormField
