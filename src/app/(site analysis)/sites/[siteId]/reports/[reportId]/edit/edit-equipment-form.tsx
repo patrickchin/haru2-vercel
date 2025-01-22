@@ -7,7 +7,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { equipment1 } from "@/db/schema";
 import { LucideLoaderCircle, LucideX } from "lucide-react";
 import { SiteDetails } from "@/lib/types";
-import { getCountryCurrency } from "@/lib/constants";
+import { currencies, getCountryCurrency } from "@/lib/constants";
 import * as Actions from "@/lib/actions";
 
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
@@ -110,7 +110,9 @@ export function EditEquipmentForm({
                 <TableHead className="text-center w-2/12">Quantity</TableHead>
                 <TableHead className="text-center w-2/12">Cost</TableHead>
                 <TableHead className="text-center w-2/12">Ownership</TableHead>
-                <TableHead className="text-center w-2/12">Operation Time (Hours)</TableHead>
+                <TableHead className="text-center w-2/12">
+                  Operation Time (Hours)
+                </TableHead>
                 <TableHead className="text-center w-1/12"></TableHead>
               </TableRow>
             </TableHeader>
@@ -175,13 +177,11 @@ export function EditEquipmentForm({
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="USD">USD</SelectItem>
-                              <SelectItem value="EUR">EUR</SelectItem>
-                              <SelectItem value="GBP">GBP</SelectItem>
-                              <SelectItem value="CNY">CNY</SelectItem>
-                              <SelectItem value="SLL">SLL</SelectItem>
-                              <SelectItem value="NGN">NGN</SelectItem>
-                              <SelectItem value="KES">KES</SelectItem>
+                              {currencies.map((currency) => (
+                                <SelectItem value={currency} key={currency}>
+                                  {currency}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -204,7 +204,9 @@ export function EditEquipmentForm({
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="rented">Rented</SelectItem>
-                              <SelectItem value="purchased">Purchased</SelectItem>
+                              <SelectItem value="purchased">
+                                Purchased
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />

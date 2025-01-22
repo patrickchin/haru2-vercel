@@ -6,6 +6,8 @@ export const maxSiteInvitations = 5;
 
 export const supportedCountries = ["NG", "SL", "GH", "KE", "ZM"];
 
+export const currencies = ["USD", "EUR", "GBP", "CNY", "SLL", "NGN", "KES", "ZMW", "GHS"];
+
 export const getCountryCurrency = (countryCode: string | null) => {
   if (!countryCode) return;
   const currencyMap: Record<string, string> = {

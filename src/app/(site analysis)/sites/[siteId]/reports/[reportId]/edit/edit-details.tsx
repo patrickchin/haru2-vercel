@@ -3,7 +3,7 @@
 import { notFound } from "next/navigation";
 import useSWR, { KeyedMutator } from "swr";
 import { cn } from "@/lib/utils";
-import { z } from "zod";
+import { number, z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createInsertSchema } from "drizzle-zod";
@@ -14,7 +14,7 @@ import * as Schemas from "@/db/schema";
 import { LucideLoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormField, FormItem } from "@/components/ui/form";
+import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { FormControl, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,8 +25,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { EditMaterialsForm } from "./edit-materials-form";
 import { EditEquipmentForm } from "./edit-equipment-form";
+import { currencies } from "@/lib/constants";
 
 const reportFormSchema = createInsertSchema(Schemas.siteReportDetails1);
 type ReportFormType = z.infer<typeof reportFormSchema>;
@@ -225,19 +233,30 @@ function EditSitePersonnel({
   report: SiteReportAll;
   mutate: KeyedMutator<SiteReportAll | undefined>;
 }) {
-  const schema = reportFormSchema.pick({
-    contractors: true,
-    engineers: true,
-    workers: true,
-    visitors: true,
-  });
-  const form = useForm<z.infer<typeof schema>>({
+  const schema = reportFormSchema
+    .pick({
+      contractors: true,
+      engineers: true,
+      numberOfWorkers: true,
+      workersHours: true,
+      workersCost: true,
+      workersCostCurrency: true,
+      visitors: true,
+    })
+    .extend({
+      numberOfWorkers: z.coerce.number().nullable(),
+    });
+  type SchemaType = z.infer<typeof schema>;
+  const form = useForm<SchemaType>({
     resolver: zodResolver(schema),
     defaultValues: {
-      contractors: report.contractors || "",
-      engineers: report.engineers || "",
-      workers: report.workers || "",
-      visitors: report.visitors || "",
+      contractors: report.contractors,
+      engineers: report.engineers,
+      numberOfWorkers: report.numberOfWorkers,
+      workersHours: report.workersHours,
+      workersCost: report.workersCost,
+      workersCostCurrency: report.workersCostCurrency,
+      visitors: report.visitors,
     },
   });
 
@@ -245,7 +264,7 @@ function EditSitePersonnel({
     <Form {...form}>
       <form
         className="flex flex-col gap-4 rounded border p-4 bg-background"
-        onSubmit={form.handleSubmit(async (data: ReportFormType) => {
+        onSubmit={form.handleSubmit(async (data: SchemaType) => {
           const newReport = await mutate(
             Actions.updateSiteReportDetails(report.id, data),
             { revalidate: false },
@@ -253,7 +272,7 @@ function EditSitePersonnel({
           form.reset(newReport);
         })}
       >
-        <h3 className="font-semibold">Site Personel</h3>
+        <h3 className="font-semibold">Site Personnel</h3>
 
         <div className="flex flex-col gap-3">
           <FormField
@@ -295,24 +314,6 @@ function EditSitePersonnel({
 
           <FormField
             control={form.control}
-            name="workers"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Workers</FormLabel>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    value={field.value ?? undefined}
-                    className="min-h-10 h-10"
-                    placeholder="eg. John Doe"
-                    autoResize={true}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
             name="visitors"
             render={({ field }) => (
               <FormItem>
@@ -329,6 +330,80 @@ function EditSitePersonnel({
               </FormItem>
             )}
           />
+
+          <FormLabel>Workers</FormLabel>
+          <div className="flex gap-2 items-end">
+            <FormField
+              control={form.control}
+              name="numberOfWorkers"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-normal">Number</FormLabel>
+                  <Input type="number" {...field} value={field.value ?? ""} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="workersHours"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-normal">Total Hours</FormLabel>
+                  <Input
+                    type="number"
+                    step="0.5"
+                    {...field}
+                    value={field.value ?? ""}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex items-end">
+              <FormField
+                control={form.control}
+                name="workersCost"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-normal">Cost Per Hour</FormLabel>
+
+                    <Input
+                      type="number"
+                      step="0.01"
+                      {...field}
+                      value={field.value ?? ""}
+                      className="rounded-r-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="workersCostCurrency"
+                render={({ field }) => (
+                  <FormItem>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value ?? ""}
+                    >
+                      <SelectTrigger className="rounded-l-none border-l-0">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {currencies.map((currency) => (
+                          <SelectItem value={currency} key={currency}>
+                            {currency}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
         </div>
 
         <div className="flex gap-2 justify-end">
