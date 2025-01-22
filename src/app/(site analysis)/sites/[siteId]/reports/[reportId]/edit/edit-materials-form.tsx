@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import useSWR from "swr";
 import { z } from "zod";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { createInsertSchema } from "drizzle-zod";
 import { materials1 } from "@/db/schema";
 import * as Actions from "@/lib/actions";
@@ -42,15 +42,20 @@ function MaterialTableRow({
   form: any;
   remove: (index: number) => void;
 }) {
-  const totalCost = useMemo(() => {
-    return (field.quantity ?? 0) * parseFloat(field.unitCost ?? "0");
-  }, [field]);
+  const quantity = useWatch({
+    control: form.control,
+    name: `materials.${index}.quantity`,
+  });
+  const unitCost = useWatch({
+    control: form.control,
+    name: `materials.${index}.unitCost`,
+  });
+  const unitCostCurrency = useWatch({
+    control: form.control,
+    name: `materials.${index}.unitCostCurrency`,
+  });
 
-  const [totalCostCurrency, setTotalCostCurrency] = useState(
-    field.unitCostCurrency,
-  );
-  const [quantity, setQuantity] = useState(field.quantity);
-  const [unitCost, setUnitCost] = useState(field.unitCost);
+  const totalCost = (quantity ?? 0) * (unitCost ? parseFloat(unitCost) : 0);
 
   return (
     <TableRow key={field.id}>
@@ -75,10 +80,6 @@ function MaterialTableRow({
               <Input
                 type="number"
                 {...field}
-                onChange={(event) => {
-                  field.onChange(event);
-                  setQuantity(event.target.value);
-                }}
                 value={field.value ?? ""}
               />
               <FormMessage />
@@ -108,10 +109,6 @@ function MaterialTableRow({
                 type="number"
                 step="0.01"
                 {...field}
-                onChange={(event) => {
-                  field.onChange(event);
-                  setUnitCost(event.target.value);
-                }}
                 value={field.value ?? ""}
                 className="rounded-r-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
@@ -125,10 +122,7 @@ function MaterialTableRow({
           render={({ field }) => (
             <FormItem>
               <Select
-                onValueChange={(v) => {
-                  field.onChange(v);
-                  setTotalCostCurrency(v);
-                }}
+                onValueChange={field.onChange}
                 defaultValue={field.value ?? ""}
               >
                 <SelectTrigger className="rounded-l-none border-l-0">
@@ -151,7 +145,7 @@ function MaterialTableRow({
       </TableCell>
       <TableCell>
         <div className="text-right whitespace-nowrap">
-          {(quantity * unitCost).toLocaleString()} {totalCostCurrency}
+          {totalCost.toLocaleString()} {unitCostCurrency}
         </div>
       </TableCell>
       <TableCell>
