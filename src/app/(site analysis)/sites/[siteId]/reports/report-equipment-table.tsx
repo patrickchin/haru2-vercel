@@ -69,7 +69,9 @@ export const columns: ColumnDef<SiteEquipment>[] = [
     size: 150,
     cell: ({ row }) => {
       return (
-        <div className="text-left font-medium">{row.getValue("ownership")}</div>
+        <div className="text-left font-medium capitalize">
+          {row.getValue("ownership")}
+        </div>
       );
     },
   },
