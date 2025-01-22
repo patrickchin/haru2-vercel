@@ -290,6 +290,10 @@ export const equipment1 = pgTable("equipments1", {
   quantity: integer("quantity"),
   cost: numeric("cost"),
   costUnits: varchar("costUnits"),
+
+  condition: varchar("condition"),
+  ownership: varchar("ownership"),
+  operationTimeHours: numeric("operationTimeHours"),
 });
 
 export const siteReportDetails1 = pgTable("siteReportDetails1", {

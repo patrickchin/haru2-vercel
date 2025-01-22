@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import * as Actions from "@/lib/actions";
-import { SiteEquipment, SiteReport } from "@/lib/types";
+import { SiteReport, SiteEquipment } from "@/lib/types";
 import useSWR from "swr";
 
 import {
@@ -41,7 +41,7 @@ export const columns: ColumnDef<SiteEquipment>[] = [
   },
   {
     accessorKey: "cost",
-    header: () => <div className="text-right">Cost</div>,
+    header: () => <div className="text-right">Unit Cost</div>,
     size: 150,
     cell: ({ row }) => {
       const amount = row.original.cost ? parseFloat(row.original.cost) : 0;
@@ -49,6 +49,38 @@ export const columns: ColumnDef<SiteEquipment>[] = [
       return (
         <div className="text-right font-medium">
           {amount ? amount.toLocaleString() : "-"} {currency ?? "-"}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "condition",
+    header: () => <div className="text-left">Condition</div>,
+    size: 150,
+    cell: ({ row }) => {
+      return (
+        <div className="text-left font-medium">{row.getValue("condition")}</div>
+      );
+    },
+  },
+  {
+    accessorKey: "ownership",
+    header: () => <div className="text-left">Ownership</div>,
+    size: 150,
+    cell: ({ row }) => {
+      return (
+        <div className="text-left font-medium">{row.getValue("ownership")}</div>
+      );
+    },
+  },
+  {
+    accessorKey: "operationTimeHours",
+    header: () => <div className="text-center">Operation Time (Hours)</div>,
+    size: 150,
+    cell: ({ row }) => {
+      return (
+        <div className="text-right font-medium">
+          {row.getValue("operationTimeHours")}
         </div>
       );
     },
@@ -116,6 +148,7 @@ export function EquipmentTable({ report }: { report?: SiteReport }) {
                   return (
                     <TableHead
                       key={header.id}
+                      className="text-center"
                       style={{ width: `${header.getSize()}px` }}
                     >
                       {header.isPlaceholder

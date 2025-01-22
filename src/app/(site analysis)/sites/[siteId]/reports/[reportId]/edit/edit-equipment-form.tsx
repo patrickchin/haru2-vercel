@@ -106,10 +106,12 @@ export function EditEquipmentForm({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-1/4">Name</TableHead>
-                <TableHead className="w-1/12">Quantity</TableHead>
-                <TableHead className="w-1/12">Cost</TableHead>
-                <TableHead className="w-1/12"></TableHead>
+                <TableHead className="text-center w-4/12">Name</TableHead>
+                <TableHead className="text-center w-2/12">Quantity</TableHead>
+                <TableHead className="text-center w-2/12">Cost</TableHead>
+                <TableHead className="text-center w-2/12">Ownership</TableHead>
+                <TableHead className="text-center w-2/12">Operation Time (Hours)</TableHead>
+                <TableHead className="text-center w-1/12"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -188,6 +190,46 @@ export function EditEquipmentForm({
                     />
                   </TableCell>
                   <TableCell>
+                    <FormField
+                      name={`equipment.${index}.ownership`}
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value ?? ""}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="rented">Rented</SelectItem>
+                              <SelectItem value="purchased">Purchased</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <FormField
+                      name={`equipment.${index}.operationTimeHours`}
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <Input
+                            type="number"
+                            step={0.5}
+                            {...field}
+                            value={field.value ?? ""}
+                          />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell>
                     <Button
                       variant="outline"
                       size="icon"
@@ -212,6 +254,8 @@ export function EditEquipmentForm({
                 quantity: 1,
                 cost: null,
                 costUnits: defaultCurrency,
+                ownership: null,
+                operationTimeHours: null,
               })
             }
           >
