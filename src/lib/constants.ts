@@ -4,21 +4,33 @@ export const demoSiteIds: number[] = [21];
 
 export const maxSiteInvitations = 5;
 
-export const supportedCountries = ["NG", "SL", "GH", "KE", "ZM"];
+export const supportedCountries = ["GH", "KE", "NG", "SL", "ZM"];
 
-export const currencies = ["USD", "EUR", "GBP", "CNY", "SLL", "NGN", "KES", "ZMW", "GHS"];
+export const currencies = [
+  "CNY",
+  "EUR",
+  "GBP",
+  "GHS",
+  "KES",
+  "NGN",
+  "SLL",
+  "USD",
+  "ZMW",
+];
 
-export const getCountryCurrency = (countryCode: string | null) => {
-  if (!countryCode) return;
-  const currencyMap: Record<string, string> = {
-    NG: "NGN",
-    SL: "SLL",
-    GH: "GHS",
-    KE: "KES",
-    ZM: "ZMW",
-  };
-  if (countryCode in currencyMap) {
-    return currencyMap[countryCode];
+export function getCountryCurrency(countryCode: string | null) {
+  if (!countryCode) return null;
+  try {
+    // Create a locale using the country code
+    const locale = new Intl.Locale("en-" + countryCode);
+    const currency = new Intl.NumberFormat(locale.baseName, {
+      style: "currency",
+      currencyDisplay: "name",
+    }).resolvedOptions().currency;
+    return currency;
+  } catch (error) {
+    console.error("Error retrieving currency:", error);
+    return null;
   }
 }
 
