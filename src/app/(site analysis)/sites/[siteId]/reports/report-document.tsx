@@ -214,19 +214,19 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
                 <TableBody>
                   <TableRow>
                     <TableHead>Contractor</TableHead>
-                    <TableCell className="whitespace-pre-line">
+                    <TableCell className="whitespace-pre-line" colSpan={2}>
                       {report?.contractors ?? "--"}
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableHead>Engineers</TableHead>
-                    <TableCell className="whitespace-pre-line">
+                    <TableCell className="whitespace-pre-line" colSpan={2}>
                       {report?.engineers ?? "--"}
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableHead>Visitors</TableHead>
-                    <TableCell className="whitespace-pre-line">
+                    <TableCell className="whitespace-pre-line" colSpan={2}>
                       {report?.visitors ?? "--"}
                     </TableCell>
                   </TableRow>
