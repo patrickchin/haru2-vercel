@@ -332,12 +332,17 @@ export const siteReportDetails1 = pgTable("siteReportDetails1", {
 
   contractors: varchar("contractors"),
   engineers: varchar("engineers"),
-  workers: varchar("workers"),
+  workers: varchar("workers"), // deprecated
   visitors: varchar("visitors"),
 
-  // deprecated
-  materialsUsed: varchar("materialsUsed"),
-  equipmentUsed: varchar("equipmentUsed"),
+  numberOfWorkers: integer("numberOfWorkers"),
+  workersHours: numeric("workersHours"),
+  workersCost: numeric("workersCost"),
+  workersCostCurrency: varchar("workersCostCurrency"),
+
+  materialsUsed: varchar("materialsUsed"), // deprecated
+  equipmentUsed: varchar("equipmentUsed"), // deprecated
+
   materialsInventory: varchar("materialsInventory"),
   equipmentInventory: varchar("equipmentInventory"),
 

@@ -252,9 +252,9 @@ export function EditMaterialsForm({
           },
         )}
       >
-        <ScrollArea className="grow h-1 border rounded-md relative">
+        <ScrollArea className="grow h-1 border rounded-md">
           <Table>
-            <TableHeader className="sticky top-0">
+            <TableHeader>
               <TableRow>
                 <TableHead className="text-center w-3/12">Name</TableHead>
                 <TableHead className="text-center w-1/12">Quantity</TableHead>
