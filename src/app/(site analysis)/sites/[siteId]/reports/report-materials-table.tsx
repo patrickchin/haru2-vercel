@@ -22,6 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { LucideLoaderCircle } from "lucide-react";
 
 export const columns: ColumnDef<SiteMaterial>[] = [
   {
@@ -95,7 +96,7 @@ export const columns: ColumnDef<SiteMaterial>[] = [
 ];
 
 export function MaterialsTable({ report }: { report?: SiteReport }) {
-  const { data: materials } = useSWR(
+  const { data: materials, isLoading } = useSWR(
     `/api/report/${report?.id}/materials`,
     () =>
       report?.id ? Actions.listSiteReportUsedMaterials(report.id) : undefined,
@@ -170,7 +171,16 @@ export function MaterialsTable({ report }: { report?: SiteReport }) {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 flex justify-center items-center"
+                >
+                  <LucideLoaderCircle className="animate-spin size-4" />
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
