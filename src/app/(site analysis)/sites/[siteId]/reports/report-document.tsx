@@ -23,6 +23,7 @@ import {
 import { LucideMaximize2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MaterialsTable } from "./report-materials-table";
+import { EquipmentTable } from "./report-equipment-table";
 
 async function ReportSiteDetails({ report }: { report?: SiteReportAll }) {
   const site =
@@ -173,7 +174,7 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
                   Materials Used
                 </DialogTitle>
                 <DialogDescription className="sr-only">
-                  Materials Used List
+                  Materials Used List Table
                 </DialogDescription>
                 <ScrollArea className="grow h-1 pr-3">
                   <MaterialsTable report={report} />
@@ -194,27 +195,11 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
                 <DialogTitle className="text-lg font-semibold">
                   Equipment Used
                 </DialogTitle>
-                <ScrollArea className="grow h-1 border rounded-md">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="first:[&_th]:pl-4">
-                        <TableHead className="w-1/4">Name</TableHead>
-                        <TableHead className="w-1/12">Quantity</TableHead>
-                        <TableHead className="w-1/12">Cost</TableHead>
-                        <TableHead className="w-1/12">Cost Units</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {equipment.map((eq, i) => (
-                        <TableRow key={i} className="first:[&_td]:pl-4">
-                          <TableCell>{eq.name}</TableCell>
-                          <TableCell>{eq.quantity}</TableCell>
-                          <TableCell>{eq.cost}</TableCell>
-                          <TableCell>{eq.costUnits}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                <DialogDescription className="sr-only">
+                  Equipment Used List Table
+                </DialogDescription>
+                <ScrollArea className="grow h-1 pr-3">
+                  <EquipmentTable report={report} />
                 </ScrollArea>
               </DialogContent>
             </Dialog>

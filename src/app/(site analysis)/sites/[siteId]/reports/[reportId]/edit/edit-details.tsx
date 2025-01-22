@@ -154,7 +154,13 @@ function EditReportEstimates({
   );
 }
 
-function EditEquipment({ report }: { report: SiteReportAll }) {
+function EditEquipment({
+  site,
+  report,
+}: {
+  site: SiteDetails;
+  report: SiteReportAll;
+}) {
   return (
     <Dialog>
       <div className="flex gap-4 items-center p-4 rounded border bg-background">
@@ -174,7 +180,7 @@ function EditEquipment({ report }: { report: SiteReportAll }) {
           Equipment Used
         </DialogTitle>
 
-        <EditEquipmentForm reportId={report.id} />
+        <EditEquipmentForm site={site} reportId={report.id} />
       </DialogContent>
     </Dialog>
   );
@@ -212,7 +218,7 @@ function EditMaterials({
   );
 }
 
-function EditSitePersonel({
+function EditSitePersonnel({
   report,
   mutate,
 }: {
@@ -573,9 +579,9 @@ export function EditReportDocument({
               <div className="flex flex-col gap-4">
                 <EditSiteActivities report={report} mutate={mutate} />
                 <EditMaterials site={site} report={report} />
-                <EditEquipment report={report} />
+                <EditEquipment site={site} report={report} />
               </div>
-              <EditSitePersonel report={report} mutate={mutate} />
+              <EditSitePersonnel report={report} mutate={mutate} />
             </>
           )}
         </CardContent>

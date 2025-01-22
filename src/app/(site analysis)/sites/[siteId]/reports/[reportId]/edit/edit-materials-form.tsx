@@ -98,58 +98,56 @@ function MaterialTableRow({
           )}
         />
       </TableCell>
-      <TableCell>
-        <div className="flex">
-          <FormField
-            name={`materials.${index}.unitCost`}
-            control={form.control}
-            render={({ field }) => (
-              <FormItem className="flex-grow">
-                <Input
-                  type="number"
-                  step="0.01"
-                  {...field}
-                  onChange={(event) => {
-                    field.onChange(event);
-                    setUnitCost(event.target.value);
-                  }}
-                  value={field.value ?? ""}
-                  className="rounded-r-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name={`materials.${index}.unitCostCurrency`}
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <Select
-                  onValueChange={(v) => {
-                    field.onChange(v);
-                    setTotalCostCurrency(v);
-                  }}
-                  defaultValue={field.value ?? ""}
-                >
-                  <SelectTrigger className="rounded-l-none border-l-0">
-                    <SelectValue defaultValue="USD" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="USD">USD</SelectItem>
-                    <SelectItem value="EUR">EUR</SelectItem>
-                    <SelectItem value="GBP">GBP</SelectItem>
-                    <SelectItem value="CNY">CNY</SelectItem>
-                    <SelectItem value="SLL">SLL</SelectItem>
-                    <SelectItem value="NGN">NGN</SelectItem>
-                    <SelectItem value="KES">KES</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+      <TableCell className="flex">
+        <FormField
+          name={`materials.${index}.unitCost`}
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className="flex-grow">
+              <Input
+                type="number"
+                step="0.01"
+                {...field}
+                onChange={(event) => {
+                  field.onChange(event);
+                  setUnitCost(event.target.value);
+                }}
+                value={field.value ?? ""}
+                className="rounded-r-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          name={`materials.${index}.unitCostCurrency`}
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <Select
+                onValueChange={(v) => {
+                  field.onChange(v);
+                  setTotalCostCurrency(v);
+                }}
+                defaultValue={field.value ?? ""}
+              >
+                <SelectTrigger className="rounded-l-none border-l-0">
+                  <SelectValue defaultValue="USD" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="USD">USD</SelectItem>
+                  <SelectItem value="EUR">EUR</SelectItem>
+                  <SelectItem value="GBP">GBP</SelectItem>
+                  <SelectItem value="CNY">CNY</SelectItem>
+                  <SelectItem value="SLL">SLL</SelectItem>
+                  <SelectItem value="NGN">NGN</SelectItem>
+                  <SelectItem value="KES">KES</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       </TableCell>
       <TableCell>
         <div className="text-right whitespace-nowrap">

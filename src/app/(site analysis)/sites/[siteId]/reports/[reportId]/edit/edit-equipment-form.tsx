@@ -5,6 +5,9 @@ import { z } from "zod";
 import { useEffect, useRef } from "react";
 import { createInsertSchema } from "drizzle-zod";
 import { equipment1 } from "@/db/schema";
+import { LucideLoaderCircle, LucideX } from "lucide-react";
+import { SiteDetails } from "@/lib/types";
+import { getCountryCurrency } from "@/lib/constants";
 import * as Actions from "@/lib/actions";
 
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
@@ -27,11 +30,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { LucideLoaderCircle } from "lucide-react";
 
 export function EditEquipmentForm({
+  site,
   reportId,
 }: {
+  site: SiteDetails;
   reportId: number; // might be nicer to pass in equipmentListId instead
 }) {
   const {
@@ -79,6 +83,8 @@ export function EditEquipmentForm({
     );
   }
 
+  const defaultCurrency = getCountryCurrency(site.countryCode);
+
   return (
     <Form {...form}>
       <form
@@ -103,8 +109,7 @@ export function EditEquipmentForm({
                 <TableHead className="w-1/4">Name</TableHead>
                 <TableHead className="w-1/12">Quantity</TableHead>
                 <TableHead className="w-1/12">Cost</TableHead>
-                <TableHead className="w-1/12">Cost Units</TableHead>
-                <TableHead className="w-1/12">Actions</TableHead>
+                <TableHead className="w-1/12"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -138,7 +143,7 @@ export function EditEquipmentForm({
                       )}
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="flex">
                     <FormField
                       name={`equipment.${index}.cost`}
                       control={form.control}
@@ -149,13 +154,12 @@ export function EditEquipmentForm({
                             step="0.01"
                             {...field}
                             value={field.value ?? ""}
+                            className="rounded-r-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           />
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                  </TableCell>
-                  <TableCell>
                     <FormField
                       name={`equipment.${index}.costUnits`}
                       control={form.control}
@@ -165,8 +169,8 @@ export function EditEquipmentForm({
                             onValueChange={field.onChange}
                             defaultValue={field.value ?? ""}
                           >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select currency" />
+                            <SelectTrigger className="rounded-l-none border-l-0">
+                              <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="USD">USD</SelectItem>
@@ -184,8 +188,13 @@ export function EditEquipmentForm({
                     />
                   </TableCell>
                   <TableCell>
-                    <Button type="button" onClick={() => remove(index)}>
-                      Remove
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      type="button"
+                      onClick={() => remove(index)}
+                    >
+                      <LucideX />
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -200,9 +209,9 @@ export function EditEquipmentForm({
             onClick={() =>
               append({
                 name: null,
-                quantity: null,
+                quantity: 1,
                 cost: null,
-                costUnits: null,
+                costUnits: defaultCurrency,
               })
             }
           >
