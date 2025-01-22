@@ -208,7 +208,7 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
 
         <div>
           <div className="rounded border p-3 bg-background space-y-2">
-            <h2 className="text-base font-semibold">Site Personel</h2>
+            <h2 className="text-base font-semibold">Site Personnel</h2>
             <div>
               <Table>
                 <TableBody>
@@ -227,7 +227,12 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
                   <TableRow>
                     <TableHead>Workers</TableHead>
                     <TableCell className="whitespace-pre-line">
-                      {report?.workers ?? "--"}
+                      {report
+                        ? `${report.numberOfWorkers} workers\n` +
+                          `${report.workersHours} hours per day\n` +
+                          `${report.workersCost} ${report.workersCostCurrency} per hour\n` +
+                          `${((report.numberOfWorkers ?? 0) * parseFloat(report.workersHours ?? "0") * parseFloat(report.workersCost ?? "0")).toLocaleString()} ${report.workersCostCurrency} total cost`
+                        : "--"}
                     </TableCell>
                   </TableRow>
                   <TableRow>
