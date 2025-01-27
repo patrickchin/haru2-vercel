@@ -27,8 +27,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { LucideLoaderCircle, LucideX } from "lucide-react";
-import { SiteDetails, SiteMaterial } from "@/lib/types";
+import { LucideLoaderCircle, LucidePlus, LucideX } from "lucide-react";
+import { SiteDetails } from "@/lib/types";
 import { getCountryCurrency } from "@/lib/constants";
 
 function MaterialTableRow({
@@ -77,11 +77,7 @@ function MaterialTableRow({
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <Input
-                type="number"
-                {...field}
-                value={field.value ?? ""}
-              />
+              <Input type="number" {...field} value={field.value ?? ""} />
               <FormMessage />
             </FormItem>
           )}
@@ -192,9 +188,15 @@ export function EditUsedMaterialsForm({
   site: SiteDetails;
   reportId: number;
 }) {
-  const { data: materials, mutate, isLoading } = useMaterialsData(reportId,
+  const {
+    data: materials,
+    mutate,
+    isLoading,
+  } = useMaterialsData(
+    reportId,
     `/api/report/${reportId}/used-materials`,
-    Actions.listSiteReportUsedMaterials);
+    Actions.listSiteReportUsedMaterials,
+  );
   return (
     <EditMaterialsForm
       site={site}
@@ -214,9 +216,15 @@ export function EditInventoryMaterialsForm({
   site: SiteDetails;
   reportId: number;
 }) {
-  const { data: materials, mutate, isLoading } = useMaterialsData(reportId,
+  const {
+    data: materials,
+    mutate,
+    isLoading,
+  } = useMaterialsData(
+    reportId,
     `/api/report/${reportId}/inventory-materials`,
-    Actions.listSiteReportInventoryMaterials);
+    Actions.listSiteReportInventoryMaterials,
+  );
   return (
     <EditMaterialsForm
       site={site}
@@ -342,7 +350,7 @@ function EditMaterialsForm({
               })
             }
           >
-            Add Material
+            Add Material <LucidePlus />
           </Button>
         </div>
         <FormMessage>{form.formState.errors.root?.message}</FormMessage>

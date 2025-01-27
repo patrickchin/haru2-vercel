@@ -3,14 +3,13 @@ import * as Actions from "@/lib/actions";
 import { ReportSections } from "./report-sections";
 
 import { Button } from "@/components/ui/button";
-import { SiteReportAll, SiteMaterial, SiteEquipment } from "@/lib/types/site";
+import { SiteReportAll, SiteEquipment } from "@/lib/types/site";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
-  TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import {
@@ -20,7 +19,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { LucideMaximize2 } from "lucide-react";
+import { LucideCuboid, LucideForklift } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   InventoryMaterialsTable,
@@ -172,7 +171,7 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="outline">
-                  Open <LucideMaximize2 />
+                  Open <LucideCuboid />
                 </Button>
               </DialogTrigger>
               <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] w-[55rem] max-w-full flex flex-col p-4 gap-4">
@@ -194,7 +193,7 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="outline">
-                  Open <LucideMaximize2 />
+                  Open <LucideForklift />
                 </Button>
               </DialogTrigger>
               <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] w-[55rem] max-w-full flex flex-col p-4 gap-4">
@@ -285,7 +284,7 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
 
 function ReportInventory({ report }: { report?: SiteReportAll }) {
   return (
-    <Card className="flex flex-col sm:flex-row justify-between items-center">
+    <Card className="flex flex-col sm:flex-row justify-between items-center bg-muted">
       <CardHeader className="flex flex-col sm:flex-row justify-between items-center p-6 pr-0">
         <CardTitle className="text-lg">Inventory and Storage</CardTitle>
       </CardHeader>
@@ -294,7 +293,7 @@ function ReportInventory({ report }: { report?: SiteReportAll }) {
         <Dialog>
           <DialogTrigger asChild>
             <Button size="default" variant="outline">
-              Open Materials <LucideMaximize2 />
+              Open Materials <LucideCuboid />
             </Button>
           </DialogTrigger>
           <DialogContent
@@ -314,7 +313,7 @@ function ReportInventory({ report }: { report?: SiteReportAll }) {
         <Dialog>
           <DialogTrigger asChild>
             <Button size="default" variant="outline">
-              Open Equipment <LucideMaximize2 />
+              Open Equipment <LucideForklift />
             </Button>
           </DialogTrigger>
           <DialogContent

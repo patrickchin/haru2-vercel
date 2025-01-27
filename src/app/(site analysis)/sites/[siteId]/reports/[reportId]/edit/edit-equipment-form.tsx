@@ -5,7 +5,7 @@ import { z } from "zod";
 import { useEffect, useRef } from "react";
 import { createInsertSchema } from "drizzle-zod";
 import { equipment1 } from "@/db/schema";
-import { LucideLoaderCircle, LucideX } from "lucide-react";
+import { LucideLoaderCircle, LucidePlus, LucideX } from "lucide-react";
 import { SiteDetails, SiteEquipmentNew } from "@/lib/types";
 import { currencies, getCountryCurrency } from "@/lib/constants";
 import * as Actions from "@/lib/actions";
@@ -330,7 +330,7 @@ function EditEquipmentForm({
               })
             }
           >
-            Add Equipment
+            Add Equipment <LucidePlus />
           </Button>
         </div>
         <FormMessage>{form.formState.errors.root?.message}</FormMessage>

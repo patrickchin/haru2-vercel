@@ -223,7 +223,11 @@ export function UsedMaterialsTable({ report }: { report?: SiteReport }) {
   );
 
   return (
-    <MaterialsTable materials={materials} report={report} isLoading={isLoading} />
+    <MaterialsTable
+      materials={materials}
+      report={report}
+      isLoading={isLoading}
+    />
   );
 }
 
@@ -231,11 +235,16 @@ export function InventoryMaterialsTable({ report }: { report?: SiteReport }) {
   const { data: materials, isLoading } = useSWR(
     `/api/report/${report?.id}/inventory-materials`,
     () =>
-      report?.id ? Actions.listSiteReportInventoryMaterials(report.id) : undefined,
+      report?.id
+        ? Actions.listSiteReportInventoryMaterials(report.id)
+        : undefined,
   );
-  console.log(report, materials)
 
   return (
-    <MaterialsTable materials={materials} report={report} isLoading={isLoading} />
+    <MaterialsTable
+      materials={materials}
+      report={report}
+      isLoading={isLoading}
+    />
   );
 }

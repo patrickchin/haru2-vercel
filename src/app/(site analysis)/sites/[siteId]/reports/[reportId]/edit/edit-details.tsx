@@ -10,7 +10,7 @@ import { SiteDetails, SiteReportAll } from "@/lib/types/site";
 import * as Actions from "@/lib/actions";
 import * as Schemas from "@/db/schema";
 
-import { LucideLoaderCircle } from "lucide-react";
+import { LucideCuboid, LucideForklift, LucideLoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
@@ -31,8 +31,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EditUsedMaterialsForm, EditInventoryMaterialsForm } from "./edit-materials-form";
-import { EditUsedEquipmentForm, EditInventoryEquipmentForm } from "./edit-equipment-form";
+import {
+  EditUsedMaterialsForm,
+  EditInventoryMaterialsForm,
+} from "./edit-materials-form";
+import {
+  EditUsedEquipmentForm,
+  EditInventoryEquipmentForm,
+} from "./edit-equipment-form";
 import { currencies } from "@/lib/constants";
 
 const reportFormSchema = createInsertSchema(Schemas.siteReportDetails1);
@@ -175,7 +181,9 @@ function EditEquipment({
           Equipment Used
         </h2>
         <DialogTrigger asChild>
-          <Button variant="outline">Open</Button>
+          <Button variant="outline">
+            Open <LucideForklift />
+          </Button>
         </DialogTrigger>
       </div>
 
@@ -207,7 +215,9 @@ function EditMaterials({
           Materials Used
         </h2>
         <DialogTrigger asChild>
-          <Button variant="outline">Open</Button>
+          <Button variant="outline">
+            Open <LucideCuboid />
+          </Button>
         </DialogTrigger>
       </div>
 
@@ -494,7 +504,9 @@ function EditInventory({
     <div className="flex gap-2">
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="outline">Open Materials</Button>
+          <Button variant="outline">
+            Open Materials <LucideCuboid />
+          </Button>
         </DialogTrigger>
 
         <DialogContent
@@ -513,7 +525,9 @@ function EditInventory({
 
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="outline">Open Equipment</Button>
+          <Button variant="outline">
+            Open Equipment <LucideForklift />
+          </Button>
         </DialogTrigger>
 
         <DialogContent
