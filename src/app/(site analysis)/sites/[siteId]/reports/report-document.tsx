@@ -22,8 +22,14 @@ import {
 } from "@/components/ui/dialog";
 import { LucideMaximize2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MaterialsTable } from "./report-materials-table";
-import { EquipmentTable } from "./report-equipment-table";
+import {
+  InventoryMaterialsTable,
+  UsedMaterialsTable,
+} from "./report-materials-table";
+import {
+  InventoryEquipmentTable,
+  UsedEquipmentTable,
+} from "./report-equipment-table";
 
 async function ReportSiteDetails({ report }: { report?: SiteReportAll }) {
   const site =
@@ -174,10 +180,10 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
                   Materials Used
                 </DialogTitle>
                 <DialogDescription className="sr-only">
-                  Materials Used List Table
+                  Materials Used Table
                 </DialogDescription>
                 <ScrollArea className="grow h-1 pr-3">
-                  <MaterialsTable report={report} />
+                  <UsedMaterialsTable report={report} />
                 </ScrollArea>
               </DialogContent>
             </Dialog>
@@ -199,7 +205,7 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
                   Equipment Used List Table
                 </DialogDescription>
                 <ScrollArea className="grow h-1 pr-3">
-                  <EquipmentTable report={report} />
+                  <UsedEquipmentTable report={report} />
                 </ScrollArea>
               </DialogContent>
             </Dialog>
@@ -279,55 +285,52 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
 
 function ReportInventory({ report }: { report?: SiteReportAll }) {
   return (
-    <Card className="">
-      <Dialog>
-        <CardHeader className="flex flex-col sm:flex-row justify-between items-center px-6 py-0">
-          <CardTitle className="text-lg py-6">Inventory and Storage</CardTitle>
+    <Card className="flex flex-col sm:flex-row justify-between items-center">
+      <CardHeader className="flex flex-col sm:flex-row justify-between items-center p-6 pr-0">
+        <CardTitle className="text-lg">Inventory and Storage</CardTitle>
+      </CardHeader>
+
+      <CardContent className="flex flex-col sm:flex-row gap-2 p-6 pl-0">
+        <Dialog>
           <DialogTrigger asChild>
             <Button size="default" variant="outline">
-              Open <LucideMaximize2 />
+              Open Materials <LucideMaximize2 />
             </Button>
           </DialogTrigger>
-        </CardHeader>
-        <CardContent className="flex flex-col sm:flex-row justify-between items-center p-0">
           <DialogContent
             className={cn(
               "min-h-96 max-h-[90svh] h-[50rem]",
               "min-w-80 max-w-[90svw] w-[60rem]",
-              "grid grid-cols-2",
+              "flex flex-col",
             )}
           >
-            <div className="flex flex-col gap-4">
-              <DialogTitle className="text-lg font-semibold">
-                Materials Storage
-              </DialogTitle>
-              <ol className="overflow-y-auto border rounded h-0 grow">
-                {report?.materialsInventory?.split("\n").map((eq, i) => {
-                  return (
-                    <li key={i} className="hover:bg-accent px-3 py-2">
-                      {eq}
-                    </li>
-                  );
-                })}
-              </ol>
-            </div>
-            <div className="flex flex-col gap-4">
-              <DialogTitle className="text-lg font-semibold">
-                Equipment Storage
-              </DialogTitle>
-              <ol className="overflow-y-auto border rounded h-0 grow">
-                {report?.equipmentInventory?.split("\n").map((eq, i) => {
-                  return (
-                    <li key={i} className="hover:bg-accent px-3 py-2">
-                      {eq}
-                    </li>
-                  );
-                })}
-              </ol>
-            </div>
+            <DialogTitle className="text-lg font-semibold">
+              Materials Storage
+            </DialogTitle>
+            <InventoryMaterialsTable report={report} />
           </DialogContent>
-        </CardContent>
-      </Dialog>
+        </Dialog>
+
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button size="default" variant="outline">
+              Open Equipment <LucideMaximize2 />
+            </Button>
+          </DialogTrigger>
+          <DialogContent
+            className={cn(
+              "min-h-96 max-h-[90svh] h-[50rem]",
+              "min-w-80 max-w-[90svw] w-[60rem]",
+              "flex flex-col",
+            )}
+          >
+            <DialogTitle className="text-lg font-semibold">
+              Equipment Storage
+            </DialogTitle>
+            <InventoryEquipmentTable report={report} />
+          </DialogContent>
+        </Dialog>
+      </CardContent>
     </Card>
   );
 }
@@ -350,8 +353,8 @@ export async function ReportDocument({
     <div className="flex flex-col gap-4">
       <ReportSiteDetails report={report} />
       <ReportBudget report={report} />
-      <ReportActivities report={report} />
       <ReportInventory report={report} />
+      <ReportActivities report={report} />
       <ReportSections sections={sections} />
     </div>
   );

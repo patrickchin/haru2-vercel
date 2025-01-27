@@ -349,11 +349,15 @@ export const siteReportDetails1 = pgTable("siteReportDetails1", {
   usedMaterialsListId: integer("usedMaterialsListId").references(
     () => materialsList1.id,
   ),
-  // inventoryMaterialsListId: integer("inventoryMaterialsListId").references(() => materialsList1.id),
+  inventoryMaterialsListId: integer("inventoryMaterialsListId").references(
+    () => materialsList1.id,
+  ),
   usedEquipmentListId: integer("usedEquipmentListId").references(
     () => equipmentList1.id,
   ),
-  // inventoryEquipmentListId: integer("inventoryEquipmentListId").references(() => equipmentList1.id),
+  inventoryEquipmentListId: integer("inventoryEquipmentListId").references(
+    () => equipmentList1.id,
+  ),
 
   budget: varchar("budget"),
   spent: varchar("spent"),

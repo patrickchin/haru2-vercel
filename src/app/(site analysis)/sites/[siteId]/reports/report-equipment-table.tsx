@@ -90,13 +90,15 @@ export const columns: ColumnDef<SiteEquipment>[] = [
   },
 ];
 
-export function EquipmentTable({ report }: { report?: SiteReport }) {
-  const { data: equipment, isLoading } = useSWR(
-    `/api/report/${report?.id}/equipment`,
-    () =>
-      report?.id ? Actions.listSiteReportUsedEquipment(report.id) : undefined,
-  );
-
+function EquipmentTable({
+  equipment,
+  report,
+  isLoading,
+}: {
+  equipment: SiteEquipment[] | undefined;
+  report?: SiteReport;
+  isLoading: boolean;
+}) {
   const table = useReactTable({
     data: equipment ?? [],
     columns,
@@ -206,5 +208,29 @@ export function EquipmentTable({ report }: { report?: SiteReport }) {
         </Table>
       </div>
     </div>
+  );
+}
+
+export function UsedEquipmentTable({ report }: { report?: SiteReport }) {
+  const { data: equipment, isLoading } = useSWR(
+    `/api/report/${report?.id}/used-equipment`,
+    () =>
+      report?.id ? Actions.listSiteReportUsedEquipment(report.id) : undefined,
+  );
+
+  return (
+    <EquipmentTable equipment={equipment} report={report} isLoading={isLoading} />
+  );
+}
+
+export function InventoryEquipmentTable({ report }: { report?: SiteReport }) {
+  const { data: equipment, isLoading } = useSWR(
+    `/api/report/${report?.id}/inventory-equipment`,
+    () =>
+      report?.id ? Actions.listSiteReportInventoryEquipment(report.id) : undefined,
+  );
+
+  return (
+    <EquipmentTable equipment={equipment} report={report} isLoading={isLoading} />
   );
 }

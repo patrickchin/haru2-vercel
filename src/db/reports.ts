@@ -486,3 +486,115 @@ export async function updateSiteReportUsedEquipment(
       .returning();
   });
 }
+
+export async function listSiteReportInventoryMaterials(reportId: number) {
+  return db
+    .select()
+    .from(Schemas.materials1)
+    .innerJoin(
+      Schemas.siteReportDetails1,
+      eq(
+        Schemas.siteReportDetails1.inventoryMaterialsListId,
+        Schemas.materials1.materialsListId,
+      ),
+    )
+    .where(eq(Schemas.siteReportDetails1.id, reportId))
+    .then((r) => r.map((m) => m.materials1));
+}
+
+export async function updateSiteReportInventoryMaterials(
+  reportId: number,
+  materials: SiteMaterialNew[],
+) {
+  return await db.transaction(async (tx) => {
+    let inventoryMaterialsListId = await tx
+      .select({ id: Schemas.siteReportDetails1.inventoryMaterialsListId })
+      .from(Schemas.siteReportDetails1)
+      .where(eq(Schemas.siteReportDetails1.id, reportId))
+      .limit(1)
+      .then((r) => r[0].id);
+
+    if (inventoryMaterialsListId) {
+      await tx
+        .delete(Schemas.materials1)
+        .where(eq(Schemas.materials1.materialsListId, inventoryMaterialsListId));
+    } else {
+      inventoryMaterialsListId = await tx
+        .insert(Schemas.materialsList1)
+        .values({})
+        .returning()
+        .then((r) => r[0].id);
+      inventoryMaterialsListId = await tx
+        .update(Schemas.siteReportDetails1)
+        .set({ inventoryMaterialsListId: inventoryMaterialsListId })
+        .where(eq(Schemas.siteReportDetails1.id, reportId))
+        .returning()
+        .then((r) => r[0].inventoryMaterialsListId);
+    }
+
+    assert(inventoryMaterialsListId);
+
+    return tx
+      .insert(Schemas.materials1)
+      .values(
+        materials.map((m) => ({ ...m, materialsListId: inventoryMaterialsListId })),
+      )
+      .returning();
+  });
+}
+
+export async function listSiteReportInventoryEquipment(reportId: number) {
+  return db
+    .select()
+    .from(Schemas.equipment1)
+    .innerJoin(
+      Schemas.siteReportDetails1,
+      eq(
+        Schemas.siteReportDetails1.inventoryEquipmentListId,
+        Schemas.equipment1.equipmentListId,
+      ),
+    )
+    .where(eq(Schemas.siteReportDetails1.id, reportId))
+    .then((r) => r.map((m) => m.equipments1));
+}
+
+export async function updateSiteReportInventoryEquipment(
+  reportId: number,
+  equipment: SiteEquipmentNew[],
+) {
+  return await db.transaction(async (tx) => {
+    let inventoryEquipmentListId = await tx
+      .select({ id: Schemas.siteReportDetails1.inventoryEquipmentListId })
+      .from(Schemas.siteReportDetails1)
+      .where(eq(Schemas.siteReportDetails1.id, reportId))
+      .limit(1)
+      .then((r) => r[0].id);
+
+    if (inventoryEquipmentListId) {
+      await tx
+        .delete(Schemas.equipment1)
+        .where(eq(Schemas.equipment1.equipmentListId, inventoryEquipmentListId));
+    } else {
+      inventoryEquipmentListId = await tx
+        .insert(Schemas.equipmentList1)
+        .values({})
+        .returning()
+        .then((r) => r[0].id);
+      inventoryEquipmentListId = await tx
+        .update(Schemas.siteReportDetails1)
+        .set({ inventoryEquipmentListId: inventoryEquipmentListId })
+        .where(eq(Schemas.siteReportDetails1.id, reportId))
+        .returning()
+        .then((r) => r[0].inventoryEquipmentListId);
+    }
+
+    assert(inventoryEquipmentListId);
+
+    return tx
+      .insert(Schemas.equipment1)
+      .values(
+        equipment.map((m) => ({ ...m, equipmentListId: inventoryEquipmentListId })),
+      )
+      .returning();
+  });
+}
