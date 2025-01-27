@@ -174,22 +174,76 @@ function MaterialTableRow({
   );
 }
 
-export function EditMaterialsForm({
+function useMaterialsData(
+  reportId: number,
+  key: string,
+  fetcher: (reportId: number) => Promise<any>,
+) {
+  const { data, mutate, isLoading } = useSWR(key, async () =>
+    fetcher(reportId),
+  );
+  return { data, mutate, isLoading };
+}
+
+export function EditUsedMaterialsForm({
   site,
   reportId,
 }: {
   site: SiteDetails;
-  reportId: number; // might be nicer to pass in materialsListId instead
+  reportId: number;
 }) {
-  const {
-    data: materials,
-    mutate,
-    isLoading,
-  } = useSWR(
-    `/api/report/${reportId}/usedMaterialsList`, // api route doesn't really exist
-    async () => Actions.listSiteReportUsedMaterials(reportId),
+  const { data: materials, mutate, isLoading } = useMaterialsData(reportId,
+    `/api/report/${reportId}/used-materials`,
+    Actions.listSiteReportUsedMaterials);
+  return (
+    <EditMaterialsForm
+      site={site}
+      reportId={reportId}
+      materials={materials}
+      mutate={mutate}
+      isLoading={isLoading}
+      updateAction={Actions.updateSiteReportUsedMaterials}
+    />
   );
+}
 
+export function EditInventoryMaterialsForm({
+  site,
+  reportId,
+}: {
+  site: SiteDetails;
+  reportId: number;
+}) {
+  const { data: materials, mutate, isLoading } = useMaterialsData(reportId,
+    `/api/report/${reportId}/inventory-materials`,
+    Actions.listSiteReportInventoryMaterials);
+  return (
+    <EditMaterialsForm
+      site={site}
+      reportId={reportId}
+      materials={materials}
+      mutate={mutate}
+      isLoading={isLoading}
+      updateAction={Actions.updateSiteReportInventoryMaterials}
+    />
+  );
+}
+
+function EditMaterialsForm({
+  site,
+  reportId,
+  materials,
+  mutate,
+  isLoading,
+  updateAction,
+}: {
+  site: SiteDetails;
+  reportId: number;
+  materials: any;
+  mutate: any;
+  isLoading: boolean;
+  updateAction: (reportId: number, materials: any) => Promise<any>;
+}) {
   const schema = z.object({
     materials: z.array(
       createInsertSchema(materials1)
@@ -234,9 +288,8 @@ export function EditMaterialsForm({
         className="flex flex-col gap-4 grow"
         onSubmit={form.handleSubmit(
           async (data: SchemaType) => {
-            console.log(data);
             const newMaterials = await mutate(
-              Actions.updateSiteReportUsedMaterials(reportId, data.materials),
+              updateAction(reportId, data.materials),
               { revalidate: false },
             );
             form.reset({ materials: newMaterials });

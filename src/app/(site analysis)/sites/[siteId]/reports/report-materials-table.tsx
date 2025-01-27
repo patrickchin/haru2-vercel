@@ -95,13 +95,15 @@ export const columns: ColumnDef<SiteMaterial>[] = [
   },
 ];
 
-export function MaterialsTable({ report }: { report?: SiteReport }) {
-  const { data: materials, isLoading } = useSWR(
-    `/api/report/${report?.id}/materials`,
-    () =>
-      report?.id ? Actions.listSiteReportUsedMaterials(report.id) : undefined,
-  );
-
+function MaterialsTable({
+  materials,
+  report,
+  isLoading,
+}: {
+  materials: SiteMaterial[] | undefined;
+  report?: SiteReport;
+  isLoading: boolean;
+}) {
   const table = useReactTable({
     data: materials ?? [],
     columns,
@@ -210,5 +212,30 @@ export function MaterialsTable({ report }: { report?: SiteReport }) {
         </Table>
       </div>
     </div>
+  );
+}
+
+export function UsedMaterialsTable({ report }: { report?: SiteReport }) {
+  const { data: materials, isLoading } = useSWR(
+    `/api/report/${report?.id}/used-materials`,
+    () =>
+      report?.id ? Actions.listSiteReportUsedMaterials(report.id) : undefined,
+  );
+
+  return (
+    <MaterialsTable materials={materials} report={report} isLoading={isLoading} />
+  );
+}
+
+export function InventoryMaterialsTable({ report }: { report?: SiteReport }) {
+  const { data: materials, isLoading } = useSWR(
+    `/api/report/${report?.id}/inventory-materials`,
+    () =>
+      report?.id ? Actions.listSiteReportInventoryMaterials(report.id) : undefined,
+  );
+  console.log(report, materials)
+
+  return (
+    <MaterialsTable materials={materials} report={report} isLoading={isLoading} />
   );
 }

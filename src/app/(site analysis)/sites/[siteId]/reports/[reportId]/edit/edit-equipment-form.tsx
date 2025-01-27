@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 import { createInsertSchema } from "drizzle-zod";
 import { equipment1 } from "@/db/schema";
 import { LucideLoaderCircle, LucideX } from "lucide-react";
-import { SiteDetails } from "@/lib/types";
+import { SiteDetails, SiteEquipmentNew } from "@/lib/types";
 import { currencies, getCountryCurrency } from "@/lib/constants";
 import * as Actions from "@/lib/actions";
 
@@ -31,22 +31,91 @@ import {
 } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-export function EditEquipmentForm({
+function useEquipmentData(
+  reportId: number,
+  key: string,
+  fetcher: (reportId: number) => Promise<any>,
+) {
+  const { data, mutate, isLoading } = useSWR(key, async () =>
+    fetcher(reportId),
+  );
+  return { data, mutate, isLoading };
+}
+
+export function EditUsedEquipmentForm({
   site,
   reportId,
 }: {
   site: SiteDetails;
-  reportId: number; // might be nicer to pass in equipmentListId instead
+  reportId: number;
 }) {
   const {
     data: equipment,
     mutate,
     isLoading,
-  } = useSWR(
-    `/api/report/${reportId}/usedEquipmentList`, // api route doesn't really exist
-    async () => Actions.listSiteReportUsedEquipment(reportId),
+  } = useEquipmentData(
+    reportId,
+    `/api/report/${reportId}/used-equipment`,
+    Actions.listSiteReportUsedEquipment,
   );
+  return (
+    <EditEquipmentForm
+      site={site}
+      reportId={reportId}
+      equipment={equipment}
+      mutate={mutate}
+      isLoading={isLoading}
+      updateAction={Actions.updateSiteReportUsedEquipment}
+    />
+  );
+}
 
+export function EditInventoryEquipmentForm({
+  site,
+  reportId,
+}: {
+  site: SiteDetails;
+  reportId: number;
+}) {
+  const {
+    data: equipment,
+    mutate,
+    isLoading,
+  } = useEquipmentData(
+    reportId,
+    `/api/report/${reportId}/inventory-equipment`,
+    Actions.listSiteReportInventoryEquipment,
+  );
+  return (
+    <EditEquipmentForm
+      site={site}
+      reportId={reportId}
+      equipment={equipment}
+      mutate={mutate}
+      isLoading={isLoading}
+      updateAction={Actions.updateSiteReportInventoryEquipment}
+    />
+  );
+}
+
+function EditEquipmentForm({
+  site,
+  reportId,
+  equipment,
+  mutate,
+  isLoading,
+  updateAction,
+}: {
+  site: SiteDetails;
+  reportId: number;
+  equipment: any;
+  mutate: any;
+  isLoading: boolean;
+  updateAction: (
+    reportId: number,
+    equipment: SiteEquipmentNew[],
+  ) => Promise<any>;
+}) {
   const schema = z.object({
     equipment: z.array(
       createInsertSchema(equipment1)
@@ -92,7 +161,7 @@ export function EditEquipmentForm({
         onSubmit={form.handleSubmit(
           async (data: SchemaType) => {
             const newEquipment = await mutate(
-              Actions.updateSiteReportUsedEquipment(reportId, data.equipment),
+              updateAction(reportId, data.equipment),
               { revalidate: false },
             );
             form.reset({ equipment: newEquipment });

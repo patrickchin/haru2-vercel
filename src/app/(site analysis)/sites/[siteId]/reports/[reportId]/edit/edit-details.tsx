@@ -31,8 +31,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EditMaterialsForm } from "./edit-materials-form";
-import { EditEquipmentForm } from "./edit-equipment-form";
+import { EditUsedMaterialsForm, EditInventoryMaterialsForm } from "./edit-materials-form";
+import { EditUsedEquipmentForm, EditInventoryEquipmentForm } from "./edit-equipment-form";
 import { currencies } from "@/lib/constants";
 
 const reportFormSchema = createInsertSchema(Schemas.siteReportDetails1);
@@ -187,7 +187,7 @@ function EditEquipment({
           Equipment Used
         </DialogTitle>
 
-        <EditEquipmentForm site={site} reportId={report.id} />
+        <EditUsedEquipmentForm site={site} reportId={report.id} />
       </DialogContent>
     </Dialog>
   );
@@ -219,7 +219,7 @@ function EditMaterials({
           Materials Used
         </DialogTitle>
 
-        <EditMaterialsForm site={site} reportId={report.id} />
+        <EditUsedMaterialsForm site={site} reportId={report.id} />
       </DialogContent>
     </Dialog>
   );
@@ -484,142 +484,52 @@ function EditSiteActivities({
 }
 
 function EditInventory({
+  site,
   report,
-  mutate,
 }: {
+  site: SiteDetails;
   report: SiteReportAll;
-  mutate: KeyedMutator<SiteReportAll | undefined>;
 }) {
-  const materialsSchema = reportFormSchema.pick({
-    materialsInventory: true,
-  });
-  const materialsForm = useForm<z.infer<typeof materialsSchema>>({
-    resolver: zodResolver(materialsSchema),
-    defaultValues: {
-      materialsInventory: report.materialsInventory || "",
-    },
-  });
-
-  const equipmentSchema = reportFormSchema.pick({
-    equipmentInventory: true,
-  });
-  const equipmentForm = useForm<z.infer<typeof equipmentSchema>>({
-    resolver: zodResolver(equipmentSchema),
-    defaultValues: {
-      equipmentInventory: report.equipmentInventory || "",
-    },
-  });
-
-  const placeholder =
-    "e.g.\nSand - 10kg bags x 10\nGravel - 10kg bags x 8\nCrushed Stone ...";
-
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline">Open</Button>
-      </DialogTrigger>
+    <div className="flex gap-2">
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Open Materials</Button>
+        </DialogTrigger>
 
-      <DialogContent
-        className={cn(
-          "min-h-96 max-h-[90svh] h-[50rem]",
-          "min-w-80 max-w-[90svw] w-[60rem]",
-          "overflow-hidden",
-          "grid grid-cols-2 gap-4",
-        )}
-      >
-        <Form {...materialsForm}>
-          <form
-            className="grow flex flex-col gap-4"
-            onSubmit={materialsForm.handleSubmit(
-              async (data: ReportFormType) => {
-                const newReport = await mutate(
-                  Actions.updateSiteReportDetails(report.id, data),
-                  { revalidate: false },
-                );
-                materialsForm.reset(newReport);
-              },
-            )}
-          >
-            <DialogTitle className="text-lg font-semibold">
-              Materials Storage
-            </DialogTitle>
+        <DialogContent
+          className={cn(
+            "min-h-96 max-h-[90svh] h-[50rem]",
+            "min-w-80 max-w-[90svw] w-[60rem]",
+            "flex flex-col",
+          )}
+        >
+          <DialogTitle className="text-lg font-semibold">
+            Materials Storage
+          </DialogTitle>
+          <EditInventoryMaterialsForm site={site} reportId={report.id} />
+        </DialogContent>
+      </Dialog>
 
-            <FormField
-              control={materialsForm.control}
-              name="materialsInventory"
-              render={({ field }) => (
-                <FormItem className="grow">
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      value={field.value ?? undefined}
-                      className="h-full text-base leading-8 resize-none"
-                      placeholder={
-                        "e.g.\n" +
-                        "Cement - 50kg - 20 bags - New condition\n" +
-                        "Steel rods - 70 bundles - Good condition\n" +
-                        "Cement bricks - 300 bricks - Bad condition\n"
-                      }
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Open Equipment</Button>
+        </DialogTrigger>
 
-            <div className="flex gap-2 justify-end">
-              <SaveRevertForm form={materialsForm} />
-            </div>
-          </form>
-        </Form>
-
-        <Form {...equipmentForm}>
-          <form
-            className="grow flex flex-col gap-4"
-            onSubmit={equipmentForm.handleSubmit(
-              async (data: ReportFormType) => {
-                const newReport = await mutate(
-                  Actions.updateSiteReportDetails(report.id, data),
-                  { revalidate: false },
-                );
-                equipmentForm.reset(newReport);
-              },
-            )}
-          >
-            <div className="flex flex-col gap-4 h-full">
-              <DialogTitle className="text-lg font-semibold">
-                Equipment Storage
-              </DialogTitle>
-              <FormField
-                control={equipmentForm.control}
-                name="equipmentInventory"
-                render={({ field }) => (
-                  <FormItem className="grow">
-                    <FormControl>
-                      <Textarea
-                        {...field}
-                        value={field.value ?? undefined}
-                        className="h-full text-base leading-8 resize-none"
-                        placeholder={
-                          "e.g.\n" +
-                          "Excavators - 1 - New condition\n" +
-                          "Dump Trucks - 3 - Good condition\n" +
-                          "Pick Axes - 12 - Bad condition\n" +
-                          "Shovels - 15 - New condition\n"
-                        }
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="flex gap-2 justify-end">
-              <SaveRevertForm form={equipmentForm} />
-            </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+        <DialogContent
+          className={cn(
+            "min-h-96 max-h-[90svh] h-[50rem]",
+            "min-w-80 max-w-[90svw] w-[60rem]",
+            "flex flex-col",
+          )}
+        >
+          <DialogTitle className="text-lg font-semibold">
+            Equipment Storage
+          </DialogTitle>
+          <EditInventoryEquipmentForm site={site} reportId={report.id} />
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }
 
@@ -645,6 +555,29 @@ export function EditReportDocument({
 
   return (
     <>
+      <Card className="bg-muted">
+        <CardContent className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-6">
+          <CardTitle className="text-lg grow text-left">
+            Inventory and Storage
+          </CardTitle>
+          {isLoading ? (
+            <div className="flex items-center justify-center grow">
+              <LucideLoaderCircle className="animate-spin" />
+            </div>
+          ) : !report ? (
+            <div className="flex items-center justify-center grow">
+              Error loading report
+            </div>
+          ) : !site ? (
+            <div className="flex items-center justify-center grow col-span-2">
+              Error loading site
+            </div>
+          ) : (
+            <EditInventory site={site} report={report} />
+          )}
+        </CardContent>
+      </Card>
+
       <Card className="bg-cyan-50 dark:bg-cyan-950">
         <CardHeader className="flex flex-row justify-between">
           <CardTitle className="text-lg">
@@ -676,25 +609,6 @@ export function EditReportDocument({
               </div>
               <EditSitePersonnel report={report} mutate={mutate} />
             </>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card className="bg-muted">
-        <CardContent className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-6">
-          <CardTitle className="text-lg grow text-left">
-            Inventory and Storage
-          </CardTitle>
-          {isLoading ? (
-            <div className="flex items-center justify-center grow">
-              <LucideLoaderCircle className="animate-spin" />
-            </div>
-          ) : !report ? (
-            <div className="flex items-center justify-center grow">
-              Error loading report
-            </div>
-          ) : (
-            <EditInventory report={report} mutate={mutate} />
           )}
         </CardContent>
       </Card>
