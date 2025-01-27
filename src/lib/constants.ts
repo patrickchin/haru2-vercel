@@ -22,14 +22,10 @@ export function getCountryCurrency(countryCode: string | null) {
   if (!countryCode) return null;
   try {
     // Create a locale using the country code
-    const locale = new Intl.Locale("en-" + countryCode);
-    const currency = new Intl.NumberFormat(locale.baseName, {
-      style: "currency",
-      currencyDisplay: "name",
-    }).resolvedOptions().currency;
+    const displayNames = new Intl.DisplayNames(["en"], { type: "currency" });
+    const currency = displayNames.of(countryCode);
     return currency;
   } catch (error) {
-    console.error("Error retrieving currency:", error);
     return null;
   }
 }
