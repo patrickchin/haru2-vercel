@@ -260,11 +260,14 @@ async function ReportActivities({ report }: { report?: SiteReportAll }) {
                   </TableRow>
                   <TableRow>
                     <TableCell className="text-right">
-                      {report
+                      {report &&
+                      report.numberOfWorkers &&
+                      report.workersHours &&
+                      report.workersCost
                         ? (
-                            (report.numberOfWorkers ?? 0) *
-                            parseFloat(report.workersHours ?? "0") *
-                            parseFloat(report.workersCost ?? "0")
+                            report.numberOfWorkers *
+                            parseFloat(report.workersHours) *
+                            parseFloat(report.workersCost)
                           ).toLocaleString()
                         : "--"}
                     </TableCell>
