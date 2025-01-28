@@ -306,6 +306,9 @@ function ReportInventory({ report }: { report?: SiteReportAll }) {
             <DialogTitle className="text-lg font-semibold">
               Materials Storage
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              Materials Storage Table
+            </DialogDescription>
             <InventoryMaterialsTable report={report} />
           </DialogContent>
         </Dialog>
@@ -326,6 +329,9 @@ function ReportInventory({ report }: { report?: SiteReportAll }) {
             <DialogTitle className="text-lg font-semibold">
               Equipment Storage
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              Equipment Storage Table
+            </DialogDescription>
             <InventoryEquipmentTable report={report} />
           </DialogContent>
         </Dialog>

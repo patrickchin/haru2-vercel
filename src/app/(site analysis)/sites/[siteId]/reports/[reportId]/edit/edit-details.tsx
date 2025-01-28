@@ -21,6 +21,7 @@ import { SaveRevertForm } from "@/components/save-revert-form";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -519,6 +520,9 @@ function EditInventory({
           <DialogTitle className="text-lg font-semibold">
             Materials Storage
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            Materials Storage Table
+          </DialogDescription>
           <EditInventoryMaterialsForm site={site} reportId={report.id} />
         </DialogContent>
       </Dialog>
@@ -540,6 +544,9 @@ function EditInventory({
           <DialogTitle className="text-lg font-semibold">
             Equipment Storage
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            Equipment Storage Table
+          </DialogDescription>
           <EditInventoryEquipmentForm site={site} reportId={report.id} />
         </DialogContent>
       </Dialog>
