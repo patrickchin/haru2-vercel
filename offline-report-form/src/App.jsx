@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
-import "./App.css";
 import MaterialsList from "./MaterialsList";
 import ActivitiesList from "./ActivitiesList";
 import EquipmentList from "./EquipmentList";
@@ -65,12 +64,14 @@ export default function App() {
 
   return (
     <div className="App">
-      <header className="App-header">Harpa Pro Construction Report Form</header>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <h2>Report Title</h2>
-        <input type="text" {...register("reportTitle")} />
+      <header className="App-header bg-gray-800 text-white p-4 text-xl">
+        Harpa Pro Construction Report Form
+      </header>
+      <form onSubmit={handleSubmit(onSubmit)} className="p-4">
+        <h2 className="text-2xl mb-4">Report Title</h2>
+        <input type="text" {...register("reportTitle")} className="mb-4 p-2 border rounded w-full" />
 
-        <h3>Materials Storage List</h3>
+        <h3 className="text-xl mb-4">Materials Storage List</h3>
         <MaterialsList
           register={register}
           fields={materialFields}
@@ -78,7 +79,7 @@ export default function App() {
           append={appendMaterial}
         />
 
-        <h3>Equipment List</h3>
+        <h3 className="text-xl mb-4">Equipment List</h3>
         <EquipmentList
           register={register}
           fields={equipmentFields}
@@ -86,23 +87,23 @@ export default function App() {
           append={appendEquipment}
         />
 
-        <h3>Construction Activity List</h3>
+        <h3 className="text-xl mb-4">Construction Activity List</h3>
         <ActivitiesList register={register} control={control} fields={activityFields} />
-        <button type="button" onClick={() => appendActivity()}>
+        <button type="button" onClick={() => appendActivity()} className="mb-4 p-2 bg-blue-500 text-white rounded">
           Add Activity
         </button>
 
-        <h3>Extra Details</h3>
-        <textarea {...register("extraDetails")} rows="5" cols="50" />
+        <h3 className="text-xl mb-4">Extra Details</h3>
+        <textarea {...register("extraDetails")} rows="5" cols="50" className="mb-4 p-2 border rounded w-full" />
 
-        <div>
-          <button type="button" onClick={saveToLocalStorage}>
+        <div className="flex space-x-2">
+          <button type="button" onClick={saveToLocalStorage} className="p-2 bg-green-500 text-white rounded">
             Save to Cache
           </button>
-          <button type="button" onClick={loadFromLocalStorage}>
+          <button type="button" onClick={loadFromLocalStorage} className="p-2 bg-yellow-500 text-white rounded">
             Load from Cache
           </button>
-          <button type="button" onClick={resetForm}>
+          <button type="button" onClick={resetForm} className="p-2 bg-red-500 text-white rounded">
             Reset Form
           </button>
         </div>
