@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      cra-template-typescript:
-        specifier: 1.2.0
-        version: 1.2.0
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -20,13 +17,6 @@ importers:
       react-scripts:
         specifier: 5.0.1
         version: 5.0.1(@babel/plugin-syntax-flow@7.26.0(@babel/core@7.26.7))(@babel/plugin-transform-react-jsx@7.25.9(@babel/core@7.26.7))(@types/babel__core@7.20.5)(eslint@8.57.1)(react@19.0.0)(type-fest@0.21.3)(typescript@4.9.5)
-    devDependencies:
-      html-inline-script-webpack-plugin:
-        specifier: ^3.2.1
-        version: 3.2.1(html-webpack-plugin@5.6.3(webpack@5.97.1))(webpack@5.97.1)
-      html-webpack-plugin:
-        specifier: ^5.6.3
-        version: 5.6.3(webpack@5.97.1)
 
 packages:
 
@@ -1912,10 +1902,6 @@ packages:
     resolution: {integrity: sha512-AdmX6xUzdNASswsFtmwSt7Vj8po9IuqXm0UXz7QKPuEUmPB4XyjGfaAr2PSuELMwkRMVH1EpIkX5bTZGRB3eCA==}
     engines: {node: '>=10'}
 
-  cra-template-typescript@1.2.0:
-    resolution: {integrity: sha512-GmkiMCJYLPCUuu3lonHVKs4KpDMmNu+24usHqHDaK/U9DhZxT9DRmz7lP31aRa0JI57bmbIJs+0DWnoxH+CUqg==}
-    engines: {node: '>=14'}
-
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
     engines: {node: '>= 8'}
@@ -2816,13 +2802,6 @@ packages:
 
   html-escaper@2.0.2:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
-
-  html-inline-script-webpack-plugin@3.2.1:
-    resolution: {integrity: sha512-PEj9Ve31BE0dva6eTD6wHMOztgIdPxF6gx3wad7ohBkCn7MXpuUvPC9t5ThMJ2NrVi1jWGBYU76DfoS+8dabRw==}
-    engines: {node: '>=14.0.0', npm: '>=6.0.0'}
-    peerDependencies:
-      html-webpack-plugin: ^5.0.0
-      webpack: ^5.0.0
 
   html-minifier-terser@6.1.0:
     resolution: {integrity: sha512-YXxSlJBZTP7RS3tWnQw74ooKa6L9b9i9QYXY21eUEvhZ3u9XLfv6OnFsQq6RxkhHygsaUMvYsZRV5rU/OVNZxw==}
@@ -7757,8 +7736,6 @@ snapshots:
       path-type: 4.0.0
       yaml: 1.10.2
 
-  cra-template-typescript@1.2.0: {}
-
   cross-spawn@7.0.6:
     dependencies:
       path-key: 3.1.1
@@ -8841,11 +8818,6 @@ snapshots:
   html-entities@2.5.2: {}
 
   html-escaper@2.0.2: {}
-
-  html-inline-script-webpack-plugin@3.2.1(html-webpack-plugin@5.6.3(webpack@5.97.1))(webpack@5.97.1):
-    dependencies:
-      html-webpack-plugin: 5.6.3(webpack@5.97.1)
-      webpack: 5.97.1
 
   html-minifier-terser@6.1.0:
     dependencies:
