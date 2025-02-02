@@ -1,13 +1,31 @@
-import React, { useState } from "react";
+import React from "react";
+import {
+  FieldArrayWithId,
+  UseFieldArrayAppend,
+  UseFieldArrayRemove,
+  UseFormRegister,
+} from "react-hook-form";
+import { Button } from "./components/ui/button";
+import { Input } from "./components/ui/input";
 
-export default function EquipmentList({ register, fields, remove, append }) {
-  const [isCollapsed, setIsCollapsed] = useState(true);
+export default function EquipmentList({
+  register,
+  fields,
+  remove,
+  append,
+}: {
+  register: UseFormRegister<any>;
+  fields: FieldArrayWithId<any, any, any>[];
+  remove: UseFieldArrayRemove;
+  append: UseFieldArrayAppend<any>;
+}) {
+  const [isCollapsed, setIsCollapsed] = React.useState(true);
 
   return (
     <div className="mb-4">
-      <button type="button" onClick={() => setIsCollapsed(!isCollapsed)} className="mb-2 p-2 bg-blue-500 text-white rounded">
+      <Button type="button" onClick={() => setIsCollapsed(!isCollapsed)}>
         {isCollapsed ? "Show Equipment List" : "Hide Equipment List"}
-      </button>
+      </Button>
       {!isCollapsed && (
         <>
           <table className="w-full border-collapse mb-4">
@@ -26,51 +44,53 @@ export default function EquipmentList({ register, fields, remove, append }) {
               {fields.map((field, index) => (
                 <tr key={field.id}>
                   <td className="border p-2">
-                    <input
+                    <Input
                       type="text"
                       {...register(`equipment.${index}.equipmentName`)}
-                      className="p-2 border rounded w-full"
                     />
                   </td>
                   <td className="border p-2">
-                    <input
+                    <Input
                       type="number"
                       {...register(`equipment.${index}.quantity`)}
-                      className="p-2 border rounded w-full"
                     />
                   </td>
                   <td className="border p-2">
-                    <input type="text" {...register(`equipment.${index}.unit`)} className="p-2 border rounded w-full" />
+                    <Input
+                      type="text"
+                      {...register(`equipment.${index}.unit`)}
+                    />
                   </td>
                   <td className="border p-2">
-                    <input
+                    <Input
                       type="number"
                       {...register(`equipment.${index}.unitCost`)}
-                      className="p-2 border rounded w-full"
                     />
                   </td>
                   <td className="border p-2">
-                    <input type="text" {...register(`equipment.${index}.currency`)} className="p-2 border rounded w-full" />
+                    <Input
+                      type="text"
+                      {...register(`equipment.${index}.currency`)}
+                    />
                   </td>
                   <td className="border p-2">
-                    <input
+                    <Input
                       type="text"
                       {...register(`equipment.${index}.condition`)}
-                      className="p-2 border rounded w-full"
                     />
                   </td>
                   <td className="border p-2">
-                    <button type="button" onClick={() => remove(index)} className="p-2 bg-red-500 text-white rounded">
+                    <Button type="button" onClick={() => remove(index)}>
                       Remove
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <button type="button" onClick={() => append()} className="p-2 bg-green-500 text-white rounded">
+          <Button type="button" onClick={() => append({})}>
             Add Equipment
-          </button>
+          </Button>
         </>
       )}
     </div>

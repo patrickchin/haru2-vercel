@@ -1,13 +1,31 @@
-import React, { useState } from "react";
+import React from "react";
+import {
+  UseFieldArrayRemove,
+  UseFieldArrayAppend,
+  FieldValues,
+  UseFormRegister,
+} from "react-hook-form";
+import { Button } from "./components/ui/button";
+import { Input } from "./components/ui/input";
 
-export default function MaterialsList({ register, fields, remove, append }) {
-  const [isCollapsed, setIsCollapsed] = useState(true);
+export default function MaterialsList({
+  register,
+  fields,
+  remove,
+  append,
+}: {
+  register: UseFormRegister<FieldValues>;
+  fields: { id: string }[];
+  remove: UseFieldArrayRemove;
+  append: UseFieldArrayAppend<FieldValues>;
+}) {
+  const [isCollapsed, setIsCollapsed] = React.useState(true);
 
   return (
     <div className="mb-4">
-      <button type="button" onClick={() => setIsCollapsed(!isCollapsed)} className="mb-2 p-2 bg-blue-500 text-white rounded">
+      <Button type="button" onClick={() => setIsCollapsed(!isCollapsed)}>
         {isCollapsed ? "Show Materials List" : "Hide Materials List"}
-      </button>
+      </Button>
       {!isCollapsed && (
         <>
           <table className="w-full border-collapse mb-4">
@@ -26,51 +44,53 @@ export default function MaterialsList({ register, fields, remove, append }) {
               {fields.map((field, index) => (
                 <tr key={field.id}>
                   <td className="border p-2">
-                    <input
+                    <Input
                       type="text"
                       {...register(`materials.${index}.materialName`)}
-                      className="p-2 border rounded w-full"
                     />
                   </td>
                   <td className="border p-2">
-                    <input
+                    <Input
                       type="number"
                       {...register(`materials.${index}.quantity`)}
-                      className="p-2 border rounded w-full"
                     />
                   </td>
                   <td className="border p-2">
-                    <input type="text" {...register(`materials.${index}.unit`)} className="p-2 border rounded w-full" />
+                    <Input
+                      type="text"
+                      {...register(`materials.${index}.unit`)}
+                    />
                   </td>
                   <td className="border p-2">
-                    <input
+                    <Input
                       type="number"
                       {...register(`materials.${index}.unitCost`)}
-                      className="p-2 border rounded w-full"
                     />
                   </td>
                   <td className="border p-2">
-                    <input type="text" {...register(`materials.${index}.currency`)} className="p-2 border rounded w-full" />
+                    <Input
+                      type="text"
+                      {...register(`materials.${index}.currency`)}
+                    />
                   </td>
                   <td className="border p-2">
-                    <input
+                    <Input
                       type="text"
                       {...register(`materials.${index}.condition`)}
-                      className="p-2 border rounded w-full"
                     />
                   </td>
                   <td className="border p-2">
-                    <button type="button" onClick={() => remove(index)} className="p-2 bg-red-500 text-white rounded">
+                    <Button type="button" onClick={() => remove(index)}>
                       Remove
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <button type="button" onClick={() => append()} className="p-2 bg-green-500 text-white rounded">
+          <Button type="button" onClick={() => append({})}>
             Add Material
-          </button>
+          </Button>
         </>
       )}
     </div>
