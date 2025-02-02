@@ -65,7 +65,7 @@ function MaterialsUsedList({
 
   return (
     <>
-      <Button type="button" onClick={() => setIsCollapsed(!isCollapsed)}>
+      <Button type="button" onClick={() => setIsCollapsed(!isCollapsed)} variant="default">
         {isCollapsed ? "Show Materials Used" : "Hide Materials Used"}
       </Button>
       <h4 className="text-lg mb-2">Materials Used</h4>
@@ -99,6 +99,7 @@ function MaterialsUsedList({
                 usedUnit: "",
               })
             }
+            variant="outline"
           >
             Add Material
           </Button>
@@ -130,13 +131,12 @@ function Activity({
         <Input
           type="text"
           {...register(`activities.${index}.activityName`)}
-          readOnly={isCollapsed}
           className="flex-1 p-2 border rounded"
         />
-        <Button type="button" onClick={() => setIsCollapsed(!isCollapsed)}>
+        <Button type="button" onClick={() => setIsCollapsed(!isCollapsed)} variant="default">
           {isCollapsed ? "Show Details" : "Hide Details"}
         </Button>
-        <Button type="button" onClick={() => remove(index)} className="ml-2">
+        <Button type="button" onClick={() => remove(index)} variant="destructive" className="ml-2">
           Remove Activity
         </Button>
       </div>

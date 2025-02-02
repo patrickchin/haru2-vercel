@@ -23,7 +23,7 @@ export default function EquipmentList({
 
   return (
     <div className="mb-4">
-      <Button type="button" onClick={() => setIsCollapsed(!isCollapsed)}>
+      <Button type="button" onClick={() => setIsCollapsed(!isCollapsed)} variant="default">
         {isCollapsed ? "Show Equipment List" : "Hide Equipment List"}
       </Button>
       {!isCollapsed && (
@@ -80,7 +80,7 @@ export default function EquipmentList({
                     />
                   </td>
                   <td className="border p-2">
-                    <Button type="button" onClick={() => remove(index)}>
+                    <Button type="button" onClick={() => remove(index)} variant="destructive">
                       Remove
                     </Button>
                   </td>
@@ -88,7 +88,7 @@ export default function EquipmentList({
               ))}
             </tbody>
           </table>
-          <Button type="button" onClick={() => append({})}>
+          <Button type="button" onClick={() => append({})} variant="outline">
             Add Equipment
           </Button>
         </>

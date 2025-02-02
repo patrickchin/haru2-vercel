@@ -63,6 +63,17 @@ export default function App() {
     });
   };
 
+  const exportToFile = () => {
+    const formData = getValues();
+    const blob = new Blob([JSON.stringify(formData, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "harpapro-report.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   useEffect(() => {
     loadFromLocalStorage();
   }, [loadFromLocalStorage]);
@@ -103,7 +114,7 @@ export default function App() {
           fields={activityFields}
           remove={removeActivity}
         />
-        <Button type="button" onClick={() => appendActivity({})}>
+        <Button type="button" onClick={() => appendActivity({})} variant="default">
           Add Activity
         </Button>
 
@@ -116,14 +127,17 @@ export default function App() {
         />
 
         <div className="flex space-x-2">
-          <Button type="button" onClick={saveToLocalStorage}>
+          <Button type="button" onClick={saveToLocalStorage} variant="secondary">
             Save to Cache
           </Button>
-          <Button type="button" onClick={loadFromLocalStorage}>
+          <Button type="button" onClick={loadFromLocalStorage} variant="secondary">
             Load from Cache
           </Button>
-          <Button type="button" onClick={resetForm}>
+          <Button type="button" onClick={resetForm} variant="destructive">
             Reset Form
+          </Button>
+          <Button type="button" onClick={exportToFile} variant="default">
+            Export to File
           </Button>
         </div>
       </form>
