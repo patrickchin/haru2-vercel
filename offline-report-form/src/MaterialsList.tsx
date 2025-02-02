@@ -7,6 +7,14 @@ import {
 } from "react-hook-form";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  TableHeader,
+} from "./components/ui/table";
 
 export default function MaterialsList({
   register,
@@ -23,71 +31,79 @@ export default function MaterialsList({
 
   return (
     <div className="mb-4">
-      <Button type="button" onClick={() => setIsCollapsed(!isCollapsed)} variant="default">
+      <Button
+        type="button"
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        variant="default"
+      >
         {isCollapsed ? "Show Materials List" : "Hide Materials List"}
       </Button>
       {!isCollapsed && (
         <>
-          <table className="w-full border-collapse mb-4">
-            <thead>
-              <tr>
-                <th className="border p-2">Material Name</th>
-                <th className="border p-2">Quantity</th>
-                <th className="border p-2">Unit</th>
-                <th className="border p-2">Unit Cost</th>
-                <th className="border p-2">Currency</th>
-                <th className="border p-2">Condition</th>
-                <th className="border p-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Material Name</TableHead>
+                <TableHead>Quantity</TableHead>
+                <TableHead>Unit</TableHead>
+                <TableHead>Unit Cost</TableHead>
+                <TableHead>Currency</TableHead>
+                <TableHead>Condition</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {fields.map((field, index) => (
-                <tr key={field.id}>
-                  <td className="border p-2">
+                <TableRow key={field.id}>
+                  <TableCell>
                     <Input
                       type="text"
                       {...register(`materials.${index}.materialName`)}
                     />
-                  </td>
-                  <td className="border p-2">
+                  </TableCell>
+                  <TableCell>
                     <Input
                       type="number"
                       {...register(`materials.${index}.quantity`)}
                     />
-                  </td>
-                  <td className="border p-2">
+                  </TableCell>
+                  <TableCell>
                     <Input
                       type="text"
                       {...register(`materials.${index}.unit`)}
                     />
-                  </td>
-                  <td className="border p-2">
+                  </TableCell>
+                  <TableCell>
                     <Input
                       type="number"
                       {...register(`materials.${index}.unitCost`)}
                     />
-                  </td>
-                  <td className="border p-2">
+                  </TableCell>
+                  <TableCell>
                     <Input
                       type="text"
                       {...register(`materials.${index}.currency`)}
                     />
-                  </td>
-                  <td className="border p-2">
+                  </TableCell>
+                  <TableCell>
                     <Input
                       type="text"
                       {...register(`materials.${index}.condition`)}
                     />
-                  </td>
-                  <td className="border p-2">
-                    <Button type="button" onClick={() => remove(index)} variant="destructive">
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      type="button"
+                      onClick={() => remove(index)}
+                      variant="destructive"
+                    >
                       Remove
                     </Button>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
           <Button type="button" onClick={() => append({})} variant="outline">
             Add Material
           </Button>

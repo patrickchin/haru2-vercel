@@ -7,6 +7,14 @@ import {
 } from "react-hook-form";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  TableHeader,
+} from "./components/ui/table";
 
 export default function EquipmentList({
   register,
@@ -23,71 +31,79 @@ export default function EquipmentList({
 
   return (
     <div className="mb-4">
-      <Button type="button" onClick={() => setIsCollapsed(!isCollapsed)} variant="default">
+      <Button
+        type="button"
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        variant="default"
+      >
         {isCollapsed ? "Show Equipment List" : "Hide Equipment List"}
       </Button>
       {!isCollapsed && (
         <>
-          <table className="w-full border-collapse mb-4">
-            <thead>
-              <tr>
-                <th className="border p-2">Equipment Name</th>
-                <th className="border p-2">Quantity</th>
-                <th className="border p-2">Unit</th>
-                <th className="border p-2">Unit Cost</th>
-                <th className="border p-2">Currency</th>
-                <th className="border p-2">Condition</th>
-                <th className="border p-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Equipment Name</TableHead>
+                <TableHead>Quantity</TableHead>
+                <TableHead>Unit</TableHead>
+                <TableHead>Unit Cost</TableHead>
+                <TableHead>Currency</TableHead>
+                <TableHead>Condition</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {fields.map((field, index) => (
-                <tr key={field.id}>
-                  <td className="border p-2">
+                <TableRow key={field.id}>
+                  <TableCell>
                     <Input
                       type="text"
                       {...register(`equipment.${index}.equipmentName`)}
                     />
-                  </td>
-                  <td className="border p-2">
+                  </TableCell>
+                  <TableCell>
                     <Input
                       type="number"
                       {...register(`equipment.${index}.quantity`)}
                     />
-                  </td>
-                  <td className="border p-2">
+                  </TableCell>
+                  <TableCell>
                     <Input
                       type="text"
                       {...register(`equipment.${index}.unit`)}
                     />
-                  </td>
-                  <td className="border p-2">
+                  </TableCell>
+                  <TableCell>
                     <Input
                       type="number"
                       {...register(`equipment.${index}.unitCost`)}
                     />
-                  </td>
-                  <td className="border p-2">
+                  </TableCell>
+                  <TableCell>
                     <Input
                       type="text"
                       {...register(`equipment.${index}.currency`)}
                     />
-                  </td>
-                  <td className="border p-2">
+                  </TableCell>
+                  <TableCell>
                     <Input
                       type="text"
                       {...register(`equipment.${index}.condition`)}
                     />
-                  </td>
-                  <td className="border p-2">
-                    <Button type="button" onClick={() => remove(index)} variant="destructive">
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      type="button"
+                      onClick={() => remove(index)}
+                      variant="destructive"
+                    >
                       Remove
                     </Button>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
           <Button type="button" onClick={() => append({})} variant="outline">
             Add Equipment
           </Button>
