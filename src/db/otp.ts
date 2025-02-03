@@ -3,8 +3,7 @@ import "server-only";
 import { db } from "./_db";
 import { eq } from "drizzle-orm";
 import { genSaltSync, hashSync, compareSync } from "bcrypt-ts";
-
-import * as Schemas from "@/db/schema";
+import { otps1 } from "./schema";
 
 export async function saveOtp(
   contactInfo: string,
@@ -22,8 +21,8 @@ export async function saveOtp(
     // Check if there is an existing OTP for the phone number
     const existingOtp = await tx
       .select()
-      .from(Schemas.otps1)
-      .where(eq(Schemas.otps1.contactInfo, contactInfo))
+      .from(otps1)
+      .where(eq(otps1.contactInfo, contactInfo))
       .limit(1);
 
     if (existingOtp.length > 0) {
@@ -44,9 +43,7 @@ export async function saveOtp(
         }
 
         // If allowed, delete the existing OTP (to be overwritten)
-        await tx
-          .delete(Schemas.otps1)
-          .where(eq(Schemas.otps1.contactInfo, contactInfo));
+        await tx.delete(otps1).where(eq(otps1.contactInfo, contactInfo));
       }
     }
 
@@ -56,7 +53,7 @@ export async function saveOtp(
 
     // Save the new OTP
     return await tx
-      .insert(Schemas.otps1)
+      .insert(otps1)
       .values({
         contactInfo,
         otp: hashedOtp,
@@ -75,8 +72,8 @@ export async function verifyOtp(
     // Retrieve the OTP record for the given phone number
     const record = await tx
       .select()
-      .from(Schemas.otps1)
-      .where(eq(Schemas.otps1.contactInfo, contactInfo))
+      .from(otps1)
+      .where(eq(otps1.contactInfo, contactInfo))
       .limit(1);
 
     // If no record is found, return false
@@ -89,9 +86,7 @@ export async function verifyOtp(
     // Check if the OTP has expired
     if (new Date() > new Date(expiresAt)) {
       // If expired, delete the OTP record and return false
-      await tx
-        .delete(Schemas.otps1)
-        .where(eq(Schemas.otps1.contactInfo, contactInfo));
+      await tx.delete(otps1).where(eq(otps1.contactInfo, contactInfo));
       return false;
     }
 
@@ -100,9 +95,7 @@ export async function verifyOtp(
 
     // If the OTP is valid, delete the OTP record
     if (isValidOtp) {
-      await tx
-        .delete(Schemas.otps1)
-        .where(eq(Schemas.otps1.contactInfo, contactInfo));
+      await tx.delete(otps1).where(eq(otps1.contactInfo, contactInfo));
     }
 
     return isValidOtp;
