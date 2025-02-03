@@ -136,10 +136,6 @@ function ReportBudget({ report }: { report?: SiteReportAll }) {
 }
 
 async function ReportActivities({ report }: { report?: SiteReportAll }) {
-  const equipment: SiteEquipment[] = report
-    ? ((await Actions.listSiteReportUsedEquipment(report.id)) ?? [])
-    : [];
-
   return (
     <Card className="bg-cyan-50 dark:bg-cyan-950">
       <CardHeader className="flex flex-row justify-between">
