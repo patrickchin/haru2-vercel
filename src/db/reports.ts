@@ -505,6 +505,18 @@ export async function getReportActivityRole({
     .then((r) => (r && r.length ? r[0].role : null));
 }
 
+export async function listSiteReportActivities(reportId: number) {
+  return db
+    .select()
+    .from(siteActivity1)
+    .where(
+      eq(
+        siteActivity1.siteActivityListId,
+        siteReportDetails1.siteActivityListId,
+      ),
+    );
+}
+
 export async function addSiteActivity(
   reportId: number,
   activity: SiteActivityNew,

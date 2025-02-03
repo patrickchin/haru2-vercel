@@ -326,11 +326,25 @@ export async function updateSiteReportInventoryEquipment(
   }
 }
 
-export async function addSiteActivity(reportId: number, activity: SiteActivityNew) {
+export async function listSiteReportActivities(reportId: number) {
+  const role = await getSiteMemberRole({ reportId });
+  if (viewSiteRoles.includes(role)) {
+    return db.listSiteReportActivities(reportId);
+  }
+}
+
+export async function addSiteActivity(
+  reportId: number,
+  activity: SiteActivityNew,
+) {
   const role = await getSiteMemberRole({ reportId });
   if (editReportRoles.includes(role)) {
     const newActivity = await db.addSiteActivity(reportId, activity);
-    db.addlogMessage({ message: "Site activity added", reportId, activityId: newActivity.id });
+    db.addlogMessage({
+      message: "Site activity added",
+      reportId,
+      activityId: newActivity.id,
+    });
     revalidatePath(`/sites/${reportId}/activities/${newActivity.id}`);
     return newActivity;
   }
@@ -346,7 +360,10 @@ export async function removeSiteActivity(activityId: number) {
   }
 }
 
-export async function updateSiteActivity(activityId: number, values: SiteActivityNew) {
+export async function updateSiteActivity(
+  activityId: number,
+  values: SiteActivityNew,
+) {
   const role = await getSiteMemberRole({ activityId });
   if (editReportRoles.includes(role)) {
     const updatedActivity = await db.updateSiteActivity(activityId, values);
@@ -356,21 +373,39 @@ export async function updateSiteActivity(activityId: number, values: SiteActivit
   }
 }
 
-export async function updateSiteActivityUsedMaterials(activityId: number, materials: SiteMaterialNew[]) {
+export async function updateSiteActivityUsedMaterials(
+  activityId: number,
+  materials: SiteMaterialNew[],
+) {
   const role = await getSiteMemberRole({ activityId });
   if (editReportRoles.includes(role)) {
-    const updatedMaterials = await db.updateSiteActivityUsedMaterials(activityId, materials);
-    db.addlogMessage({ message: "Site activity materials updated", activityId });
+    const updatedMaterials = await db.updateSiteActivityUsedMaterials(
+      activityId,
+      materials,
+    );
+    db.addlogMessage({
+      message: "Site activity materials updated",
+      activityId,
+    });
     revalidatePath(`/activities/${activityId}/materials`);
     return updatedMaterials;
   }
 }
 
-export async function updateSiteActivityUsedEquipment(activityId: number, equipment: SiteEquipmentNew[]) {
+export async function updateSiteActivityUsedEquipment(
+  activityId: number,
+  equipment: SiteEquipmentNew[],
+) {
   const role = await getSiteMemberRole({ activityId });
   if (editReportRoles.includes(role)) {
-    const updatedEquipment = await db.updateSiteActivityUsedEquipment(activityId, equipment);
-    db.addlogMessage({ message: "Site activity equipment updated", activityId });
+    const updatedEquipment = await db.updateSiteActivityUsedEquipment(
+      activityId,
+      equipment,
+    );
+    db.addlogMessage({
+      message: "Site activity equipment updated",
+      activityId,
+    });
     revalidatePath(`/activities/${activityId}/equipment`);
     return updatedEquipment;
   }
