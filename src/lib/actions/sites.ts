@@ -371,6 +371,7 @@ export async function getSiteMemberRole(
     siteId,
     reportId,
     sectionId,
+    activityId,
     meetingId,
     invitationId,
     commentsSectionId,
@@ -378,6 +379,7 @@ export async function getSiteMemberRole(
     siteId?: number;
     reportId?: number;
     sectionId?: number;
+    activityId?: number;
     meetingId?: number;
     invitationId?: number;
     commentsSectionId?: number;
@@ -395,6 +397,8 @@ export async function getSiteMemberRole(
     role = await db.getReportRole({ reportId, userId });
   } else if (sectionId) {
     role = await db.getReportSectionRole({ sectionId, userId });
+  } else if (activityId) {
+    role = await db.getReportActivityRole({ activityId, userId });
   } else if (meetingId) {
     role = await db.getMeetingRole({ meetingId, userId });
   } else if (commentsSectionId) {

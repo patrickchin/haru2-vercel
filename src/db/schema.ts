@@ -296,6 +296,38 @@ export const equipment1 = pgTable("equipments1", {
   operationTimeHours: numeric("operationTimeHours"),
 });
 
+export const siteActivityList1 = pgTable("siteActivityList1", {
+  id: serial("id").primaryKey(),
+});
+
+export const siteActivity1 = pgTable("siteActivity1", {
+  id: serial("id").primaryKey(),
+  siteActivityListId: integer("siteActivityListId").references(
+    () => siteActivityList1.id,
+  ),
+  name: varchar("name"),
+  description: varchar("description"),
+
+  contractors: varchar("contractors"),
+  engineers: varchar("engineers"),
+  visitors: varchar("visitors"),
+
+  startDate: timestamp("startDate", { mode: "date", withTimezone: true }),
+  endOfDate: timestamp("endOfDate", { mode: "date", withTimezone: true }),
+
+  numberOfWorkers: integer("numberOfWorkers"),
+  workersHoursPerDay: numeric("workerHoursPerDay"),
+  workersCostPerDay: numeric("workerCostPerDay"),
+  workersCostCurrency: varchar("workersCostCurrency"),
+
+  usedMaterialsListId: integer("usedMaterialsListId").references(
+    () => materialsList1.id,
+  ),
+  usedEquipmentListId: integer("usedEquipmentListId").references(
+    () => equipmentList1.id,
+  ),
+});
+
 export const siteReportDetails1 = pgTable("siteReportDetails1", {
   id: serial("id")
     .primaryKey()
@@ -328,44 +360,45 @@ export const siteReportDetails1 = pgTable("siteReportDetails1", {
     withTimezone: true,
   }),
 
-  activity: varchar("activity"),
-
-  contractors: varchar("contractors"),
-  engineers: varchar("engineers"),
-  workers: varchar("workers"), // deprecated
-  visitors: varchar("visitors"),
-
-  numberOfWorkers: integer("numberOfWorkers"),
-  workersHours: numeric("workersHours"),
-  workersCost: numeric("workersCost"),
-  workersCostCurrency: varchar("workersCostCurrency"),
-
-  materialsUsed: varchar("materialsUsed"), // deprecated
-  equipmentUsed: varchar("equipmentUsed"), // deprecated
-
-  materialsInventory: varchar("materialsInventory"),
-  equipmentInventory: varchar("equipmentInventory"),
-
-  usedMaterialsListId: integer("usedMaterialsListId").references(
-    () => materialsList1.id,
-  ),
   inventoryMaterialsListId: integer("inventoryMaterialsListId").references(
     () => materialsList1.id,
-  ),
-  usedEquipmentListId: integer("usedEquipmentListId").references(
-    () => equipmentList1.id,
   ),
   inventoryEquipmentListId: integer("inventoryEquipmentListId").references(
     () => equipmentList1.id,
   ),
 
-  budget: varchar("budget"),
-  spent: varchar("spent"),
-  timeline: varchar("timeline"),
+  siteActivityListId: integer("siteActivityListId").references(
+    () => siteActivityList1.id,
+  ),
+
+  contractors: varchar("contractors"), // deprecated
+  engineers: varchar("engineers"), // deprecated
+  visitors: varchar("visitors"), // deprecated
+
+  activity: varchar("activity"), // deprecated
+  workers: varchar("workers"), // deprecated
+  numberOfWorkers: integer("numberOfWorkers"),
+  workersHours: numeric("workersHours"), // per day
+  workersCost: numeric("workersCost"), // per day
+  workersCostCurrency: varchar("workersCostCurrency"),
+  materialsUsed: varchar("materialsUsed"), // deprecated
+  equipmentUsed: varchar("equipmentUsed"), // deprecated
+  materialsInventory: varchar("materialsInventory"), // deprecated
+  equipmentInventory: varchar("equipmentInventory"), // deprecated
+  usedMaterialsListId: integer("usedMaterialsListId").references(
+    () => materialsList1.id,
+  ), // deprecated
+  usedEquipmentListId: integer("usedEquipmentListId").references(
+    () => equipmentList1.id,
+  ), // deprecated
+
+  budget: varchar("budget"), // unused for now
+  spent: varchar("spent"), // unused for now
+  timeline: varchar("timeline"), // unused for now
   completion: timestamp("completionDate", {
     mode: "date",
     withTimezone: true,
-  }).defaultNow(),
+  }).defaultNow(), // unused for now
 });
 
 export const siteReportSections1 = pgTable("siteReportSections1", {
@@ -412,6 +445,7 @@ export const logs1 = pgTable("logs1", {
   userId: integer("userId"),
   siteId: integer("siteId"),
   reportId: integer("reportId"),
+  activityId: integer("activityId"),
 
   noticeId: integer("noticeId"),
   meetingId: integer("meetingId"),
