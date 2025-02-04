@@ -29,7 +29,7 @@ export async function addSite(data: zSiteNewBothType) {
   const parsed = zSiteNewBoth.safeParse(data);
   if (!parsed.success) return;
   const site = await db.addSite(session.user.idn, parsed.data);
-  db.addlogMessage({ message: "Site added", siteId: site.id });
+  db.addLogMessage({ message: "Site added", siteId: site.id });
   redirect(`/sites/${site.id}/edit/choose`);
 }
 
@@ -61,7 +61,7 @@ export async function updateSite(siteId: number, data: SiteNew) {
   const role = await getSiteMemberRole({ siteId });
   if (editSiteRoles.includes(role)) {
     const updated = await db.updateSite(siteId, data);
-    db.addlogMessage({ message: "Site updated", siteId });
+    db.addLogMessage({ message: "Site updated", siteId });
     revalidatePath(`/sites/${siteId}`);
     return updated;
   }
@@ -74,7 +74,7 @@ export async function updateSiteDetails(
   const role = await getSiteMemberRole({ siteId });
   if (editSiteRoles.includes(role)) {
     const updated = await db.updateSiteDetails(siteId, details);
-    db.addlogMessage({ message: "Site details updated", siteId });
+    db.addLogMessage({ message: "Site details updated", siteId });
     revalidatePath(`/sites/${siteId}`);
     return updated;
   }
@@ -106,7 +106,7 @@ export async function addSiteFile({
         ...fileInfo,
         uploaderId: session?.user?.idn,
       });
-      db.addlogMessage({
+      db.addLogMessage({
         message: "Site file added",
         siteId,
         fileId: file.id,
@@ -129,7 +129,7 @@ export async function deleteSiteFile({
     const fileGroupId = await db.ensureSiteFilesSection(siteId);
     if (fileGroupId) {
       const file = await db.updateFile({ fileId }, { deletedAt: new Date() });
-      db.addlogMessage({
+      db.addLogMessage({
         message: "Site file deleted",
         siteId,
         fileId: file.id,
@@ -187,7 +187,7 @@ export async function addSiteMeeting(siteId: number, values: SiteMeetingNew) {
       { siteId, userId: session?.user?.idn },
       values,
     );
-    db.addlogMessage({
+    db.addLogMessage({
       message: "Site meeting added",
       siteId,
       meetingId: meeting.id,
@@ -204,7 +204,7 @@ export async function updateSiteMeeting(
   const role = await getSiteMemberRole({ meetingId });
   if (editMeetingRoles.includes(role) || acceptMeetingRoles.includes(role)) {
     const meeting = await db.updateSiteMeeting(meetingId, values);
-    db.addlogMessage({
+    db.addLogMessage({
       message: "Site meeting updated",
       siteId: meeting.siteId,
       meetingId,
@@ -221,7 +221,7 @@ export async function updateSiteMeetingReturnAllMeetings(
   const role = await getSiteMemberRole({ meetingId });
   if (editMeetingRoles.includes(role) || acceptMeetingRoles.includes(role)) {
     const meeting = await db.updateSiteMeeting(meetingId, values);
-    db.addlogMessage({
+    db.addLogMessage({
       message: "Site meeting updated 2",
       siteId: meeting.siteId,
       meetingId,
@@ -234,7 +234,7 @@ export async function deleteSiteMeeting(meetingId: number) {
   const role = await getSiteMemberRole({ meetingId });
   if (editSiteRoles.includes(role)) {
     const meeting = await db.deleteSiteMeeting(meetingId);
-    db.addlogMessage({
+    db.addLogMessage({
       message: "Site meeting deleted",
       siteId: meeting.siteId,
       meetingId,
@@ -247,7 +247,7 @@ export async function deleteSiteMeetingReturnAllMeetings(meetingId: number) {
   const role = await getSiteMemberRole({ meetingId });
   if (editSiteRoles.includes(role)) {
     const meeting = await db.deleteSiteMeeting(meetingId);
-    db.addlogMessage({
+    db.addLogMessage({
       message: "Site meeting deleted 2",
       siteId: meeting.siteId,
       meetingId,
@@ -283,7 +283,7 @@ The Harpa Pro Team.
   const nInv = await db.countSiteInvitations(siteId);
   if (nInv < maxSiteInvitations) {
     const invitation = await db.addSiteInvitation(siteId, { email });
-    db.addlogMessage({
+    db.addLogMessage({
       message: `Site invitation added ${email}`,
       siteId,
       invitationId: invitation.id,
@@ -332,7 +332,7 @@ export async function updateSiteMemberRole({
   role: SiteMemberRole;
 }) {
   if (editSiteRoles.includes(await getSiteMemberRole({ siteId }))) {
-    db.addlogMessage({
+    db.addLogMessage({
       message: `Site member role updated to "${role}"`,
       siteId,
     });
@@ -350,7 +350,7 @@ export async function removeSiteMember({
   if (editSiteRoles.includes(await getSiteMemberRole({ siteId }))) {
     const n = await db.countSiteMembers(siteId);
     if (n > 1) {
-      db.addlogMessage({
+      db.addLogMessage({
         message: "Site member removed",
         siteId,
         userId,
@@ -425,7 +425,7 @@ export async function deleteSiteInvitation(invitationId: number) {
   const role = await getSiteMemberRole({ invitationId }, session);
   if (editSiteRoles.includes(role)) {
     const invitation = await db.deleteSiteInvitation(invitationId);
-    db.addlogMessage({
+    db.addLogMessage({
       message: `Site invitation removed: "${invitation.email}"`,
       siteId: invitation.siteId,
       invitationId,

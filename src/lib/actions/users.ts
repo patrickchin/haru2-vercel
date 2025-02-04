@@ -88,13 +88,13 @@ export async function signInFromLogin(
     });
   } catch (error: unknown) {
     if (isRedirectError(error)) {
-      db.addlogMessage({
+      db.addLogMessage({
         message: `Successfull login: ${username}`,
         userId: (await user)?.id,
       });
       throw error;
     } else if (error instanceof AuthError) {
-      db.addlogMessage({
+      db.addLogMessage({
         message: `Failed to login: ${username}`,
         userId: (await user)?.id,
       });
@@ -149,9 +149,9 @@ export async function updateUserPassword({
     const salt = genSaltSync(10);
     const hash = hashSync(newPassword, salt);
     await db.updateUserPassword(userId, hash);
-    db.addlogMessage({ message: "Changed password successfully" });
+    db.addLogMessage({ message: "Changed password successfully" });
   } else {
-    db.addlogMessage({ message: "Failed to update password" });
+    db.addLogMessage({ message: "Failed to update password" });
     return { error: "Failed to update password" };
   }
 }

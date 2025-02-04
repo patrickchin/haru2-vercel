@@ -45,7 +45,7 @@ export async function addSiteReport(siteId: number) {
       siteId: siteId,
     });
     const reportId = report.id;
-    db.addlogMessage({ message: "Site report added", reportId });
+    db.addLogMessage({ message: "Site report added", reportId });
     return report;
   }
 }
@@ -56,7 +56,7 @@ export async function updateSiteReport(
 ) {
   if (editReportRoles.includes(await getSiteMemberRole({ reportId }))) {
     const report = await db.updateSiteReport(reportId, values);
-    db.addlogMessage({ message: "Site report updated", reportId });
+    db.addLogMessage({ message: "Site report updated", reportId });
     revalidatePath(`/sites/${report.siteId}/reports/${report.id}`);
     return report;
   }
@@ -82,7 +82,7 @@ export async function updateSiteReportDetails(
       db.updateSiteReportDetails(reportId, values),
       db.getSiteReport(reportId),
     ]);
-    db.addlogMessage({ message: "Site report details updated", reportId });
+    db.addLogMessage({ message: "Site report details updated", reportId });
     revalidatePath(`/sites/${report.siteId}/reports/${report.id}`);
     return { ...report, ...details };
   }
@@ -94,7 +94,7 @@ export async function publishReport(reportId: number) {
     const report = await db.updateSiteReport(reportId, {
       publishedAt: new Date(),
     });
-    db.addlogMessage({ message: "Site report published", reportId });
+    db.addLogMessage({ message: "Site report published", reportId });
     revalidatePath(`/sites/${report.siteId}/reports/${report.id}`);
     return report;
   }
@@ -134,7 +134,7 @@ export async function signReport(reportId: number, buttonRole: SiteMemberRole) {
 
   if (!signArgs) return;
   const report = await db.updateSiteReportDetails(reportId, signArgs);
-  db.addlogMessage({ message: `Site report signed by ${role}`, reportId });
+  db.addLogMessage({ message: `Site report signed by ${role}`, reportId });
 
   revalidatePath(`/sites/${oldReport.siteId}/reports/${report.id}`);
   return report;
@@ -149,7 +149,7 @@ export async function deleteSiteReport(reportId: number) {
       const updatedReport = db.updateSiteReport(reportId, {
         deletedAt: new Date(),
       });
-      db.addlogMessage({ message: "Site report deleted", reportId });
+      db.addLogMessage({ message: "Site report deleted", reportId });
       revalidatePath(`/sites/${report.siteId}/reports/${report.id}`);
       return updatedReport;
     }
@@ -184,7 +184,7 @@ export async function addSiteReportFile(
         ...fileInfo,
         uploaderId: session?.user?.idn,
       });
-      db.addlogMessage({
+      db.addLogMessage({
         message: "Site report file added",
         reportId,
         fileId: file.id,
@@ -204,7 +204,7 @@ export async function deleteSiteReportFile({
   const role = await getSiteMemberRole({ reportId });
   if (editReportRoles.includes(role)) {
     const file = db.updateFile({ fileId }, { deletedAt: new Date() });
-    db.addlogMessage({
+    db.addLogMessage({
       message: "Site report file deleted",
       reportId,
       fileId,
@@ -346,7 +346,7 @@ export async function addSiteActivity({
   const role = await getSiteMemberRole({ reportId });
   if (editReportRoles.includes(role)) {
     const newActivity = await db.addSiteActivity(reportId, activity);
-    db.addlogMessage({
+    db.addLogMessage({
       message: "Site activity added",
       reportId,
       activityId: newActivity.id,
@@ -359,7 +359,7 @@ export async function deleteSiteActivity(activityId: number) {
   const role = await getSiteMemberRole({ activityId });
   if (editReportRoles.includes(role)) {
     const removedActivity = await db.deleteSiteActivity(activityId);
-    db.addlogMessage({ message: "Site activity removed", activityId });
+    db.addLogMessage({ message: "Site activity removed", activityId });
     return removedActivity;
   }
 }
@@ -374,7 +374,7 @@ export async function updateSiteActivity({
   const role = await getSiteMemberRole({ activityId });
   if (editReportRoles.includes(role)) {
     const updatedActivity = await db.updateSiteActivity(activityId, values);
-    db.addlogMessage({ message: "Site activity updated", activityId });
+    db.addLogMessage({ message: "Site activity updated", activityId });
     return updatedActivity;
   }
 }
@@ -403,7 +403,7 @@ export async function updateSiteActivityUsedMaterials({
       activityId,
       materials,
     });
-    db.addlogMessage({
+    db.addLogMessage({
       message: "Site activity materials updated",
       activityId,
     });
@@ -432,7 +432,7 @@ export async function updateSiteActivityUsedEquipment(
       activityId,
       equipment,
     );
-    db.addlogMessage({
+    db.addLogMessage({
       message: "Site activity equipment updated",
       activityId,
     });
