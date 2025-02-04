@@ -28,7 +28,8 @@ import {
 } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { LucideLoaderCircle, LucidePlus, LucideX } from "lucide-react";
-import { SiteDetails } from "@/lib/types";
+import { SiteDetails, SiteMaterial, SiteMaterialNew } from "@/lib/types";
+import { getCountryCurrency } from "@/lib/constants";
 
 function MaterialTableRow({
   field,
@@ -181,7 +182,7 @@ export function EditUsedMaterialsForm({
     mutate,
     isLoading,
   } = useSWR(`/api/activity/${activityId}/used-materials`, async () =>
-    Actions.listSiteActivityUsedMaterials(activityId),
+    Actions.listSiteActivityUsedMaterials({ activityId }),
   );
   return (
     <EditMaterialsForm
@@ -190,7 +191,7 @@ export function EditUsedMaterialsForm({
       mutate={mutate}
       isLoading={isLoading}
       updateAction={(materials) =>
-        Actions.updateSiteActivityUsedMaterials(activityId, materials)
+        Actions.updateSiteActivityUsedMaterials({ activityId, materials })
       }
     />
   );
@@ -212,7 +213,7 @@ export function EditInventoryMaterialsForm({
   );
   return (
     <EditMaterialsForm
-      site={site}
+      defaultCurrency={getCountryCurrency(site.countryCode) ?? null}
       materials={materials}
       mutate={mutate}
       isLoading={isLoading}
@@ -231,10 +232,10 @@ function EditMaterialsForm({
   updateAction,
 }: {
   defaultCurrency: string | null;
-  materials: any;
+  materials?: SiteMaterial[];
   mutate: any;
   isLoading: boolean;
-  updateAction: (materials: any) => Promise<any>;
+  updateAction: (materials: SiteMaterialNew[]) => Promise<any>;
 }) {
   const schema = z.object({
     materials: z.array(
@@ -278,9 +279,11 @@ function EditMaterialsForm({
         className="flex flex-col gap-4 grow"
         onSubmit={form.handleSubmit(
           async (data: SchemaType) => {
-            const newMaterials = await mutate(updateAction(data.materials), {
-              revalidate: false,
-            });
+            console.log("data", data);
+            await updateAction(data.materials);
+            console.log("data", data);
+            const newMaterials = await mutate();
+            console.log("newMaterials", newMaterials);
             form.reset({ materials: newMaterials });
           },
           (errors) => {

@@ -97,12 +97,12 @@ export const columns: ColumnDef<SiteMaterial>[] = [
 
 function MaterialsTable({
   materials,
-  report,
   isLoading,
+  exportFilename,
 }: {
-  materials: SiteMaterial[] | undefined;
-  report?: SiteReport;
+  materials?: SiteMaterial[];
   isLoading: boolean;
+  exportFilename: string;
 }) {
   const table = useReactTable({
     data: materials ?? [],
@@ -126,7 +126,6 @@ function MaterialsTable({
           variant="default"
           onClick={() => {
             if (!materials) return;
-            if (!report) return;
             let csvContent = "data:text/csv;charset=utf-8,";
             csvContent += Object.keys(materials[0]).join(",");
             csvContent += "\n";
@@ -137,10 +136,7 @@ function MaterialsTable({
             var encodedUri = encodeURI(csvContent);
             var link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute(
-              "download",
-              `harpapro-report-#${report.id}-${report.createdAt?.toDateString()}-materials.csv`,
-            );
+            link.setAttribute("download", exportFilename);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -215,17 +211,22 @@ function MaterialsTable({
   );
 }
 
-export function UsedMaterialsTable({ report }: { report?: SiteReport }) {
+export function UsedMaterialsTable({
+  reportId,
+  activityId,
+}: {
+  reportId: number;
+  activityId: number;
+}) {
   const { data: materials, isLoading } = useSWR(
-    `/api/report/${report?.id}/used-materials`,
-    () =>
-      report?.id ? Actions.listSiteReportUsedMaterials(report.id) : undefined,
+    `/api/activity/${activityId}/used-materials`,
+    () => Actions.listSiteActivityUsedMaterials({ activityId }),
   );
 
   return (
     <MaterialsTable
       materials={materials}
-      report={report}
+      exportFilename={`harpapro-${new Date().getTime()}-report-#${reportId}-materials-used-activity=#${activityId}.csv`}
       isLoading={isLoading}
     />
   );
@@ -243,7 +244,7 @@ export function InventoryMaterialsTable({ report }: { report?: SiteReport }) {
   return (
     <MaterialsTable
       materials={materials}
-      report={report}
+      exportFilename={`harpapro-${new Date().getTime()}-report-#${report?.id}-materials-storage.csv`}
       isLoading={isLoading}
     />
   );

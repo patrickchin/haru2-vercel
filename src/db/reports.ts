@@ -272,13 +272,14 @@ export async function listSiteReportSections(
     .orderBy(siteReportSections1.id);
 }
 
-export async function listSiteReportSection(
+export async function getSiteReportSection(
   sectionId: number,
 ): Promise<SiteReportSection> {
   return db
     .select()
     .from(siteReportSections1)
     .where(eq(siteReportSections1.id, sectionId))
+    .limit(1)
     .then((r) => r[0]);
 }
 
@@ -374,6 +375,7 @@ export async function listSiteReportInventoryMaterials(reportId: number) {
       ),
     )
     .where(eq(siteReportDetails1.id, reportId))
+    .orderBy(materials1.id)
     .then((r) => r.map((m) => m.materials1));
 }
 
@@ -432,6 +434,7 @@ export async function listSiteReportInventoryEquipment(reportId: number) {
       ),
     )
     .where(eq(siteReportDetails1.id, reportId))
+    .orderBy(equipment1.id)
     .then((r) => r.map((m) => m.equipments1));
 }
 
@@ -519,6 +522,7 @@ export async function listSiteReportActivities(reportId: number) {
       eq(siteReportDetails1.siteActivityListId, siteActivityList1.id),
     )
     .where(eq(siteReportDetails1.id, reportId))
+    .orderBy(siteActivity1.id)
     .then((r) => r.map((m) => m.siteActivity1));
 }
 
@@ -586,15 +590,20 @@ export async function listSiteActivityUsedMaterials(activityId: number) {
     )
     .innerJoin(
       siteActivity1,
-      eq(siteActivity1.usedEquipmentListId, materialsList1.id),
+      eq(siteActivity1.usedMaterialsListId, materialsList1.id),
     )
-    .where(eq(siteActivity1.id, activityId));
+    .where(eq(siteActivity1.id, activityId))
+    .orderBy(materials1.id)
+    .then((r) => r.map((m) => m.materials1));
 }
 
-export async function updateSiteActivityUsedMaterials(
-  activityId: number,
-  materials: SiteMaterialNew[],
-) {
+export async function updateSiteActivityUsedMaterials({
+  activityId,
+  materials,
+}: {
+  activityId: number;
+  materials: SiteMaterialNew[];
+}) {
   return await db.transaction(async (tx) => {
     let usedMaterialsListId = await tx
       .select({ id: siteActivity1.usedMaterialsListId })
@@ -643,7 +652,9 @@ export async function listSiteActivityUsedEquipment(activityId: number) {
       siteActivity1,
       eq(siteActivity1.usedEquipmentListId, equipmentList1.id),
     )
-    .where(eq(siteActivity1.id, activityId));
+    .where(eq(siteActivity1.id, activityId))
+    .orderBy(equipment1.id)
+    .then((r) => r.map((m) => m.equipments1));
 }
 
 export async function updateSiteActivityUsedEquipment(

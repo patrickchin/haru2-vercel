@@ -92,12 +92,12 @@ export const columns: ColumnDef<SiteEquipment>[] = [
 
 function EquipmentTable({
   equipment,
-  report,
   isLoading,
+  exportFilename,
 }: {
-  equipment: SiteEquipment[] | undefined;
-  report?: SiteReport;
+  equipment?: SiteEquipment[];
   isLoading: boolean;
+  exportFilename: string;
 }) {
   const table = useReactTable({
     data: equipment ?? [],
@@ -121,7 +121,6 @@ function EquipmentTable({
           variant="default"
           onClick={() => {
             if (!equipment) return;
-            if (!report) return;
             let csvContent = "data:text/csv;charset=utf-8,";
             csvContent += Object.keys(equipment[0]).join(",");
             csvContent += "\n";
@@ -132,10 +131,7 @@ function EquipmentTable({
             var encodedUri = encodeURI(csvContent);
             var link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute(
-              "download",
-              `harpapro-report-#${report.id}-${report.createdAt?.toDateString()}-equipment.csv`,
-            );
+            link.setAttribute("download", exportFilename);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -211,15 +207,24 @@ function EquipmentTable({
   );
 }
 
-export function UsedEquipmentTable({ report }: { report?: SiteReport }) {
+export function UsedEquipmentTable({
+  reportId,
+  activityId,
+}: {
+  reportId: number;
+  activityId: number;
+}) {
   const { data: equipment, isLoading } = useSWR(
-    `/api/report/${report?.id}/used-equipment`,
-    () =>
-      report?.id ? Actions.listSiteReportUsedEquipment(report.id) : undefined,
+    `/api/activityId/${activityId}/used-equipment`,
+    () => Actions.listSiteActivityUsedEquipment({ activityId }),
   );
 
   return (
-    <EquipmentTable equipment={equipment} report={report} isLoading={isLoading} />
+    <EquipmentTable
+      equipment={equipment}
+      exportFilename={`harpapro-${new Date().getTime()}-report-#${reportId}-equipment-used-activity=#${activityId}.csv`}
+      isLoading={isLoading}
+    />
   );
 }
 
@@ -227,10 +232,16 @@ export function InventoryEquipmentTable({ report }: { report?: SiteReport }) {
   const { data: equipment, isLoading } = useSWR(
     `/api/report/${report?.id}/inventory-equipment`,
     () =>
-      report?.id ? Actions.listSiteReportInventoryEquipment(report.id) : undefined,
+      report?.id
+        ? Actions.listSiteReportInventoryEquipment(report.id)
+        : undefined,
   );
 
   return (
-    <EquipmentTable equipment={equipment} report={report} isLoading={isLoading} />
+    <EquipmentTable
+      equipment={equipment}
+      exportFilename={`harpapro-${new Date().getTime()}-report-#${report?.id}-equipment-storage.csv`}
+      isLoading={isLoading}
+    />
   );
 }

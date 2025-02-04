@@ -43,7 +43,7 @@ export function EditUsedEquipmentForm({
     mutate,
     isLoading,
   } = useSWR(`/api/activity/${activityId}/used-equipment`, async () =>
-    Actions.listSiteActivityUsedEquipment(activityId),
+    Actions.listSiteActivityUsedEquipment({ activityId }),
   );
 
   return (
