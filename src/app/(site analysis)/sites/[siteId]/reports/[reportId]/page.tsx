@@ -1,13 +1,16 @@
 import { Suspense } from "react";
 import * as Actions from "@/lib/actions";
 import { DefaultLayout } from "@/components/page-layouts";
-import { ReportDocument } from "../report-document";
 import { FileDisplayDialogCarousel } from "../report-file-viewer";
 import { ReportTitleBar } from "../report-title";
 
 import { ErrorBox, WarningBox } from "@/components/info-box";
 import CommentsSection from "@/components/comments-section";
 import { ReportSignatureSection } from "../report-sign";
+import { ReportSections } from "../report-sections";
+import { ReportSiteDetails } from "../report-site-details";
+import { ReportActivities } from "../report-activities";
+import { ReportInventory } from "../report-storage";
 
 export default async function Page({
   params,
@@ -22,9 +25,10 @@ export default async function Page({
   const fileId = Number((await searchParams)?.fileId);
 
   const props = { siteId, reportId, fileId };
-  const [report, commentsSectionId] = await Promise.all([
-    Actions.getSiteReport(reportId),
+  const [report, commentsSectionId, sections] = await Promise.all([
+    Actions.getSiteReportDetails(reportId),
     Actions.getSiteReportCommentsSectionId(reportId),
+    Actions.listSiteReportSections(reportId),
   ]);
 
   return (
@@ -55,10 +59,11 @@ export default async function Page({
         <FileDisplayDialogCarousel {...props} />
       </section>
 
-      <section className="w-full max-w-5xl mx-auto">
-        <Suspense fallback={<ReportDocument />}>
-          <ReportDocument {...props} />
-        </Suspense>
+      <section className="w-full max-w-5xl mx-auto flex flex-col gap-4">
+        <ReportSiteDetails report={report} />
+        <ReportInventory report={report} />
+        <ReportActivities report={report} />
+        <ReportSections sections={sections} />
       </section>
 
       <section className="w-full max-w-5xl mx-auto">
