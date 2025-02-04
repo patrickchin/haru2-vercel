@@ -399,12 +399,10 @@ export async function updateSiteActivityUsedMaterials({
 }) {
   const role = await getSiteMemberRole({ activityId });
   if (editReportRoles.includes(role)) {
-    console.log("updateSiteActivityUsedMaterials", activityId, materials);
     const updatedMaterials = await db.updateSiteActivityUsedMaterials({
       activityId,
       materials,
     });
-    console.log("updateSiteActivityUsedMaterials ok", activityId, materials);
     db.addlogMessage({
       message: "Site activity materials updated",
       activityId,
