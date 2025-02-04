@@ -240,7 +240,7 @@ function UploadAndManageFilesSection({
   );
 }
 
-export function UploadAndManageFiles({ reportId }: { reportId: number }) {
+export function EditReportFiles({ reportId }: { reportId: number }) {
   const { data: files, mutate } = useSWR<HaruFile[]>(
     `/api/report/${reportId}/files`,
     async () => {

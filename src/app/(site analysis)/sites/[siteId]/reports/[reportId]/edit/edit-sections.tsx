@@ -7,7 +7,6 @@ import { uploadReportSectionFile } from "@/lib/utils/upload";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { cn } from "@/lib/utils";
 import * as Actions from "@/lib/actions";
 import * as Schemas from "@/db/schema";
 
@@ -30,7 +29,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import {
@@ -58,7 +56,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import prettyBytes from "pretty-bytes";
 import { SaveRevertForm } from "@/components/save-revert-form";
-import { InfoBox } from "@/components/info-box";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -281,7 +278,7 @@ function UpdateSiteReportSection({
   siteId: number;
   reportId: number;
   section: SiteReportSection;
-  sectionsMutate: KeyedMutator<SiteReportSection[]>;
+  sectionsMutate: () => Promise<any>;
 }) {
   const formSchema = createInsertSchema(Schemas.siteReportSections1).pick({
     title: true,
@@ -376,12 +373,12 @@ function UpdateSiteReportSection({
                   </FormItem>
                 )}
               />
+              <SaveRevertForm form={form} />
               <DeleteSectionButton
                 sectionId={section.id}
                 disabled={false}
                 onSubmit={sectionsMutate}
               />
-              <SaveRevertForm form={form} />
             </div>
 
             <FormField
@@ -417,24 +414,21 @@ function UpdateSiteReportSection({
   );
 }
 
-export function UpdateSiteReportSections({
+export function EditReportSections({
   siteId,
   reportId,
 }: {
   siteId: number;
   reportId: number;
 }) {
-  const { data: sections, mutate } = useSWR<SiteReportSection[]>(
-    `/api/report/${reportId}/sections`, // api route doesn't really exist
-    async () => {
-      const sections = await Actions.listSiteReportSections(reportId);
-      return sections || [];
-    },
+  const { data: sections, mutate } = useSWR(
+    `/api/report/${reportId}/sections`,
+    async () => Actions.listSiteReportSections(reportId),
   );
 
   return (
     <div className="flex flex-col gap-4">
-      {sections && sections.length > 0 ? (
+      {sections &&
         sections?.map((s) => (
           <UpdateSiteReportSection
             siteId={siteId}
@@ -443,22 +437,17 @@ export function UpdateSiteReportSections({
             sectionsMutate={mutate}
             key={`UpdateSiteReportSection-${s.id}`}
           />
-        ))
-      ) : (
-        <InfoBox className="text-base p-6 rounded-lg hidden">
-          You can create a more detailed site report by adding new sections and
-          attaching photos.
-        </InfoBox>
-      )}
+        ))}
       <Card>
         <CardContent className="p-6 py-12 flex flex-col gap-4 items-center">
           <Button
+            variant="secondary"
             onClick={async () => {
               await Actions.addSiteReportSection(reportId, {});
               await mutate();
             }}
           >
-            Add Section <LucidePlus />
+            Add Detailed Section <LucidePlus />
           </Button>
         </CardContent>
       </Card>
