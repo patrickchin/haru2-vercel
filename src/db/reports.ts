@@ -489,12 +489,13 @@ export async function getReportActivityRole({
   return db
     .select({ role: siteMembers1.role })
     .from(siteMembers1)
-    .leftJoin(siteReports1, eq(siteReports1.siteId, siteMembers1.siteId))
-    .leftJoin(
+    .innerJoin(siteReports1, eq(siteReports1.siteId, siteMembers1.siteId))
+    .innerJoin(siteReportDetails1, eq(siteReportDetails1.id, siteReports1.id))
+    .innerJoin(
       siteActivityList1,
       eq(siteActivityList1.id, siteReportDetails1.siteActivityListId),
     )
-    .leftJoin(
+    .innerJoin(
       siteActivity1,
       eq(siteActivity1.siteActivityListId, siteActivityList1.id),
     )
@@ -509,12 +510,16 @@ export async function listSiteReportActivities(reportId: number) {
   return db
     .select()
     .from(siteActivity1)
-    .where(
-      eq(
-        siteActivity1.siteActivityListId,
-        siteReportDetails1.siteActivityListId,
-      ),
-    );
+    .innerJoin(
+      siteActivityList1,
+      eq(siteActivityList1.id, siteActivity1.siteActivityListId),
+    )
+    .innerJoin(
+      siteReportDetails1,
+      eq(siteReportDetails1.siteActivityListId, siteActivityList1.id),
+    )
+    .where(eq(siteReportDetails1.id, reportId))
+    .then((r) => r.map((m) => m.siteActivity1));
 }
 
 export async function addSiteActivity(
@@ -550,12 +555,13 @@ export async function addSiteActivity(
   });
 }
 
-export async function removeSiteActivity(activityId: number) {
+export async function deleteSiteActivity(activityId: number) {
   return db
     .delete(siteActivity1)
     .where(eq(siteActivity1.id, activityId))
     .returning()
     .then((r) => r[0]);
+  // what about usedMaterialsListId and usedEquipmentListId?
 }
 
 export async function updateSiteActivity(
@@ -568,6 +574,21 @@ export async function updateSiteActivity(
     .where(eq(siteActivity1.id, activityId))
     .returning()
     .then((r) => r[0]);
+}
+
+export async function listSiteActivityUsedMaterials(activityId: number) {
+  return db
+    .select()
+    .from(materials1)
+    .innerJoin(
+      materialsList1,
+      eq(materialsList1.id, materials1.materialsListId),
+    )
+    .innerJoin(
+      siteActivity1,
+      eq(siteActivity1.usedEquipmentListId, materialsList1.id),
+    )
+    .where(eq(siteActivity1.id, activityId));
 }
 
 export async function updateSiteActivityUsedMaterials(
@@ -608,6 +629,21 @@ export async function updateSiteActivityUsedMaterials(
       )
       .returning();
   });
+}
+
+export async function listSiteActivityUsedEquipment(activityId: number) {
+  return db
+    .select()
+    .from(equipment1)
+    .innerJoin(
+      equipmentList1,
+      eq(equipmentList1.id, equipment1.equipmentListId),
+    )
+    .innerJoin(
+      siteActivity1,
+      eq(siteActivity1.usedEquipmentListId, equipmentList1.id),
+    )
+    .where(eq(siteActivity1.id, activityId));
 }
 
 export async function updateSiteActivityUsedEquipment(
