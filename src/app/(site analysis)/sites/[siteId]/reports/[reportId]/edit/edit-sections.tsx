@@ -294,7 +294,7 @@ function UpdateSiteReportSection({
     },
   });
 
-  const sectioniTitles = [
+  const sectionTitles = [
     "Site Layout and Access",
     "Current Construction Activities",
     "Health and Safety",
@@ -351,7 +351,7 @@ function UpdateSiteReportSection({
                           </DropdownMenuTrigger>
                         </Button>
                         <DropdownMenuContent className="p-4">
-                          {sectioniTitles.map((t, i) =>
+                          {sectionTitles.map((t, i) =>
                             t ? (
                               <DropdownMenuItem
                                 key={i}

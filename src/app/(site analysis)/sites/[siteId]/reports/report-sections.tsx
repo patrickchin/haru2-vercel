@@ -133,10 +133,8 @@ export async function ReportSections({
                   );
                 })
               ) : (
-                <li className="py-8 px-12 space-y-4 hover:bg-muted">
-                  <p className="text-base text-pretty whitespace-pre-line">
-                    No detailed sections in this report.
-                  </p>
+                <li className="p-6 text-center text-sm text-muted-foreground bg-green-100 dark:bg-green-950 ">
+                  No detailed sections in this report.
                 </li>
               )}
             </ol>

@@ -85,14 +85,18 @@ export async function ReportActivities({ report }: { report?: SiteReportAll }) {
     <Card className="bg-cyan-50 dark:bg-cyan-950">
       <CardHeader className="flex flex-row justify-between">
         <CardTitle className="text-lg">
-          Current Construction Activities
+          Construction Activities
         </CardTitle>
       </CardHeader>
 
       <CardContent className="flex flex-col gap-3">
-        {activities?.map((activity, i) => (
+        {activities && activities.length > 0 ? activities?.map((activity, i) => (
           <ReportActivity key={i} report={report} activity={activity} />
-        ))}
+        )) : (
+          <div className="text-center text-sm text-muted-foreground">
+            No activities in this report.
+          </div>
+        )}
       </CardContent>
     </Card>
   );
