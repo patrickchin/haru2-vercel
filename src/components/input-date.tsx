@@ -17,13 +17,20 @@ import {
 import { PopoverClose } from "@radix-ui/react-popover";
 import { useRef } from "react";
 
-export function InputDate({ field }: { field: ControllerRenderProps }) {
+export function InputDate({
+  field,
+  disabled,
+}: {
+  field: ControllerRenderProps;
+  disabled?: boolean;
+}) {
   const closeRef = useRef<null | HTMLButtonElement>(null);
   return (
     <Popover>
       <PopoverTrigger asChild>
         <FormControl>
           <Button
+            disabled={disabled}
             variant={"outline"}
             className={cn(
               "pl-3 font-normal w-full",
