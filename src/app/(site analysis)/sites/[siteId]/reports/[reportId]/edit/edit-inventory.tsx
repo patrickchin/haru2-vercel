@@ -33,14 +33,6 @@ export function EditReportInventory({
     async () => Actions.getSiteReportDetails(reportId),
   );
 
-  if (siteLoading || reportLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!site || !report) {
-    return <div>Error loading data</div>;
-  }
-
   return (
     <Card className="bg-muted">
       <CardContent className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-6">
@@ -68,7 +60,9 @@ export function EditReportInventory({
               <DialogDescription className="sr-only">
                 Materials Storage Table
               </DialogDescription>
-              <EditInventoryMaterialsForm site={site} reportId={report.id} />
+              {site && report && (
+                <EditInventoryMaterialsForm site={site} reportId={report.id} />
+              )}
             </DialogContent>
           </Dialog>
 
@@ -92,7 +86,9 @@ export function EditReportInventory({
               <DialogDescription className="sr-only">
                 Equipment Storage Table
               </DialogDescription>
-              <EditInventoryEquipmentForm site={site} reportId={report.id} />
+              {site && report && (
+                <EditInventoryEquipmentForm site={site} reportId={report.id} />
+              )}
             </DialogContent>
           </Dialog>
         </div>

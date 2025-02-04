@@ -14,6 +14,7 @@ import Image from "next/image";
 import {
   LucideChevronDown,
   LucideLoader2,
+  LucideLoaderCircle,
   LucidePlus,
   LucideTrash2,
   LucideVideo,
@@ -421,7 +422,7 @@ export function EditReportSections({
   siteId: number;
   reportId: number;
 }) {
-  const { data: sections, mutate } = useSWR(
+  const { data: sections, mutate, isLoading } = useSWR(
     `/api/report/${reportId}/sections`,
     async () => Actions.listSiteReportSections(reportId),
   );
@@ -443,12 +444,16 @@ export function EditReportSections({
           <Button
             variant="secondary"
             onClick={async () => {
-              await mutate(
-               Actions.addSiteReportSection(reportId, {})
-              );
+              await mutate(Actions.addSiteReportSection(reportId, {}));
             }}
+            disabled={isLoading}
           >
-            Add Detailed Section <LucidePlus />
+            Add Detailed Section{" "}
+            {isLoading ? (
+              <LucideLoaderCircle className="animate-spin" />
+            ) : (
+              <LucidePlus />
+            )}
           </Button>
         </CardContent>
       </Card>

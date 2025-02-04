@@ -506,21 +506,8 @@ export function EditReportActivities({
 
   return (
     <>
-      {reportLoading || siteLoading || activitiesLoading ? (
-        <div className="flex items-center justify-center grow col-span-2">
-          <LucideLoaderCircle className="animate-spin" />
-        </div>
-      ) : !report || !site || !activities ? (
-        <div className="flex items-center justify-center grow col-span-2">
-          Error loading: {!!report}
-          {!!site}
-          {!!activities}
-        </div>
-      ) : activities.length == 0 ? (
-        <div className="flex items-center justify-center grow col-span-2">
-          No activities
-        </div>
-      ) : (
+      {activities &&
+        site &&
         activities.map((activity) => (
           <EditActivity
             key={activity.id}
@@ -528,8 +515,7 @@ export function EditReportActivities({
             activity={activity}
             mutateActivities={mutateActivities}
           />
-        ))
-      )}
+        ))}
 
       <Card className="bg-cyan-50 dark:bg-cyan-950">
         <CardContent className="p-6 py-12 flex flex-col gap-4 items-center">
@@ -541,7 +527,12 @@ export function EditReportActivities({
               );
             }}
           >
-            Add Site Activity <LucidePlus />
+            Add Site Activity{" "}
+            {activitiesLoading ? (
+              <LucideLoaderCircle className="animate-spin" />
+            ) : (
+              <LucidePlus />
+            )}
           </Button>
         </CardContent>
       </Card>
