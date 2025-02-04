@@ -34,8 +34,6 @@ export default function MaterialsList({
           <TableHead>Material Name</TableHead>
           <TableHead>Quantity</TableHead>
           <TableHead>Unit</TableHead>
-          <TableHead>Unit Cost</TableHead>
-          <TableHead>Currency</TableHead>
           <TableHead>Condition</TableHead>
           <TableHead></TableHead>
         </TableRow>
@@ -60,15 +58,6 @@ export default function MaterialsList({
             </TableCell>
             <TableCell>
               <Input
-                type="number"
-                {...register(`materials.${index}.unitCost`)}
-              />
-            </TableCell>
-            <TableCell>
-              <Input type="text" {...register(`materials.${index}.currency`)} />
-            </TableCell>
-            <TableCell>
-              <Input
                 type="text"
                 {...register(`materials.${index}.condition`)}
               />
@@ -86,7 +75,7 @@ export default function MaterialsList({
           </TableRow>
         ))}
         <TableRow className="text-center h-16 bg-muted">
-          <TableCell colSpan={7}>
+          <TableCell colSpan={5}>
             <Button type="button" onClick={() => append({})} variant="outline">
               Add Material <LucidePlus />
             </Button>

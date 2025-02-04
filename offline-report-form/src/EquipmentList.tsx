@@ -14,6 +14,7 @@ import {
   TableBody,
   TableHeader,
 } from "./components/ui/table";
+import { LucideX } from "lucide-react";
 
 export default function EquipmentList({
   register,
@@ -32,11 +33,10 @@ export default function EquipmentList({
         <TableRow>
           <TableHead>Name</TableHead>
           <TableHead>Quantity</TableHead>
-          <TableHead>Unit</TableHead>
-          <TableHead>Unit Cost</TableHead>
-          <TableHead>Currency</TableHead>
           <TableHead>Condition</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead>Ownership</TableHead>
+          <TableHead>Operation Time</TableHead>
+          <TableHead></TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -55,30 +55,31 @@ export default function EquipmentList({
               />
             </TableCell>
             <TableCell>
-              <Input type="text" {...register(`equipment.${index}.unit`)} />
-            </TableCell>
-            <TableCell>
-              <Input
-                type="number"
-                {...register(`equipment.${index}.unitCost`)}
-              />
-            </TableCell>
-            <TableCell>
-              <Input type="text" {...register(`equipment.${index}.currency`)} />
-            </TableCell>
-            <TableCell>
               <Input
                 type="text"
                 {...register(`equipment.${index}.condition`)}
               />
             </TableCell>
             <TableCell>
+              <Input
+                type="text"
+                {...register(`equipment.${index}.ownership`)}
+              />
+            </TableCell>
+            <TableCell>
+              <Input
+                type="text"
+                {...register(`equipment.${index}.operationTime`)}
+              />
+            </TableCell>
+            <TableCell>
               <Button
                 type="button"
+                size="icon"
                 onClick={() => remove(index)}
-                variant="destructive"
+                variant="outline"
               >
-                Remove
+                <LucideX />
               </Button>
             </TableCell>
           </TableRow>
