@@ -21,7 +21,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { LucideLoaderCircle } from "lucide-react";
 
 export const columns: ColumnDef<SiteEquipment>[] = [
@@ -117,28 +116,6 @@ function EquipmentTable({
           }
           className="max-w-sm"
         />
-        <Button
-          variant="default"
-          onClick={() => {
-            if (!equipment) return;
-            let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += Object.keys(equipment[0]).join(",");
-            csvContent += "\n";
-            csvContent += equipment
-              .map((e) => Object.values(e).join(","))
-              .join("\n");
-
-            var encodedUri = encodeURI(csvContent);
-            var link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", exportFilename);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          }}
-        >
-          Export CSV
-        </Button>
       </div>
       <div className="rounded-md border">
         <Table>

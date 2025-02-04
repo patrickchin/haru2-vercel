@@ -21,7 +21,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { LucideLoaderCircle } from "lucide-react";
 
 export const columns: ColumnDef<SiteMaterial>[] = [
@@ -122,28 +121,6 @@ function MaterialsTable({
           }
           className="max-w-sm"
         />
-        <Button
-          variant="default"
-          onClick={() => {
-            if (!materials) return;
-            let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += Object.keys(materials[0]).join(",");
-            csvContent += "\n";
-            csvContent += materials
-              .map((e) => Object.values(e).join(","))
-              .join("\n");
-
-            var encodedUri = encodeURI(csvContent);
-            var link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", exportFilename);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          }}
-        >
-          Export CSV
-        </Button>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -226,7 +203,7 @@ export function UsedMaterialsTable({
   return (
     <MaterialsTable
       materials={materials}
-      exportFilename={`harpapro-${new Date().getTime()}-report-#${reportId}-materials-used-activity=#${activityId}.csv`}
+      exportFilename={`harpapro-${new Date().getTime()}-report-#${reportId}-materials-used-activity=#${activityId}`}
       isLoading={isLoading}
     />
   );
@@ -244,7 +221,7 @@ export function InventoryMaterialsTable({ report }: { report?: SiteReport }) {
   return (
     <MaterialsTable
       materials={materials}
-      exportFilename={`harpapro-${new Date().getTime()}-report-#${report?.id}-materials-storage.csv`}
+      exportFilename={`harpapro-${new Date().getTime()}-report-#${report?.id}-materials-storage`}
       isLoading={isLoading}
     />
   );

@@ -279,11 +279,8 @@ function EditMaterialsForm({
         className="flex flex-col gap-4 grow"
         onSubmit={form.handleSubmit(
           async (data: SchemaType) => {
-            console.log("data", data);
             await updateAction(data.materials);
-            console.log("data", data);
             const newMaterials = await mutate();
-            console.log("newMaterials", newMaterials);
             form.reset({ materials: newMaterials });
           },
           (errors) => {
@@ -291,6 +288,31 @@ function EditMaterialsForm({
           },
         )}
       >
+        <div className="flex items-center justify-end gap-3">
+          <Input
+            className="w-fit"
+            placeholder="Paste to Import"
+            readOnly
+            onPaste={(e) => {
+              e.preventDefault();
+              const stringContent = e.clipboardData.getData("text");
+              const jsonContent = JSON.parse(stringContent);
+              console.log(jsonContent);
+              form.reset(jsonContent, { keepDefaultValues: true });
+            }}
+          />
+          <Button
+            variant="default"
+            onClick={() => {
+              const jsonValues = JSON.stringify(form.getValues());
+              if (!jsonValues) return;
+              navigator.clipboard.writeText(jsonValues);
+            }}
+          >
+            Export to Clipboard
+          </Button>
+        </div>
+
         <ScrollArea className="grow h-1 border rounded-md">
           <Table>
             <TableHeader>
