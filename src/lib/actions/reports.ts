@@ -350,7 +350,7 @@ export async function addSiteActivity({
       reportId,
       activityId: newActivity.id,
     });
-    return newActivity;
+    return await db.listSiteReportActivities(reportId);
   }
 }
 

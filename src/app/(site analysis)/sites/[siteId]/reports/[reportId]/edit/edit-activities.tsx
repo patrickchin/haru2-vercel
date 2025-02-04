@@ -536,8 +536,9 @@ export function EditReportActivities({
           <Button
             variant="secondary"
             onClick={async () => {
-              await Actions.addSiteActivity({ reportId, activity: {} });
-              mutateActivities();
+              await mutateActivities(
+                Actions.addSiteActivity({ reportId, activity: {} }),
+              );
             }}
           >
             Add Site Activity <LucidePlus />
