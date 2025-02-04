@@ -443,8 +443,9 @@ export function EditReportSections({
           <Button
             variant="secondary"
             onClick={async () => {
-              await Actions.addSiteReportSection(reportId, {});
-              await mutate();
+              await mutate(
+               Actions.addSiteReportSection(reportId, {})
+              );
             }}
           >
             Add Detailed Section <LucidePlus />

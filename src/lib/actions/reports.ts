@@ -235,10 +235,11 @@ export async function addSiteReportSection(
 ) {
   const role = await getSiteMemberRole({ reportId });
   if (editReportRoles.includes(role)) {
-    return db.addSiteReportSection({
+     db.addSiteReportSection({
       ...args,
       reportId,
     });
+    return db.listSiteReportSections(reportId);
   }
 }
 
