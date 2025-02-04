@@ -92,11 +92,9 @@ export const columns: ColumnDef<SiteEquipment>[] = [
 function EquipmentTable({
   equipment,
   isLoading,
-  exportFilename,
 }: {
   equipment?: SiteEquipment[];
   isLoading: boolean;
-  exportFilename: string;
 }) {
   const table = useReactTable({
     data: equipment ?? [],
@@ -196,13 +194,7 @@ export function UsedEquipmentTable({
     () => Actions.listSiteActivityUsedEquipment({ activityId }),
   );
 
-  return (
-    <EquipmentTable
-      equipment={equipment}
-      exportFilename={`harpapro-${new Date().getTime()}-report-#${reportId}-equipment-used-activity=#${activityId}.csv`}
-      isLoading={isLoading}
-    />
-  );
+  return <EquipmentTable equipment={equipment} isLoading={isLoading} />;
 }
 
 export function InventoryEquipmentTable({ report }: { report?: SiteReport }) {
@@ -214,11 +206,5 @@ export function InventoryEquipmentTable({ report }: { report?: SiteReport }) {
         : undefined,
   );
 
-  return (
-    <EquipmentTable
-      equipment={equipment}
-      exportFilename={`harpapro-${new Date().getTime()}-report-#${report?.id}-equipment-storage.csv`}
-      isLoading={isLoading}
-    />
-  );
+  return <EquipmentTable equipment={equipment} isLoading={isLoading} />;
 }

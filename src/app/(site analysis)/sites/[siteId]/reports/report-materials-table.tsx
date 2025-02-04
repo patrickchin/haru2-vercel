@@ -97,11 +97,9 @@ export const columns: ColumnDef<SiteMaterial>[] = [
 function MaterialsTable({
   materials,
   isLoading,
-  exportFilename,
 }: {
   materials?: SiteMaterial[];
   isLoading: boolean;
-  exportFilename: string;
 }) {
   const table = useReactTable({
     data: materials ?? [],
@@ -203,7 +201,6 @@ export function UsedMaterialsTable({
   return (
     <MaterialsTable
       materials={materials}
-      exportFilename={`harpapro-${new Date().getTime()}-report-#${reportId}-materials-used-activity=#${activityId}`}
       isLoading={isLoading}
     />
   );
@@ -221,7 +218,6 @@ export function InventoryMaterialsTable({ report }: { report?: SiteReport }) {
   return (
     <MaterialsTable
       materials={materials}
-      exportFilename={`harpapro-${new Date().getTime()}-report-#${report?.id}-materials-storage`}
       isLoading={isLoading}
     />
   );
