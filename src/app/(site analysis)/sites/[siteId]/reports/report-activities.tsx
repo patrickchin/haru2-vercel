@@ -22,54 +22,68 @@ async function ReportActivity({
   activity: SiteActivity;
 }) {
   return (
-    <div className="grid grid-cols-4 p-4 gap-3 items-center bg-background rounded border">
-      <h2 className="text-base">{activity.name}</h2>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="outline">
-            Materials <LucideCuboid />
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] w-[55rem] max-w-full flex flex-col p-4 gap-4">
-          <DialogTitle className="text-lg font-semibold">
-            Materials Used
-          </DialogTitle>
-          <DialogDescription className="sr-only">
-            Materials Used Table
-          </DialogDescription>
-          <ScrollArea className="grow h-1 pr-3">
-            <UsedMaterialsTable reportId={report.id} activityId={activity.id} />
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
+    <div className="flex flex-col p-4 gap-3 bg-background rounded border">
+      <div className="col-span-3 flex justify-between items-center">
+        <h2 className="text-base">{activity.name}</h2>
+        <div className="text-sm text-muted-foreground">
+          {activity.startDate?.toDateString() ?? "no start date"} &mdash;{" "}
+          {activity.endDate?.toDateString() ?? "no end date"}
+        </div>
+      </div>
+      <div className="grid grid-cols-3 items-center gap-3">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline">
+              Materials <LucideCuboid />
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] w-[55rem] max-w-full flex flex-col p-4 gap-4">
+            <DialogTitle className="text-lg font-semibold">
+              Materials Used
+            </DialogTitle>
+            <DialogDescription className="sr-only">
+              Materials Used Table
+            </DialogDescription>
+            <ScrollArea className="grow h-1 pr-3">
+              <UsedMaterialsTable
+                reportId={report.id}
+                activityId={activity.id}
+              />
+            </ScrollArea>
+          </DialogContent>
+        </Dialog>
 
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="outline">
-            Equipment <LucideForklift />
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] w-[55rem] max-w-full flex flex-col p-4 gap-4">
-          <DialogTitle className="text-lg font-semibold">
-            Equipment Used
-          </DialogTitle>
-          <DialogDescription className="sr-only">
-            Equipment Used List Table
-          </DialogDescription>
-          <ScrollArea className="grow h-1 pr-3">
-            <UsedEquipmentTable reportId={report.id} activityId={activity.id} />
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline">
+              Equipment <LucideForklift />
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] w-[55rem] max-w-full flex flex-col p-4 gap-4">
+            <DialogTitle className="text-lg font-semibold">
+              Equipment Used
+            </DialogTitle>
+            <DialogDescription className="sr-only">
+              Equipment Used List Table
+            </DialogDescription>
+            <ScrollArea className="grow h-1 pr-3">
+              <UsedEquipmentTable
+                reportId={report.id}
+                activityId={activity.id}
+              />
+            </ScrollArea>
+          </DialogContent>
+        </Dialog>
 
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="outline" disabled>
-            Personnel <LucideUsers />
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] w-[55rem] max-w-full flex flex-col p-4 gap-4"></DialogContent>
-      </Dialog>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline" disabled>
+              Personnel <LucideUsers />
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="min-h-96 max-h-[90svh] h-[50rem] w-[55rem] max-w-full flex flex-col p-4 gap-4"></DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }

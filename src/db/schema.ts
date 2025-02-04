@@ -313,7 +313,7 @@ export const siteActivity1 = pgTable("siteActivity1", {
   visitors: varchar("visitors"),
 
   startDate: timestamp("startDate", { mode: "date", withTimezone: true }),
-  endOfDate: timestamp("endOfDate", { mode: "date", withTimezone: true }),
+  endDate: timestamp("endOfDate", { mode: "date", withTimezone: true }),
 
   numberOfWorkers: integer("numberOfWorkers"),
   workersHoursPerDay: numeric("workerHoursPerDay"),
