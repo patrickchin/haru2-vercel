@@ -19,14 +19,14 @@ export const currencies = [
 ];
 
 export function getCountryCurrency(countryCode: string | null) {
-  if (!countryCode) return null;
+  if (!countryCode) return;
   try {
     // Create a locale using the country code
     const displayNames = new Intl.DisplayNames(["en"], { type: "currency" });
     const currency = displayNames.of(countryCode);
     return currency;
   } catch (error) {
-    return null;
+    return;
   }
 }
 

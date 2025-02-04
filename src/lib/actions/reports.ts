@@ -326,17 +326,24 @@ export async function updateSiteReportInventoryEquipment(
   }
 }
 
-export async function listSiteReportActivities(reportId: number) {
+export async function listSiteReportActivities({
+  reportId,
+}: {
+  reportId: number;
+}) {
   const role = await getSiteMemberRole({ reportId });
   if (viewSiteRoles.includes(role)) {
     return db.listSiteReportActivities(reportId);
   }
 }
 
-export async function addSiteActivity(
-  reportId: number,
-  activity: SiteActivityNew,
-) {
+export async function addSiteActivity({
+  reportId,
+  activity,
+}: {
+  reportId: number;
+  activity: SiteActivityNew;
+}) {
   const role = await getSiteMemberRole({ reportId });
   if (editReportRoles.includes(role)) {
     const newActivity = await db.addSiteActivity(reportId, activity);
@@ -345,31 +352,38 @@ export async function addSiteActivity(
       reportId,
       activityId: newActivity.id,
     });
-    revalidatePath(`/sites/${reportId}/activities/${newActivity.id}`);
     return newActivity;
   }
 }
 
-export async function removeSiteActivity(activityId: number) {
+export async function deleteSiteActivity(activityId: number) {
   const role = await getSiteMemberRole({ activityId });
   if (editReportRoles.includes(role)) {
-    const removedActivity = await db.removeSiteActivity(activityId);
+    const removedActivity = await db.deleteSiteActivity(activityId);
     db.addlogMessage({ message: "Site activity removed", activityId });
-    revalidatePath(`/activities/${activityId}`);
     return removedActivity;
   }
 }
 
-export async function updateSiteActivity(
-  activityId: number,
-  values: SiteActivityNew,
-) {
+export async function updateSiteActivity({
+  activityId,
+  values,
+}: {
+  activityId: number;
+  values: SiteActivityNew;
+}) {
   const role = await getSiteMemberRole({ activityId });
   if (editReportRoles.includes(role)) {
     const updatedActivity = await db.updateSiteActivity(activityId, values);
     db.addlogMessage({ message: "Site activity updated", activityId });
-    revalidatePath(`/activities/${activityId}`);
     return updatedActivity;
+  }
+}
+
+export async function listSiteActivityUsedMaterials(activityId: number) {
+  const role = await getSiteMemberRole({ activityId });
+  if (viewSiteRoles.includes(role)) {
+    return db.listSiteActivityUsedMaterials(activityId);
   }
 }
 
@@ -387,8 +401,14 @@ export async function updateSiteActivityUsedMaterials(
       message: "Site activity materials updated",
       activityId,
     });
-    revalidatePath(`/activities/${activityId}/materials`);
     return updatedMaterials;
+  }
+}
+
+export async function listSiteActivityUsedEquipment(activityId: number) {
+  const role = await getSiteMemberRole({ activityId });
+  if (viewSiteRoles.includes(role)) {
+    return db.listSiteActivityUsedEquipment(activityId);
   }
 }
 
@@ -406,7 +426,6 @@ export async function updateSiteActivityUsedEquipment(
       message: "Site activity equipment updated",
       activityId,
     });
-    revalidatePath(`/activities/${activityId}/equipment`);
     return updatedEquipment;
   }
 }
