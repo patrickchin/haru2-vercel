@@ -4,7 +4,7 @@ export const demoSiteIds: number[] = [21];
 
 export const maxSiteInvitations = 5;
 
-export const supportedCountries = ["GH", "KE", "NG", "SL", "ZM"];
+export const supportedCountries = ["GH", "KE", "NG", "SL", "ZM", "GM"];
 
 export const currencies = [
   "CNY",
@@ -16,6 +16,7 @@ export const currencies = [
   "SLL",
   "USD",
   "ZMW",
+  "GMD",
 ];
 
 export function getCountryCurrency(countryCode: string | null) {
