@@ -18,7 +18,7 @@ async function ReportActivity({
   report,
   activity,
 }: {
-  report?: SiteReportAll;
+  report: SiteReportAll;
   activity: SiteActivity;
 }) {
   return (
@@ -38,7 +38,7 @@ async function ReportActivity({
             Materials Used Table
           </DialogDescription>
           <ScrollArea className="grow h-1 pr-3">
-            <UsedMaterialsTable report={report} />
+            <UsedMaterialsTable reportId={report.id} activityId={activity.id} />
           </ScrollArea>
         </DialogContent>
       </Dialog>
@@ -57,7 +57,7 @@ async function ReportActivity({
             Equipment Used List Table
           </DialogDescription>
           <ScrollArea className="grow h-1 pr-3">
-            <UsedEquipmentTable report={report} />
+            <UsedEquipmentTable reportId={report.id} activityId={activity.id} />
           </ScrollArea>
         </DialogContent>
       </Dialog>

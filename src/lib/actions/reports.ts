@@ -223,12 +223,10 @@ export async function listSiteReportSections(reportId: number) {
   if (viewSiteRoles.includes(role)) return db.listSiteReportSections(reportId);
 }
 
-export async function listSiteReportSection(sectionId: number) {
+export async function getSiteReportSection(sectionId: number) {
   const role = await getSiteMemberRole({ sectionId });
   // TODO inlcude/exclude unpublished reports
-  // if (editReportRoles.includes(role))
-  //   return db.listSiteReportSection(reportId, true);
-  if (viewSiteRoles.includes(role)) return db.listSiteReportSection(sectionId);
+  if (viewSiteRoles.includes(role)) return db.getSiteReportSection(sectionId);
 }
 
 export async function addSiteReportSection(
@@ -268,7 +266,7 @@ export async function addSiteReportSectionFile(
   const session = await auth();
   const role = await getSiteMemberRole({ sectionId });
   if (editReportRoles.includes(role)) {
-    let section = await db.listSiteReportSection(sectionId);
+    let section = await db.getSiteReportSection(sectionId);
     if (section.fileGroupId) {
       return db.addFileToGroup(section.fileGroupId, {
         ...fileInfo,
@@ -380,23 +378,32 @@ export async function updateSiteActivity({
   }
 }
 
-export async function listSiteActivityUsedMaterials(activityId: number) {
+export async function listSiteActivityUsedMaterials({
+  activityId,
+}: {
+  activityId: number;
+}) {
   const role = await getSiteMemberRole({ activityId });
   if (viewSiteRoles.includes(role)) {
     return db.listSiteActivityUsedMaterials(activityId);
   }
 }
 
-export async function updateSiteActivityUsedMaterials(
-  activityId: number,
-  materials: SiteMaterialNew[],
-) {
+export async function updateSiteActivityUsedMaterials({
+  activityId,
+  materials,
+}: {
+  activityId: number;
+  materials: SiteMaterialNew[];
+}) {
   const role = await getSiteMemberRole({ activityId });
   if (editReportRoles.includes(role)) {
-    const updatedMaterials = await db.updateSiteActivityUsedMaterials(
+    console.log("updateSiteActivityUsedMaterials", activityId, materials);
+    const updatedMaterials = await db.updateSiteActivityUsedMaterials({
       activityId,
       materials,
-    );
+    });
+    console.log("updateSiteActivityUsedMaterials ok", activityId, materials);
     db.addlogMessage({
       message: "Site activity materials updated",
       activityId,
@@ -405,7 +412,11 @@ export async function updateSiteActivityUsedMaterials(
   }
 }
 
-export async function listSiteActivityUsedEquipment(activityId: number) {
+export async function listSiteActivityUsedEquipment({
+  activityId,
+}: {
+  activityId: number;
+}) {
   const role = await getSiteMemberRole({ activityId });
   if (viewSiteRoles.includes(role)) {
     return db.listSiteActivityUsedEquipment(activityId);
