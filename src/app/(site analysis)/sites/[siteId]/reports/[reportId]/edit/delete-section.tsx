@@ -14,7 +14,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
-import { useRouter } from "next/navigation";
 
 export function DeleteSectionButton({
   sectionId,
@@ -26,17 +25,11 @@ export function DeleteSectionButton({
   onSubmit: () => void;
 }) {
   const form = useForm();
-  const router = useRouter();
-
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button
-          variant="destructive"
-          disabled={disabled}
-          className="flex gap-2"
-        >
-          Delete Section
+        <Button variant="link" disabled={disabled} className="flex gap-2">
+          Delete
           {form.formState.isSubmitting ? (
             <LucideLoader2 className="animate-spin" />
           ) : (

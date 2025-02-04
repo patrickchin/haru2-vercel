@@ -1,4 +1,5 @@
 import { DefaultLayout } from "@/components/page-layouts";
+import { auth } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { editReportRoles } from "@/lib/permissions";
@@ -8,12 +9,12 @@ import * as Actions from "@/lib/actions";
 import { LucideMoveLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ErrorBox, WarningBox } from "@/components/info-box";
-import { UploadAndManageFiles } from "./edit-upload";
-import { UpdateSiteReportSections } from "./edit-sections";
-import { EditReportDocument } from "./edit-details";
+import { EditReportFiles } from "./edit-upload";
+import { EditReportSections } from "./edit-sections";
+import { EditReportInventory } from "./edit-inventory";
 import { PublishButton } from "./publish-button";
 import { DeleteReportButton } from "./delete-report";
-import { auth } from "@/lib/auth";
+import { EditReportActivities } from "./edit-activities";
 
 async function EditReportHeader({ report }: { report: SiteReport }) {
   return (
@@ -72,9 +73,10 @@ export default async function Page({
 
         {!report?.publishedAt || session?.user?.role === "admin" ? (
           <>
-            <UploadAndManageFiles reportId={reportId} />
-            <EditReportDocument siteId={siteId} reportId={reportId} />
-            <UpdateSiteReportSections siteId={siteId} reportId={reportId} />
+            <EditReportFiles reportId={reportId} />
+            <EditReportInventory siteId={siteId} reportId={reportId} />
+            <EditReportActivities siteId={siteId} reportId={reportId} />
+            <EditReportSections siteId={siteId} reportId={reportId} />
           </>
         ) : (
           <WarningBox>

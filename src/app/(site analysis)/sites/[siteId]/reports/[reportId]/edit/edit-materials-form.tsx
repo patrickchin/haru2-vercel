@@ -29,7 +29,6 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { LucideLoaderCircle, LucidePlus, LucideX } from "lucide-react";
 import { SiteDetails } from "@/lib/types";
-import { getCountryCurrency } from "@/lib/constants";
 
 function MaterialTableRow({
   field,
@@ -170,41 +169,29 @@ function MaterialTableRow({
   );
 }
 
-function useMaterialsData(
-  reportId: number,
-  key: string,
-  fetcher: (reportId: number) => Promise<any>,
-) {
-  const { data, mutate, isLoading } = useSWR(key, async () =>
-    fetcher(reportId),
-  );
-  return { data, mutate, isLoading };
-}
-
 export function EditUsedMaterialsForm({
-  site,
-  reportId,
+  defaultCurrency,
+  activityId,
 }: {
-  site: SiteDetails;
-  reportId: number;
+  defaultCurrency: string | null;
+  activityId: number;
 }) {
   const {
     data: materials,
     mutate,
     isLoading,
-  } = useMaterialsData(
-    reportId,
-    `/api/report/${reportId}/used-materials`,
-    Actions.listSiteReportUsedMaterials,
+  } = useSWR(`/api/activity/${activityId}/used-materials`, async () =>
+    Actions.listSiteActivityUsedMaterials(activityId),
   );
   return (
     <EditMaterialsForm
-      site={site}
-      reportId={reportId}
+      defaultCurrency={defaultCurrency}
       materials={materials}
       mutate={mutate}
       isLoading={isLoading}
-      updateAction={Actions.updateSiteReportUsedMaterials}
+      updateAction={(materials) =>
+        Actions.updateSiteActivityUsedMaterials(activityId, materials)
+      }
     />
   );
 }
@@ -220,37 +207,34 @@ export function EditInventoryMaterialsForm({
     data: materials,
     mutate,
     isLoading,
-  } = useMaterialsData(
-    reportId,
-    `/api/report/${reportId}/inventory-materials`,
-    Actions.listSiteReportInventoryMaterials,
+  } = useSWR(`/api/report/${reportId}/inventory-materials`, async () =>
+    Actions.listSiteReportInventoryMaterials(reportId),
   );
   return (
     <EditMaterialsForm
       site={site}
-      reportId={reportId}
       materials={materials}
       mutate={mutate}
       isLoading={isLoading}
-      updateAction={Actions.updateSiteReportInventoryMaterials}
+      updateAction={(materials) =>
+        Actions.updateSiteReportInventoryMaterials(reportId, materials)
+      }
     />
   );
 }
 
 function EditMaterialsForm({
-  site,
-  reportId,
+  defaultCurrency,
   materials,
   mutate,
   isLoading,
   updateAction,
 }: {
-  site: SiteDetails;
-  reportId: number;
+  defaultCurrency: string | null;
   materials: any;
   mutate: any;
   isLoading: boolean;
-  updateAction: (reportId: number, materials: any) => Promise<any>;
+  updateAction: (materials: any) => Promise<any>;
 }) {
   const schema = z.object({
     materials: z.array(
@@ -288,18 +272,15 @@ function EditMaterialsForm({
     );
   }
 
-  const defaultCurrency = getCountryCurrency(site.countryCode);
-
   return (
     <Form {...form}>
       <form
         className="flex flex-col gap-4 grow"
         onSubmit={form.handleSubmit(
           async (data: SchemaType) => {
-            const newMaterials = await mutate(
-              updateAction(reportId, data.materials),
-              { revalidate: false },
-            );
+            const newMaterials = await mutate(updateAction(data.materials), {
+              revalidate: false,
+            });
             form.reset({ materials: newMaterials });
           },
           (errors) => {

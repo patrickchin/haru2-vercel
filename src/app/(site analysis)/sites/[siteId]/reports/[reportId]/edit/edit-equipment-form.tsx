@@ -31,41 +31,30 @@ import {
 } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-function useEquipmentData(
-  reportId: number,
-  key: string,
-  fetcher: (reportId: number) => Promise<any>,
-) {
-  const { data, mutate, isLoading } = useSWR(key, async () =>
-    fetcher(reportId),
-  );
-  return { data, mutate, isLoading };
-}
-
 export function EditUsedEquipmentForm({
   site,
-  reportId,
+  activityId,
 }: {
   site: SiteDetails;
-  reportId: number;
+  activityId: number;
 }) {
   const {
     data: equipment,
     mutate,
     isLoading,
-  } = useEquipmentData(
-    reportId,
-    `/api/report/${reportId}/used-equipment`,
-    Actions.listSiteReportUsedEquipment,
+  } = useSWR(`/api/activity/${activityId}/used-equipment`, async () =>
+    Actions.listSiteActivityUsedEquipment(activityId),
   );
+
   return (
     <EditEquipmentForm
       site={site}
-      reportId={reportId}
       equipment={equipment}
       mutate={mutate}
       isLoading={isLoading}
-      updateAction={Actions.updateSiteReportUsedEquipment}
+      updateAction={(equipment) =>
+        Actions.updateSiteActivityUsedEquipment(activityId, equipment)
+      }
     />
   );
 }
@@ -81,40 +70,35 @@ export function EditInventoryEquipmentForm({
     data: equipment,
     mutate,
     isLoading,
-  } = useEquipmentData(
-    reportId,
-    `/api/report/${reportId}/inventory-equipment`,
-    Actions.listSiteReportInventoryEquipment,
+  } = useSWR(`/api/report/${reportId}/inventory-equipment`, async () =>
+    Actions.listSiteReportInventoryEquipment(reportId),
   );
+
   return (
     <EditEquipmentForm
       site={site}
-      reportId={reportId}
       equipment={equipment}
       mutate={mutate}
       isLoading={isLoading}
-      updateAction={Actions.updateSiteReportInventoryEquipment}
+      updateAction={(equipment) =>
+        Actions.updateSiteReportInventoryEquipment(reportId, equipment)
+      }
     />
   );
 }
 
 function EditEquipmentForm({
   site,
-  reportId,
   equipment,
   mutate,
   isLoading,
   updateAction,
 }: {
   site: SiteDetails;
-  reportId: number;
   equipment: any;
   mutate: any;
   isLoading: boolean;
-  updateAction: (
-    reportId: number,
-    equipment: SiteEquipmentNew[],
-  ) => Promise<any>;
+  updateAction: (equipment: SiteEquipmentNew[]) => Promise<any>;
 }) {
   const schema = z.object({
     equipment: z.array(
@@ -160,10 +144,9 @@ function EditEquipmentForm({
         className="flex flex-col gap-4 grow"
         onSubmit={form.handleSubmit(
           async (data: SchemaType) => {
-            const newEquipment = await mutate(
-              updateAction(reportId, data.equipment),
-              { revalidate: false },
-            );
+            const newEquipment = await mutate(updateAction(data.equipment), {
+              revalidate: false,
+            });
             form.reset({ equipment: newEquipment });
           },
           (errors) => {

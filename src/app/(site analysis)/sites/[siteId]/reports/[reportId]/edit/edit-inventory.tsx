@@ -6,11 +6,11 @@ import { z } from "zod";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createInsertSchema } from "drizzle-zod";
-import { SiteDetails, SiteReportAll } from "@/lib/types/site";
+import { SiteReportAll } from "@/lib/types/site";
 import * as Actions from "@/lib/actions";
 import * as Schemas from "@/db/schema";
 
-import { LucideCuboid, LucideForklift, LucideLoaderCircle } from "lucide-react";
+import { LucideCuboid, LucideForklift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
@@ -169,12 +169,29 @@ function EditReportEstimates({
 }
 
 function EditEquipment({
-  site,
-  report,
+  siteId,
+  reportId,
 }: {
-  site: SiteDetails;
-  report: SiteReportAll;
+  siteId: number;
+  reportId: number;
 }) {
+  const { data: site, isLoading: siteLoading } = useSWR(
+    `/api/site/${siteId}/details`,
+    async () => Actions.getSiteDetails(siteId),
+  );
+  const { data: report, isLoading: reportLoading } = useSWR(
+    `/api/reports/${reportId}/details`,
+    async () => Actions.getSiteReportDetails(reportId),
+  );
+
+  if (siteLoading || reportLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!site || !report) {
+    return <div>Error loading data</div>;
+  }
+
   return (
     <Dialog>
       <div className="flex gap-4 items-center p-4 rounded border bg-background">
@@ -203,12 +220,29 @@ function EditEquipment({
 }
 
 function EditMaterials({
-  site,
-  report,
+  siteId,
+  reportId,
 }: {
-  site: SiteDetails;
-  report: SiteReportAll;
+  siteId: number;
+  reportId: number;
 }) {
+  const { data: site, isLoading: siteLoading } = useSWR(
+    `/api/site/${siteId}/details`,
+    async () => Actions.getSiteDetails(siteId),
+  );
+  const { data: report, isLoading: reportLoading } = useSWR(
+    `/api/reports/${reportId}/details`,
+    async () => Actions.getSiteReportDetails(reportId),
+  );
+
+  if (siteLoading || reportLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!site || !report) {
+    return <div>Error loading data</div>;
+  }
+
   return (
     <Dialog>
       <div className="flex gap-4 items-center p-4 rounded border bg-background">
@@ -494,145 +528,86 @@ function EditSiteActivities({
   );
 }
 
-function EditInventory({
-  site,
-  report,
-}: {
-  site: SiteDetails;
-  report: SiteReportAll;
-}) {
-  return (
-    <div className="flex gap-2">
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="outline">
-            Open Materials <LucideCuboid />
-          </Button>
-        </DialogTrigger>
-
-        <DialogContent
-          className={cn(
-            "min-h-96 max-h-[90svh] h-[50rem]",
-            "min-w-80 max-w-[90svw] w-[60rem]",
-            "flex flex-col",
-          )}
-        >
-          <DialogTitle className="text-lg font-semibold">
-            Materials Storage
-          </DialogTitle>
-          <DialogDescription className="sr-only">
-            Materials Storage Table
-          </DialogDescription>
-          <EditInventoryMaterialsForm site={site} reportId={report.id} />
-        </DialogContent>
-      </Dialog>
-
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="outline">
-            Open Equipment <LucideForklift />
-          </Button>
-        </DialogTrigger>
-
-        <DialogContent
-          className={cn(
-            "min-h-96 max-h-[90svh] h-[50rem]",
-            "min-w-80 max-w-[90svw] w-[60rem]",
-            "flex flex-col",
-          )}
-        >
-          <DialogTitle className="text-lg font-semibold">
-            Equipment Storage
-          </DialogTitle>
-          <DialogDescription className="sr-only">
-            Equipment Storage Table
-          </DialogDescription>
-          <EditInventoryEquipmentForm site={site} reportId={report.id} />
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-}
-
-export function EditReportDocument({
+export function EditReportInventory({
   siteId,
   reportId,
 }: {
   siteId: number;
   reportId: number;
 }) {
-  const {
-    data: report,
-    mutate,
-    isLoading,
-  } = useSWR(
-    `/api/reports/${reportId}/details`, // api route doesn't really exist
-    async () => Actions.getSiteReportDetails(reportId),
-  );
   const { data: site, isLoading: siteLoading } = useSWR(
-    `/api/site/${siteId}/details`, // api route doesn't really exist
+    `/api/site/${siteId}/details`,
     async () => Actions.getSiteDetails(siteId),
   );
+  const { data: report, isLoading: reportLoading } = useSWR(
+    `/api/reports/${reportId}/details`,
+    async () => Actions.getSiteReportDetails(reportId),
+  );
+
+  if (siteLoading || reportLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!site || !report) {
+    return <div>Error loading data</div>;
+  }
 
   return (
-    <>
-      <Card className="bg-muted">
-        <CardContent className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-6">
-          <CardTitle className="text-lg grow text-left">
-            Inventory and Storage
-          </CardTitle>
-          {isLoading ? (
-            <div className="flex items-center justify-center grow">
-              <LucideLoaderCircle className="animate-spin" />
-            </div>
-          ) : !report ? (
-            <div className="flex items-center justify-center grow">
-              Error loading report
-            </div>
-          ) : !site ? (
-            <div className="flex items-center justify-center grow col-span-2">
-              Error loading site
-            </div>
-          ) : (
-            <EditInventory site={site} report={report} />
-          )}
-        </CardContent>
-      </Card>
+    <Card className="bg-muted">
+      <CardContent className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-6">
+        <CardTitle className="text-lg grow text-left">
+          Inventory and Storage
+        </CardTitle>
+        <div className="flex gap-2">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                Open Materials <LucideCuboid />
+              </Button>
+            </DialogTrigger>
 
-      <Card className="bg-cyan-50 dark:bg-cyan-950">
-        <CardHeader className="flex flex-row justify-between">
-          <CardTitle className="text-lg">
-            Current Construction Activities
-          </CardTitle>
-        </CardHeader>
+            <DialogContent
+              className={cn(
+                "min-h-96 max-h-[90svh] h-[50rem]",
+                "min-w-80 max-w-[90svw] w-[60rem]",
+                "flex flex-col",
+              )}
+            >
+              <DialogTitle className="text-lg font-semibold">
+                Materials Storage
+              </DialogTitle>
+              <DialogDescription className="sr-only">
+                Materials Storage Table
+              </DialogDescription>
+              <EditInventoryMaterialsForm site={site} reportId={report.id} />
+            </DialogContent>
+          </Dialog>
 
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-          {/* <EditReportEstimates report={report} mutate={mutate} /> */}
-          {/* <EditReportDetails report={report} mutate={mutate} /> */}
-          {isLoading || siteLoading ? (
-            <div className="flex items-center justify-center grow col-span-2">
-              <LucideLoaderCircle className="animate-spin" />
-            </div>
-          ) : !report ? (
-            <div className="flex items-center justify-center grow col-span-2">
-              Error loading report
-            </div>
-          ) : !site ? (
-            <div className="flex items-center justify-center grow col-span-2">
-              Error loading site
-            </div>
-          ) : (
-            <>
-              <div className="flex flex-col gap-4">
-                <EditSiteActivities report={report} mutate={mutate} />
-                <EditMaterials site={site} report={report} />
-                <EditEquipment site={site} report={report} />
-              </div>
-              <EditSitePersonnel report={report} mutate={mutate} />
-            </>
-          )}
-        </CardContent>
-      </Card>
-    </>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                Open Equipment <LucideForklift />
+              </Button>
+            </DialogTrigger>
+
+            <DialogContent
+              className={cn(
+                "min-h-96 max-h-[90svh] h-[50rem]",
+                "min-w-80 max-w-[90svw] w-[60rem]",
+                "flex flex-col",
+              )}
+            >
+              <DialogTitle className="text-lg font-semibold">
+                Equipment Storage
+              </DialogTitle>
+              <DialogDescription className="sr-only">
+                Equipment Storage Table
+              </DialogDescription>
+              <EditInventoryEquipmentForm site={site} reportId={report.id} />
+            </DialogContent>
+          </Dialog>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
