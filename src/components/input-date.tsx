@@ -15,13 +15,15 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { PopoverClose } from "@radix-ui/react-popover";
-import { useRef } from "react";
+import { ReactNode, useRef } from "react";
 
 export function InputDate({
   field,
+  prefix,
   disabled,
 }: {
   field: ControllerRenderProps;
+  prefix?: ReactNode;
   disabled?: boolean;
 }) {
   const closeRef = useRef<null | HTMLButtonElement>(null);
@@ -37,6 +39,7 @@ export function InputDate({
               !field.value && "text-muted-foreground",
             )}
           >
+            {prefix}
             {field.value ? (
               formatDate(field.value, "PPP")
             ) : (
