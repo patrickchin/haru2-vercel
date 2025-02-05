@@ -526,6 +526,15 @@ export async function listSiteReportActivities(reportId: number) {
     .then((r) => r.map((m) => m.siteActivity1));
 }
 
+export async function getSiteReportActivity(activityId: number) {
+  return db
+    .select()
+    .from(siteActivity1)
+    .where(eq(siteActivity1.id, activityId))
+    .limit(1)
+    .then((r) => r[0]);
+}
+
 export async function addSiteActivity(
   reportId: number,
   activity: SiteActivityNew,

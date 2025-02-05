@@ -336,6 +336,17 @@ export async function listSiteReportActivities({
   }
 }
 
+export async function getSiteReportActivity({
+  activityId,
+}: {
+  activityId: number;
+}) {
+  const role = await getSiteMemberRole({ activityId });
+  if (viewSiteRoles.includes(role)) {
+    return db.getSiteReportActivity(activityId);
+  }
+}
+
 export async function addSiteActivity({
   reportId,
   activity,
