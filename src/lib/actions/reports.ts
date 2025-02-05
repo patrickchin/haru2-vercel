@@ -135,7 +135,6 @@ export async function signReport(reportId: number, buttonRole: SiteMemberRole) {
   if (!signArgs) return;
   const report = await db.updateSiteReportDetails(reportId, signArgs);
   db.addLogMessage({ message: `Site report signed by ${role}`, reportId });
-
   revalidatePath(`/sites/${oldReport.siteId}/reports/${report.id}`);
   return report;
 }
@@ -385,7 +384,6 @@ export async function updateSiteActivity({
   const role = await getSiteMemberRole({ activityId });
   if (editReportRoles.includes(role)) {
     const updatedActivity = await db.updateSiteActivity(activityId, values);
-    db.addLogMessage({ message: "Site activity updated", activityId });
     return updatedActivity;
   }
 }
@@ -414,10 +412,6 @@ export async function updateSiteActivityUsedMaterials({
       activityId,
       materials,
     });
-    db.addLogMessage({
-      message: "Site activity materials updated",
-      activityId,
-    });
     return updatedMaterials;
   }
 }
@@ -443,10 +437,6 @@ export async function updateSiteActivityUsedEquipment(
       activityId,
       equipment,
     );
-    db.addLogMessage({
-      message: "Site activity equipment updated",
-      activityId,
-    });
     return updatedEquipment;
   }
 }
