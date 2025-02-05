@@ -25,10 +25,9 @@ export default async function Page({
   const fileId = Number((await searchParams)?.fileId);
 
   const props = { siteId, reportId, fileId };
-  const [report, commentsSectionId, sections] = await Promise.all([
+  const [report, commentsSectionId] = await Promise.all([
     Actions.getSiteReportDetails(reportId),
     Actions.getSiteReportCommentsSectionId(reportId),
-    Actions.listSiteReportSections(reportId),
   ]);
 
   return (
@@ -63,7 +62,7 @@ export default async function Page({
         <ReportSiteDetails report={report} />
         <ReportInventory report={report} />
         <ReportActivities report={report} />
-        <ReportSections sections={sections} />
+        <ReportSections reportId={reportId} />
       </section>
 
       <section className="w-full max-w-5xl mx-auto">

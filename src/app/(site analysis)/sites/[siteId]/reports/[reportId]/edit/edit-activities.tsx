@@ -11,6 +11,7 @@ import * as Schemas from "@/db/schema";
 
 import {
   LucideCuboid,
+  LucideEraser,
   LucideForklift,
   LucideLoader2,
   LucideLoaderCircle,
@@ -52,6 +53,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { InputDate } from "@/components/input-date";
+import { dateDiffInDays } from "@/lib/utils";
 
 function EditUsedEquipment({
   site,
@@ -114,7 +117,7 @@ function EditUsedMaterials({
   );
 }
 
-function EditSitePersonnel({
+function EditSitePersonnelForm({
   activity,
   mutate,
 }: {
@@ -153,24 +156,25 @@ function EditSitePersonnel({
     control: form.control,
     name: "numberOfWorkers",
   });
-  const workersHoursPerDay = useWatch({
-    control: form.control,
-    name: "workersHoursPerDay",
-  });
   const workersCostPerDay = useWatch({
     control: form.control,
     name: "workersCostPerDay",
   });
 
+  const durationDays =
+    activity.startDate && activity.endOfDate
+      ? dateDiffInDays(activity.startDate, activity.endOfDate) + 1
+      : undefined;
+
   const totalCost =
-    (numberOfWorkers ?? 0) *
-    (workersHoursPerDay ? parseFloat(workersHoursPerDay) : 0) *
-    (workersCostPerDay ? parseFloat(workersCostPerDay) : 0);
+    numberOfWorkers && workersCostPerDay && durationDays
+      ? numberOfWorkers * parseFloat(workersCostPerDay) * durationDays
+      : undefined;
 
   return (
     <Form {...form}>
       <form
-        className="flex flex-col gap-4 rounded border p-4 bg-background"
+        className="flex flex-col gap-4"
         onSubmit={form.handleSubmit(async (data: SchemaType) => {
           const newReport = Actions.updateSiteActivity({
             activityId: activity.id,
@@ -180,140 +184,141 @@ function EditSitePersonnel({
           form.reset(await newReport);
         })}
       >
-        <h3 className="font-semibold">Site Personnel</h3>
+        <FormField
+          control={form.control}
+          name="contractors"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Contractors</FormLabel>
+              <FormControl>
+                <Textarea
+                  {...field}
+                  value={field.value ?? undefined}
+                  className="min-h-10 h-10"
+                  placeholder="eg. John Doe"
+                  autoResize={true}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="engineers"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Engineers</FormLabel>
+              <FormControl>
+                <Textarea
+                  {...field}
+                  value={field.value ?? undefined}
+                  className="min-h-10 h-10"
+                  placeholder="eg. John Doe"
+                  autoResize={true}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
-        <div className="flex flex-col gap-3">
+        <FormField
+          control={form.control}
+          name="visitors"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Visitors</FormLabel>
+              <FormControl>
+                <Textarea
+                  {...field}
+                  value={field.value ?? undefined}
+                  className="min-h-10 h-10"
+                  placeholder="eg. John Doe"
+                  autoResize={true}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormLabel>Workers</FormLabel>
+        <div className="flex gap-2 items-end">
           <FormField
             control={form.control}
-            name="contractors"
+            name="numberOfWorkers"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Contractors</FormLabel>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    value={field.value ?? undefined}
-                    className="min-h-10 h-10"
-                    placeholder="eg. John Doe"
-                    autoResize={true}
-                  />
-                </FormControl>
+                <FormLabel className="font-normal">Number</FormLabel>
+                <Input type="number" {...field} value={field.value ?? ""} />
+                <FormMessage />
               </FormItem>
             )}
           />
           <FormField
             control={form.control}
-            name="engineers"
+            name="workersHoursPerDay"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Engineers</FormLabel>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    value={field.value ?? undefined}
-                    className="min-h-10 h-10"
-                    placeholder="eg. John Doe"
-                    autoResize={true}
-                  />
-                </FormControl>
+                <FormLabel className="font-normal">Hours Per Day</FormLabel>
+                <Input
+                  type="number"
+                  step="0.5"
+                  {...field}
+                  value={field.value ?? ""}
+                />
+                <FormMessage />
               </FormItem>
             )}
           />
-
-          <FormField
-            control={form.control}
-            name="visitors"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Visitors</FormLabel>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    value={field.value ?? undefined}
-                    className="min-h-10 h-10"
-                    placeholder="eg. John Doe"
-                    autoResize={true}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          <FormLabel>Workers</FormLabel>
-          <div className="flex gap-2 items-end">
+          <div className="flex items-end">
             <FormField
               control={form.control}
-              name="numberOfWorkers"
+              name="workersCostPerDay"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-normal">Number</FormLabel>
-                  <Input type="number" {...field} value={field.value ?? ""} />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="workersHoursPerDay"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-normal">Total Hours</FormLabel>
+                  <FormLabel className="font-normal">Cost Per Day</FormLabel>
+
                   <Input
                     type="number"
-                    step="0.5"
+                    step="0.01"
                     {...field}
                     value={field.value ?? ""}
+                    className="rounded-r-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <div className="flex items-end">
-              <FormField
-                control={form.control}
-                name="workersCostPerDay"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-normal">Cost Per Hour</FormLabel>
-
-                    <Input
-                      type="number"
-                      step="0.01"
-                      {...field}
-                      value={field.value ?? ""}
-                      className="rounded-r-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="workersCostCurrency"
-                render={({ field }) => (
-                  <FormItem>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value ?? ""}
-                    >
-                      <SelectTrigger className="rounded-l-none border-l-0">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {currencies.map((currency) => (
-                          <SelectItem value={currency} key={currency}>
-                            {currency}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="workersCostCurrency"
+              render={({ field }) => (
+                <FormItem>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value ?? ""}
+                  >
+                    <SelectTrigger className="rounded-l-none border-l-0">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {currencies.map((currency) => (
+                        <SelectItem value={currency} key={currency}>
+                          {currency}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
           </div>
-          <div className="text-sm">
-            Total Cost: {totalCost.toLocaleString()}{" "}
+        </div>
+        <div className="text-sm">
+          <div>
+            Total Days: {durationDays ? durationDays?.toLocaleString() : "--"}
+          </div>
+          <div>
+            Total Cost: {totalCost ? totalCost?.toLocaleString() : "--"}{" "}
             {form.getValues("workersCostCurrency")}
           </div>
         </div>
@@ -323,6 +328,37 @@ function EditSitePersonnel({
         </div>
       </form>
     </Form>
+  );
+}
+
+function EditSitePersonnel({
+  activity,
+  mutate,
+}: {
+  activity: SiteActivity;
+  mutate: KeyedMutator<any>;
+}) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">
+          Personnel
+          <LucideUsers />
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent
+        // className="max-h-[90svh] h-[50rem] w-[70rem] max-w-full flex flex-col p-4 gap-4"
+        id="edit-equipment-used-dialog-content"
+      >
+        <DialogTitle className="text-lg font-semibold">
+          Activity Site Personnel
+        </DialogTitle>
+        {activity && (
+          <EditSitePersonnelForm activity={activity} mutate={mutate} />
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -384,19 +420,29 @@ function DeleteActivityButton({
   );
 }
 
-function EditActivityName({
+function EditActivityNameForm({
+  site,
   activity,
   mutate,
 }: {
+  site: any;
   activity: SiteActivity;
   mutate: KeyedMutator<any>;
 }) {
   const activitySchema = createInsertSchema(Schemas.siteActivity1);
-  const schema = activitySchema.pick({ name: true });
+  const schema = activitySchema.pick({
+    name: true,
+    startDate: true,
+    endOfDate: true,
+  });
   type SchemaType = z.infer<typeof schema>;
   const form = useForm<SchemaType>({
     resolver: zodResolver(schema),
-    defaultValues: { name: activity.name || "" },
+    defaultValues: {
+      name: activity.name || "",
+      startDate: activity.startDate,
+      endOfDate: activity.endOfDate,
+    },
   });
 
   return (
@@ -404,41 +450,110 @@ function EditActivityName({
       <form
         className="flex flex-col gap-4"
         onSubmit={form.handleSubmit(async (data: SchemaType) => {
-          const newActivity = Actions.updateSiteActivity({
-            activityId: activity.id,
-            values: data,
-          });
-          await mutate();
-          form.reset(await newActivity);
+          const newActivity = await mutate(
+            Actions.updateSiteActivity({
+              activityId: activity.id,
+              values: data,
+            }),
+          );
+          form.reset(newActivity);
         })}
       >
-        <div className="flex gap-2 items-end">
+        <div className="flex gap-3 items-center">
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
-              <FormItem className="grow">
-                <div className="flex flex-row gap-4">
-                  <FormControl>
-                    <Input
-                      className="grow max-w-[30rem] md:text-base"
-                      placeholder="Enter an Activity ..."
-                      name={field.name}
-                      onChange={field.onChange}
-                      value={field.value || ""}
-                    />
-                  </FormControl>
-                </div>
+              <FormItem className="flex-grow">
+                <FormControl>
+                  <Input
+                    className="md:text-base"
+                    placeholder="Enter an Activity ..."
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value || ""}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <SaveRevertForm form={form} />
-          <DeleteActivityButton
-            activityId={activity.id}
-            disabled={false}
-            onSubmit={mutate}
-          />
+          <div className="flex gap-2 justify-end col-span-2">
+            <SaveRevertForm form={form} />
+            <DeleteActivityButton
+              activityId={activity.id}
+              disabled={false}
+              onSubmit={mutate}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-3">
+          <div className="flex gap-2">
+            <FormField
+              control={form.control}
+              name="startDate"
+              render={({ field }) => (
+                <FormItem className="flex-grow">
+                  <FormControl>
+                    <InputDate
+                      field={field}
+                      prefix={
+                        <span className="text-sm font-semibold">
+                          Start Date:{" "}
+                        </span>
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={() => form.setValue("startDate", null)}
+            >
+              <LucideEraser />
+            </Button>
+          </div>
+
+          <div className="flex gap-2">
+            <FormField
+              control={form.control}
+              name="endOfDate"
+              render={({ field }) => (
+                <FormItem className="flex-grow">
+                  <FormControl>
+                    <InputDate
+                      field={field}
+                      prefix={
+                        <span className="text-sm font-semibold">
+                          End Date:{" "}
+                        </span>
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={() => form.setValue("endOfDate", null)}
+            >
+              <LucideEraser />
+            </Button>
+          </div>
+        </div>
+
+        <div className="grow grid grid-cols-3 gap-3">
+          <EditUsedMaterials site={site} activityId={activity.id} />
+          <EditUsedEquipment site={site} activityId={activity.id} />
+          <EditSitePersonnel activity={activity} mutate={mutate} />
         </div>
       </form>
     </Form>
@@ -447,31 +562,25 @@ function EditActivityName({
 
 function EditActivity({
   site,
-  activity,
-  mutateActivities,
+  activityId,
 }: {
   site: SiteDetails;
-  activity: SiteActivity;
-  mutateActivities: KeyedMutator<any>;
+  activityId: number;
 }) {
+  const { data, mutate, isLoading } = useSWR(
+    `/api/activity/${activityId}/details`,
+    async () => Actions.getSiteReportActivity({ activityId }),
+    { revalidateOnFocus: false },
+  );
+
   return (
     <Card className="bg-cyan-50 dark:bg-cyan-950">
       <CardContent className="flex flex-col gap-4 p-6">
-        <EditActivityName activity={activity} mutate={mutateActivities} />
-        <div className="grid grid-cols-3 gap-4">
-          <EditUsedMaterials site={site} activityId={activity.id} />
-          <EditUsedEquipment site={site} activityId={activity.id} />
-
-          <Button variant="outline" disabled>
-            Personnel <LucideUsers />
-          </Button>
-        </div>
-
-        {/* <div className="flex flex-col gap-4">
-          <EditUsedMaterials site={site} activityId={activity.id} />
-          <EditEquipment site={site} activityId={activity.id} />
-        </div>
-        <EditSitePersonnel activity={activity} mutate={mutateActivities} /> */}
+        {isLoading ? (
+          <LucideLoader2 className="animate-spin" />
+        ) : data ? (
+          <EditActivityNameForm site={site} activity={data} mutate={mutate} />
+        ) : null}
       </CardContent>
     </Card>
   );
@@ -484,11 +593,6 @@ export function EditReportActivities({
   siteId: number;
   reportId: number;
 }) {
-  const { data: report, isLoading: reportLoading } = useSWR(
-    `/api/reports/${reportId}/details`, // api route doesn't really exist
-    async () => Actions.getSiteReportDetails(reportId),
-    { revalidateOnFocus: false },
-  );
   const { data: site, isLoading: siteLoading } = useSWR(
     `/api/site/${siteId}/details`, // api route doesn't really exist
     async () => Actions.getSiteDetails(siteId),
@@ -506,14 +610,13 @@ export function EditReportActivities({
 
   return (
     <>
-      {activities &&
+      {Array.isArray(activities) &&
         site &&
         activities.map((activity) => (
           <EditActivity
             key={activity.id}
             site={site}
-            activity={activity}
-            mutateActivities={mutateActivities}
+            activityId={activity.id}
           />
         ))}
 

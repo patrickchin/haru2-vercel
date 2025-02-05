@@ -3,7 +3,11 @@ import { cn } from "@/lib/utils";
 import { HaruFile, SiteReportSection } from "@/lib/types";
 import * as Actions from "@/lib/actions";
 
-import { LucideChevronsDownUp, LucideChevronsUpDown } from "lucide-react";
+import {
+  LucideChevronsDownUp,
+  LucideChevronsUpDown,
+  LucideLoaderCircle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import {
@@ -25,7 +29,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Fragment } from "react";
+import { Fragment, Suspense } from "react";
 import { Separator } from "@/components/ui/separator";
 
 async function ReportSectionFiles({ section }: { section: SiteReportSection }) {
@@ -83,11 +87,43 @@ async function ReportSectionFiles({ section }: { section: SiteReportSection }) {
   );
 }
 
-export async function ReportSections({
-  sections,
-}: {
-  sections?: SiteReportSection[];
-}) {
+async function ReportSectionList({ reportId }: { reportId: number }) {
+  const sections = await Actions.listSiteReportSections(reportId);
+
+  return (
+    <ol className="flex flex-col">
+      {sections && sections.length > 0 ? (
+        sections.map((section) => {
+          return (
+            <Fragment key={section.id}>
+              <Separator />
+              <li
+                key={section.id}
+                className="py-8 px-12 space-y-4 hover:bg-muted"
+              >
+                <h3 className="text-xl font-semibold underline">
+                  {section.title}
+                </h3>
+                <div className="space-y-4">
+                  <p className="text-base text-pretty whitespace-pre-line">
+                    {section.content}
+                  </p>
+                  <ReportSectionFiles section={section} />
+                </div>
+              </li>
+            </Fragment>
+          );
+        })
+      ) : (
+        <li className="p-6 text-center text-sm text-muted-foreground bg-green-100 dark:bg-green-950 ">
+          No detailed sections in this report.
+        </li>
+      )}
+    </ol>
+  );
+}
+
+export async function ReportSections({ reportId }: { reportId: number }) {
   return (
     <Card className="overflow-hidden">
       <Collapsible defaultOpen={true}>
@@ -109,35 +145,15 @@ export async function ReportSections({
 
         <CollapsibleContent>
           <CardContent className="flex flex-col p-0">
-            <ol className="flex flex-col">
-              {sections && sections.length > 0 ? (
-                sections.map((section) => {
-                  return (
-                    <Fragment key={section.id}>
-                      <Separator />
-                      <li
-                        key={section.id}
-                        className="py-8 px-12 space-y-4 hover:bg-muted"
-                      >
-                        <h3 className="text-xl font-semibold underline">
-                          {section.title}
-                        </h3>
-                        <div className="space-y-4">
-                          <p className="text-base text-pretty whitespace-pre-line">
-                            {section.content}
-                          </p>
-                          <ReportSectionFiles section={section} />
-                        </div>
-                      </li>
-                    </Fragment>
-                  );
-                })
-              ) : (
-                <li className="p-6 text-center text-sm text-muted-foreground bg-green-100 dark:bg-green-950 ">
-                  No detailed sections in this report.
-                </li>
-              )}
-            </ol>
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center p-6">
+                  <LucideLoaderCircle className="animate-spin" />
+                </div>
+              }
+            >
+              <ReportSectionList reportId={reportId} />
+            </Suspense>
           </CardContent>
         </CollapsibleContent>
       </Collapsible>
