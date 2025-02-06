@@ -24,10 +24,7 @@ export function SiteMaterials({
   site: SiteDetails;
   role: SiteMemberRole;
 }) {
-  const {
-    data: materials,
-    isLoading,
-  } = useSWR<
+  const { data: materials, isLoading } = useSWR<
     (SiteMaterial & {
       activityName: string | null;
       activityEndDate: Date | null;
@@ -68,11 +65,14 @@ export function SiteMaterials({
                   <TableCell>
                     {m.quantity?.toLocaleString()} {m.quantityUnit}
                   </TableCell>
-                  <TableCell>
-                    {m.totalCost
-                      ? parseFloat(m.totalCost?.toLocaleString())
+                  <TableCell className="text-right">
+                    {m.quantity && m.unitCost
+                      ? (
+                          parseFloat(m.quantity.toLocaleString()) *
+                          parseFloat(m.unitCost.toLocaleString())
+                        ).toLocaleString()
                       : ""}{" "}
-                    {m.totalCostCurrency}
+                    {m.unitCostCurrency}
                   </TableCell>
                   <TableCell>{m.activityName}</TableCell>
                   <TableCell>{m.reportCreatedDate?.toDateString()}</TableCell>
