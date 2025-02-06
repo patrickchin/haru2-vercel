@@ -185,15 +185,11 @@ function FileListTable({
 }
 
 function UpdateSiteReportSectionFiles({
-  siteId,
   reportId,
   section,
-  sectionsMutate,
 }: {
-  siteId: number;
   reportId: number;
   section: SiteReportSection;
-  sectionsMutate: KeyedMutator<SiteReportSection[]>;
 }) {
   const { data: files, mutate: mutateFiles } = useSWR<HaruFile[]>(
     `/api/report/${reportId}/sections/${section.id}/files`, // api route doesn't really exist
@@ -236,7 +232,7 @@ function UpdateSiteReportSectionFiles({
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4">
         <h3 className="font-medium">Section Files</h3>
-        <Button asChild>
+        <Button asChild variant="secondary">
           <Label
             htmlFor={`upload-file-section-${section.id}`}
             className="rounded hover:cursor-pointer flex gap-2"
@@ -326,15 +322,15 @@ function UpdateSiteReportSection({
               await sectionsMutate();
               form.reset(newSection);
             })}
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-3"
           >
-            <div className="flex gap-2 items-end">
+            <div className="flex flex-col md:flex-row gap-3">
               <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem className="grow">
-                    <div className="flex flex-row gap-4">
+                    <div className="w-full flex flex-col md:flex-row gap-3">
                       <FormControl>
                         <Input
                           className="grow max-w-[30rem] md:text-base"
@@ -374,12 +370,15 @@ function UpdateSiteReportSection({
                   </FormItem>
                 )}
               />
-              <SaveRevertForm form={form} />
-              <DeleteSectionButton
-                sectionId={section.id}
-                disabled={false}
-                onSubmit={sectionsMutate}
-              />
+
+              <div className="hidden md:flex gap-3 justify-end">
+                <SaveRevertForm form={form} />
+                <DeleteSectionButton
+                  sectionId={section.id}
+                  disabled={false}
+                  onSubmit={sectionsMutate}
+                />
+              </div>
             </div>
 
             <FormField
@@ -401,6 +400,15 @@ function UpdateSiteReportSection({
                 </FormItem>
               )}
             />
+
+            <div className="flex md:hidden gap-3 justify-end mb-3">
+              <SaveRevertForm form={form} />
+              <DeleteSectionButton
+                sectionId={section.id}
+                disabled={false}
+                onSubmit={sectionsMutate}
+              />
+            </div>
           </form>
         </Form>
 
@@ -422,9 +430,12 @@ export function EditReportSections({
   siteId: number;
   reportId: number;
 }) {
-  const { data: sections, mutate, isLoading } = useSWR(
-    `/api/report/${reportId}/sections`,
-    async () => Actions.listSiteReportSections(reportId),
+  const {
+    data: sections,
+    mutate,
+    isLoading,
+  } = useSWR(`/api/report/${reportId}/sections`, async () =>
+    Actions.listSiteReportSections(reportId),
   );
 
   return (
