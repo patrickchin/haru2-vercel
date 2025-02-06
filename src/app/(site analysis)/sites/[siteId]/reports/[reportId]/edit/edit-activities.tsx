@@ -258,7 +258,7 @@ function EditSitePersonnelForm({
             name="workersHoursPerDay"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-normal">Hours Per Day</FormLabel>
+                <FormLabel>Hours Per Day</FormLabel>
                 <Input
                   type="number"
                   step="0.5"
@@ -275,8 +275,7 @@ function EditSitePersonnelForm({
               name="workersCostPerDay"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-normal">Cost Per Day</FormLabel>
-
+                  <FormLabel>Cost Per Day</FormLabel>
                   <Input
                     type="number"
                     step="0.01"

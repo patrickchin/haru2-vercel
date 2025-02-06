@@ -134,23 +134,28 @@ async function ReportActivity({
                 </TableRow>
                 <TableRow>
                   <TableCell className="text-right">
-                    {activity?.numberOfWorkers ?? "--"}
+                    {activity?.numberOfWorkers?.toLocaleString() ?? "--"}
                   </TableCell>
                   <TableCell>workers</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell className="text-right">
-                    {activity?.workersHoursPerDay ?? "--"}
+                    {activity?.workersHoursPerDay
+                      ? parseFloat(
+                          activity?.workersHoursPerDay,
+                        ).toLocaleString()
+                      : "--"}
                   </TableCell>
                   <TableCell>hours per day</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell className="text-right">
-                    {activity?.workersCostPerDay ?? "--"}
+                    {activity?.workersCostPerDay
+                      ? parseFloat(activity?.workersCostPerDay).toLocaleString()
+                      : "--"}{" "}
+                    {activity?.workersCostCurrency}
                   </TableCell>
-                  <TableCell>
-                    {activity?.workersCostCurrency ?? "--"} per day
-                  </TableCell>
+                  <TableCell>per day</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell className="text-right">
@@ -160,10 +165,11 @@ async function ReportActivity({
                 </TableRow>
                 <TableRow>
                   <TableCell className="text-right">
-                    {totalCost?.toLocaleString() ?? "--"}
+                    {totalCost?.toLocaleString() ?? "--"}{" "}
+                    {activity?.workersCostCurrency}
                   </TableCell>
                   <TableCell className="whitespace-pre-line">
-                    {activity?.workersCostCurrency ?? "--"} total cost
+                    total cost
                   </TableCell>
                 </TableRow>
               </TableBody>
