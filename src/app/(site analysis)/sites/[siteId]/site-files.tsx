@@ -179,7 +179,7 @@ export function SiteFiles({
                       {f.filesize ? prettyBytes(f.filesize) : "--"}
                     </TableCell>
                     <TableCell>{f.uploader?.name ?? "--"}</TableCell>
-                    <TableCell>{f.uploadedAt.toDateString()}</TableCell>
+                    <TableCell>{f.uploadedAt?.toDateString()}</TableCell>
                     <TableCell className="text-center space-x-2">
                       <Button variant="outline" size="icon" asChild>
                         <Link href={f.url || "/not-found"} target="_blank">
