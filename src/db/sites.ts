@@ -528,5 +528,11 @@ export async function listSiteActivityMaterials({
       eq(siteReportDetails1.siteActivityListId, siteActivityList1.id),
     )
     .innerJoin(siteReports1, eq(siteReports1.id, siteReportDetails1.id))
-    .where(eq(siteReports1.siteId, siteId));
+    .where(
+      and(
+        eq(siteReports1.siteId, siteId),
+        isNotNull(siteReports1.publishedAt),
+        isNull(siteReports1.deletedAt),
+      ),
+    );
 }
