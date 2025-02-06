@@ -16,6 +16,7 @@ const infoBoxVariants = cva(
         info:    "bg-blue-50    border-blue-200   dark:bg-blue-950",
         warning: "bg-yellow-100 border-yellow-200 dark:bg-yellow-800",
         error:   "bg-red-100    border-red-400    dark:bg-red-950",
+        gray:    "",
       },
     },
     defaultVariants: {
@@ -36,7 +37,8 @@ const infoBoxIcons = {
 };
 
 export function InfoBox({ children, className, variant }: InfoBoxProps) {
-  const Icon = infoBoxIcons[variant || "info"];
+  const iconVariant = variant === "gray" ? "info" : variant;
+  const Icon = infoBoxIcons[iconVariant || "info"];
   return (
     <div className={cn(infoBoxVariants({ variant, className }))}>
       <div className="align-baseline">
@@ -57,4 +59,8 @@ export function WarningBox(props: Omit<InfoBoxProps, "variant">) {
 
 export function GoodBox(props: Omit<InfoBoxProps, "variant">) {
   return <InfoBox {...props} variant="good" />;
+}
+
+export function GrayBox(props: Omit<InfoBoxProps, "variant">) {
+  return <InfoBox {...props} variant="gray" />;
 }

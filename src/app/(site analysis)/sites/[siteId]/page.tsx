@@ -52,6 +52,7 @@ import {
 import { TabsTriggerSearchParams } from "@/components/tabs-trigger-search-params";
 import { getRoleName } from "@/lib/constants";
 import { SiteFiles } from "./site-files";
+import { SiteMaterials } from "./site-materials";
 
 function SiteDescription({
   site,
@@ -424,6 +425,10 @@ export default async function Page(props: {
             <TabsTriggerSearchParams searchParamsKey="tab" value="files">
               Files
             </TabsTriggerSearchParams>
+            <div className="grow"></div>
+            <TabsTriggerSearchParams searchParamsKey="tab" value="materials">
+              Materials
+            </TabsTriggerSearchParams>
           </TabsList>
         </Card>
 
@@ -464,6 +469,10 @@ export default async function Page(props: {
 
         <TabsContent value="files" className="space-y-4">
           <SiteFiles site={site} role={role} />
+        </TabsContent>
+
+        <TabsContent value="materials" className="space-y-4">
+          <SiteMaterials site={site} role={role} />
         </TabsContent>
       </Tabs>
     </DefaultLayout>

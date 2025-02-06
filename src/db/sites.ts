@@ -35,6 +35,11 @@ import {
   siteInvitations1,
   accounts1,
   fileGroups1,
+  materials1,
+  materialsList1,
+  siteActivity1,
+  siteActivityList1,
+  siteReportDetails1,
 } from "./schema";
 
 export async function getAllSites(userId?: number): Promise<SiteAndExtra[]> {
@@ -490,4 +495,38 @@ export async function acceptAllUserInvitations({ userId }: { userId: number }) {
 
     return await db.insert(siteMembers1).values(memberships).returning();
   });
+}
+
+export async function listSiteActivityMaterials({
+  siteId,
+}: {
+  siteId: number;
+}) {
+  return db
+    .select({
+      ...getTableColumns(materials1),
+      reportId: siteReportDetails1.id,
+      reportCreatedDate: siteReports1.createdAt,
+      activityName: siteActivity1.name,
+      activityEndDate: siteActivity1.endOfDate,
+    })
+    .from(materials1)
+    .innerJoin(
+      materialsList1,
+      eq(materialsList1.id, materials1.materialsListId),
+    )
+    .innerJoin(
+      siteActivity1,
+      eq(siteActivity1.usedMaterialsListId, materialsList1.id),
+    )
+    .innerJoin(
+      siteActivityList1,
+      eq(siteActivityList1.id, siteActivity1.siteActivityListId),
+    )
+    .innerJoin(
+      siteReportDetails1,
+      eq(siteReportDetails1.siteActivityListId, siteActivityList1.id),
+    )
+    .innerJoin(siteReports1, eq(siteReports1.id, siteReportDetails1.id))
+    .where(eq(siteReports1.siteId, siteId));
 }

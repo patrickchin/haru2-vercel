@@ -84,7 +84,7 @@ export async function listSiteFiles({ siteId }: { siteId: number }) {
   const role = await getSiteMemberRole({ siteId });
   if (viewSiteRoles.includes(role)) {
     const fileGroupId = await db.ensureSiteFilesSection(siteId);
-    if (fileGroupId) { // TODO log on error?
+    if (fileGroupId) {
       return db.getFilesFromGroup(fileGroupId);
     }
   }
@@ -432,4 +432,13 @@ export async function deleteSiteInvitation(invitationId: number) {
     });
     return invitation;
   }
+}
+
+export async function listSiteActivityMaterials({
+  siteId,
+}: {
+  siteId: number;
+}) {
+  if (viewSiteRoles.includes(await getSiteMemberRole({ siteId })))
+    return db.listSiteActivityMaterials({ siteId });
 }
