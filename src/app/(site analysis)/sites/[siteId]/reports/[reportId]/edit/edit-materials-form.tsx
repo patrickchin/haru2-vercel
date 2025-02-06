@@ -1,8 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFieldArray, useWatch } from "react-hook-form";
+import {
+  useForm,
+  useFieldArray,
+  useWatch,
+  UseFormReturn,
+  FieldArrayWithId,
+} from "react-hook-form";
 import useSWR from "swr";
 import { z } from "zod";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createInsertSchema } from "drizzle-zod";
 import { materials1 } from "@/db/schema";
 import * as Actions from "@/lib/actions";
@@ -27,9 +33,26 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { LucideLoaderCircle, LucidePlus, LucideX } from "lucide-react";
+import {
+  LucideLoaderCircle,
+  LucidePlus,
+  LucideX,
+  LucideCheck,
+} from "lucide-react";
 import { SiteDetails, SiteMaterial, SiteMaterialNew } from "@/lib/types";
 import { getCountryCurrency } from "@/lib/constants";
+import { cn } from "@/lib/utils";
+
+const schema = z.object({
+  materials: z.array(
+    createInsertSchema(materials1)
+      .omit({ id: true, materialsListId: true })
+      .extend({
+        quantity: z.coerce.number().nullable(),
+      }),
+  ),
+});
+type SchemaType = z.infer<typeof schema>;
 
 function MaterialTableRow({
   field,
@@ -37,9 +60,9 @@ function MaterialTableRow({
   form,
   remove,
 }: {
-  field: any;
+  field: FieldArrayWithId;
   index: number;
-  form: any;
+  form: UseFormReturn<SchemaType>;
   remove: (index: number) => void;
 }) {
   const quantity = useWatch({
@@ -56,9 +79,17 @@ function MaterialTableRow({
   });
 
   const totalCost = (quantity ?? 0) * (unitCost ? parseFloat(unitCost) : 0);
+  const dirtyMaterials = form.formState.dirtyFields.materials?.[index];
+  console.log(dirtyMaterials);
+  const isRowDirty = dirtyMaterials
+    ? Object.values(dirtyMaterials).every((value) => value === true)
+    : false;
 
   return (
-    <TableRow key={field.id}>
+    <TableRow
+      key={field.id}
+      className={isRowDirty ? "bg-yellow-50 dark:bg-stone-800" : ""}
+    >
       <TableCell>
         <FormField
           name={`materials.${index}.name`}
@@ -237,16 +268,6 @@ function EditMaterialsForm({
   isLoading: boolean;
   updateAction: (materials: SiteMaterialNew[]) => Promise<any>;
 }) {
-  const schema = z.object({
-    materials: z.array(
-      createInsertSchema(materials1)
-        .omit({ id: true, materialsListId: true })
-        .extend({
-          quantity: z.coerce.number().nullable(),
-        }),
-    ),
-  });
-  type SchemaType = z.infer<typeof schema>;
   const form = useForm<SchemaType>({
     resolver: zodResolver(schema),
     defaultValues: materials && { materials: materials },
@@ -264,6 +285,8 @@ function EditMaterialsForm({
     }
     wasLoadingRef.current = isLoading;
   }, [materials, isLoading, form]);
+
+  const [copied, setCopied] = useState(false);
 
   if (isLoading) {
     return (
@@ -296,20 +319,26 @@ function EditMaterialsForm({
             onPaste={(e) => {
               e.preventDefault();
               const stringContent = e.clipboardData.getData("text");
-              const jsonContent = JSON.parse(stringContent);
-              console.log(jsonContent);
-              form.reset(jsonContent, { keepDefaultValues: true });
+              append(JSON.parse(stringContent).materials);
             }}
           />
           <Button
+            type="button"
             variant="default"
-            onClick={() => {
+            onClick={async () => {
               const jsonValues = JSON.stringify(form.getValues());
               if (!jsonValues) return;
-              navigator.clipboard.writeText(jsonValues);
+              await navigator.clipboard.writeText(jsonValues);
+              setCopied(true);
+              setTimeout(() => setCopied(false), 2000);
             }}
+            className={cn(
+              copied
+                ? "hover:bg-green-900 bg-green-950 dark:hover:bg-green-200 dark:bg-green-100"
+                : "",
+            )}
           >
-            Export to Clipboard
+            Export to Clipboard {copied && <LucideCheck />}
           </Button>
         </div>
 
