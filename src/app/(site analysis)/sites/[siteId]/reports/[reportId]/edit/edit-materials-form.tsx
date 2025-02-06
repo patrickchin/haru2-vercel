@@ -5,6 +5,7 @@ import {
   useWatch,
   UseFormReturn,
   FieldArrayWithId,
+  UseFieldArrayRemove,
 } from "react-hook-form";
 import useSWR from "swr";
 import { z } from "zod";
@@ -55,15 +56,13 @@ const schema = z.object({
 type SchemaType = z.infer<typeof schema>;
 
 function MaterialTableRow({
-  field,
   index,
   form,
   remove,
 }: {
-  field: FieldArrayWithId;
   index: number;
   form: UseFormReturn<SchemaType>;
-  remove: (index: number) => void;
+  remove: UseFieldArrayRemove;
 }) {
   const quantity = useWatch({
     control: form.control,
@@ -87,7 +86,6 @@ function MaterialTableRow({
 
   return (
     <TableRow
-      key={field.id}
       className={isRowDirty ? "bg-yellow-50 dark:bg-stone-800" : ""}
     >
       <TableCell>
@@ -359,7 +357,6 @@ function EditMaterialsForm({
               {fields.map((field, index) => (
                 <MaterialTableRow
                   key={field.id}
-                  field={field}
                   index={index}
                   form={form}
                   remove={remove}

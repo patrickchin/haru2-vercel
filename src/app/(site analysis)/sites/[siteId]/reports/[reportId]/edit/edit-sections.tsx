@@ -412,12 +412,7 @@ function UpdateSiteReportSection({
           </form>
         </Form>
 
-        <UpdateSiteReportSectionFiles
-          siteId={siteId}
-          reportId={reportId}
-          section={section}
-          sectionsMutate={sectionsMutate}
-        />
+        <UpdateSiteReportSectionFiles reportId={reportId} section={section} />
       </CardContent>
     </Card>
   );

@@ -4,6 +4,7 @@ import {
   useFieldArray,
   UseFormReturn,
   FieldArrayWithId,
+  UseFieldArrayRemove,
 } from "react-hook-form";
 import useSWR from "swr";
 import { z } from "zod";
@@ -54,15 +55,13 @@ const schema = z.object({
 type SchemaType = z.infer<typeof schema>;
 
 function EquipmentTableRow({
-  field,
   index,
   form,
   remove,
 }: {
-  field: FieldArrayWithId;
   index: number;
   form: UseFormReturn<SchemaType>;
-  remove: any;
+  remove: UseFieldArrayRemove;
 }) {
   const dirtyEquipment = form.formState.dirtyFields.equipment?.[index];
   const isRowDirty = dirtyEquipment
@@ -298,7 +297,7 @@ function EditEquipmentForm({
             <TableBody>
               {fields.map((field, index) => (
                 <EquipmentTableRow
-                  field={field}
+                  key={field.id}
                   index={index}
                   form={form}
                   remove={remove}
