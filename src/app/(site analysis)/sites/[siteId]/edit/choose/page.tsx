@@ -10,7 +10,7 @@ import { LucideMoveRight } from "lucide-react";
 
 function ProjectTypeSelection({ siteId }: { siteId: number }) {
   return (
-    <div className="grid grid-cols-2 gap-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
       <Button
         variant="outline"
         className={cn(
