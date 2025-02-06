@@ -538,7 +538,7 @@ function EditActivityNameForm({
           </Button>
         </div>
 
-        <div className="block lg:hidden"></div> 
+        <div className="block lg:hidden"></div>
 
         <div className="flex gap-2 justify-end items-center">
           <SaveRevertForm form={form} />
@@ -559,25 +559,27 @@ function EditActivityNameForm({
 
 function EditActivity({
   site,
-  activityId,
+  origActivity,
 }: {
   site: SiteDetails;
-  activityId: number;
+  origActivity: SiteActivity;
 }) {
   const { data, mutate, isLoading } = useSWR(
-    `/api/activity/${activityId}/details`,
-    async () => Actions.getSiteReportActivity({ activityId }),
-    { revalidateOnFocus: false },
+    `/api/activity/${origActivity.id}/details`,
+    async () => Actions.getSiteReportActivity({ activityId: origActivity.id }),
+    { revalidateOnFocus: false, initialData: origActivity },
   );
 
   return (
     <Card className="bg-cyan-50 dark:bg-cyan-950">
       <CardContent className="flex flex-col gap-4 p-6">
-        {isLoading ? (
-          <LucideLoader2 className="animate-spin" />
-        ) : data ? (
+        {data ? (
           <EditActivityNameForm site={site} activity={data} mutate={mutate} />
-        ) : null}
+        ) : isLoading ? (
+          <LucideLoader2 className="animate-spin" />
+        ) : (
+          <div>Error loading activity.</div>
+        )}
       </CardContent>
     </Card>
   );
@@ -610,11 +612,7 @@ export function EditReportActivities({
       {Array.isArray(activities) &&
         site &&
         activities.map((activity) => (
-          <EditActivity
-            key={activity.id}
-            site={site}
-            activityId={activity.id}
-          />
+          <EditActivity key={activity.id} site={site} origActivity={activity} />
         ))}
 
       <Card className="bg-cyan-50 dark:bg-cyan-950">
