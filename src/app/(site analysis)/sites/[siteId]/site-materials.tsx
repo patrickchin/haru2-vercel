@@ -31,7 +31,7 @@ export function SiteMaterials({
       reportCreatedDate: Date | null;
     } & any)[]
   >(
-    `/api/site/${site.id}/files`,
+    `/api/site/${site.id}/materials`,
     async () =>
       (await Actions.listSiteActivityMaterials({ siteId: site.id })) ?? [],
   );
