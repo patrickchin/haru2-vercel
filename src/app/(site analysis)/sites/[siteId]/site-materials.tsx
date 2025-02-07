@@ -25,15 +25,15 @@ export function SiteMaterials({
   role: SiteMemberRole;
 }) {
   const { data: materials, isLoading } = useSWR<
-    (SiteMaterial & {
-      activityName: string | null;
-      activityEndDate: Date | null;
-      reportCreatedDate: Date | null;
-    } & any)[]
-  >(
-    `/api/site/${site.id}/materials`,
-    async () =>
-      (await Actions.listSiteActivityMaterials({ siteId: site.id })) ?? [],
+    | (SiteMaterial & {
+        reportId: number | null;
+        reportCreatedDate: Date | null;
+        activityName: string | null;
+        activityEndDate: Date | null;
+      })[]
+    | undefined
+  >(`/api/site/${site.id}/materials`, async () =>
+    Actions.listSiteActivityMaterials({ siteId: site.id }),
   );
 
   return (
