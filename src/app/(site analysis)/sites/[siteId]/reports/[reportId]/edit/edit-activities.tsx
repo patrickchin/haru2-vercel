@@ -482,34 +482,6 @@ function EditActivityNameForm({
         <div className="flex gap-2">
           <FormField
             control={form.control}
-            name="endOfDate"
-            render={({ field }) => (
-              <FormItem className="flex-grow">
-                <FormControl>
-                  <InputDate
-                    field={field}
-                    prefix={
-                      <span className="text-sm font-semibold">End Date: </span>
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={() => form.setValue("endOfDate", null)}
-          >
-            <LucideEraser />
-          </Button>
-        </div>
-
-        <div className="flex gap-2">
-          <FormField
-            control={form.control}
             name="startDate"
             render={({ field }) => (
               <FormItem className="flex-grow">
@@ -532,6 +504,34 @@ function EditActivityNameForm({
             variant="outline"
             size="icon"
             onClick={() => form.setValue("startDate", null)}
+          >
+            <LucideEraser />
+          </Button>
+        </div>
+
+        <div className="flex gap-2">
+          <FormField
+            control={form.control}
+            name="endOfDate"
+            render={({ field }) => (
+              <FormItem className="flex-grow">
+                <FormControl>
+                  <InputDate
+                    field={field}
+                    prefix={
+                      <span className="text-sm font-semibold">End Date: </span>
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={() => form.setValue("endOfDate", null)}
           >
             <LucideEraser />
           </Button>
