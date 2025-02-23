@@ -78,7 +78,7 @@ async function SitesList() {
 
 export default async function Page() {
   return (
-    <DefaultLayout className="px-8">
+    <DefaultLayout>
       <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
         <h1 className="grow text-2xl font-semibold">
           Site Supervision Projects

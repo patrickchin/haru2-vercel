@@ -29,7 +29,8 @@ export function MainNav({ className, user }: { className?: string; user?: User }
   const globalNav = [
     { name: "About Us", href: "/about" },
     // { name: "Contact Us", href: "/contact", },
-    { name: "Docs", href: "/docs" },
+    // { name: "Docs", href: "/docs" },
+    { name: "Offline", href: "/offline" },
   ];
 
   const userNav = [

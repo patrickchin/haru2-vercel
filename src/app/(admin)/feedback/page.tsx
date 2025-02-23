@@ -13,7 +13,7 @@ export default async function Page() {
   return (
     <DefaultLayout>
       <div className="flex items-center">
-        <h1 className="grow text-3xl font-semibold">Feedback Comments</h1>
+        <h1 className="grow text-2xl font-semibold">Feedback Comments</h1>
       </div>
 
       <ol className="min-w-96 flex flex-col gap-4">

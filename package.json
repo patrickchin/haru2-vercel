@@ -2,6 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "offline": "cd offline-report-form && pnpm install && pnpm build && cp ./dist/index.html ../public/offline.html",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
