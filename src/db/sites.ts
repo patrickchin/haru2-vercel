@@ -536,3 +536,79 @@ export async function listSiteActivityMaterials({
       ),
     );
 }
+
+export async function listSiteStorageMaterials({ siteId }: { siteId: number }) {
+  return db
+    .select()
+    .from(materials1)
+    .innerJoin(
+      materialsList1,
+      eq(materialsList1.id, materials1.materialsListId),
+    )
+    .innerJoin(
+      siteDetails1,
+      eq(siteDetails1.storageMaterialsListId, materialsList1.id),
+    )
+    .where(eq(siteDetails1.id, siteId))
+    .orderBy(materials1.id);
+}
+
+async function ensureSiteStorageMaterialsList({
+  tx,
+  siteId,
+}: {
+  tx: any;
+  siteId: number;
+}) {
+  const { storageMaterialsListId } = await tx
+    .select({ storageMaterialsListId: siteDetails1.storageMaterialsListId })
+    .from(siteDetails1)
+    .where(eq(siteDetails1.id, siteId))
+    .then((r) => r[0]);
+
+  if (storageMaterialsListId) return storageMaterialsListId;
+
+  const materialsList = await tx
+    .insert(materialsList1)
+    .values({})
+    .returning()
+    .then((r) => r[0]);
+
+  await tx
+    .update(siteDetails1)
+    .set({ storageMaterialsListId: materialsList.id })
+    .where(eq(siteDetails1.id, siteId));
+
+  return materialsList.id;
+}
+
+export async function updateSiteStorageMaterials({
+  siteId,
+}: {
+  siteId: number;
+}) {
+  return db.transaction(async (tx) => {
+    const materials = await ensureSiteStorageMaterialsList({ tx, siteId });
+    if (materials.length < 1) return;
+
+    const materialsList = await tx
+      .insert(materialsList1)
+      .values({})
+      .returning()
+      .then((r) => r[0]);
+
+    await tx
+      .update(siteDetails1)
+      .set({ storageMaterialsListId: materialsList.id })
+      .where(eq(siteDetails1.id, siteId));
+
+    await Promise.all(
+      materials.map((m) =>
+        tx
+          .update(materials1)
+          .set({ materialsListId: materialsList.id })
+          .where(eq(materials1.id, m.id)),
+      ),
+    );
+  });
+}

@@ -1,7 +1,14 @@
 import "server-only";
 
 import { db } from "./_db";
-import { and, desc, eq, getTableColumns, isNotNull, isNull } from "drizzle-orm";
+import {
+  and,
+  desc,
+  eq,
+  getTableColumns,
+  isNotNull,
+  isNull,
+} from "drizzle-orm";
 import {
   SiteActivity,
   SiteActivityNew,
@@ -606,6 +613,41 @@ export async function listSiteActivityUsedMaterials(activityId: number) {
     .then((r) => r.map((m) => m.materials1));
 }
 
+async function ensureSiteActivityUsedMaterialsList(activityId: number) {
+  let usedMaterialsListId = await db
+    .update({ id: siteActivity1.usedMaterialsListId })
+    .from(siteActivity1)
+    .where(eq(siteActivity1.id, activityId))
+    .limit(1)
+    .then((r) => r[0].id);
+
+  return db.transaction(async (tx) => {
+    let usedMaterialsListId = await tx
+      .select({ id: siteActivity1.usedMaterialsListId })
+      .from(siteActivity1)
+      .where(eq(siteActivity1.id, activityId))
+      .limit(1)
+      .then((r) => r[0].id);
+
+    if (!usedMaterialsListId) {
+      usedMaterialsListId = await tx
+        .insert(materialsList1)
+        .values({})
+        .returning()
+        .then((r) => r[0].id);
+      await tx
+        .update(siteActivity1)
+        .set({ usedMaterialsListId })
+        .where(eq(siteActivity1.id, activityId))
+        .returning();
+    }
+
+    return usedMaterialsListId;
+  });
+}
+
+
+
 export async function updateSiteActivityUsedMaterials({
   activityId,
   materials,
@@ -631,11 +673,17 @@ export async function updateSiteActivityUsedMaterials({
         .values({})
         .returning()
         .then((r) => r[0].id);
-      await tx
+      const updatedActivity = await tx
         .update(siteActivity1)
         .set({ usedMaterialsListId })
-        .where(eq(siteActivity1.id, activityId))
-        .returning();
+        .where(
+          and(
+            eq(siteActivity1.id, activityId),
+            isNull(siteActivity1.usedMaterialsListId),
+          ),
+        )
+        .returning()
+      updatedActivity.length === 1;
     }
 
     assert(usedMaterialsListId);

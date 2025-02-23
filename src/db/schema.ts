@@ -130,6 +130,16 @@ export const siteDetails1 = pgTable("siteDetails1", {
   ),
   fileGroupId: integer("fileGroupId").references(() => fileGroups1.id),
 
+  storageMaterialsListId: integer("storageMaterialsListId").references(
+    () => materialsList1.id,
+  ),
+  storageEquipmentListId: integer("storageEquipmentListId").references(
+    () => equipmentList1.id,
+  ),
+  siteActivityListId: integer("siteActivityListId").references(
+    () => siteActivityList1.id,
+  ),
+
   startDate: timestamp("startDate", { mode: "date", withTimezone: true }),
   endDate: timestamp("endDate", { mode: "date", withTimezone: true }),
   nextReportDate: timestamp("nextReportDate", {
@@ -282,10 +292,9 @@ export const equipmentList1 = pgTable("equipmentList1", {
 
 export const equipment1 = pgTable("equipments1", {
   id: serial("id").primaryKey(),
-  equipmentListId: integer("equipmentListId").references(
-    () => equipmentList1.id,
-    { onDelete: "cascade" },
-  ).notNull(),
+  equipmentListId: integer("equipmentListId")
+    .references(() => equipmentList1.id, { onDelete: "cascade" })
+    .notNull(),
   name: varchar("name"),
   quantity: integer("quantity"),
   cost: numeric("cost"),
