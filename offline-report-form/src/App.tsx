@@ -188,18 +188,18 @@ export default function App() {
                   Extra Details <LucideEllipsis />
                 </Button>
 
-                <div className="flex space-x-2">
+                <div className="flex flex-col md:flex-row gap-2 p-4 border rounded bg-muted">
                   <Button
                     type="button"
                     onClick={saveToLocalStorage}
-                    variant="secondary"
+                    variant="outline"
                   >
                     Save to Cache
                   </Button>
                   <Button
                     type="button"
                     onClick={loadFromLocalStorage}
-                    variant="secondary"
+                    variant="outline"
                   >
                     Load from Cache
                   </Button>
