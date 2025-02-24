@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -94,7 +94,33 @@ export default function App() {
     loadFromLocalStorage();
   }, [loadFromLocalStorage]);
 
-  const [currentPage, setCurrentPage] = useState("form");
+  const getCurrentPage = () => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("page") || "form";
+  };
+
+  const setCurrentPage = (page: string) => {
+    const params = new URLSearchParams(window.location.search);
+    params.set("page", page);
+    window.history.pushState({}, "", `${window.location.pathname}?${params.toString()}`);
+    setCurrentPageState(page);
+  };
+
+  const [currentPage, setCurrentPageState] = useState(getCurrentPage());
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentPageState(getCurrentPage());
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
+
+  useEffect(() => {
+    setCurrentPageState(getCurrentPage());
+  }, [window.location.search]);
 
   const goToMaterialsList = () => setCurrentPage("materials");
   const goToEquipmentList = () => setCurrentPage("equipment");
