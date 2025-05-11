@@ -33,7 +33,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   LucideLoaderCircle,
   LucidePlus,
@@ -344,13 +344,13 @@ function EditMaterialsForm({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-center w-3/12">Name</TableHead>
-                <TableHead className="text-center w-1/12">Quantity</TableHead>
-                <TableHead className="text-center w-2/12">Unit</TableHead>
-                <TableHead className="text-center w-2/12">Unit Cost</TableHead>
-                <TableHead className="text-center w-1/12">Total Cost</TableHead>
-                <TableHead className="text-center w-2/12">Condition</TableHead>
-                <TableHead className="text-center w-px"></TableHead>
+                <TableHead className="text-center min-w-32 w-3/12">Name</TableHead>
+                <TableHead className="text-center min-w-32 w-1/12">Quantity</TableHead>
+                <TableHead className="text-center min-w-24 w-2/12">Unit</TableHead>
+                <TableHead className="text-center min-w-40 w-2/12">Unit Cost</TableHead>
+                <TableHead className="text-center min-w-24 w-1/12">Total Cost</TableHead>
+                <TableHead className="text-center min-w-24 w-2/12">Condition</TableHead>
+                <TableHead className="text-center min-w-8 w-px"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -364,6 +364,8 @@ function EditMaterialsForm({
               ))}
             </TableBody>
           </Table>
+          <ScrollBar orientation="vertical" />
+          <ScrollBar orientation="horizontal" />
         </ScrollArea>
         <div className="flex justify-center mt-3">
           <Button

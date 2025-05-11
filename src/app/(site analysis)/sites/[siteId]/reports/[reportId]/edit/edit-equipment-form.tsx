@@ -40,7 +40,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 const schema = z.object({
@@ -284,11 +284,11 @@ function EditEquipmentForm({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-center w-4/12">Name</TableHead>
-                <TableHead className="text-center w-2/12">Quantity</TableHead>
-                <TableHead className="text-center w-2/12">Cost</TableHead>
-                <TableHead className="text-center w-2/12">Ownership</TableHead>
-                <TableHead className="text-center w-2/12">
+                <TableHead className="text-center min-w-32 w-3/12">Name</TableHead>
+                <TableHead className="text-center min-w-28 w-2/12">Quantity</TableHead>
+                <TableHead className="text-center min-w-40 w-3/12">Cost</TableHead>
+                <TableHead className="text-center min-w-28 w-2/12">Ownership</TableHead>
+                <TableHead className="text-center min-w-28 w-2/12">
                   Operation Time (Hours)
                 </TableHead>
                 <TableHead className="text-center w-1/12"></TableHead>
@@ -305,6 +305,8 @@ function EditEquipmentForm({
               ))}
             </TableBody>
           </Table>
+          <ScrollBar orientation="vertical" />
+          <ScrollBar orientation="horizontal" />
         </ScrollArea>
         <div className="flex justify-center mt-3">
           <Button
