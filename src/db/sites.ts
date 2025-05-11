@@ -42,7 +42,7 @@ import {
   siteReportDetails1,
 } from "./schema";
 
-export async function getAllSites(userId?: number): Promise<SiteAndExtra[]> {
+export async function getAllSites(userId?: string): Promise<SiteAndExtra[]> {
   return await db
     .selectDistinctOn([sites1.id], {
       ...getTableColumns(sites1),
@@ -65,7 +65,7 @@ export async function getAllSites(userId?: number): Promise<SiteAndExtra[]> {
 }
 
 // get all the sites that userId is the owner of
-export async function getMySites(userId: number): Promise<Site[]> {
+export async function getMySites(userId: string): Promise<Site[]> {
   return await db
     .select({
       ...getTableColumns(sites1),
@@ -82,7 +82,7 @@ export async function getMySites(userId: number): Promise<Site[]> {
 
 // get all the sites that userId is a member of
 export async function getAllVisibleSites(
-  userId: number,
+  userId: string,
 ): Promise<SiteAndExtra[]> {
   return await db
     .selectDistinctOn([sites1.id], {
@@ -151,7 +151,7 @@ export async function listSiteMembers(
   return await db
     .select({
       ...getTableColumns(siteMembers1),
-      ...getTableColumns(users1),
+      user: { ...getTableColumns(users1) },
     })
     .from(siteMembers1)
     .innerJoin(users1, eq(users1.id, siteMembers1.memberId))
@@ -181,7 +181,7 @@ export async function getSiteMeeting(meetingId: number): Promise<SiteMeeting> {
 }
 
 export async function addSiteMeeting(
-  { siteId, userId }: { siteId: number; userId?: number },
+  { siteId, userId }: { siteId: number; userId?: string },
   values: SiteMeetingNew,
 ): Promise<SiteMeeting> {
   return await db
@@ -238,7 +238,7 @@ export async function updateSiteNotice(siteId: number, values: SiteNoticeNew) {
 }
 
 export async function addSite(
-  ownerId: number,
+  ownerId: string,
   args: Pick<
     SiteNew & SiteDetailsNew,
     "title" | "type" | "countryCode" | "address" | "description"
@@ -342,7 +342,7 @@ export async function addSiteMember({
   role,
 }: {
   siteId: number;
-  userId: number;
+  userId: string;
   role: SiteMemberRole;
 }) {
   return await db
@@ -366,7 +366,7 @@ export async function updateSiteMemberRole({
   role,
 }: {
   siteId: number;
-  userId: number;
+  userId: string;
   role: SiteMemberRole;
 }) {
   return await db
@@ -384,7 +384,7 @@ export async function removeSiteMember({
   userId,
 }: {
   siteId: number;
-  userId: number;
+  userId: string;
 }) {
   return await db
     .delete(siteMembers1)
@@ -404,7 +404,7 @@ export async function getSiteRole({
   userId,
 }: {
   siteId: number;
-  userId: number;
+  userId: string;
 }) {
   return db
     .select({ role: siteMembers1.role })
@@ -459,7 +459,7 @@ export async function acceptSiteInvitation({
   userId,
 }: {
   invitationId: number;
-  userId: number;
+  userId: string;
 }) {
   return db.transaction(async (tx) => {
     const inv = await deleteSiteInvitation(invitationId);
@@ -468,22 +468,22 @@ export async function acceptSiteInvitation({
   });
 }
 
-export async function acceptAllUserInvitations({ userId }: { userId: number }) {
+export async function acceptAllUserInvitations({ userId }: { userId: string }) {
   return db.transaction(async (tx) => {
-    const account = await tx
+    const user = await tx
       .select()
-      .from(accounts1)
-      .where(eq(accounts1.id, userId))
+      .from(users1)
+      .where(eq(users1.id, userId))
       .then((r) => r[0]);
-    if (!account.email) return;
+    if (!user.email) return;
 
     const invitations = await tx
       .delete(siteInvitations1)
-      .where(eq(siteInvitations1.email, account.email))
+      .where(eq(siteInvitations1.email, user.email))
       .returning();
 
     console.log(
-      `User ${userId} (${account.email}) accepting ${invitations.length} invitations.`,
+      `User ${userId} (${user.email}) accepting ${invitations.length} invitations.`,
     );
 
     const memberships = invitations.map((inv) => ({

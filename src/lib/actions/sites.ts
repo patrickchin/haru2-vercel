@@ -25,27 +25,27 @@ import { SiteInvitationLimitReached } from "../errors";
 
 export async function addSite(data: zSiteNewBothType) {
   const session = await auth();
-  if (!session?.user) return; // unauthorized();
+  if (!session?.user?.id) return; // unauthorized();
   const parsed = zSiteNewBoth.safeParse(data);
   if (!parsed.success) return;
-  const site = await db.addSite(session.user.idn, parsed.data);
+  const site = await db.addSite(session.user.id, parsed.data);
   db.addLogMessage({ message: "Site added", siteId: site.id });
   redirect(`/sites/${site.id}/edit/choose`);
 }
 
 export async function getMySites() {
   const session = await auth();
-  if (!session?.user) return;
-  return db.getMySites(session.user.idn);
+  if (!session?.user?.id) return;
+  return db.getMySites(session.user.id);
 }
 
 export async function getAllVisibleSites() {
   const session = await auth();
-  if (!session?.user) return;
+  if (!session?.user.id) return;
   if (session?.user.role === "admin") {
-    return db.getAllSites(session.user.idn);
+    return db.getAllSites(session.user.id);
   }
-  return db.getAllVisibleSites(session.user.idn);
+  return db.getAllVisibleSites(session.user.id);
 }
 
 export async function getSiteDetails(siteId: number) {
@@ -104,7 +104,7 @@ export async function addSiteFile({
     if (fileGroupId) {
       const file = await db.addFileToGroup(fileGroupId, {
         ...fileInfo,
-        uploaderId: session?.user?.idn,
+        uploaderId: session?.user?.id,
       });
       db.addLogMessage({
         message: "Site file added",
@@ -160,8 +160,8 @@ export async function listSiteMembers(siteId: number) {
 
 export async function getSiteRole(siteId: number) {
   const session = await auth();
-  if (!session?.user) return;
-  return db.getSiteRole({ siteId, userId: session.user.idn });
+  if (!session?.user.id) return;
+  return db.getSiteRole({ siteId, userId: session.user.id });
 }
 
 export async function getSiteNotices(siteId: number) {
@@ -184,7 +184,7 @@ export async function addSiteMeeting(siteId: number, values: SiteMeetingNew) {
   const role = await getSiteMemberRole({ siteId }, session);
   if (editMeetingRoles.includes(role)) {
     const meeting = await db.addSiteMeeting(
-      { siteId, userId: session?.user?.idn },
+      { siteId, userId: session?.user?.id },
       values,
     );
     db.addLogMessage({
@@ -328,7 +328,7 @@ export async function updateSiteMemberRole({
   role,
 }: {
   siteId: number;
-  userId: number;
+  userId: string;
   role: SiteMemberRole;
 }) {
   if (editSiteRoles.includes(await getSiteMemberRole({ siteId }))) {
@@ -345,7 +345,7 @@ export async function removeSiteMember({
   userId,
 }: {
   siteId: number;
-  userId: number;
+  userId: string;
 }) {
   if (editSiteRoles.includes(await getSiteMemberRole({ siteId }))) {
     const n = await db.countSiteMembers(siteId);
@@ -389,22 +389,24 @@ export async function getSiteMemberRole(
   const s = session === undefined ? await auth() : session;
   if (!s?.user) return null;
 
-  const userId = s.user.idn;
+  const userId = s.user.id;
   let role: SiteMemberRole = null;
-  if (siteId) {
-    role = await db.getSiteRole({ siteId, userId });
-  } else if (reportId) {
-    role = await db.getReportRole({ reportId, userId });
-  } else if (sectionId) {
-    role = await db.getReportSectionRole({ sectionId, userId });
-  } else if (activityId) {
-    role = await db.getReportActivityRole({ activityId, userId });
-  } else if (meetingId) {
-    role = await db.getMeetingRole({ meetingId, userId });
-  } else if (commentsSectionId) {
-    role = await db.getCommentsSectionRole({ commentsSectionId, userId });
-  } else if (invitationId) {
-    role = await db.getInvitationRole({ invitationId, userId });
+  if (userId) {
+    if (siteId) {
+      role = await db.getSiteRole({ siteId, userId });
+    } else if (reportId) {
+      role = await db.getReportRole({ reportId, userId });
+    } else if (sectionId) {
+      role = await db.getReportSectionRole({ sectionId, userId });
+    } else if (activityId) {
+      role = await db.getReportActivityRole({ activityId, userId });
+    } else if (meetingId) {
+      role = await db.getMeetingRole({ meetingId, userId });
+    } else if (commentsSectionId) {
+      role = await db.getCommentsSectionRole({ commentsSectionId, userId });
+    } else if (invitationId) {
+      role = await db.getInvitationRole({ invitationId, userId });
+    }
   }
   if (!role) {
     if (s.user.role === "admin") return "supervisor";

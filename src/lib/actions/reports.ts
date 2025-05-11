@@ -41,7 +41,7 @@ export async function addSiteReport(siteId: number) {
   const session = await auth();
   if (editReportRoles.includes(await getSiteMemberRole({ siteId }, session))) {
     const report = await db.addSiteReport({
-      reporterId: session?.user?.idn ?? null,
+      reporterId: session?.user?.id,
       siteId: siteId,
     });
     const reportId = report.id;
@@ -112,22 +112,22 @@ export async function signReport(reportId: number, buttonRole: SiteMemberRole) {
   let signArgs: SiteReportDetailsNew = {};
   if (role === "supervisor") {
     signArgs = {
-      supervisorId: session.user.idn,
+      supervisorId: session.user.id,
       supervisorSignDate: new Date(),
     };
   } else if (role === "manager") {
     signArgs = {
-      contractorId: session.user.idn,
+      contractorId: session.user.id,
       contractorSignDate: new Date(),
     };
   } else if (role === "contractor") {
     signArgs = {
-      contractorId: session.user.idn,
+      contractorId: session.user.id,
       contractorSignDate: new Date(),
     };
   } else if (role === "owner") {
     signArgs = {
-      ownerId: session.user.idn,
+      ownerId: session.user.id,
       ownerSignDate: new Date(),
     };
   }
@@ -181,7 +181,7 @@ export async function addSiteReportFile(
     if (report.fileGroupId) {
       const file = await db.addFileToGroup(report.fileGroupId, {
         ...fileInfo,
-        uploaderId: session?.user?.idn,
+        uploaderId: session?.user?.id,
       });
       db.addLogMessage({
         message: "Site report file added",
@@ -270,7 +270,7 @@ export async function addSiteReportSectionFile(
     if (section.fileGroupId) {
       return db.addFileToGroup(section.fileGroupId, {
         ...fileInfo,
-        uploaderId: session?.user?.idn,
+        uploaderId: session?.user?.id,
       });
     }
   }

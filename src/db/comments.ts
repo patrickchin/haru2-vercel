@@ -23,7 +23,7 @@ export async function getCommentsSectionRole({
   userId,
 }: {
   commentsSectionId: number;
-  userId: number;
+  userId: string;
 }) {
   return db
     .select({ role: siteMembers1.role })
@@ -56,7 +56,7 @@ export async function listCommentsFromSection(
 
 export async function addCommentToSection(
   commentsSectionId: number,
-  userId: number,
+  userId: string,
   values: HaruCommentNew,
 ) {
   return await db

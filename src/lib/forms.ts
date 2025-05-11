@@ -73,16 +73,6 @@ export const authorizeSchema = z
     message: "Needs to specify one of otp or password",
   });
 
-const registerPhoneOtpSchema = z.object({
-  name: z.string().trim().min(0, { message: "Name is required" }),
-  phone: phoneNumberZod,
-  otp: otpZod,
-});
-const registerEmailOtpSchema = z.object({
-  name: z.string().trim().min(0, { message: "Name is required" }),
-  email: z.string().email("Invalid email address"),
-  otp: otpZod,
-});
 const registerPasswordSchema = z
   .object({
     name: z.string().trim().min(0, { message: "Name is required" }),
@@ -95,8 +85,6 @@ const registerPasswordSchema = z
     path: ["confirmPassword"],
   });
 export const registerZodSchemas = {
-  phone: registerPhoneOtpSchema,
-  email: registerEmailOtpSchema,
   password: registerPasswordSchema,
 };
 

@@ -24,7 +24,8 @@ import { UserAvatar } from "./user-avatar";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
-export function MainNav({ className, user }: { className?: string; user?: User }) {
+export function MainNav({ className }: { className?: string }) {
+  const { data: session } = useSession();
   const pathname = usePathname();
   const globalNav = [
     { name: "About Us", href: "/about" },
@@ -61,8 +62,8 @@ export function MainNav({ className, user }: { className?: string; user?: User }
       <div className="grow"></div>
 
       {userNav.map((item, i) => {
-        if (item.needLogin && !user) return null;
-        if (item.needAdmin && user?.role !== "admin") return null;
+        if (item.needLogin && !session?.user) return null;
+        if (item.needAdmin && session?.user?.role !== "admin") return null;
         return (
           <Button
             key={i}
@@ -119,11 +120,8 @@ function UserMenu({ user }: { user?: User }) {
 function LoginSignup() {
   return (
     <div className="flex gap-x-3">
-      <Button asChild variant="secondary">
+      <Button asChild variant="default">
         <Link href="/login">Login</Link>
-      </Button>
-      <Button asChild>
-        <Link href="/register">Sign Up</Link>
       </Button>
     </div>
   );
@@ -161,7 +159,7 @@ export default function Header() {
           </span>
         </Link>
 
-        <MainNav user={session?.user} className="md:inline-flex md:h-16 items-center" />
+        <MainNav className="md:inline-flex md:h-16 items-center" />
 
         <div className="inline-flex flex-row gap-3 items-center h-16">
           <ThemeToggle />
