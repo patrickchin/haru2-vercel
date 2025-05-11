@@ -11,12 +11,15 @@ import {
   interval,
   boolean,
   primaryKey,
+  text,
 } from "drizzle-orm/pg-core";
+import type { AdapterAccountType } from "next-auth/adapters"
 
 // pnpm drizzle-kit push
 // pnpm drizzle-kit introspect
 // pnpm drizzle-kit generate
 // pnpm drizzle-kit migrate
+
 
 export const accountRoleEnum = pgEnum("role", [
   "client",
@@ -25,43 +28,97 @@ export const accountRoleEnum = pgEnum("role", [
   "admin",
 ]);
 
-export const accounts1 = pgTable("accounts1", {
-  id: serial("id").primaryKey(),
-  password: varchar("password"),
-  email: varchar("email").unique(),
-  emailVerified: timestamp("emailVerified", {
-    mode: "date",
-    withTimezone: true,
-  }),
-  phone: varchar("phone").unique(),
-  phoneVerified: timestamp("phoneVerified", {
-    mode: "date",
-    withTimezone: true,
-  }),
+export const users1 = pgTable("user", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text("name"),
+  email: text("email").unique(),
+  emailVerified: timestamp("emailVerified", { mode: "date" }),
+  image: text("image"),
   createdAt: timestamp("createdAt", { mode: "date", withTimezone: true })
     .notNull()
     .defaultNow(),
   role: accountRoleEnum("role").default("client"),
 });
+ 
+export const accounts1 = pgTable(
+  "account",
+  {
+    userId: text("userId")
+      .notNull()
+      .references(() => users1.id, { onDelete: "cascade" }),
+    type: text("type").$type<AdapterAccountType>().notNull(),
+    provider: text("provider").notNull(),
+    providerAccountId: text("providerAccountId").notNull(),
+    refresh_token: text("refresh_token"),
+    access_token: text("access_token"),
+    expires_at: integer("expires_at"),
+    token_type: text("token_type"),
+    scope: text("scope"),
+    id_token: text("id_token"),
+    session_state: text("session_state"),
+  },
+  (account) => [
+    {
+      compoundKey: primaryKey({
+        columns: [account.provider, account.providerAccountId],
+      }),
+    },
+  ]
+)
+ 
+export const sessions1 = pgTable("session", {
+  sessionToken: text("sessionToken").primaryKey(),
+  userId: text("userId")
+    .notNull()
+    .references(() => users1.id, { onDelete: "cascade" }),
+  expires: timestamp("expires", { mode: "date" }).notNull(),
+})
+ 
+export const verificationTokens1 = pgTable(
+  "verificationToken",
+  {
+    identifier: text("identifier").notNull(),
+    token: text("token").notNull(),
+    expires: timestamp("expires", { mode: "date" }).notNull(),
+  },
+  (verificationToken) => [
+    {
+      compositePk: primaryKey({
+        columns: [verificationToken.identifier, verificationToken.token],
+      }),
+    },
+  ]
+)
+ 
+export const authenticators1 = pgTable(
+  "authenticator",
+  {
+    credentialID: text("credentialID").notNull().unique(),
+    userId: text("userId")
+      .notNull()
+      .references(() => users1.id, { onDelete: "cascade" }),
+    providerAccountId: text("providerAccountId").notNull(),
+    credentialPublicKey: text("credentialPublicKey").notNull(),
+    counter: integer("counter").notNull(),
+    credentialDeviceType: text("credentialDeviceType").notNull(),
+    credentialBackedUp: boolean("credentialBackedUp").notNull(),
+    transports: text("transports"),
+  },
+  (authenticator) => [
+    {
+      compositePK: primaryKey({
+        columns: [authenticator.userId, authenticator.credentialID],
+      }),
+    },
+  ]
+)
 
-export const users1 = pgTable("users1", {
-  id: serial("id")
-    .primaryKey()
-    .references(() => accounts1.id),
-  name: varchar("name").notNull(),
-  avatarUrl: varchar("avatarUrl"),
-});
-
-export const contacts1 = pgTable("contacts1", {
-  id: serial("id")
-    .primaryKey()
-    .references(() => users1.id),
-  contactId: serial("contactId").references(() => users1.id),
-});
 
 export const files1 = pgTable("files1", {
   id: serial("id").primaryKey(),
-  uploaderId: integer("uploaderId").references(() => users1.id),
+  uploaderId: text("uploaderId"), // .references(() => users.id),
 
   filename: varchar("filename"),
   filesize: integer("filesize"),
@@ -171,9 +228,11 @@ export const siteMemberRole = pgEnum("siteMemberRole", [
 export const siteMembers1 = pgTable(
   "siteMembers1",
   {
-    id: serial("id").unique(),
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
     siteId: integer("siteId").references(() => sites1.id),
-    memberId: integer("memberId").references(() => users1.id),
+    memberId: text("memberId"), // .references(() => users1.id),
     role: siteMemberRole("role").default("member"),
 
     dateAdded: timestamp("dateAdded", { mode: "date", withTimezone: true })
@@ -188,7 +247,7 @@ export const siteInvitations1 = pgTable(
   {
     id: serial("id").unique(),
     siteId: integer("siteId").references(() => sites1.id),
-    email: varchar("email"),
+    email: text("email"),
 
     dateAdded: timestamp("dateAdded", { mode: "date", withTimezone: true })
       .notNull()
@@ -207,7 +266,7 @@ export const siteMeetingStatus = pgEnum("siteMeetingStatus", [
 export const siteMeetings1 = pgTable("siteMeetings1", {
   id: serial("id").primaryKey(),
   siteId: integer("siteId").references(() => sites1.id),
-  userId: integer("userId").references(() => users1.id),
+  userId: text("userId"), // .references(() => users1.id),
   status: siteMeetingStatus("status").default("pending"),
   date: timestamp("date", { mode: "date", withTimezone: true }),
   duration: interval("duration"),
@@ -228,7 +287,7 @@ export const siteNotices1 = pgTable("siteNotices1", {
 
 export const siteReports1 = pgTable("siteReports1", {
   id: serial("id").primaryKey(),
-  reporterId: integer("reporterId").references(() => users1.id),
+  reporterId: text("reporterId"), // .references(() => users1.id),
   siteId: integer("siteId").references(() => sites1.id),
   createdAt: timestamp("createdAt", {
     mode: "date",
@@ -333,11 +392,11 @@ export const siteReportDetails1 = pgTable("siteReportDetails1", {
     .primaryKey()
     .references(() => siteReports1.id),
 
-  ownerId: integer("ownerId").references(() => users1.id),
-  supervisorId: integer("supervisorId").references(() => users1.id),
-  architectId: integer("architectId").references(() => users1.id),
-  managerId: integer("managerId").references(() => users1.id),
-  contractorId: integer("contractorId").references(() => users1.id),
+  ownerId: text("ownerId"), // .references(() => users1.id),
+  supervisorId: text("supervisorId"), // .references(() => users1.id),
+  architectId: text("architectId"), // .references(() => users1.id),
+  managerId: text("managerId"), // .references(() => users1.id),
+  contractorId: text("contractorId"), // .references(() => users1.id),
 
   ownerSignDate: timestamp("ownerSignDate", {
     mode: "date",
@@ -428,7 +487,7 @@ export const comments1 = pgTable("comments1", {
   commentsSectionId: integer("commentsSectionId").references(
     () => commentsSections1.id,
   ),
-  userId: integer("userId").references(() => users1.id),
+  userId: text("userId"), // .references(() => users1.id),
   createdAt: timestamp("createdAt", { mode: "date", withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -442,7 +501,7 @@ export const logs1 = pgTable("logs1", {
     .defaultNow(),
   message: varchar("message"),
 
-  userId: integer("userId"),
+  userId: text("userId"),
   siteId: integer("siteId"),
   reportId: integer("reportId"),
   activityId: integer("activityId"),

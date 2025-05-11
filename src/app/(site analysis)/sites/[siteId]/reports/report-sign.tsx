@@ -19,7 +19,7 @@ async function ReportSignature({
   role?: SiteMemberRole;
   buttonRole: SiteMemberRole;
   signDate?: Date | null;
-  signUserId?: number | null;
+  signUserId?: string | null;
   disabled?: boolean;
 }) {
   const signedBy = signUserId ? await Actions.getUser(signUserId) : undefined;
@@ -38,7 +38,7 @@ async function ReportSignature({
           <div className="italic text-center">
             <p>
               <span className="font-semibold">Signed by </span>
-              <span>{signedBy?.users1?.name}</span>
+              <span>{signedBy?.user?.name}</span>
             </p>
             <p>
               <span className="font-semibold">on </span>

@@ -52,7 +52,7 @@ export async function getReportRole({
   userId,
 }: {
   reportId: number;
-  userId: number;
+  userId: string;
 }): Promise<SiteMemberRole> {
   return db
     .select({ role: siteMembers1.role })
@@ -70,7 +70,7 @@ export async function getMeetingRole({
   userId,
 }: {
   meetingId: number;
-  userId: number;
+  userId: string;
 }): Promise<SiteMemberRole> {
   return db
     .select({ role: siteMembers1.role })
@@ -242,7 +242,7 @@ export async function getReportSectionRole({
   userId,
 }: {
   sectionId: number;
-  userId: number;
+  userId: string;
 }) {
   return db
     .select({ role: siteMembers1.role })
@@ -344,7 +344,7 @@ export async function getInvitationRole({
   userId,
 }: {
   invitationId: number;
-  userId: number;
+  userId: string;
 }): Promise<SiteMemberRole> {
   return db
     .select({ role: siteMembers1.role })
@@ -487,7 +487,7 @@ export async function getReportActivityRole({
   userId,
 }: {
   activityId: number;
-  userId: number;
+  userId: string;
 }) {
   return db
     .select({ role: siteMembers1.role })

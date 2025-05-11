@@ -5,55 +5,16 @@ import { eq, getTableColumns } from "drizzle-orm";
 import { genSaltSync, hashSync } from "bcrypt-ts";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { HaruUserBasic } from "@/lib/types";
-import { users1, accounts1, siteMembers1 } from "./schema";
+import { accounts1, siteMembers1, users1 } from "./schema";
 
-export async function getUserAccount(userId: number) {
+export async function getUserAccount(userId: string) {
   return db
-    .select({
-      ...getTableColumns(users1),
-      ...getTableColumns(accounts1),
-    })
-    .from(accounts1)
-    .leftJoin(users1, eq(users1.id, accounts1.id))
-    .where(eq(accounts1.id, userId))
+    .select().from(accounts1)
+    .where(eq(accounts1.userId, userId))
     .then((r) => (r.length > 0 ? r[0] : null));
 }
 
-export async function getUserAccountByEmail(email: string) {
-  return db
-    .select({
-      ...getTableColumns(users1),
-      ...getTableColumns(accounts1),
-    })
-    .from(accounts1)
-    .leftJoin(users1, eq(users1.id, accounts1.id))
-    .where(eq(accounts1.email, email))
-    .then((r) => (r.length > 0 ? r[0] : null));
-}
-
-export async function getUserAccountByPhone(phone: string) {
-  const phoneURI = parsePhoneNumberFromString(phone)?.getURI();
-  if (!phoneURI) return;
-  return db
-    .select({
-      ...getTableColumns(users1),
-      ...getTableColumns(accounts1),
-    })
-    .from(accounts1)
-    .leftJoin(users1, eq(users1.id, accounts1.id))
-    .where(eq(accounts1.phone, phoneURI))
-    .then((r) => (r.length > 0 ? r[0] : null));
-}
-
-export async function getUserInternal(userId: number) {
-  return await db
-    .select()
-    .from(users1)
-    .where(eq(users1.id, userId))
-    .then((r) => (r.length > 0 ? r[0] : null));
-}
-
-export async function getUser(userId: number, requestinUserId: number) {
+export async function getUser(userId: string, requestinUserId: string) {
   const requestUserSites = db
     .selectDistinct({ siteId: siteMembers1.siteId })
     .from(siteMembers1)
@@ -87,81 +48,14 @@ export async function getUserByEmail(email: string) {
       ...getTableColumns(users1),
     })
     .from(users1)
-    .leftJoin(accounts1, eq(accounts1.id, users1.id))
-    .where(eq(accounts1.email, email))
+    .leftJoin(accounts1, eq(accounts1.userId, users1.id))
+    .where(eq(users1.email, email))
     .then((r) => (r.length > 0 ? r[0] : null));
-}
-
-export async function getUserByPhone(phone: string) {
-  const phoneURI = parsePhoneNumberFromString(phone)?.getURI();
-  if (!phoneURI) return;
-  return await db
-    .select({
-      ...getTableColumns(users1),
-    })
-    .from(users1)
-    .leftJoin(accounts1, eq(accounts1.id, users1.id))
-    .where(eq(accounts1.phone, phoneURI))
-    .then((r) => (r.length > 0 ? r[0] : null));
-}
-
-export async function getAllUsers() {
-  return await db
-    .select({
-      ...getTableColumns(users1),
-      email: accounts1.email,
-    })
-    .from(users1)
-    .leftJoin(accounts1, eq(accounts1.id, users1.id));
-}
-
-export async function createUserIfNotExists({
-  name,
-  phone,
-  email,
-  password,
-}: {
-  name: string;
-  phone?: string;
-  email: string;
-  password: string;
-}) {
-  const salt = genSaltSync(10);
-  const hash = hashSync(password, salt);
-  const phoneURI = phone
-    ? parsePhoneNumberFromString(phone)?.getURI()
-    : undefined;
-
-  return db.transaction(async (tx) => {
-    console.log(`createUserIfNotExists phone: ${phoneURI} , email: ${email}`);
-    const newAccount = await tx
-      .insert(accounts1)
-      .values({
-        phone: phoneURI,
-        email,
-        password: hash,
-      })
-      .returning()
-      .then((r) => r[0]);
-
-    console.log(`createUserIfNotExists id: ${newAccount.id} , name: ${name}`);
-    const newUser = await tx
-      .insert(users1)
-      .values({
-        id: newAccount.id,
-        name,
-      })
-      .returning()
-      .then((r) => r[0]);
-
-    console.log("createUserIfNotExists successful");
-    return newUser;
-  });
 }
 
 export async function updateUserAvatar(
-  uploaderId: number,
-  values: { avatarUrl: string | null },
+  uploaderId: string,
+  values: { image: string | null },
 ): Promise<{ initial: HaruUserBasic; updated: HaruUserBasic }> {
   return await db.transaction(async (tx) => {
     const oldUser = await tx
@@ -182,16 +76,7 @@ export async function updateUserAvatar(
   });
 }
 
-export async function updateUserPassword(userId: number, password: string) {
-  return db
-    .update(accounts1)
-    .set({ password })
-    .where(eq(accounts1.id, userId))
-    .returning()
-    .then((r) => r[0]);
-}
-
-export async function deleteUserAvatar(uploaderId: number) {
+export async function deleteUserAvatar(uploaderId: string) {
   return await db.transaction(async (tx) => {
     const oldUser = await tx
       .select()
@@ -205,7 +90,7 @@ export async function deleteUserAvatar(uploaderId: number) {
 
     const updatedUser = await tx
       .update(users1)
-      .set({ avatarUrl: null })
+      .set({ image: null })
       .where(eq(users1.id, uploaderId))
       .returning()
       .then((r) => r[0]);

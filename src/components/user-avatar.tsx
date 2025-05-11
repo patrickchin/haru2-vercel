@@ -12,13 +12,15 @@ export function HaruUserAvatar({
   className?: string;
 }) {
   // const userId: number = Math.floor(Math.random() * 1000);
-  const userId: number = user?.id ?? 0;
+  const userId: number = Number(`0x${user?.id.slice(-8)}`) ?? 0;
   const randomHue: number = ((userId - 1) * 80) % 360;
   const bgCol: string = `hsl(${randomHue} 100 75)`;
   const bgCol2: string = `hsl(${randomHue + 60} 100 90)`;
   return (
-    <Avatar className={cn("border dark:border-none border-foreground", className)}>
-      <AvatarImage src={user?.avatarUrl ?? undefined} />
+    <Avatar
+      className={cn("border dark:border-none border-foreground", className)}
+    >
+      <AvatarImage src={user?.image ?? undefined} />
       <AvatarFallback
         style={{
           backgroundColor: bgCol,
@@ -43,9 +45,14 @@ export function UserAvatar({
     <HaruUserAvatar
       className={className}
       user={{
-        id: Number(user?.id),
+        id: user?.id ?? "unknown",
         name: user?.name ?? "?",
-        avatarUrl: user?.image ?? null,
+        image: user?.image ?? null,
+
+        email: null,
+        emailVerified: null,
+        createdAt: new Date(),
+        role: null,
       }}
     />
   );
@@ -58,9 +65,14 @@ export function CurrentUserAvatar({ className }: { className?: string }) {
     <HaruUserAvatar
       className={className}
       user={{
-        id: Number(user?.id),
+        id: user?.id ?? "unknown",
         name: user?.name ?? "?",
-        avatarUrl: user?.image ?? null,
+        image: user?.image ?? null,
+
+        email: null,
+        emailVerified: null,
+        createdAt: new Date(),
+        role: null,
       }}
     />
   );

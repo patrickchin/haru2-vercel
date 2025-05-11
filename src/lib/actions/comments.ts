@@ -18,9 +18,9 @@ export async function addCommentToSection(
   values: HaruCommentNew,
 ) {
   const session = await auth();
-  if (!session?.user) return;
+  if (!session?.user.id) return;
   const role = await getSiteMemberRole({ commentsSectionId });
   if (viewSiteRoles.includes(role)) {
-    return db.addCommentToSection(commentsSectionId, session.user.idn, values);
+    return db.addCommentToSection(commentsSectionId, session.user.id, values);
   }
 }

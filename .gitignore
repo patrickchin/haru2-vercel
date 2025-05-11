@@ -44,3 +44,4 @@ certificates
 /playwright/.cache/
 
 pgdata
+pgdata*

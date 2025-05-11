@@ -1,32 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { LucideLoader2 } from "lucide-react";
-import { UseFormReturn, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { cn } from "@/lib/utils";
-import { useCountdown } from "@/lib/hooks/use-countdown";
-import {
-  signInFromLogin,
-  sendOtpViaWhatsApp,
-  sendOtpViaEmail,
-} from "@/lib/actions";
-import {
-  LoginSchemaPhone,
-  LoginSchemaEmail,
-  LoginSchemaPassword,
-  LoginTypesEmail,
-  LoginTypesPassword,
-  LoginTypesPhone,
-} from "@/lib/forms";
-import {
-  CredentialsSigninError,
-  FailedToSendEmailOTP,
-  FailedToSendWhatsappOTP,
-  UnknownError,
-} from "@/lib/errors";
 
 import {
   Card,
@@ -35,358 +9,163 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
 import { Button } from "@/components/ui/button";
 import { GradientLayout } from "@/components/page-layouts";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { signIn } from "next-auth/react";
 
-function FormFooter({
-  form,
-  disabled,
-}: {
-  form: UseFormReturn<any>;
-  disabled?: boolean;
-}) {
+function GoogleLogin() {
+  // return <Button onClick={() => signIn("google")}>Sign-In with Google</Button>
+
+  const css = `
+.gsi-material-button {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -webkit-appearance: none;
+  background-color: #131314;
+  background-image: none;
+  border: 1px solid #747775;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  color: #e3e3e3;
+  cursor: pointer;
+  font-family: 'Roboto', arial, sans-serif;
+  font-size: 14px;
+  height: 40px;
+  letter-spacing: 0.25px;
+  outline: none;
+  overflow: hidden;
+  padding: 0 12px;
+  position: relative;
+  text-align: center;
+  -webkit-transition: background-color .218s, border-color .218s, box-shadow .218s;
+  transition: background-color .218s, border-color .218s, box-shadow .218s;
+  vertical-align: middle;
+  white-space: nowrap;
+  width: auto;
+  max-width: 400px;
+  min-width: min-content;
+  border-color: #8e918f;
+}
+
+.gsi-material-button .gsi-material-button-icon {
+  height: 20px;
+  margin-right: 12px;
+  min-width: 20px;
+  width: 20px;
+}
+
+.gsi-material-button .gsi-material-button-content-wrapper {
+  -webkit-align-items: center;
+  align-items: center;
+  display: flex;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  height: 100%;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+}
+
+.gsi-material-button .gsi-material-button-contents {
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
+  font-family: 'Roboto', arial, sans-serif;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: top;
+}
+
+.gsi-material-button .gsi-material-button-state {
+  -webkit-transition: opacity .218s;
+  transition: opacity .218s;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.gsi-material-button:disabled {
+  cursor: default;
+  background-color: #13131461;
+  border-color: #8e918f1f;
+}
+
+.gsi-material-button:disabled .gsi-material-button-state {
+  background-color: #e3e3e31f;
+}
+
+.gsi-material-button:disabled .gsi-material-button-contents {
+  opacity: 38%;
+}
+
+.gsi-material-button:disabled .gsi-material-button-icon {
+  opacity: 38%;
+}
+
+.gsi-material-button:not(:disabled):active .gsi-material-button-state, 
+.gsi-material-button:not(:disabled):focus .gsi-material-button-state {
+  background-color: white;
+  opacity: 12%;
+}
+
+.gsi-material-button:not(:disabled):hover {
+  -webkit-box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .30), 0 1px 3px 1px rgba(60, 64, 67, .15);
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .30), 0 1px 3px 1px rgba(60, 64, 67, .15);
+}
+
+.gsi-material-button:not(:disabled):hover .gsi-material-button-state {
+  background-color: white;
+  opacity: 8%;
+}
+`;
+
   return (
     <>
-      {form.formState.errors.root && (
-        <p className="text-sm font-medium text-destructive whitespace-pre-line">
-          {form.formState.errors.root?.message}
-        </p>
-      )}
-
-      <div className="pt-3">
-        <Button
-          type="submit"
-          className="w-full flex gap-2"
-          disabled={disabled || form.formState.isSubmitting}
-        >
-          Login
-          <LucideLoader2
-            className={cn(
-              "animate-spin w-4 h-4",
-              form.formState.isSubmitting ? "" : "hidden",
-            )}
-          />
-        </Button>
-      </div>
-
-      <p className="text-center text-sm text-muted-foreground">
-        {" Don't have an account? "}
-        <Link href="/register" className="font-bold hover:underline">
-          {"Sign up"}
-        </Link>
-        {" for free."}
-      </p>
+      <style>{css}</style>
+      <button className="gsi-material-button">
+        <div className="gsi-material-button-state"></div>
+        <div className="gsi-material-button-content-wrapper">
+          <div className="gsi-material-button-icon">
+            <svg
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 48 48"
+              xmlnsXlink="http://www.w3.org/1999/xlink"
+            >
+              <path
+                fill="#EA4335"
+                d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+              ></path>
+              <path
+                fill="#4285F4"
+                d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+              ></path>
+              <path
+                fill="#FBBC05"
+                d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+              ></path>
+              <path
+                fill="#34A853"
+                d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+              ></path>
+              <path fill="none" d="M0 0h48v48H0z"></path>
+            </svg>
+          </div>
+          <span className="gsi-material-button-contents">
+            Sign in with Google
+          </span>
+          <span className="hidden">Sign in with Google</span>
+        </div>
+      </button>
     </>
-  );
-}
-
-function PhoneLogin() {
-  const router = useRouter();
-  const form = useForm<LoginTypesPhone>({
-    resolver: zodResolver(LoginSchemaPhone),
-  });
-  const { countdown: resendOtpTimer, setCountdown: setResendOtpTimer } =
-    useCountdown(0);
-  const [sendingOTP, setSendingOTP] = useState(false);
-
-  const handleSendOtpClick = async (phone?: string) => {
-    try {
-      form.clearErrors();
-      setSendingOTP(true);
-
-      if (!phone) {
-        form.setError("phone", { message: "Phone number is required." });
-        return;
-      }
-
-      const ret = await sendOtpViaWhatsApp(phone);
-      if (!ret) {
-        setResendOtpTimer(60);
-      } else if (typeof ret === typeof FailedToSendWhatsappOTP) {
-        form.setError("otp", {
-          message: "Failed to send passcode via Whatsapp.",
-        });
-      }
-    } finally {
-      setSendingOTP(false);
-    }
-  };
-
-  const onSubmit = async (data: LoginTypesPhone) => {
-    form.clearErrors();
-    const ret = await signInFromLogin(data);
-    if (typeof ret === typeof CredentialsSigninError) {
-      form.setError("root", {
-        message: "Failed to login.\nPlease check your passcode and try again.",
-      });
-    } else if (typeof ret === typeof UnknownError) {
-      form.setError("root", { message: "Failed to login. Unknown Error" });
-    }
-  };
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Phone number</FormLabel>
-              <FormControl>
-                <Input
-                  onChange={field.onChange}
-                  name={field.name}
-                  type="tel"
-                  placeholder="+254 0755 555 555"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="otp"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>One-Time Passcode</FormLabel>
-              <div className="flex items-center gap-3">
-                <FormControl>
-                  <InputOTP
-                    maxLength={6}
-                    pattern="^[0-9]+$"
-                    onChange={field.onChange}
-                    name={field.name}
-                  >
-                    <InputOTPGroup className="bg-background">
-                      <InputOTPSlot index={0} />
-                      <InputOTPSlot index={1} />
-                      <InputOTPSlot index={2} />
-                      <InputOTPSlot index={3} />
-                      <InputOTPSlot index={4} />
-                      <InputOTPSlot index={5} />
-                    </InputOTPGroup>
-                  </InputOTP>
-                </FormControl>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-auto bg-green-400/35 text-green-600 dark:text-green-400 border-green-600"
-                  onClick={() => handleSendOtpClick(form.getValues("phone"))}
-                  disabled={sendingOTP || resendOtpTimer > 0}
-                >
-                  Send Code
-                </Button>
-              </div>
-              {resendOtpTimer > 0 && (
-                <p className="text-xs text-muted mt-2">
-                  Resend OTP in {resendOtpTimer} seconds
-                </p>
-              )}
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormFooter form={form} />
-      </form>
-    </Form>
-  );
-}
-
-function EmailLogin() {
-  const router = useRouter();
-  const form = useForm<LoginTypesEmail>({
-    resolver: zodResolver(LoginSchemaEmail),
-  });
-  const { countdown: resendOtpTimer, setCountdown: setResendOtpTimer } =
-    useCountdown(0);
-  const [sendingOTP, setSendingOTP] = useState(false);
-
-  const handleSendOtpClick = async (email?: string) => {
-    try {
-      form.clearErrors();
-      setSendingOTP(true);
-
-      if (!email) {
-        form.setError("email", { message: "Email is required." });
-        return;
-      }
-
-      const ret = await sendOtpViaEmail(email);
-      if (!ret) {
-        setResendOtpTimer(60);
-      } else if (typeof ret === typeof FailedToSendEmailOTP) {
-        form.setError("otp", {
-          message: "Failed to send passcode via email.",
-        });
-      }
-    } finally {
-      setSendingOTP(false);
-    }
-  };
-
-  const onSubmit = async (data: LoginTypesEmail) => {
-    form.clearErrors();
-    const ret = await signInFromLogin(data);
-    if (typeof ret === typeof CredentialsSigninError) {
-      form.setError("root", {
-        message: "Failed to login.\nPlease check your passcode and try again.",
-      });
-    } else if (typeof ret === typeof UnknownError) {
-      form.setError("root", { message: "Failed to login. Unknown Error" });
-    }
-  };
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email address</FormLabel>
-              <FormControl>
-                <Input
-                  onChange={field.onChange}
-                  name={field.name}
-                  type="email"
-                  placeholder="patrick@haru.com"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="otp"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>One-Time Passcode</FormLabel>
-              <div className="flex items-center gap-3">
-                <FormControl>
-                  <InputOTP
-                    maxLength={6}
-                    pattern="^[0-9]+$"
-                    onChange={field.onChange}
-                    name={field.name}
-                  >
-                    <InputOTPGroup className="bg-background">
-                      <InputOTPSlot index={0} />
-                      <InputOTPSlot index={1} />
-                      <InputOTPSlot index={2} />
-                      <InputOTPSlot index={3} />
-                      <InputOTPSlot index={4} />
-                      <InputOTPSlot index={5} />
-                    </InputOTPGroup>
-                  </InputOTP>
-                </FormControl>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-auto bg-blue-500/35 text-blue-600 dark:text-blue-400 border-blue-600"
-                  onClick={() => handleSendOtpClick(form.getValues("email"))}
-                  disabled={sendingOTP || resendOtpTimer > 0}
-                >
-                  Send Code
-                </Button>
-              </div>
-              {resendOtpTimer > 0 && (
-                <p className="text-xs text-gray-600 mt-2">
-                  Resend OTP in {resendOtpTimer} seconds
-                </p>
-              )}
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormFooter form={form} />
-      </form>
-    </Form>
-  );
-}
-
-function PasswordLogin() {
-  const router = useRouter();
-  const form = useForm<LoginTypesPassword>({
-    resolver: zodResolver(LoginSchemaPassword),
-  });
-
-  const onSubmit = async (data: LoginTypesPassword) => {
-    form.clearErrors();
-    const ret = await signInFromLogin(data);
-    if (typeof ret === typeof CredentialsSigninError) {
-      form.setError("root", {
-        message:
-          "Failed to login.\nPlease check your credentials and try again.",
-      });
-    } else if (typeof ret === typeof UnknownError) {
-      form.setError("root", { message: "Failed to login. Unknown Error" });
-    }
-  };
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email address</FormLabel>
-              <FormControl>
-                <Input
-                  onChange={field.onChange}
-                  name={field.name}
-                  type="email"
-                  placeholder="patrick@haru.com"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input
-                  type="password"
-                  onChange={field.onChange}
-                  name={field.name}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormFooter form={form} />
-      </form>
-    </Form>
   );
 }
 
@@ -394,41 +173,14 @@ function LoginCard() {
   const [tabValue, setTabValue] = useState("password");
   return (
     <Card className="w-full max-w-lg p-0 rounded-4xl overflow-hidden">
-      <Tabs value={tabValue} onValueChange={setTabValue}>
-        <CardHeader className="space-y-3 text-center pt-8">
-          <CardTitle className="text-3xl">Login</CardTitle>
-          <CardDescription className="text-base">
-            Choose your preferred login method.
-          </CardDescription>
-          <TabsList className="grid grid-cols-3 gap-2">
-            <TabsTrigger
-              disabled
-              value="phone"
-              className="data-[state=active]:text-green-400 data-[state=active]:bg-green-400/35"
-            >
-              Whatsapp
-            </TabsTrigger>
-            <TabsTrigger
-              value="email"
-              className="data-[state=active]:text-blue-400 data-[state=active]:bg-blue-400/35"
-            >
-              Email
-            </TabsTrigger>
-            <TabsTrigger value="password">Password</TabsTrigger>
-          </TabsList>
-        </CardHeader>
-        <CardContent className="bg-muted p-12 pt-2 border-t">
-          <TabsContent value="phone" className="space-y-4">
-            <PhoneLogin />
-          </TabsContent>
-          <TabsContent value="email" className="space-y-4">
-            <EmailLogin />
-          </TabsContent>
-          <TabsContent value="password" className="space-y-4">
-            <PasswordLogin />
-          </TabsContent>
-        </CardContent>
-      </Tabs>
+      <CardHeader className="space-y-3 text-center pt-8">
+        <CardDescription className="text-base">
+          Choose your preferred login method.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="bg-muted p-8 border-t flex flex-col justify-center items-center">
+        <GoogleLogin />
+      </CardContent>
     </Card>
   );
 }

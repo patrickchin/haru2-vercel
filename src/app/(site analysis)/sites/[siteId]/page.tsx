@@ -56,11 +56,9 @@ import { SiteMaterials } from "./site-materials";
 
 function SiteDescription({
   site,
-  members,
   role,
 }: {
   site: SiteDetails;
-  members: SiteMember[] | undefined;
   role: SiteMemberRole;
 }) {
   const desc =
@@ -439,7 +437,7 @@ export default async function Page(props: {
               <SiteMembersBar site={site} />
             </div>
             <div className="grow">
-              <SiteDescription site={site} members={members} role={role} />
+              <SiteDescription site={site} role={role} />
             </div>
           </div>
         </TabsContent>

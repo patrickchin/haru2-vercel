@@ -208,7 +208,7 @@ export default function SiteMembers({
 
   const [isRemoving, setIsRemoving] = useState(false);
   const { data: session } = useSession();
-  const role = members?.find((m) => m.id === session?.user?.idn)?.role;
+  const role = members?.find((m) => m.id === session?.user?.id)?.role;
   const canEditSite = role && editSiteRoles.includes(role);
 
   return (
@@ -337,8 +337,8 @@ export default function SiteMembers({
                   className="flex flex-col sm:flex-row gap-4 p-4 bg-background justify-between [&:not(:last-child)]:border-b"
                 >
                   <div className="flex gap-3 items-center">
-                    <HaruUserAvatar user={m} className="w-8 h-8" />
-                    <p>{m.name}</p>
+                    <HaruUserAvatar user={m.user} className="w-8 h-8" />
+                    <p>{m.user.name}</p>
                   </div>
                   {canEditSite ? (
                     <div className="flex flex-row gap-3 sm:items-center">

@@ -17,7 +17,7 @@ export async function getFeedback() {
 export async function addLogMessage(values: HaruLogMessageNew) {
   const session = await auth();
   return db.insert(logs1).values({
-    userId: session?.user?.idn,
+    userId: session?.user?.id,
     ...values,
   });
 }
