@@ -28,6 +28,7 @@ export const accountRoleEnum = pgEnum("role", [
 ]);
 
 export const users1 = pgTable("user", {
+  sid: serial("sid"),
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
@@ -44,6 +45,7 @@ export const users1 = pgTable("user", {
 export const accounts1 = pgTable(
   "account",
   {
+    sid: serial("sid"),
     userId: text("userId")
       .notNull()
       .references(() => users1.id, { onDelete: "cascade" }),
@@ -68,6 +70,7 @@ export const accounts1 = pgTable(
 );
 
 export const sessions1 = pgTable("session", {
+  sid: serial("sid"),
   sessionToken: text("sessionToken").primaryKey(),
   userId: text("userId")
     .notNull()
@@ -78,6 +81,7 @@ export const sessions1 = pgTable("session", {
 export const verificationTokens1 = pgTable(
   "verificationToken",
   {
+    sid: serial("sid"),
     identifier: text("identifier").notNull(),
     token: text("token").notNull(),
     expires: timestamp("expires", { mode: "date" }).notNull(),
@@ -94,6 +98,7 @@ export const verificationTokens1 = pgTable(
 export const authenticators1 = pgTable(
   "authenticator",
   {
+    sid: serial("sid"),
     credentialID: text("credentialID").notNull().unique(),
     userId: text("userId")
       .notNull()
@@ -142,20 +147,6 @@ export const fileGroupFiles1 = pgTable(
   },
   (t) => [unique().on(t.fileGroupId, t.fileId)],
 );
-
-export const otps1 = pgTable("otps1", {
-  id: serial("id").primaryKey().notNull(),
-  contactInfo: varchar("contactInfo").notNull(),
-  otp: varchar("otp").notNull(),
-  createdAt: timestamp("createdAt", {
-    mode: "date",
-    withTimezone: true,
-  }).notNull(),
-  expiresAt: timestamp("expiresAt", {
-    mode: "date",
-    withTimezone: true,
-  }).notNull(),
-});
 
 // TODO could move to a separate file:
 // ============================== Site Analysis ==============================
