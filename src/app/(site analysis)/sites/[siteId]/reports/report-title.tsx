@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Session } from "next-auth";
 import { auth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
-import { editReportRoles } from "@/lib/permissions";
+import { allowEditAfterPublish, editReportRoles } from "@/lib/permissions";
 import * as Actions from "@/lib/actions";
 
 import {
@@ -131,7 +131,7 @@ export async function ReportTitleBarDisplay({
           editReportRoles.includes(memberRole) && (
             <div className="grid grid-cols-2 w-full sm:w-fit sm:flex gap-4">
               {report &&
-                (!report.publishedAt ? (
+                (!report.publishedAt || allowEditAfterPublish ? (
                   <Button variant="secondary" asChild>
                     <Link
                       href={`/sites/${site.id}/reports/${report.id}/edit`}

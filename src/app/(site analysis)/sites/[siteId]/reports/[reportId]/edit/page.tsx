@@ -2,7 +2,7 @@ import { DefaultLayout } from "@/components/page-layouts";
 import { auth } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { editReportRoles } from "@/lib/permissions";
+import { allowEditAfterPublish, editReportRoles } from "@/lib/permissions";
 import { SiteReport } from "@/lib/types";
 import * as Actions from "@/lib/actions";
 
@@ -71,7 +71,9 @@ export default async function Page({
           </ErrorBox>
         ) : null}
 
-        {!report?.publishedAt || session?.user?.role === "admin" ? (
+        {!report?.publishedAt ||
+        allowEditAfterPublish ||
+        session?.user?.role === "admin" ? (
           <>
             <EditReportFiles reportId={reportId} />
             <EditReportInventory siteId={siteId} reportId={reportId} />

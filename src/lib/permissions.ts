@@ -14,3 +14,5 @@ export const editReportRoles: SiteMemberRole[] = [
   "supervisor",
   "owner",
 ];
+
+export const allowEditAfterPublish = true;
