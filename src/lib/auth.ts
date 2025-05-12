@@ -21,10 +21,11 @@ export const { handlers, auth } = NextAuth({
       if (user) {
         assert(user.id, "user.id is required");
         const dbUser = await getUser(user.id);
-        assert(dbUser, "dbUser is required");
-        token.sub = dbUser.id;
-        token.role = dbUser.role;
-        token.picture = dbUser.image;
+        if (dbUser) {
+          token.sub = dbUser.id;
+          token.role = dbUser.role;
+          token.picture = dbUser.image;
+        }
       }
       return token;
     },
