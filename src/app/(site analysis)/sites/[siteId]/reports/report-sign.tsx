@@ -38,7 +38,7 @@ async function ReportSignature({
           <div className="italic text-center">
             <p>
               <span className="font-semibold">Signed by </span>
-              <span>{signedBy?.user?.name}</span>
+              <span>{signedBy?.name}</span>
             </p>
             <p>
               <span className="font-semibold">on </span>
