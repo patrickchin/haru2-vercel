@@ -21,9 +21,8 @@ import type { AdapterAccountType } from "next-auth/adapters";
 // pnpm drizzle-kit migrate
 
 export const accountRoleEnum = pgEnum("role", [
-  "client",
-  "manager",
-  "supervisor",
+  "guest",
+  "user",
   "admin",
 ]);
 
@@ -39,7 +38,7 @@ export const users1 = pgTable("user", {
   createdAt: timestamp("createdAt", { mode: "date", withTimezone: true })
     .notNull()
     .defaultNow(),
-  role: accountRoleEnum("role").default("client"),
+  role: accountRoleEnum("role").default("user"),
 });
 
 export const accounts1 = pgTable(
