@@ -38,8 +38,9 @@ function SettingsPage() {
   const [isUploading, setUpLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const fetcher = (arg: string) => fetch(arg).then((res) => res.json());
-  const { data: user } = useSWR(`/api/me`, fetcher);
+  const { data: user, } = useSWR(`/api/me`, async () =>
+    Actions.getUser(session?.user?.id as string),
+  );
 
   async function onChangeAvatar(e: ChangeEvent<HTMLInputElement>) {
     const targetFiles = e.currentTarget.files;
@@ -151,8 +152,8 @@ function SettingsPage() {
               <TableRow>
                 <TableHead>Signup Date</TableHead>
                 <TableCell>
-                  <time dateTime={user?.createdAt}>
-                    {new Date(user?.createdAt).toLocaleString()}
+                  <time dateTime={user?.createdAt.toString()}>
+                    {user?.createdAt.toLocaleString()}
                   </time>
                 </TableCell>
               </TableRow>
@@ -162,7 +163,7 @@ function SettingsPage() {
               </TableRow>
               <TableRow>
                 <TableHead>Phone Number</TableHead>
-                <TableCell>{user?.phone}</TableCell>
+                <TableCell>Unknown</TableCell>
               </TableRow>
               <TableRow>
                 <TableHead>Account Role</TableHead>
