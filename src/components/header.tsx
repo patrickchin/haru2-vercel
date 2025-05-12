@@ -120,8 +120,11 @@ function UserMenu({ user }: { user?: User }) {
 function LoginSignup() {
   return (
     <div className="flex gap-x-3">
-      <Button asChild variant="default">
+      <Button asChild variant="secondary">
         <Link href="/login">Login</Link>
+      </Button>
+      <Button asChild variant="default">
+        <Link href="/register">Sign Up</Link>
       </Button>
     </div>
   );
