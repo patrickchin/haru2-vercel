@@ -149,7 +149,7 @@ function SiteMemberSelectRole({
           setIsUpdating(true);
           const ret = await Actions.updateSiteMemberRole({
             siteId,
-            userId: member.id,
+            userId: member.user.id,
             role: r as SiteMemberRole,
           });
           if (ret) await mutate();
@@ -208,7 +208,7 @@ export default function SiteMembers({
 
   const [isRemoving, setIsRemoving] = useState(false);
   const { data: session } = useSession();
-  const role = members?.find((m) => m.id === session?.user?.id)?.role;
+  const role = members?.find((m) => m.user.id === session?.user?.id)?.role;
   const canEditSite = role && editSiteRoles.includes(role);
 
   return (
@@ -357,7 +357,7 @@ export default function SiteMembers({
                             setIsRemoving(true);
                             await Actions.removeSiteMember({
                               siteId: site.id,
-                              userId: m.id,
+                              userId: m.user.id,
                             });
                             await mutateMembers();
                           } finally {

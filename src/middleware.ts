@@ -1,9 +1,9 @@
 import NextAuth from "next-auth";
-import { authConfig } from "@/lib/auth.config";
+import authConfig from "@/lib/auth.config";
 
-const auth = NextAuth(authConfig).auth;
+const { auth } = NextAuth(authConfig)
 
-export default auth((req) => {
+export default auth(async function middleware(req) {
   const protectedPathnames: string[] = ["/sites", "/settings"];
   const isProtected = protectedPathnames.some((p) =>
     req.nextUrl.pathname.startsWith(p),

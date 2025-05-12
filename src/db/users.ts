@@ -2,14 +2,13 @@ import "server-only";
 
 import { db } from "./_db";
 import { eq, getTableColumns } from "drizzle-orm";
-import { genSaltSync, hashSync } from "bcrypt-ts";
-import parsePhoneNumberFromString from "libphonenumber-js";
 import { HaruUserBasic } from "@/lib/types";
 import { accounts1, siteMembers1, users1 } from "./schema";
 
 export async function getUserAccount(userId: string) {
   return db
-    .select().from(accounts1)
+    .select()
+    .from(accounts1)
     .where(eq(accounts1.userId, userId))
     .then((r) => (r.length > 0 ? r[0] : null));
 }
@@ -39,7 +38,7 @@ export async function getUser(userId: string, requestinUserId: string) {
       eq(requestUserSiteMembers.memberId, users1.id),
     )
     .where(eq(requestUserSiteMembers.memberId, userId))
-    .then((r) => (r.length > 0 ? r[0] : null));
+    .then((r) => (r.length > 0 ? r[0].user : null));
 }
 
 export async function getUserByEmail(email: string) {

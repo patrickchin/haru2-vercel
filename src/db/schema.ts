@@ -13,13 +13,12 @@ import {
   primaryKey,
   text,
 } from "drizzle-orm/pg-core";
-import type { AdapterAccountType } from "next-auth/adapters"
+import type { AdapterAccountType } from "next-auth/adapters";
 
 // pnpm drizzle-kit push
 // pnpm drizzle-kit introspect
 // pnpm drizzle-kit generate
 // pnpm drizzle-kit migrate
-
 
 export const accountRoleEnum = pgEnum("role", [
   "client",
@@ -41,7 +40,7 @@ export const users1 = pgTable("user", {
     .defaultNow(),
   role: accountRoleEnum("role").default("client"),
 });
- 
+
 export const accounts1 = pgTable(
   "account",
   {
@@ -65,17 +64,17 @@ export const accounts1 = pgTable(
         columns: [account.provider, account.providerAccountId],
       }),
     },
-  ]
-)
- 
+  ],
+);
+
 export const sessions1 = pgTable("session", {
   sessionToken: text("sessionToken").primaryKey(),
   userId: text("userId")
     .notNull()
     .references(() => users1.id, { onDelete: "cascade" }),
   expires: timestamp("expires", { mode: "date" }).notNull(),
-})
- 
+});
+
 export const verificationTokens1 = pgTable(
   "verificationToken",
   {
@@ -89,9 +88,9 @@ export const verificationTokens1 = pgTable(
         columns: [verificationToken.identifier, verificationToken.token],
       }),
     },
-  ]
-)
- 
+  ],
+);
+
 export const authenticators1 = pgTable(
   "authenticator",
   {
@@ -112,9 +111,8 @@ export const authenticators1 = pgTable(
         columns: [authenticator.userId, authenticator.credentialID],
       }),
     },
-  ]
-)
-
+  ],
+);
 
 export const files1 = pgTable("files1", {
   id: serial("id").primaryKey(),
@@ -228,9 +226,7 @@ export const siteMemberRole = pgEnum("siteMemberRole", [
 export const siteMembers1 = pgTable(
   "siteMembers1",
   {
-    id: text("id")
-      .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+    id: serial("id").unique(),
     siteId: integer("siteId").references(() => sites1.id),
     memberId: text("memberId"), // .references(() => users1.id),
     role: siteMemberRole("role").default("member"),
@@ -341,10 +337,9 @@ export const equipmentList1 = pgTable("equipmentList1", {
 
 export const equipment1 = pgTable("equipments1", {
   id: serial("id").primaryKey(),
-  equipmentListId: integer("equipmentListId").references(
-    () => equipmentList1.id,
-    { onDelete: "cascade" },
-  ).notNull(),
+  equipmentListId: integer("equipmentListId")
+    .references(() => equipmentList1.id, { onDelete: "cascade" })
+    .notNull(),
   name: varchar("name"),
   quantity: integer("quantity"),
   cost: numeric("cost"),

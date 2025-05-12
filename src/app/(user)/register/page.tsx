@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { GradientLayout } from "@/components/page-layouts";
 import { signIn } from "next-auth/react";
 
-function GoogleLogin() {
+function GoogleSignUp() {
   const css = `
     .gsi-material-button {
       -moz-user-select: none;
@@ -153,25 +153,25 @@ function GoogleLogin() {
             </svg>
           </div>
           <span className="gsi-material-button-contents">
-            Sign in with Google
+            Sign Up with Google
           </span>
-          <span className="hidden">Sign in with Google</span>
+          <span className="hidden">Sign Up with Google</span>
         </div>
       </Button>
     </>
   );
 }
 
-function LoginCard() {
+function SignUpCard() {
   return (
     <Card className="w-full max-w-lg rounded-xl overflow-hidden">
       <CardHeader className="text-center text-base space-y-4">
-        <CardTitle className="text-2xl">Login to Harpa Pro</CardTitle>
+        <CardTitle className="text-2xl">Sign Up to Harpa Pro</CardTitle>
       </CardHeader>
       <CardContent className="bg-muted p-8 border-t flex flex-col justify-center items-center gap-8">
-        <GoogleLogin />
+        <GoogleSignUp />
         <div className="flex flex-col items-center justify-center gap-2 text-sm">
-          <p>More login methods are coming soon!</p>
+          <p>More sign up methods are coming soon!</p>
         </div>
       </CardContent>
     </Card>
@@ -181,7 +181,7 @@ function LoginCard() {
 export default function Login() {
   return (
     <GradientLayout>
-      <LoginCard />
+      <SignUpCard />
     </GradientLayout>
   );
 }
