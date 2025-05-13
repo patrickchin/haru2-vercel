@@ -28,13 +28,12 @@ import {
   siteDetails1,
   commentsSections1,
   siteInvitations1,
-  accounts1,
   fileGroups1,
   materials1,
-  materialsList1,
   siteActivity1,
-  siteActivityList1,
   siteReportDetails1,
+  siteActivityMaterials1,
+  siteReportActivity1,
 } from "./schema";
 
 export async function getAllSites(userId?: string): Promise<SiteAndExtra[]> {
@@ -177,28 +176,24 @@ export async function addSite(
       .returning()
       .then((r) => r[0]);
 
+    // patchin: TODO remove
     const commentsSection = await tx
       .insert(commentsSections1)
       .values({})
       .returning()
       .then((r) => r[0]);
 
-    const details = await tx
-      .insert(siteDetails1)
-      .values({
-        id: site.id,
-        address: args.address,
-        description: args.description,
-        commentsSectionId: commentsSection.id,
-      })
-      .returning()
-      .then((r) => r[0]);
+    await tx.insert(siteDetails1).values({
+      id: site.id,
+      uuid: site.uuid,
+      address: args.address,
+      description: args.description,
+      commentsSectionId: commentsSection.id,
+    });
 
-    const member = await tx
+    await tx
       .insert(siteMembers1)
-      .values({ siteId: site.id, memberId: ownerId, role: "owner" })
-      .returning()
-      .then((r) => r[0]);
+      .values({ siteId: site.id, memberId: ownerId, role: "owner" });
 
     return site;
   });
@@ -434,20 +429,20 @@ export async function listSiteActivityMaterials({
     })
     .from(materials1)
     .innerJoin(
-      materialsList1,
-      eq(materialsList1.id, materials1.materialsListId),
+      siteActivityMaterials1,
+      eq(siteActivityMaterials1.materialId, materials1.id),
     )
     .innerJoin(
       siteActivity1,
-      eq(siteActivity1.usedMaterialsListId, materialsList1.id),
+      eq(siteActivity1.id, siteActivityMaterials1.siteActivityId),
     )
     .innerJoin(
-      siteActivityList1,
-      eq(siteActivityList1.id, siteActivity1.siteActivityListId),
+      siteReportActivity1,
+      eq(siteReportActivity1.siteActivityId, siteActivity1.id),
     )
     .innerJoin(
       siteReportDetails1,
-      eq(siteReportDetails1.siteActivityListId, siteActivityList1.id),
+      eq(siteReportDetails1.id, siteReportActivity1.siteReportId),
     )
     .innerJoin(siteReports1, eq(siteReports1.id, siteReportDetails1.id))
     .where(

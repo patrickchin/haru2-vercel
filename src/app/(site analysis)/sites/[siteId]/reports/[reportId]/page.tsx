@@ -10,7 +10,6 @@ import { ReportSignatureSection } from "../report-sign";
 import { ReportSections } from "../report-sections";
 import { ReportSiteDetails } from "../report-site-details";
 import { ReportActivities } from "../report-activities";
-import { ReportInventory } from "../report-storage";
 
 export default async function Page({
   params,
@@ -60,7 +59,6 @@ export default async function Page({
 
       <section className="w-full max-w-5xl mx-auto flex flex-col gap-4">
         <ReportSiteDetails report={report} />
-        {/* <ReportInventory report={report} /> */}
         <ReportActivities report={report} />
         <ReportSections reportId={reportId} />
       </section>

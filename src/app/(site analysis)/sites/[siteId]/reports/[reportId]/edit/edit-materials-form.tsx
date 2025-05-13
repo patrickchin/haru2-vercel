@@ -46,11 +46,9 @@ import { cn } from "@/lib/utils";
 
 const schema = z.object({
   materials: z.array(
-    createInsertSchema(materials1)
-      .omit({ id: true, materialsListId: true })
-      .extend({
-        quantity: z.coerce.number().nullable(),
-      }),
+    createInsertSchema(materials1).omit({ id: true }).extend({
+      quantity: z.coerce.number().nullable(),
+    }),
   ),
 });
 type SchemaType = z.infer<typeof schema>;
@@ -236,33 +234,6 @@ export function EditUsedMaterialsForm({
       isLoading={isLoading}
       updateAction={(materials) =>
         Actions.updateSiteActivityUsedMaterials({ activityId, materials })
-      }
-    />
-  );
-}
-
-export function EditInventoryMaterialsForm({
-  site,
-  reportId,
-}: {
-  site: SiteDetails;
-  reportId: number;
-}) {
-  const {
-    data: materials,
-    mutate,
-    isLoading,
-  } = useSWR(`/api/report/${reportId}/inventory-materials`, async () =>
-    Actions.listSiteReportInventoryMaterials(reportId),
-  );
-  return (
-    <EditMaterialsForm
-      defaultCurrency={getCountryCurrency(site.countryCode) ?? null}
-      materials={materials}
-      mutate={mutate}
-      isLoading={isLoading}
-      updateAction={(materials) =>
-        Actions.updateSiteReportInventoryMaterials(reportId, materials)
       }
     />
   );

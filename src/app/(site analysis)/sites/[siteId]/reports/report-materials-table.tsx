@@ -198,27 +198,5 @@ export function UsedMaterialsTable({
     () => Actions.listSiteActivityUsedMaterials({ activityId }),
   );
 
-  return (
-    <MaterialsTable
-      materials={materials}
-      isLoading={isLoading}
-    />
-  );
-}
-
-export function InventoryMaterialsTable({ report }: { report?: SiteReport }) {
-  const { data: materials, isLoading } = useSWR(
-    `/api/report/${report?.id}/inventory-materials`,
-    () =>
-      report?.id
-        ? Actions.listSiteReportInventoryMaterials(report.id)
-        : undefined,
-  );
-
-  return (
-    <MaterialsTable
-      materials={materials}
-      isLoading={isLoading}
-    />
-  );
+  return <MaterialsTable materials={materials} isLoading={isLoading} />;
 }

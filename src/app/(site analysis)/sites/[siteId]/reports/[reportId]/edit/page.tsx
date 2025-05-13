@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { ErrorBox, WarningBox } from "@/components/info-box";
 import { EditReportFiles } from "./edit-upload";
 import { EditReportSections } from "./edit-sections";
-import { EditReportInventory } from "./edit-inventory";
 import { PublishButton } from "./publish-button";
 import { DeleteReportButton } from "./delete-report";
 import { EditReportActivities } from "./edit-activities";
@@ -76,7 +75,6 @@ export default async function Page({
         session?.user?.role === "admin" ? (
           <>
             <EditReportFiles reportId={reportId} />
-            {/* <EditReportInventory siteId={siteId} reportId={reportId} /> */}
             <EditReportActivities siteId={siteId} reportId={reportId} />
             <EditReportSections siteId={siteId} reportId={reportId} />
           </>

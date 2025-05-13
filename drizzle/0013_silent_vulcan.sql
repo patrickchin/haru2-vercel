@@ -1,1 +1,0 @@
-ALTER TABLE "fileGroups1" ADD COLUMN "deletedAt" timestamp with time zone;

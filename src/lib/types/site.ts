@@ -17,11 +17,13 @@ export type SiteEquipment = typeof Schemas.equipment1.$inferInsert;
 
 export const allSiteMemberRoles = Schemas.siteMemberRole.enumValues;
 
-export type SiteNew = Omit<typeof Schemas.sites1.$inferInsert, "id" | "createdAt">;
-export type SiteDetailsNew = Omit<typeof Schemas.siteDetails1.$inferInsert, "id">;
-export type SiteReportNew = Omit<typeof Schemas.siteReports1.$inferInsert, "id" | "createdAt" | "fileGroupId">;
-export type SiteReportDetailsNew = Omit<typeof Schemas.siteReportDetails1.$inferInsert, "id">;
-export type SiteReportSectionNew = Omit<typeof Schemas.siteReportSections1.$inferInsert, "id" | "reportId" | "fileGroupId">;
-export type SiteActivityNew = Omit<typeof Schemas.siteActivity1.$inferInsert, "id" | "siteActivityListId" | "materialsListId" | "equipmentListId">;
-export type SiteMaterialNew = Omit<typeof Schemas.materials1.$inferInsert, "id"| "materialsListId">;
-export type SiteEquipmentNew = Omit<typeof Schemas.equipment1.$inferInsert, "id"| "equipmentListId">;
+export type ids2 = "id" | "uuid";
+
+export type SiteNew = Omit<typeof Schemas.sites1.$inferInsert, ids2 | "createdAt">;
+export type SiteDetailsNew = Omit<typeof Schemas.siteDetails1.$inferInsert,ids2>;
+export type SiteReportNew = Omit<typeof Schemas.siteReports1.$inferInsert, ids2 | "createdAt" | "fileGroupId">;
+export type SiteReportDetailsNew = Omit<typeof Schemas.siteReportDetails1.$inferInsert, ids2>;
+export type SiteReportSectionNew = Omit<typeof Schemas.siteReportSections1.$inferInsert, ids2 | "reportId" | "fileGroupId">;
+export type SiteActivityNew = Omit<typeof Schemas.siteActivity1.$inferInsert, ids2>;
+export type SiteMaterialNew = Omit<typeof Schemas.materials1.$inferInsert, ids2>;
+export type SiteEquipmentNew = Omit<typeof Schemas.equipment1.$inferInsert, ids2>;

@@ -290,40 +290,6 @@ export async function listSiteReportSectionFiles(sectionId: number) {
     return db.getFilesForReportSection(sectionId, false);
 }
 
-export async function listSiteReportInventoryMaterials(reportId: number) {
-  const role = await getSiteMemberRole({ reportId });
-  if (viewSiteRoles.includes(role)) {
-    return db.listSiteReportInventoryMaterials(reportId);
-  }
-}
-
-export async function updateSiteReportInventoryMaterials(
-  reportId: number,
-  materials: SiteMaterialNew[],
-) {
-  const role = await getSiteMemberRole({ reportId });
-  if (editReportRoles.includes(role)) {
-    return db.updateSiteReportInventoryMaterials(reportId, materials);
-  }
-}
-
-export async function listSiteReportInventoryEquipment(reportId: number) {
-  const role = await getSiteMemberRole({ reportId });
-  if (viewSiteRoles.includes(role)) {
-    return db.listSiteReportInventoryEquipment(reportId);
-  }
-}
-
-export async function updateSiteReportInventoryEquipment(
-  reportId: number,
-  equipment: SiteEquipmentNew[],
-) {
-  const role = await getSiteMemberRole({ reportId });
-  if (editReportRoles.includes(role)) {
-    return db.updateSiteReportInventoryEquipment(reportId, equipment);
-  }
-}
-
 export async function listSiteReportActivities({
   reportId,
 }: {
