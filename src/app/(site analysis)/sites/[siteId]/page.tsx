@@ -208,140 +208,6 @@ function SiteMembersTable({ site }: { site: SiteDetails }) {
   );
 }
 
-async function SiteComplaints({
-  site,
-  role,
-}: {
-  site: SiteDetails;
-  role?: SiteMemberRole;
-}) {
-  const complaints = await Actions.getSiteNotices(site.id);
-  const resolved = complaints?.filter((c) => c.resolved);
-  const unresolved = complaints?.filter((c) => !c.resolved);
-
-  return (
-    <Card>
-      <CardHeader className="flex flex-row justify-between items-center py-0 space-y-0">
-        <CardTitle className="py-6">
-          Current Unresolved Issues at the Site
-        </CardTitle>
-        {role && editSiteRoles.includes(role) && (
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div>
-                  <Button variant="outline" disabled size="icon">
-                    <LucideEdit />
-                  </Button>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent className="p-0">
-                <WarningBox>Coming Soon</WarningBox>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
-      </CardHeader>
-      <CardContent>
-        {unresolved && unresolved.length > 0 ? (
-          <Table>
-            <TableBody>
-              {unresolved.map((c) => (
-                <TableRow className="" key={`notice-${c.id}`}>
-                  <TableCell className="align-top" width={1}>
-                    <LucideAlertTriangle className="text-destructive" />
-                  </TableCell>
-                  <TableCell className={c.resolved ? "line-through" : ""}>
-                    {c.description}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        ) : (
-          <>
-            <GoodBox>Currently there are no unresolved issues!</GoodBox>
-          </>
-        )}
-        {resolved && resolved.length > 0 && (
-          <Table>
-            <TableBody>
-              {resolved?.map((c) => (
-                <TableRow className={"opacity-60"} key={`notice-${c.id}`}>
-                  <TableCell className="" width={1}>
-                    <LucideCheck className="text-green-600" />
-                  </TableCell>
-                  <TableCell className={c.resolved ? "line-through" : ""}>
-                    {c.description}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
-
-function SiteProgress({
-  site,
-  role,
-}: {
-  site: SiteDetails;
-  role?: SiteMemberRole;
-}) {
-  const progressPct =
-    site.startDate && site.endDate
-      ? (100 * (new Date().getTime() - site.startDate.getTime())) /
-        (site.endDate.getTime() - site.startDate.getTime())
-      : undefined;
-
-  return (
-    <Card id="progress">
-      <CardHeader className="flex flex-row justify-between items-center py-0 space-y-0">
-        <CardTitle className="py-6">Supervision Schedule</CardTitle>
-        {role && editSiteRoles.includes(role) && (
-          <EditSiteSchedule site={site} />
-        )}
-      </CardHeader>
-      <CardContent className="flex flex-col gap-3">
-        <Progress value={progressPct} />
-        <Table>
-          <TableBody>
-            <TableRow>
-              <TableHead className="font-medium">Creation Date</TableHead>
-              <TableCell>
-                {site.createdAt?.toDateString() || "Unknown"}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableHead className="font-medium">Start Date</TableHead>
-              <TableCell>
-                {site.startDate?.toDateString() ?? "Unknown"}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableHead className="font-medium">End Date</TableHead>
-              <TableCell>{site.endDate?.toDateString() ?? "Unknown"}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableHead className="font-medium">Next Report Date</TableHead>
-              <TableCell>
-                {site.nextReportDate?.toDateString() ?? "Unknown"}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableHead className="font-medium">Report Schedule</TableHead>
-              <TableCell>{site.schedule ?? "Unknown"}</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
-  );
-}
-
 export default async function Page(props: {
   params: Promise<{ siteId: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -362,7 +228,6 @@ export default async function Page(props: {
     typeof searchParams["tab"] === "string"
       ? searchParams["tab"]
       : "description";
-  const showProgressAndComplaints = true;
 
   return (
     <DefaultLayout className="px-8">
@@ -404,9 +269,6 @@ export default async function Page(props: {
             <TabsTriggerSearchParams searchParamsKey="tab" value="members">
               Members
             </TabsTriggerSearchParams>
-            <TabsTriggerSearchParams searchParamsKey="tab" value="status">
-              Status
-            </TabsTriggerSearchParams>
             <TabsTriggerSearchParams searchParamsKey="tab" value="comments">
               Comments
             </TabsTriggerSearchParams>
@@ -434,15 +296,6 @@ export default async function Page(props: {
 
         <TabsContent value="members" className="space-y-4">
           <SiteMembers site={site} members={members} />
-        </TabsContent>
-
-        <TabsContent value="status" className="space-y-4">
-          {showProgressAndComplaints && (
-            <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-              <SiteProgress site={site} role={role} />
-              <SiteComplaints site={site} role={role} />
-            </div>
-          )}
         </TabsContent>
 
         <TabsContent value="comments" className="space-y-4">

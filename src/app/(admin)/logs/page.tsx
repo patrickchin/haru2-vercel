@@ -39,7 +39,6 @@ export default async function Page(props: {
               <TableHead className="w-full">Message</TableHead>
               <TableHead className="w-1">Site Id</TableHead>
               <TableHead className="w-1">Report Id</TableHead>
-              <TableHead className="w-1">Meeting Id</TableHead>
               <TableHead className="w-1">Invitation Id</TableHead>
             </TableRow>
           </TableHeader>
@@ -60,7 +59,6 @@ export default async function Page(props: {
                 <TableCell>{l.message}</TableCell>
                 <TableCell>{l.siteId}</TableCell>
                 <TableCell>{l.reportId}</TableCell>
-                <TableCell>{l.meetingId}</TableCell>
                 <TableCell>{l.invitationId}</TableCell>
               </TableRow>
             ))}

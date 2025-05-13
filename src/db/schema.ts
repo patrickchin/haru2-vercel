@@ -8,7 +8,6 @@ import {
   pgEnum,
   jsonb,
   numeric,
-  interval,
   boolean,
   primaryKey,
   text,
@@ -20,11 +19,7 @@ import type { AdapterAccountType } from "next-auth/adapters";
 // pnpm drizzle-kit generate
 // pnpm drizzle-kit migrate
 
-export const accountRoleEnum = pgEnum("role", [
-  "guest",
-  "user",
-  "admin",
-]);
+export const accountRoleEnum = pgEnum("role", ["guest", "user", "admin"]);
 
 export const users1 = pgTable("user", {
   sid: serial("sid"),
@@ -241,35 +236,6 @@ export const siteInvitations1 = pgTable(
   },
   (t) => [unique().on(t.siteId, t.email)],
 );
-
-export const siteMeetingStatus = pgEnum("siteMeetingStatus", [
-  "pending",
-  "rejected",
-  "confirmed",
-  "cancelled",
-]);
-
-export const siteMeetings1 = pgTable("siteMeetings1", {
-  id: serial("id").primaryKey(),
-  siteId: integer("siteId").references(() => sites1.id),
-  userId: text("userId"), // .references(() => users1.id),
-  status: siteMeetingStatus("status").default("pending"),
-  date: timestamp("date", { mode: "date", withTimezone: true }),
-  duration: interval("duration"),
-  notes: varchar("notes"),
-  url: varchar("url"),
-});
-
-export const siteNotices1 = pgTable("siteNotices1", {
-  id: serial("id").primaryKey(),
-  siteId: integer("siteId").references(() => sites1.id),
-  resolved: boolean("resolved"),
-  description: varchar("description"),
-  createdAt: timestamp("createdAt", {
-    mode: "date",
-    withTimezone: true,
-  }).defaultNow(),
-});
 
 export const siteReports1 = pgTable("siteReports1", {
   id: serial("id").primaryKey(),
@@ -491,8 +457,6 @@ export const logs1 = pgTable("logs1", {
   reportId: integer("reportId"),
   activityId: integer("activityId"),
 
-  noticeId: integer("noticeId"),
-  meetingId: integer("meetingId"),
   invitationId: integer("invitationId"),
 
   commentId: integer("commentId"),

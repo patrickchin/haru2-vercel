@@ -158,11 +158,6 @@ export async function getSiteRole(siteId: number) {
   return db.getSiteRole({ siteId, userId: session.user.id });
 }
 
-export async function getSiteNotices(siteId: number) {
-  if (viewSiteRoles.includes(await getSiteMemberRole({ siteId })))
-    return db.getSiteNotices(siteId);
-}
-
 async function addSiteMemberInvite({
   siteId,
   email,

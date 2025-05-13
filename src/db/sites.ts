@@ -19,7 +19,6 @@ import {
   SiteMember,
   SiteMemberRole,
   SiteNew,
-  SiteNoticeNew,
 } from "@/lib/types/site";
 import {
   sites1,
@@ -27,7 +26,6 @@ import {
   siteReports1,
   users1,
   siteDetails1,
-  siteNotices1,
   commentsSections1,
   siteInvitations1,
   accounts1,
@@ -159,30 +157,6 @@ export async function listSiteMembers(
       ),
     )
     .orderBy(siteMembers1.role, siteMembers1.dateAdded, siteMembers1.id);
-}
-
-export async function getSiteNotices(siteId: number) {
-  return await db
-    .select()
-    .from(siteNotices1)
-    .where(eq(siteNotices1.siteId, siteId));
-}
-
-export async function addSiteNotice(siteId: number, description: string) {
-  return await db
-    .insert(siteNotices1)
-    .values({ siteId, description })
-    .returning()
-    .then((n) => n[0]);
-}
-
-export async function updateSiteNotice(siteId: number, values: SiteNoticeNew) {
-  return await db
-    .update(siteNotices1)
-    .set(values)
-    .where(eq(siteNotices1.siteId, siteId))
-    .returning()
-    .then((n) => n[0]);
 }
 
 export async function addSite(
