@@ -27,13 +27,14 @@ export const { handlers, auth } = NextAuth({
         await onUserSignUp(user.id);
       }
 
-      if (trigger) {
-        const dbuser = await getUserInternal(user.id);
-        if (!dbuser) return null;
-        token.id = dbuser.id;
-        token.role = dbuser.role;
-        token.picture = dbuser.image;
-      }
+      // just do this every time to invalidate older sessions ...
+      // unfortunately this will be called on every request
+      const dbuser = await getUserInternal(user.id);
+      if (!dbuser) return null;
+
+      token.id = dbuser.id;
+      token.role = dbuser.role;
+      token.picture = dbuser.image;
 
       return token;
     },
