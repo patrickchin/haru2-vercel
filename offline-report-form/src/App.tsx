@@ -9,6 +9,7 @@ import EquipmentList from "./EquipmentList";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Card } from "./components/ui/card";
 import {
+  LucideConstruction,
   LucideCuboid,
   LucideEllipsis,
   LucideForklift,
@@ -102,7 +103,11 @@ export default function App() {
   const setCurrentPage = (page: string) => {
     const params = new URLSearchParams(window.location.search);
     params.set("page", page);
-    window.history.pushState({}, "", `${window.location.pathname}?${params.toString()}`);
+    window.history.pushState(
+      {},
+      "",
+      `${window.location.pathname}?${params.toString()}`,
+    );
     setCurrentPageState(page);
   };
 
@@ -130,11 +135,24 @@ export default function App() {
 
   return (
     <div className="bg-gradient-to-t from-sky-100 to-indigo-200 min-h-screen flex items-center justify-center">
+      <Button asChild variant="outline" size="lg" className="text-base">
+        <a
+          href="https://www.harpapro.com/sites"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute top-4 left-4 z-10"
+        >
+          <LucideConstruction />
+          <span className="font-bold whitespace-nowrap">
+            Harpa Pro Online Site
+          </span>
+        </a>
+      </Button>
       <Card className="w-full max-w-2xl mx-auto min-h-96">
         {currentPage === "form" ? (
           <>
             <header className="font-bold p-4 text-xl">
-              Harpa Pro Construction Report Form
+              Harpa Pro Offline Report Form
             </header>
             <div>
               <form
