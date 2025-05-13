@@ -41,7 +41,7 @@ export async function getMySites() {
 
 export async function getAllVisibleSites() {
   const session = await auth();
-  if (!session?.user.id) return;
+  if (!session?.user?.id) return;
   if (session?.user.role === "admin") {
     return db.getAllSites(session.user.id);
   }
@@ -160,7 +160,7 @@ export async function listSiteMembers(siteId: number) {
 
 export async function getSiteRole(siteId: number) {
   const session = await auth();
-  if (!session?.user.id) return;
+  if (!session?.user?.id) return;
   return db.getSiteRole({ siteId, userId: session.user.id });
 }
 

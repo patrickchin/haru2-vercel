@@ -29,11 +29,10 @@ export const { handlers, auth } = NextAuth({
 
       if (trigger) {
         const dbuser = await getUserInternal(user.id);
-        if (dbuser) {
-          token.id = dbuser.id;
-          token.role = dbuser.role;
-          token.picture = dbuser.image;
-        }
+        if (!dbuser) return null;
+        token.id = dbuser.id;
+        token.role = dbuser.role;
+        token.picture = dbuser.image;
       }
 
       return token;
