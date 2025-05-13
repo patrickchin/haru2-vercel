@@ -212,7 +212,7 @@ export default function SiteMembers({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Member Permissions</CardTitle>
+        <CardTitle>Members</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div className="p-4 pt-0 text-base">
