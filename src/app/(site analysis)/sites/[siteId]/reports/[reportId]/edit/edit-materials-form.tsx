@@ -64,6 +64,7 @@ function MaterialTableRow({
   form: UseFormReturn<SchemaType>;
   remove: UseFieldArrayRemove;
 }) {
+  const defaultConditions = ["New", "Used", "Damaged", "Repaired"];
   const quantity = useWatch({
     control: form.control,
     name: `materials.${index}.quantity`,
@@ -85,9 +86,7 @@ function MaterialTableRow({
     : false;
 
   return (
-    <TableRow
-      className={isRowDirty ? "bg-yellow-50 dark:bg-stone-800" : ""}
-    >
+    <TableRow className={isRowDirty ? "bg-yellow-50 dark:bg-stone-800" : ""}>
       <TableCell>
         <FormField
           name={`materials.${index}.name`}
@@ -179,7 +178,23 @@ function MaterialTableRow({
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <Input {...field} value={field.value ?? ""} />
+              <div className="flex">
+                <Input
+                  {...field}
+                  value={field.value ?? ""}
+                  className="grow rounded-r-none min-w-28"
+                />
+                <Select onValueChange={field.onChange} defaultValue="">
+                  <SelectTrigger className="border-l-0 rounded-l-none w-12" />
+                  <SelectContent align="end">
+                    {defaultConditions.map((cond) => (
+                      <SelectItem key={cond} value={cond}>
+                        {cond}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <FormMessage />
             </FormItem>
           )}
@@ -344,12 +359,24 @@ function EditMaterialsForm({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-center min-w-32 w-3/12">Name</TableHead>
-                <TableHead className="text-center min-w-32 w-1/12">Quantity</TableHead>
-                <TableHead className="text-center min-w-24 w-2/12">Unit</TableHead>
-                <TableHead className="text-center min-w-40 w-2/12">Unit Cost</TableHead>
-                <TableHead className="text-center min-w-24 w-1/12">Total Cost</TableHead>
-                <TableHead className="text-center min-w-24 w-2/12">Condition</TableHead>
+                <TableHead className="text-center min-w-32 w-3/12">
+                  Name
+                </TableHead>
+                <TableHead className="text-center min-w-32 w-1/12">
+                  Quantity
+                </TableHead>
+                <TableHead className="text-center min-w-24 w-2/12">
+                  Unit
+                </TableHead>
+                <TableHead className="text-center min-w-40 w-2/12">
+                  Unit Cost
+                </TableHead>
+                <TableHead className="text-center min-w-24 w-1/12">
+                  Total Cost
+                </TableHead>
+                <TableHead className="text-center min-w-24 w-2/12">
+                  Condition
+                </TableHead>
                 <TableHead className="text-center min-w-8 w-px"></TableHead>
               </TableRow>
             </TableHeader>
