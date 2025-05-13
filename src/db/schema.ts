@@ -170,16 +170,7 @@ export const sites1 = pgTable("sites1", {
     mode: "date",
     withTimezone: true,
   }).defaultNow(),
-});
 
-export const siteDetails1 = pgTable("siteDetails1", {
-  id: serial("id")
-    .primaryKey()
-    .references(() => sites1.id),
-  uuid: text("uuid")
-    .notNull()
-    .unique()
-    .references(() => sites1.uuid),
   address: varchar("address"),
   postcode: varchar("postcode"),
   description: varchar("description"),
@@ -272,16 +263,6 @@ export const siteReports1 = pgTable("siteReports1", {
   commentsSectionId: integer("commentsSectionId").references(
     () => commentsSections1.id,
   ),
-});
-
-export const siteReportDetails1 = pgTable("siteReportDetails1", {
-  id: serial("id")
-    .primaryKey()
-    .references(() => siteReports1.id),
-  uuid: text("uuid")
-    .notNull()
-    .unique()
-    .references(() => siteReports1.uuid),
 
   ownerId: text("ownerId"), // .references(() => users1.id),
   supervisorId: text("supervisorId"), // .references(() => users1.id),

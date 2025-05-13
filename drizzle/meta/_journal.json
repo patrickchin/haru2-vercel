@@ -15,6 +15,13 @@
       "when": 1747168661820,
       "tag": "0001_smart_the_captain",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1747169411068,
+      "tag": "0002_confused_mariko_yashida",
+      "breakpoints": true
     }
   ]
 }
