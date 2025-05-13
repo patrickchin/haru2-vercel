@@ -37,6 +37,10 @@ export async function ReportSiteDetails({
               <TableHead>Site Address</TableHead>
               <TableCell>{site?.address ?? "--"}</TableCell>
             </TableRow>
+          </TableBody>
+        </Table>
+        <Table>
+          <TableBody>
             <TableRow>
               <TableHead>Visit Date</TableHead>
               <TableCell>{report?.visitDate?.toDateString() ?? "--"}</TableCell>
