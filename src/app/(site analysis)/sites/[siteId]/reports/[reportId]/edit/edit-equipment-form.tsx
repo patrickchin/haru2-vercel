@@ -45,11 +45,9 @@ import { cn } from "@/lib/utils";
 
 const schema = z.object({
   equipment: z.array(
-    createInsertSchema(equipment1)
-      .omit({ id: true })
-      .extend({
-        quantity: z.coerce.number().nullable(),
-      }),
+    createInsertSchema(equipment1).omit({ id: true, uuid: true }).extend({
+      quantity: z.coerce.number().nullable(),
+    }),
   ),
 });
 type SchemaType = z.infer<typeof schema>;
@@ -284,10 +282,18 @@ function EditEquipmentForm({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-center min-w-32 w-3/12">Name</TableHead>
-                <TableHead className="text-center min-w-28 w-2/12">Quantity</TableHead>
-                <TableHead className="text-center min-w-40 w-3/12">Cost</TableHead>
-                <TableHead className="text-center min-w-28 w-2/12">Ownership</TableHead>
+                <TableHead className="text-center min-w-32 w-3/12">
+                  Name
+                </TableHead>
+                <TableHead className="text-center min-w-28 w-2/12">
+                  Quantity
+                </TableHead>
+                <TableHead className="text-center min-w-40 w-3/12">
+                  Cost
+                </TableHead>
+                <TableHead className="text-center min-w-28 w-2/12">
+                  Ownership
+                </TableHead>
                 <TableHead className="text-center min-w-28 w-2/12">
                   Operation Time (Hours)
                 </TableHead>

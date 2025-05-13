@@ -46,7 +46,7 @@ import { cn } from "@/lib/utils";
 
 const schema = z.object({
   materials: z.array(
-    createInsertSchema(materials1).omit({ id: true }).extend({
+    createInsertSchema(materials1).omit({ id: true, uuid: true }).extend({
       quantity: z.coerce.number().nullable(),
     }),
   ),

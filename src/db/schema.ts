@@ -316,7 +316,6 @@ export const siteReportDetails1 = pgTable("siteReportDetails1", {
   workersCostCurrency: varchar("workersCostCurrency"),
 });
 
-
 export const materials1 = pgTable("materials1", {
   id: serial("id").primaryKey(),
   uuid: text("uuid")
