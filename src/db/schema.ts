@@ -180,23 +180,6 @@ export const siteDetails1 = pgTable("siteDetails1", {
 
   budget: numeric("budget"),
   budgetUnits: varchar("budgetUnits"),
-
-  // until something better is figured out with maybe temporary accounts ?
-  ownerName: varchar("ownerName"),
-  ownerPhone: varchar("ownerPhone"),
-  ownerEmail: varchar("ownerEmail"),
-  architectName: varchar("architectName"),
-  architectPhone: varchar("architectPhone"),
-  architectEmail: varchar("architectEmail"),
-  managerName: varchar("managerName"),
-  managerPhone: varchar("managerPhone"),
-  managerEmail: varchar("managerEmail"),
-  contractorName: varchar("contractorName"),
-  contractorPhone: varchar("contractorPhone"),
-  contractorEmail: varchar("contractorEmail"),
-  supervisorName: varchar("supervisorName"),
-  supervisorPhone: varchar("supervisorPhone"),
-  supervisorEmail: varchar("supervisorEmail"),
 });
 
 export const siteMemberRole = pgEnum("siteMemberRole", [

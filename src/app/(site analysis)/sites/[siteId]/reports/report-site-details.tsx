@@ -49,30 +49,6 @@ export async function ReportSiteDetails({
             </TableRow>
           </TableBody>
         </Table>
-        <Table>
-          <TableBody>
-            <TableRow>
-              <TableHead>Owner</TableHead>
-              <TableCell>{site?.ownerName ?? "--"}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableHead>Architect</TableHead>
-              <TableCell>{site?.architectName ?? "--"}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableHead>Project Manger</TableHead>
-              <TableCell>{site?.managerName ?? "--"}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableHead>Contractor</TableHead>
-              <TableCell>{site?.contractorName ?? "--"}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableHead>Supervisor</TableHead>
-              <TableCell>{site?.supervisorName ?? "--"}</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
       </CardContent>
     </Card>
   );
