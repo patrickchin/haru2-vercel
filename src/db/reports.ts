@@ -1,7 +1,15 @@
 import "server-only";
 
 import { db } from "./_db";
-import { and, desc, eq, getTableColumns, isNotNull, isNull } from "drizzle-orm";
+import {
+  and,
+  desc,
+  eq,
+  getTableColumns,
+  inArray,
+  isNotNull,
+  isNull,
+} from "drizzle-orm";
 import {
   SiteActivity,
   SiteActivityNew,
@@ -452,16 +460,33 @@ export async function updateSiteActivityUsedMaterials({
   materials: SiteMaterialNew[];
 }) {
   return await db.transaction(async (tx) => {
+    await tx
+      .delete(materials1)
+      .where(
+        inArray(
+          materials1.id,
+          tx
+            .select({ id: siteActivityMaterials1.materialId })
+            .from(siteActivityMaterials1)
+            .where(eq(siteActivityMaterials1.siteActivityId, activityId)),
+        ),
+      );
+
+    if (materials.length === 0) return [];
+
     const insertedMaterials = await tx
       .insert(materials1)
       .values(materials)
       .returning();
+
     await tx.insert(siteActivityMaterials1).values(
       insertedMaterials.map((m) => ({
         siteActivityId: activityId,
-        materialsId: m.id,
+        materialId: m.id,
       })),
     );
+
+    return insertedMaterials;
   });
 }
 
@@ -483,15 +508,32 @@ export async function updateSiteActivityUsedEquipment(
   equipment: SiteEquipmentNew[],
 ) {
   return await db.transaction(async (tx) => {
+    await tx
+      .delete(equipment1)
+      .where(
+        inArray(
+          equipment1.id,
+          tx
+            .select({ id: siteActivityEquipment1.equipmentId })
+            .from(siteActivityEquipment1)
+            .where(eq(siteActivityEquipment1.siteActivityId, activityId)),
+        ),
+      );
+
+    if (equipment.length === 0) return [];
+
     const insertedEquipment = await tx
       .insert(equipment1)
       .values(equipment)
       .returning();
+
     await tx.insert(siteActivityEquipment1).values(
       insertedEquipment.map((e) => ({
         siteActivityId: activityId,
-        materialsId: e.id,
+        equipmentId: e.id,
       })),
     );
+
+    return insertedEquipment;
   });
 }
