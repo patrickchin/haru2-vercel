@@ -60,7 +60,7 @@ export default async function Page({
 
       <section className="w-full max-w-5xl mx-auto flex flex-col gap-4">
         <ReportSiteDetails report={report} />
-        <ReportInventory report={report} />
+        {/* <ReportInventory report={report} /> */}
         <ReportActivities report={report} />
         <ReportSections reportId={reportId} />
       </section>

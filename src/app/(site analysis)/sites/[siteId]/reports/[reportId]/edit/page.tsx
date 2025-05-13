@@ -76,7 +76,7 @@ export default async function Page({
         session?.user?.role === "admin" ? (
           <>
             <EditReportFiles reportId={reportId} />
-            <EditReportInventory siteId={siteId} reportId={reportId} />
+            {/* <EditReportInventory siteId={siteId} reportId={reportId} /> */}
             <EditReportActivities siteId={siteId} reportId={reportId} />
             <EditReportSections siteId={siteId} reportId={reportId} />
           </>
