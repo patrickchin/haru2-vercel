@@ -3,7 +3,7 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "@/db/_db";
 import authConfig from "./auth.config";
 import { onUserSignUp } from "./actions";
-import { getUserInternal } from "@/db";
+import { addLogMessage, getUserInternal } from "@/db";
 import { AccountRole } from "./types";
 
 declare module "next-auth" {
@@ -27,14 +27,18 @@ export const { handlers, auth } = NextAuth({
         await onUserSignUp(user.id);
       }
 
-      // just do this every time to invalidate older sessions ...
-      // unfortunately this will be called on every request
-      const dbuser = await getUserInternal(user.id);
-      if (!dbuser) return null;
-
-      token.id = dbuser.id;
-      token.role = dbuser.role;
-      token.picture = dbuser.image;
+      if (trigger) {
+        const dbuser = await getUserInternal(user.id);
+        if (!dbuser) {
+          console.error("User not found in database");
+          addLogMessage(
+          { message: "User not found in database", userId: user.id });
+          return null;
+        }
+        token.id = dbuser.id;
+        token.role = dbuser.role;
+        token.picture = dbuser.image;
+      }
 
       return token;
     },
