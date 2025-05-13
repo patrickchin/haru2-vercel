@@ -31,7 +31,7 @@ function SiteDescription({
     site.description ??
     "There is currently no description for this site project";
   return (
-    <Card id="description">
+    <Card id="description" className="h-full">
       <CardHeader className="flex flex-row font-semibold py-0 items-center">
         <CardTitle className="grow py-6">Description</CardTitle>
         {editSiteRoles.includes(role) && <EditSiteDescription site={site} />}
@@ -140,9 +140,6 @@ export default async function Page(props: {
             <TabsTriggerSearchParams searchParamsKey="tab" value="members">
               Members
             </TabsTriggerSearchParams>
-            <TabsTriggerSearchParams searchParamsKey="tab" value="comments">
-              Comments
-            </TabsTriggerSearchParams>
             <TabsTriggerSearchParams searchParamsKey="tab" value="files">
               Files
             </TabsTriggerSearchParams>
@@ -153,7 +150,7 @@ export default async function Page(props: {
           </TabsList>
         </Card>
 
-        <TabsContent value="description" className="space-y-4">
+        <TabsContent value="description" className="space-y-8">
           <div className="flex flex-col sm:flex-row-reverse gap-4">
             <div className="flex flex-col gap-4 min-w-56 md:w-1/3 md:max-w-96 shrink-0">
               <SiteInfo site={site} />
@@ -162,6 +159,9 @@ export default async function Page(props: {
               <SiteDescription site={site} role={role} />
             </div>
           </div>
+          {commentsSectionId && (
+            <CommentsSection commentsSectionId={commentsSectionId} />
+          )}
         </TabsContent>
 
         <TabsContent value="members" className="space-y-4">
@@ -169,9 +169,6 @@ export default async function Page(props: {
         </TabsContent>
 
         <TabsContent value="comments" className="space-y-4">
-          {commentsSectionId && (
-            <CommentsSection commentsSectionId={commentsSectionId} />
-          )}
         </TabsContent>
 
         <TabsContent value="files" className="space-y-4">

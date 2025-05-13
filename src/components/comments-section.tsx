@@ -63,7 +63,6 @@ function CommentsSectionAdd({
                 <Textarea
                   {...field}
                   placeholder="Add your comment here"
-                  className="h-36"
                   disabled={form.formState.isSubmitting}
                 />
               </FormControl>
@@ -113,7 +112,7 @@ export default function CommentsSection({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className={titleClassName}>Comments Section</CardTitle>
+        <CardTitle className={titleClassName}>Comments</CardTitle>
       </CardHeader>
       <CardContent className="space-y-8">
         <CommentsSectionAdd
@@ -138,7 +137,7 @@ export default function CommentsSection({
           </li>
           {comments?.map((c) => (
             <li
-              className="flex items-start gap-4 p-4 hover:bg-accent rounded border-t"
+              className="flex items-start gap-4 p-4 hover:bg-accent border-t"
               key={c.id}
             >
               <HaruUserAvatar user={c.user ?? undefined} />
