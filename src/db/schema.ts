@@ -215,10 +215,6 @@ export const siteMembers1 = pgTable(
   "siteMembers1",
   {
     id: serial("id").unique(),
-    uuid: text("uuid")
-      .notNull()
-      .unique()
-      .$defaultFn(() => crypto.randomUUID()),
     siteId: integer("siteId").references(() => sites1.id),
     memberId: text("memberId"), // .references(() => users1.id),
     role: siteMemberRole("role").default("member"),
