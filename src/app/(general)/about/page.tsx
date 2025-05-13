@@ -195,10 +195,6 @@ function Benefits() {
             Keep track of building materials, equipment, and machinery usage.
           </p>
           <p>
-            Use built-in Zoom meetings and chat messaging for easy communication
-            with your architect, engineer, contractor, and site supervisor.
-          </p>
-          <p>
             Create your team, schedule site visits, and get weekly site reports.
           </p>
           <p>

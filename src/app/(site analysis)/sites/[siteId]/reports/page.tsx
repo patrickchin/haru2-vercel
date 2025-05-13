@@ -31,10 +31,6 @@ export default async function Page({
       <div className="w-full max-w-5xl mx-auto mt-4">
         <InfoBox className="text-base">
           <p>This project does not have any published reports yet.</p>
-          <p>
-            After scheduling a meeting with us, our supervisor will visit your
-            site and publish reports on this page.
-          </p>
         </InfoBox>
       </div>
     </DefaultLayout>

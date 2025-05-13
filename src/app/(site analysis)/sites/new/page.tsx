@@ -141,24 +141,6 @@ function NewSiteForm() {
           )}
         />
 
-        {/* <FormField
-          control={form.control}
-          name="postcode"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Site Postcode</FormLabel>
-              <FormControl>
-                <Input
-                  onChange={field.onChange}
-                  name={field.name}
-                  placeholder="123 123"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-
         <CountrySelectForm form={form} />
 
         <div className="sm:col-span-2 space-y-4">
@@ -196,9 +178,7 @@ function NewSiteForm() {
 
         <InfoBox className="col-span-2 leading-6 hidden">
           After submitting your project, you will be redirected to your project
-          page. <br />
-          From there you will be able to schedule a meeting with us and we will
-          organize a site supervisor to attend your construction site.
+          page.
         </InfoBox>
         <div className="col-span-2 flex justify-end">
           <Button

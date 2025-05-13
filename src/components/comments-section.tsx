@@ -111,7 +111,7 @@ export default function CommentsSection({
   );
 
   return (
-    <Card id="meetings">
+    <Card>
       <CardHeader>
         <CardTitle className={titleClassName}>Comments Section</CardTitle>
       </CardHeader>

@@ -16,8 +16,6 @@ import {
   SiteAndExtra,
   SiteDetails,
   SiteDetailsNew,
-  SiteMeeting,
-  SiteMeetingNew,
   SiteMember,
   SiteMemberRole,
   SiteNew,
@@ -29,7 +27,6 @@ import {
   siteReports1,
   users1,
   siteDetails1,
-  siteMeetings1,
   siteNotices1,
   commentsSections1,
   siteInvitations1,
@@ -162,55 +159,6 @@ export async function listSiteMembers(
       ),
     )
     .orderBy(siteMembers1.role, siteMembers1.dateAdded, siteMembers1.id);
-}
-
-export async function listSiteMeetings(siteId: number): Promise<SiteMeeting[]> {
-  return await db
-    .select()
-    .from(siteMeetings1)
-    .where(eq(siteMeetings1.siteId, siteId))
-    .orderBy(siteMeetings1.date);
-}
-
-export async function getSiteMeeting(meetingId: number): Promise<SiteMeeting> {
-  return await db
-    .select()
-    .from(siteMeetings1)
-    .where(eq(siteMeetings1.id, meetingId))
-    .then((r) => r[0]);
-}
-
-export async function addSiteMeeting(
-  { siteId, userId }: { siteId: number; userId?: string },
-  values: SiteMeetingNew,
-): Promise<SiteMeeting> {
-  return await db
-    .insert(siteMeetings1)
-    .values({ ...values, siteId, userId })
-    .returning()
-    .then((r) => r[0]);
-}
-
-export async function updateSiteMeeting(
-  meetingId: number,
-  values: SiteMeetingNew,
-): Promise<SiteMeeting> {
-  return await db
-    .update(siteMeetings1)
-    .set(values)
-    .where(eq(siteMeetings1.id, meetingId))
-    .returning()
-    .then((r) => r[0]);
-}
-
-export async function deleteSiteMeeting(
-  meetingId: number,
-): Promise<SiteMeeting> {
-  return await db
-    .delete(siteMeetings1)
-    .where(eq(siteMeetings1.id, meetingId))
-    .returning()
-    .then((r) => r[0]);
 }
 
 export async function getSiteNotices(siteId: number) {
