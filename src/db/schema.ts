@@ -19,7 +19,11 @@ import type { AdapterAccountType } from "next-auth/adapters";
 // pnpm drizzle-kit generate
 // pnpm drizzle-kit migrate
 
-export const accountRoleEnum = pgEnum("role", ["guest", "user", "admin"]);
+export const accountRoleEnum = pgEnum("accountRole", [
+  "guest",
+  "user",
+  "admin",
+]);
 
 export const users1 = pgTable("user", {
   sid: serial("sid"),
@@ -115,6 +119,10 @@ export const authenticators1 = pgTable(
 
 export const files1 = pgTable("files1", {
   id: serial("id").primaryKey(),
+  uuid: text("uuid")
+    .notNull()
+    .unique()
+    .$defaultFn(() => crypto.randomUUID()),
   uploaderId: text("uploaderId"), // .references(() => users.id),
 
   filename: varchar("filename"),
@@ -130,6 +138,10 @@ export const files1 = pgTable("files1", {
 
 export const fileGroups1 = pgTable("fileGroups1", {
   id: serial("id").primaryKey(),
+  uuid: text("uuid")
+    .notNull()
+    .unique()
+    .$defaultFn(() => crypto.randomUUID()),
   deletedAt: timestamp("deletedAt", { mode: "date", withTimezone: true }),
 });
 
@@ -139,7 +151,7 @@ export const fileGroupFiles1 = pgTable(
     fileGroupId: integer("fileGroupId").references(() => fileGroups1.id),
     fileId: integer("fileId").references(() => files1.id),
   },
-  (t) => [unique().on(t.fileGroupId, t.fileId)],
+  (t) => [primaryKey({ columns: [t.fileGroupId, t.fileId] })],
 );
 
 // TODO could move to a separate file:
@@ -147,6 +159,10 @@ export const fileGroupFiles1 = pgTable(
 
 export const sites1 = pgTable("sites1", {
   id: serial("id").primaryKey(),
+  uuid: text("uuid")
+    .notNull()
+    .unique()
+    .$defaultFn(() => crypto.randomUUID()),
   title: varchar("title"),
   type: varchar("type"),
   countryCode: varchar("countryCode"),
@@ -160,6 +176,10 @@ export const siteDetails1 = pgTable("siteDetails1", {
   id: serial("id")
     .primaryKey()
     .references(() => sites1.id),
+  uuid: text("uuid")
+    .notNull()
+    .unique()
+    .references(() => sites1.uuid),
   address: varchar("address"),
   postcode: varchar("postcode"),
   description: varchar("description"),
@@ -195,6 +215,10 @@ export const siteMembers1 = pgTable(
   "siteMembers1",
   {
     id: serial("id").unique(),
+    uuid: text("uuid")
+      .notNull()
+      .unique()
+      .$defaultFn(() => crypto.randomUUID()),
     siteId: integer("siteId").references(() => sites1.id),
     memberId: text("memberId"), // .references(() => users1.id),
     role: siteMemberRole("role").default("member"),
@@ -210,6 +234,10 @@ export const siteInvitations1 = pgTable(
   "siteInvitations1",
   {
     id: serial("id").unique(),
+    uuid: text("uuid")
+      .notNull()
+      .unique()
+      .$defaultFn(() => crypto.randomUUID()),
     siteId: integer("siteId").references(() => sites1.id),
     email: text("email"),
 
@@ -222,6 +250,10 @@ export const siteInvitations1 = pgTable(
 
 export const siteReports1 = pgTable("siteReports1", {
   id: serial("id").primaryKey(),
+  uuid: text("uuid")
+    .notNull()
+    .unique()
+    .$defaultFn(() => crypto.randomUUID()),
   reporterId: text("reporterId"), // .references(() => users1.id),
   siteId: integer("siteId").references(() => sites1.id),
   createdAt: timestamp("createdAt", {
@@ -246,85 +278,14 @@ export const siteReports1 = pgTable("siteReports1", {
   ),
 });
 
-export const materialsList1 = pgTable("materialsList1", {
-  id: serial("id").primaryKey(),
-});
-
-export const materials1 = pgTable("materials1", {
-  id: serial("id").primaryKey(),
-  materialsListId: integer("materialsListId")
-    .references(() => materialsList1.id, { onDelete: "cascade" })
-    .notNull(),
-  name: varchar("name"),
-  quantity: integer("quantity"),
-  quantityUnit: varchar("quantityUnit"),
-
-  unitCost: numeric("unitCost"),
-  unitCostCurrency: varchar("unitCostCurrency"),
-  totalCost: numeric("totalCost"),
-  totalCostCurrency: varchar("totalCostCurrency"),
-
-  cost: numeric("cost"), // deprecated
-  costUnits: varchar("costUnits"), // deprecated
-
-  condition: varchar("condition"),
-});
-
-export const equipmentList1 = pgTable("equipmentList1", {
-  id: serial("id").primaryKey(),
-});
-
-export const equipment1 = pgTable("equipments1", {
-  id: serial("id").primaryKey(),
-  equipmentListId: integer("equipmentListId")
-    .references(() => equipmentList1.id, { onDelete: "cascade" })
-    .notNull(),
-  name: varchar("name"),
-  quantity: integer("quantity"),
-  cost: numeric("cost"),
-  costUnits: varchar("costUnits"),
-
-  condition: varchar("condition"),
-  ownership: varchar("ownership"),
-  operationTimeHours: numeric("operationTimeHours"),
-});
-
-export const siteActivityList1 = pgTable("siteActivityList1", {
-  id: serial("id").primaryKey(),
-});
-
-export const siteActivity1 = pgTable("siteActivity1", {
-  id: serial("id").primaryKey(),
-  siteActivityListId: integer("siteActivityListId").references(
-    () => siteActivityList1.id,
-  ),
-  name: varchar("name"),
-  description: varchar("description"),
-
-  contractors: varchar("contractors"),
-  engineers: varchar("engineers"),
-  visitors: varchar("visitors"),
-
-  startDate: timestamp("startDate", { mode: "date", withTimezone: true }),
-  endOfDate: timestamp("endOfDate", { mode: "date", withTimezone: true }),
-
-  numberOfWorkers: integer("numberOfWorkers"),
-  workersHoursPerDay: numeric("workerHoursPerDay"),
-  workersCostPerDay: numeric("workerCostPerDay"),
-  workersCostCurrency: varchar("workersCostCurrency"),
-
-  usedMaterialsListId: integer("usedMaterialsListId").references(
-    () => materialsList1.id,
-  ),
-  usedEquipmentListId: integer("usedEquipmentListId").references(
-    () => equipmentList1.id,
-  ),
-});
-
 export const siteReportDetails1 = pgTable("siteReportDetails1", {
   id: serial("id")
     .primaryKey()
     .references(() => siteReports1.id),
+  uuid: text("uuid")
+    .notNull()
+    .unique()
+    .references(() => siteReports1.uuid),
 
   ownerId: text("ownerId"), // .references(() => users1.id),
   supervisorId: text("supervisorId"), // .references(() => users1.id),
@@ -353,49 +314,114 @@ export const siteReportDetails1 = pgTable("siteReportDetails1", {
     withTimezone: true,
   }),
 
-  inventoryMaterialsListId: integer("inventoryMaterialsListId").references(
-    () => materialsList1.id,
-  ),
-  inventoryEquipmentListId: integer("inventoryEquipmentListId").references(
-    () => equipmentList1.id,
-  ),
-
-  siteActivityListId: integer("siteActivityListId").references(
-    () => siteActivityList1.id,
-  ),
-
-  contractors: varchar("contractors"), // deprecated
-  engineers: varchar("engineers"), // deprecated
-  visitors: varchar("visitors"), // deprecated
-
-  activity: varchar("activity"), // deprecated
-  workers: varchar("workers"), // deprecated
   numberOfWorkers: integer("numberOfWorkers"),
   workersHours: numeric("workersHours"), // per day
   workersCost: numeric("workersCost"), // per day
   workersCostCurrency: varchar("workersCostCurrency"),
-  materialsUsed: varchar("materialsUsed"), // deprecated
-  equipmentUsed: varchar("equipmentUsed"), // deprecated
-  materialsInventory: varchar("materialsInventory"), // deprecated
-  equipmentInventory: varchar("equipmentInventory"), // deprecated
-  usedMaterialsListId: integer("usedMaterialsListId").references(
-    () => materialsList1.id,
-  ), // deprecated
-  usedEquipmentListId: integer("usedEquipmentListId").references(
-    () => equipmentList1.id,
-  ), // deprecated
-
-  budget: varchar("budget"), // unused for now
-  spent: varchar("spent"), // unused for now
-  timeline: varchar("timeline"), // unused for now
-  completion: timestamp("completionDate", {
-    mode: "date",
-    withTimezone: true,
-  }).defaultNow(), // unused for now
 });
+
+
+export const materials1 = pgTable("materials1", {
+  id: serial("id").primaryKey(),
+  uuid: text("uuid")
+    .notNull()
+    .unique()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: varchar("name"),
+  quantity: integer("quantity"),
+  quantityUnit: varchar("quantityUnit"),
+
+  unitCost: numeric("unitCost"),
+  unitCostCurrency: varchar("unitCostCurrency"),
+  totalCost: numeric("totalCost"),
+  totalCostCurrency: varchar("totalCostCurrency"),
+
+  condition: varchar("condition"),
+});
+
+export const equipment1 = pgTable("equipments1", {
+  id: serial("id").primaryKey(),
+  uuid: text("uuid")
+    .notNull()
+    .unique()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: varchar("name"),
+  quantity: integer("quantity"),
+  cost: numeric("cost"),
+  costUnits: varchar("costUnits"),
+
+  condition: varchar("condition"),
+  ownership: varchar("ownership"),
+  operationTimeHours: numeric("operationTimeHours"),
+});
+
+export const siteActivity1 = pgTable("siteActivity1", {
+  id: serial("id").primaryKey(),
+  uuid: text("uuid")
+    .notNull()
+    .unique()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: varchar("name"),
+  description: varchar("description"),
+
+  contractors: varchar("contractors"),
+  engineers: varchar("engineers"),
+  visitors: varchar("visitors"),
+
+  startDate: timestamp("startDate", { mode: "date", withTimezone: true }),
+  endOfDate: timestamp("endOfDate", { mode: "date", withTimezone: true }),
+
+  numberOfWorkers: integer("numberOfWorkers"),
+  workersHoursPerDay: numeric("workerHoursPerDay"),
+  workersCostPerDay: numeric("workerCostPerDay"),
+  workersCostCurrency: varchar("workersCostCurrency"),
+});
+
+export const siteActivityMaterials1 = pgTable(
+  "siteActivityMaterials1",
+  {
+    siteActivityId: integer("siteActivityId").references(
+      () => siteActivity1.id,
+      { onDelete: "cascade" },
+    ),
+    materialId: integer("materialId").references(() => materials1.id, {
+      onDelete: "cascade",
+    }),
+  },
+  (t) => [primaryKey({ columns: [t.siteActivityId, t.materialId] })],
+);
+
+export const siteActivityEquipment1 = pgTable(
+  "siteActivityEquipment1",
+  {
+    siteActivityId: integer("siteActivityId").references(
+      () => siteActivity1.id,
+      { onDelete: "cascade" },
+    ),
+    equipmentId: integer("equipmentId").references(() => equipment1.id, {
+      onDelete: "cascade",
+    }),
+  },
+  (t) => [primaryKey({ columns: [t.siteActivityId, t.equipmentId] })],
+);
+
+export const siteReportActivity1 = pgTable(
+  "siteReportActivity1",
+  {
+    siteReportId: integer("siteReportId").references(() => siteReports1.id),
+    siteActivityId: integer("siteActivityId").references(
+      () => siteActivity1.id,
+    ),
+  },
+  (t) => [primaryKey({ columns: [t.siteReportId, t.siteActivityId] })],
+);
 
 export const siteReportSections1 = pgTable("siteReportSections1", {
   id: serial("id").primaryKey(),
+  uuid: text("uuid")
+    .notNull()
+    .unique()
+    .$defaultFn(() => crypto.randomUUID()),
   reportId: integer("reportId").references(() => siteReports1.id),
   title: varchar("title"),
   content: varchar("content"),
@@ -404,6 +430,10 @@ export const siteReportSections1 = pgTable("siteReportSections1", {
 
 export const feedback1 = pgTable("feedback1", {
   id: serial("id").primaryKey(),
+  uuid: text("uuid")
+    .notNull()
+    .unique()
+    .$defaultFn(() => crypto.randomUUID()),
   email: varchar("email"),
   message: varchar("message"),
 
@@ -414,10 +444,18 @@ export const feedback1 = pgTable("feedback1", {
 
 export const commentsSections1 = pgTable("commentsSections1", {
   id: serial("id").primaryKey(),
+  uuid: text("uuid")
+    .notNull()
+    .unique()
+    .$defaultFn(() => crypto.randomUUID()),
 });
 
 export const comments1 = pgTable("comments1", {
   id: serial("id").primaryKey(),
+  uuid: text("uuid")
+    .notNull()
+    .unique()
+    .$defaultFn(() => crypto.randomUUID()),
   commentsSectionId: integer("commentsSectionId").references(
     () => commentsSections1.id,
   ),

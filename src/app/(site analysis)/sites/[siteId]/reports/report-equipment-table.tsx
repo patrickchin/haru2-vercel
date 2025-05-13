@@ -196,15 +196,3 @@ export function UsedEquipmentTable({
 
   return <EquipmentTable equipment={equipment} isLoading={isLoading} />;
 }
-
-export function InventoryEquipmentTable({ report }: { report?: SiteReport }) {
-  const { data: equipment, isLoading } = useSWR(
-    `/api/report/${report?.id}/inventory-equipment`,
-    () =>
-      report?.id
-        ? Actions.listSiteReportInventoryEquipment(report.id)
-        : undefined,
-  );
-
-  return <EquipmentTable equipment={equipment} isLoading={isLoading} />;
-}

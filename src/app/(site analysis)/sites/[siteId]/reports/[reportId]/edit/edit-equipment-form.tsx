@@ -46,7 +46,7 @@ import { cn } from "@/lib/utils";
 const schema = z.object({
   equipment: z.array(
     createInsertSchema(equipment1)
-      .omit({ id: true, equipmentListId: true })
+      .omit({ id: true })
       .extend({
         quantity: z.coerce.number().nullable(),
       }),
@@ -359,34 +359,6 @@ export function EditUsedEquipmentForm({
       isLoading={isLoading}
       updateAction={(equipment) =>
         Actions.updateSiteActivityUsedEquipment(activityId, equipment)
-      }
-    />
-  );
-}
-
-export function EditInventoryEquipmentForm({
-  site,
-  reportId,
-}: {
-  site: SiteDetails;
-  reportId: number;
-}) {
-  const {
-    data: equipment,
-    mutate,
-    isLoading,
-  } = useSWR(`/api/report/${reportId}/inventory-equipment`, async () =>
-    Actions.listSiteReportInventoryEquipment(reportId),
-  );
-
-  return (
-    <EditEquipmentForm
-      site={site}
-      equipment={equipment}
-      mutate={mutate}
-      isLoading={isLoading}
-      updateAction={(equipment) =>
-        Actions.updateSiteReportInventoryEquipment(reportId, equipment)
       }
     />
   );
