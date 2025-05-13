@@ -29,7 +29,7 @@ import { SaveRevertForm } from "@/components/save-revert-form";
 import { LucideEdit } from "lucide-react";
 
 function EditSiteScheduleForm({ site }: { site: SiteDetails }) {
-  const editScheduleSchema = createInsertSchema(Schemas.siteDetails1).pick({
+  const editScheduleSchema = createInsertSchema(Schemas.sites1).pick({
     startDate: true,
     endDate: true,
     nextReportDate: true,

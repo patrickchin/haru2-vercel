@@ -9,9 +9,6 @@ import {
   SiteMaterialNew,
   SiteMemberRole,
   SiteReport,
-  SiteReportAll,
-  SiteReportDetails,
-  SiteReportDetailsNew,
   SiteReportNew,
   SiteReportSection,
   SiteReportSectionNew,
@@ -27,7 +24,6 @@ import {
   siteInvitations1,
   siteMembers1,
   siteReportActivity1,
-  siteReportDetails1,
   siteReports1,
   siteReportSections1,
   users1,
@@ -38,11 +34,6 @@ const SiteReportColumns = {
   reporter: {
     ...getTableColumns(users1),
   },
-};
-
-const SiteReportDetailsColumns = {
-  ...SiteReportColumns,
-  ...getTableColumns(siteReportDetails1),
 };
 
 export async function getReportRole({
@@ -94,11 +85,10 @@ export async function getSiteReport(reportId: number): Promise<SiteReport> {
 export async function getSiteReportDetails(
   reportId: number,
   includeUnpublished: boolean = false,
-): Promise<SiteReportAll> {
+): Promise<SiteReport> {
   return db
-    .select(SiteReportDetailsColumns)
+    .select(SiteReportColumns)
     .from(siteReports1)
-    .innerJoin(siteReportDetails1, eq(siteReportDetails1.id, siteReports1.id))
     .leftJoin(users1, eq(users1.id, siteReports1.reporterId))
     .where(
       and(
@@ -112,7 +102,7 @@ export async function getSiteReportDetails(
 
 export async function addSiteReport(
   siteReport: SiteReportNew,
-): Promise<SiteReportAll> {
+): Promise<SiteReport> {
   return db.transaction(async (tx) => {
     const fileGroup = await tx
       .insert(fileGroups1)
@@ -136,13 +126,7 @@ export async function addSiteReport(
       .returning()
       .then((r) => r[0]);
 
-    const details = await tx
-      .insert(siteReportDetails1)
-      .values({ id: report.id, uuid: report.uuid })
-      .returning()
-      .then((r) => r[0]);
-
-    return { ...report, ...details };
+    return report;
   });
 }
 
@@ -187,31 +171,26 @@ export async function updateSiteReport(
 
 export async function updateSiteReportDetails(
   reportId: number,
-  values: SiteReportDetailsNew,
-): Promise<SiteReportDetails> {
+  values: SiteReportNew,
+): Promise<SiteReport> {
   return db
-    .update(siteReportDetails1)
+    .update(siteReports1)
     .set(values)
-    .where(eq(siteReportDetails1.id, reportId))
+    .where(eq(siteReports1.id, reportId))
     .returning()
     .then((r) => r[0]);
 }
 
 export async function deleteSiteReport(
   reportId: number,
-): Promise<SiteReportAll> {
+): Promise<SiteReport> {
   return db.transaction(async (tx) => {
     const report = await tx
       .delete(siteReports1)
       .where(eq(siteReports1.id, reportId))
       .returning()
       .then((r) => r[0]);
-    const details = await tx
-      .delete(siteReportDetails1)
-      .where(eq(siteReportDetails1.id, reportId))
-      .returning()
-      .then((r) => r[0]);
-    return { ...report, ...details };
+    return report;
   });
 }
 
@@ -354,10 +333,9 @@ export async function getReportActivityRole({
     .select({ role: siteMembers1.role })
     .from(siteMembers1)
     .innerJoin(siteReports1, eq(siteReports1.siteId, siteMembers1.siteId))
-    .innerJoin(siteReportDetails1, eq(siteReportDetails1.id, siteReports1.id))
     .innerJoin(
       siteReportActivity1,
-      eq(siteReportActivity1.siteReportId, siteReportDetails1.id),
+      eq(siteReportActivity1.siteReportId, siteReports1.id),
     )
     .innerJoin(
       siteActivity1,

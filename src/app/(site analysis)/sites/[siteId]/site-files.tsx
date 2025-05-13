@@ -3,7 +3,7 @@
 import { ChangeEvent, ReactNode, useState } from "react";
 import useSWR from "swr";
 import Link from "next/link";
-import { HaruFile, SiteDetails, SiteMemberRole } from "@/lib/types";
+import { HaruFile, Site, SiteMemberRole } from "@/lib/types";
 import { uploadSiteFile } from "@/lib/utils/upload";
 import prettyBytes from "pretty-bytes";
 import * as Actions from "@/lib/actions";
@@ -96,7 +96,7 @@ export function SiteFiles({
   site,
   role,
 }: {
-  site: SiteDetails;
+  site: Site;
   role: SiteMemberRole;
 }) {
   const {

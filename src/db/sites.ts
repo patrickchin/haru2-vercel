@@ -14,8 +14,6 @@ import {
 import {
   Site,
   SiteAndExtra,
-  SiteDetails,
-  SiteDetailsNew,
   SiteMember,
   SiteMemberRole,
   SiteNew,
@@ -25,13 +23,11 @@ import {
   siteMembers1,
   siteReports1,
   users1,
-  siteDetails1,
   commentsSections1,
   siteInvitations1,
   fileGroups1,
   materials1,
   siteActivity1,
-  siteReportDetails1,
   siteActivityMaterials1,
   siteReportActivity1,
 } from "./schema";
@@ -103,15 +99,13 @@ export async function getSiteDetails({
   siteId,
 }: {
   siteId: number;
-}): Promise<SiteDetails> {
+}): Promise<Site> {
   return await db
     .select({
       ...getTableColumns(sites1),
-      ...getTableColumns(siteDetails1),
     })
     .from(sites1)
-    .innerJoin(siteDetails1, eq(siteDetails1.id, sites1.id))
-    .where(eq(siteDetails1.id, siteId))
+    .where(eq(sites1.id, siteId))
     .limit(1)
     .then((r) => r[0]);
 }
@@ -127,12 +121,12 @@ export async function updateSite(siteId: number, values: SiteNew) {
 
 export async function updateSiteDetails(
   siteId: number,
-  values: SiteDetailsNew,
+  values: SiteNew,
 ) {
   return await db
-    .update(siteDetails1)
+    .update(sites1)
     .set(values)
-    .where(eq(siteDetails1.id, siteId))
+    .where(eq(sites1.id, siteId))
     .returning()
     .then((r) => r[0]);
 }
@@ -161,7 +155,7 @@ export async function listSiteMembers(
 export async function addSite(
   ownerId: string,
   args: Pick<
-    SiteNew & SiteDetailsNew,
+    SiteNew,
     "title" | "type" | "countryCode" | "address" | "description"
   >,
 ): Promise<Site> {
@@ -172,6 +166,8 @@ export async function addSite(
         title: args.title,
         type: args.type,
         countryCode: args.countryCode,
+        address: args.address,
+        description: args.description,
       })
       .returning()
       .then((r) => r[0]);
@@ -183,13 +179,10 @@ export async function addSite(
       .returning()
       .then((r) => r[0]);
 
-    await tx.insert(siteDetails1).values({
-      id: site.id,
-      uuid: site.uuid,
-      address: args.address,
-      description: args.description,
-      commentsSectionId: commentsSection.id,
-    });
+    await tx
+      .update(sites1)
+      .set({ commentsSectionId: commentsSection.id })
+      .where(eq(sites1.id, site.id));
 
     await tx
       .insert(siteMembers1)
@@ -202,9 +195,9 @@ export async function addSite(
 export async function ensureSiteCommentsSection(siteId: number) {
   return db.transaction(async (tx) => {
     const { commentsSectionId } = await tx
-      .select({ commentsSectionId: siteDetails1.commentsSectionId })
-      .from(siteDetails1)
-      .where(eq(siteDetails1.id, siteId))
+      .select({ commentsSectionId: sites1.commentsSectionId })
+      .from(sites1)
+      .where(eq(sites1.id, siteId))
       .then((r) => r[0]);
 
     if (commentsSectionId) return commentsSectionId;
@@ -216,9 +209,9 @@ export async function ensureSiteCommentsSection(siteId: number) {
       .then((r) => r[0]);
 
     const { commentsSectionId: commentsSectionId2 } = await tx
-      .update(siteDetails1)
+      .update(sites1)
       .set({ commentsSectionId: commentsSection.id })
-      .where(eq(siteDetails1.id, siteId))
+      .where(eq(sites1.id, siteId))
       .returning()
       .then((r) => r[0]);
 
@@ -229,9 +222,9 @@ export async function ensureSiteCommentsSection(siteId: number) {
 export async function ensureSiteFilesSection(siteId: number) {
   return db.transaction(async (tx) => {
     const { fileGroupId } = await tx
-      .select({ fileGroupId: siteDetails1.fileGroupId })
-      .from(siteDetails1)
-      .where(eq(siteDetails1.id, siteId))
+      .select({ fileGroupId: sites1.fileGroupId })
+      .from(sites1)
+      .where(eq(sites1.id, siteId))
       .then((r) => r[0]);
 
     if (fileGroupId) return fileGroupId;
@@ -243,9 +236,9 @@ export async function ensureSiteFilesSection(siteId: number) {
       .then((r) => r[0]);
 
     const { fileGroupId: fileGroupId2 } = await tx
-      .update(siteDetails1)
+      .update(sites1)
       .set({ fileGroupId: fileGroup.id })
-      .where(eq(siteDetails1.id, siteId))
+      .where(eq(sites1.id, siteId))
       .returning()
       .then((r) => r[0]);
 
@@ -422,7 +415,7 @@ export async function listSiteActivityMaterials({
   return db
     .select({
       ...getTableColumns(materials1),
-      reportId: siteReportDetails1.id,
+      reportId: siteReports1.id,
       reportCreatedDate: siteReports1.createdAt,
       activityName: siteActivity1.name,
       activityEndDate: siteActivity1.endOfDate,
@@ -441,10 +434,9 @@ export async function listSiteActivityMaterials({
       eq(siteReportActivity1.siteActivityId, siteActivity1.id),
     )
     .innerJoin(
-      siteReportDetails1,
-      eq(siteReportDetails1.id, siteReportActivity1.siteReportId),
+      siteReports1,
+      eq(siteReports1.id, siteReportActivity1.siteReportId),
     )
-    .innerJoin(siteReports1, eq(siteReports1.id, siteReportDetails1.id))
     .where(
       and(
         eq(siteReports1.siteId, siteId),

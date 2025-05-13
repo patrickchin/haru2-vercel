@@ -1,6 +1,6 @@
 import * as Actions from "@/lib/actions";
 
-import { SiteReportAll } from "@/lib/types/site";
+import { SiteReport } from "@/lib/types/site";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -13,7 +13,7 @@ import {
 export async function ReportSiteDetails({
   report,
 }: {
-  report?: SiteReportAll;
+  report?: SiteReport;
 }) {
   const site =
     report && report.siteId

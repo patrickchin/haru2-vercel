@@ -25,7 +25,7 @@ export default async function Page({
 
   const props = { siteId, reportId, fileId };
   const [report, commentsSectionId] = await Promise.all([
-    Actions.getSiteReportDetails(reportId),
+    Actions.getSiteReport(reportId),
     Actions.getSiteReportCommentsSectionId(reportId),
   ]);
 

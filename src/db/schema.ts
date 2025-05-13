@@ -171,6 +171,8 @@ export const sites1 = pgTable("sites1", {
     withTimezone: true,
   }).defaultNow(),
 
+  // site details below
+
   address: varchar("address"),
   postcode: varchar("postcode"),
   description: varchar("description"),
@@ -264,6 +266,8 @@ export const siteReports1 = pgTable("siteReports1", {
     () => commentsSections1.id,
   ),
 
+  // report details below
+
   ownerId: text("ownerId"), // .references(() => users1.id),
   supervisorId: text("supervisorId"), // .references(() => users1.id),
   architectId: text("architectId"), // .references(() => users1.id),
@@ -296,7 +300,6 @@ export const siteReports1 = pgTable("siteReports1", {
   workersCost: numeric("workersCost"), // per day
   workersCostCurrency: varchar("workersCostCurrency"),
 });
-
 
 export const materials1 = pgTable("materials1", {
   id: serial("id").primaryKey(),

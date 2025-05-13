@@ -9,7 +9,6 @@ import { editSiteRoles, viewSiteRoles } from "@/lib/permissions";
 import { demoSiteIds, maxSiteInvitations } from "@/lib/constants";
 import {
   HaruFileNew,
-  SiteDetailsNew,
   SiteMemberRole,
   SiteNew,
 } from "@/lib/types";
@@ -63,11 +62,11 @@ export async function updateSite(siteId: number, data: SiteNew) {
 
 export async function updateSiteDetails(
   siteId: number,
-  details: SiteDetailsNew,
+  details: SiteNew,
 ) {
   const role = await getSiteMemberRole({ siteId });
   if (editSiteRoles.includes(role)) {
-    const updated = await db.updateSiteDetails(siteId, details);
+    const updated = await db.updateSite(siteId, details);
     db.addLogMessage({ message: "Site details updated", siteId });
     revalidatePath(`/sites/${siteId}`);
     return updated;

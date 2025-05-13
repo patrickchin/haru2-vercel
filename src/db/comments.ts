@@ -5,7 +5,6 @@ import { and, desc, eq, getTableColumns, or } from "drizzle-orm";
 import { HaruComment, HaruCommentNew } from "@/lib/types";
 import {
   comments1,
-  siteDetails1,
   siteMembers1,
   siteReports1,
   users1,
@@ -28,14 +27,10 @@ export async function getCommentsSectionRole({
   return db
     .select({ role: siteMembers1.role })
     .from(siteMembers1)
-    .leftJoin(siteDetails1, eq(siteDetails1.id, siteMembers1.siteId))
     .leftJoin(siteReports1, eq(siteReports1.siteId, siteMembers1.siteId))
     .where(
       and(
-        or(
-          eq(siteDetails1.commentsSectionId, commentsSectionId),
-          eq(siteReports1.commentsSectionId, commentsSectionId),
-        ),
+        eq(siteReports1.commentsSectionId, commentsSectionId),
         eq(siteMembers1.memberId, userId),
       ),
     )

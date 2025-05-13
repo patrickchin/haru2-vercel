@@ -12,7 +12,7 @@ import {
   Table,
 } from "@/components/ui/table";
 import * as Actions from "@/lib/actions";
-import { SiteDetails, SiteMemberRole, SiteMaterial } from "@/lib/types";
+import { Site, SiteMemberRole, SiteMaterial } from "@/lib/types";
 import { LucideArrowRight } from "lucide-react";
 import Link from "next/link";
 import useSWR from "swr";
@@ -21,7 +21,7 @@ export function SiteMaterials({
   site,
   role,
 }: {
-  site: SiteDetails;
+  site: Site;
   role: SiteMemberRole;
 }) {
   const { data: materials, isLoading } = useSWR<

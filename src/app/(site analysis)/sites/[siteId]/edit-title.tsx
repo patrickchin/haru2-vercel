@@ -4,7 +4,7 @@ import { z, ZodType } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createInsertSchema } from "drizzle-zod";
-import { SiteDetails, SiteNew } from "@/lib/types";
+import { Site, SiteNew } from "@/lib/types";
 import * as Actions from "@/lib/actions";
 import * as Schemas from "@/db/schema";
 
@@ -27,7 +27,7 @@ import { SaveRevertForm } from "@/components/save-revert-form";
 import { LucideEdit } from "lucide-react";
 import { useRef } from "react";
 
-function EditSiteTitleForm({ site }: { site: SiteDetails }) {
+function EditSiteTitleForm({ site }: { site: Site }) {
   const editTitleSchema = createInsertSchema(Schemas.sites1).pick({
     title: true,
   }) satisfies ZodType<SiteNew>;
@@ -74,7 +74,7 @@ function EditSiteTitleForm({ site }: { site: SiteDetails }) {
   );
 }
 
-export function EditSiteTitle({ site }: { site: SiteDetails }) {
+export function EditSiteTitle({ site }: { site: Site }) {
   return (
     <div className="grow flex gap-4">
       <h1 className="text-2xl font-semibold">

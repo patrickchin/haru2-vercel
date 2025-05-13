@@ -3,7 +3,7 @@
 import useSWR from "swr";
 import {
   allSiteMemberRoles,
-  SiteDetails,
+  Site,
   SiteInvitation,
   SiteMember,
   SiteMemberRole,
@@ -184,7 +184,7 @@ export default function SiteMembers({
   site,
   members: origMembers,
 }: {
-  site: SiteDetails;
+  site: Site;
   members: SiteMember[] | undefined;
 }) {
   const { data: members, mutate: mutateMembers } = useSWR<

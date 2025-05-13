@@ -23,7 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useRef } from "react";
 
 function EditSiteDescriptionForm({ site }: { site: SiteDetails }) {
-  const editDescriptionSchema = createInsertSchema(Schemas.siteDetails1).pick({
+  const editDescriptionSchema = createInsertSchema(Schemas.sites1).pick({
     description: true,
   }) satisfies ZodType<SiteDetailsNew>;
 

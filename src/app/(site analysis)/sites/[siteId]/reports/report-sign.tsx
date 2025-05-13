@@ -68,7 +68,7 @@ export async function ReportSignatureSection({
   if (!reportId) return null;
 
   const [report, role] = await Promise.all([
-    reportId ? Actions.getSiteReportDetails(reportId) : undefined,
+    reportId ? Actions.getSiteReport(reportId) : undefined,
     reportId ? Actions.getSiteMemberRole({ reportId }) : undefined,
   ]);
   return (

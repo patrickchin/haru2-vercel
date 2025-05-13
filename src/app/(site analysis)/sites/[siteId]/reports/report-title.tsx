@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { WarningBox } from "@/components/info-box";
-import { SiteDetails, SiteReport } from "@/lib/types/site";
+import { Site, SiteReport } from "@/lib/types/site";
 import {
   Popover,
   PopoverContent,
@@ -32,7 +32,7 @@ export async function ReportListPopup({
   site,
   report,
 }: {
-  site?: SiteDetails;
+  site?: Site;
   report?: SiteReport;
 }) {
   if (!site) return <div>invalid site</div>;
@@ -77,7 +77,7 @@ export async function ReportTitleBarDisplay({
   report,
 }: {
   session?: Session | null;
-  site?: SiteDetails;
+  site?: Site;
   report?: SiteReport;
 }) {
   const memberRole = site ? await Actions.getSiteRole(site.id) : "";
