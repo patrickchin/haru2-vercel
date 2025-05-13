@@ -24,7 +24,7 @@ export async function addSite(data: zSiteNewBothType) {
   if (!parsed.success) return;
   const site = await db.addSite(session.user.id, parsed.data);
   db.addLogMessage({ message: "Site added", siteId: site.id });
-  redirect(`/sites/${site.id}`);
+  redirect(`/sites/${site.id}?tab=members`);
 }
 
 export async function getMySites() {
