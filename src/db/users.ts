@@ -13,6 +13,15 @@ export async function getUserAccount(userId: string) {
     .then((r) => (r.length > 0 ? r[0] : null));
 }
 
+export async function getUserInternal(userId?: string) {
+  if (!userId) return null;
+  return await db
+    .select()
+    .from(users1)
+    .where(eq(users1.id, userId))
+    .then((r) => (r.length > 0 ? r[0] : null));
+}
+
 export async function getUser(userId: string, requestinUserId: string) {
   if (userId === requestinUserId) {
     return await db

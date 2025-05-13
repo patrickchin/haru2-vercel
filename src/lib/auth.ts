@@ -1,17 +1,15 @@
-import NextAuth, { type DefaultSession } from "next-auth";
+import NextAuth from "next-auth";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "@/db/_db";
 import authConfig from "./auth.config";
-import { getUser } from "./actions";
-import assert from "assert";
-import { acceptAllUserInvitations, addLogMessage } from "@/db";
+import { onUserSignUp } from "./actions";
+import { getUserInternal } from "@/db";
+import { AccountRole } from "./types";
 
 declare module "next-auth" {
-  interface Session {
-    user: {
-      id?: string;
-      role?: string;
-    } & DefaultSession["user"];
+  interface User {
+    id?: string;
+    role?: AccountRole;
   }
 }
 
@@ -20,30 +18,29 @@ export const { handlers, auth } = NextAuth({
   callbacks: {
     async jwt({ token, user, trigger }) {
       if (user) {
-        assert(user.id, "user.id is required");
+        token.id = user.id;
+        token.role = user.role;
+        token.picture = user.image;
+      }
 
-        if (trigger === "signUp") {
-          addLogMessage({
-            userId: user.id,
-            message: `User ${user.name} (${user.email}) signed up`,
-          });
-          await acceptAllUserInvitations({ userId: user.id });
-        }
+      if (trigger === "signUp") {
+        await onUserSignUp(user.id);
+      }
 
-        const dbUser = await getUser(user.id);
-        if (dbUser) {
-          token.sub = dbUser.id;
-          token.role = dbUser.role;
-          token.picture = dbUser.image;
-        } else {
-          console.error("User not found in database", user);
+      if (trigger) {
+        const dbuser = await getUserInternal(user.id);
+        if (dbuser) {
+          token.id = dbuser.id;
+          token.role = dbuser.role;
+          token.picture = dbuser.image;
         }
       }
+
       return token;
     },
     session({ session, token }) {
-      session.user.id = token.sub as string;
-      session.user.role = token.role as string;
+      session.user.id = token.id as string;
+      session.user.role = (token.role as AccountRole) || "guest";
       return session;
     },
   },
