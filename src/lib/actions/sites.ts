@@ -5,17 +5,11 @@ import { auth } from "@/lib/auth";
 import { zSiteNewBoth, zSiteNewBothType } from "@/lib/forms";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import {
-  editSiteRoles,
-  editMeetingRoles,
-  viewSiteRoles,
-  acceptMeetingRoles,
-} from "@/lib/permissions";
+import { editSiteRoles, viewSiteRoles } from "@/lib/permissions";
 import { demoSiteIds, maxSiteInvitations } from "@/lib/constants";
 import {
   HaruFileNew,
   SiteDetailsNew,
-  SiteMeetingNew,
   SiteMemberRole,
   SiteNew,
 } from "@/lib/types";
@@ -30,7 +24,7 @@ export async function addSite(data: zSiteNewBothType) {
   if (!parsed.success) return;
   const site = await db.addSite(session.user.id, parsed.data);
   db.addLogMessage({ message: "Site added", siteId: site.id });
-  redirect(`/sites/${site.id}/edit/choose`);
+  redirect(`/sites/${site.id}`);
 }
 
 export async function getMySites() {
@@ -169,93 +163,6 @@ export async function getSiteNotices(siteId: number) {
     return db.getSiteNotices(siteId);
 }
 
-export async function listSiteMeetings(siteId: number) {
-  if (viewSiteRoles.includes(await getSiteMemberRole({ siteId })))
-    return db.listSiteMeetings(siteId);
-}
-
-export async function getSiteMeeting(meetingId: number) {
-  if (viewSiteRoles.includes(await getSiteMemberRole({ meetingId })))
-    return db.getSiteMeeting(meetingId);
-}
-
-export async function addSiteMeeting(siteId: number, values: SiteMeetingNew) {
-  const session = await auth();
-  const role = await getSiteMemberRole({ siteId }, session);
-  if (editMeetingRoles.includes(role)) {
-    const meeting = await db.addSiteMeeting(
-      { siteId, userId: session?.user?.id },
-      values,
-    );
-    db.addLogMessage({
-      message: "Site meeting added",
-      siteId,
-      meetingId: meeting.id,
-    });
-    return meeting;
-  }
-}
-
-export async function updateSiteMeeting(
-  meetingId: number,
-  values: SiteMeetingNew,
-) {
-  // TODO only _we_ should be able to confirm a meeting with ourselves lol
-  const role = await getSiteMemberRole({ meetingId });
-  if (editMeetingRoles.includes(role) || acceptMeetingRoles.includes(role)) {
-    const meeting = await db.updateSiteMeeting(meetingId, values);
-    db.addLogMessage({
-      message: "Site meeting updated",
-      siteId: meeting.siteId,
-      meetingId,
-    });
-    return meeting;
-  }
-}
-
-export async function updateSiteMeetingReturnAllMeetings(
-  meetingId: number,
-  values: SiteMeetingNew,
-) {
-  // TODO split this into two functions ... or not
-  const role = await getSiteMemberRole({ meetingId });
-  if (editMeetingRoles.includes(role) || acceptMeetingRoles.includes(role)) {
-    const meeting = await db.updateSiteMeeting(meetingId, values);
-    db.addLogMessage({
-      message: "Site meeting updated 2",
-      siteId: meeting.siteId,
-      meetingId,
-    });
-    return meeting.siteId ? db.listSiteMeetings(meeting.siteId) : [meeting];
-  }
-}
-
-export async function deleteSiteMeeting(meetingId: number) {
-  const role = await getSiteMemberRole({ meetingId });
-  if (editSiteRoles.includes(role)) {
-    const meeting = await db.deleteSiteMeeting(meetingId);
-    db.addLogMessage({
-      message: "Site meeting deleted",
-      siteId: meeting.siteId,
-      meetingId,
-    });
-    return meeting;
-  }
-}
-
-export async function deleteSiteMeetingReturnAllMeetings(meetingId: number) {
-  const role = await getSiteMemberRole({ meetingId });
-  if (editSiteRoles.includes(role)) {
-    const meeting = await db.deleteSiteMeeting(meetingId);
-    db.addLogMessage({
-      message: "Site meeting deleted 2",
-      siteId: meeting.siteId,
-      meetingId,
-    });
-    return meeting.siteId ? db.listSiteMeetings(meeting.siteId) : [meeting];
-  }
-}
-
 async function addSiteMemberInvite({
   siteId,
   email,
@@ -372,7 +279,6 @@ export async function getSiteMemberRole(
     reportId,
     sectionId,
     activityId,
-    meetingId,
     invitationId,
     commentsSectionId,
   }: {
@@ -380,7 +286,6 @@ export async function getSiteMemberRole(
     reportId?: number;
     sectionId?: number;
     activityId?: number;
-    meetingId?: number;
     invitationId?: number;
     commentsSectionId?: number;
   },
@@ -400,8 +305,6 @@ export async function getSiteMemberRole(
       role = await db.getReportSectionRole({ sectionId, userId });
     } else if (activityId) {
       role = await db.getReportActivityRole({ activityId, userId });
-    } else if (meetingId) {
-      role = await db.getMeetingRole({ meetingId, userId });
     } else if (commentsSectionId) {
       role = await db.getCommentsSectionRole({ commentsSectionId, userId });
     } else if (invitationId) {

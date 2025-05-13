@@ -43,8 +43,6 @@ import {
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import {
-  acceptMeetingRoles,
-  editMeetingRoles,
   editReportRoles,
   editSiteRoles,
 } from "@/lib/permissions";
@@ -252,22 +250,6 @@ export default function SiteMembers({
                   {editSiteRoles.length == 1 ? "has" : "have"} permissions to
                   edit details about the site. e.g. title, description, contact
                   details.
-                </li>
-                <li>
-                  The{" "}
-                  <code className="inline-block bg-slate-100 text-inherit px-1">
-                    {editMeetingRoles.map(getRoleName).join(", ")}
-                  </code>{" "}
-                  {editMeetingRoles.length == 1 ? "has" : "have"} permissions to
-                  create, schedule, and delete meetings.
-                </li>
-                <li>
-                  And the{" "}
-                  <code className="inline-block bg-slate-100 text-inherit px-1">
-                    {acceptMeetingRoles.map(getRoleName).join(", ")}
-                  </code>{" "}
-                  {acceptMeetingRoles.length == 1 ? "has" : "have"} permissions
-                  to accept or decline meetings.
                 </li>
                 <li>
                   Finally the{" "}

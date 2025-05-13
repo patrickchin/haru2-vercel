@@ -27,7 +27,6 @@ import {
   siteActivity1,
   siteActivityList1,
   siteInvitations1,
-  siteMeetings1,
   siteMembers1,
   siteReportDetails1,
   siteReports1,
@@ -60,24 +59,6 @@ export async function getReportRole({
     .leftJoin(siteReports1, eq(siteReports1.siteId, siteMembers1.siteId))
     .where(
       and(eq(siteReports1.id, reportId), eq(siteMembers1.memberId, userId)),
-    )
-    .limit(1)
-    .then((r) => (r && r.length ? r[0].role : null));
-}
-
-export async function getMeetingRole({
-  meetingId,
-  userId,
-}: {
-  meetingId: number;
-  userId: string;
-}): Promise<SiteMemberRole> {
-  return db
-    .select({ role: siteMembers1.role })
-    .from(siteMembers1)
-    .leftJoin(siteMeetings1, eq(siteMeetings1.siteId, siteMembers1.siteId))
-    .where(
-      and(eq(siteMeetings1.id, meetingId), eq(siteMembers1.memberId, userId)),
     )
     .limit(1)
     .then((r) => (r && r.length ? r[0].role : null));

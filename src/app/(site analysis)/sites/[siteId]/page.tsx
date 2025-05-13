@@ -14,7 +14,6 @@ import {
   LucideMoveRight,
 } from "lucide-react";
 
-import SiteMeetings from "./site-meetings";
 import SiteMembers from "./site-members";
 import { EditSiteSchedule } from "./edit-schedule";
 import { EditKeySiteMembers } from "./edit-key-members";
@@ -221,7 +220,7 @@ async function SiteComplaints({
   const unresolved = complaints?.filter((c) => !c.resolved);
 
   return (
-    <Card id="meetings">
+    <Card>
       <CardHeader className="flex flex-row justify-between items-center py-0 space-y-0">
         <CardTitle className="py-6">
           Current Unresolved Issues at the Site
@@ -307,12 +306,6 @@ function SiteProgress({
         )}
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        {!site.startDate && (
-          <InfoBox>
-            After scheduling a meeting with us in the section below, we will
-            update the site supervision schedule dates here.
-          </InfoBox>
-        )}
         <Progress value={progressPct} />
         <Table>
           <TableBody>
@@ -408,9 +401,6 @@ export default async function Page(props: {
             <TabsTriggerSearchParams searchParamsKey="tab" value="description">
               Description
             </TabsTriggerSearchParams>
-            <TabsTriggerSearchParams searchParamsKey="tab" value="meetings">
-              Meetings
-            </TabsTriggerSearchParams>
             <TabsTriggerSearchParams searchParamsKey="tab" value="members">
               Members
             </TabsTriggerSearchParams>
@@ -440,10 +430,6 @@ export default async function Page(props: {
               <SiteDescription site={site} role={role} />
             </div>
           </div>
-        </TabsContent>
-
-        <TabsContent value="meetings" className="space-y-4">
-          <SiteMeetings site={site} role={role} />
         </TabsContent>
 
         <TabsContent value="members" className="space-y-4">
