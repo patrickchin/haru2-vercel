@@ -1,8 +1,8 @@
 import { SiteMemberRole } from "./types";
 
-export const demoSiteIds: number[] = [21];
+export const demoSiteIds: number[] = [1];
 
-export const maxSiteInvitations = 5;
+export const maxSiteInvitations = 10;
 
 export const supportedCountries = [
   "GH",
