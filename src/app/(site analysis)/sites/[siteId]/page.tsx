@@ -147,7 +147,7 @@ export default async function Page(props: {
               Files
             </TabsTriggerSearchParams>
             <div className="grow"></div>
-            <TabsTriggerSearchParams searchParamsKey="tab" value="materials">
+            <TabsTriggerSearchParams searchParamsKey="tab" value="materials" className="hidden">
               Materials
             </TabsTriggerSearchParams>
           </TabsList>
