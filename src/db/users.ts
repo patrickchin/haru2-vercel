@@ -14,6 +14,14 @@ export async function getUserAccount(userId: string) {
 }
 
 export async function getUser(userId: string, requestinUserId: string) {
+  if (userId === requestinUserId) {
+    return await db
+      .select()
+      .from(users1)
+      .where(eq(users1.id, userId))
+      .then((r) => (r.length > 0 ? r[0] : null));
+  }
+
   const requestUserSites = db
     .selectDistinct({ siteId: siteMembers1.siteId })
     .from(siteMembers1)
