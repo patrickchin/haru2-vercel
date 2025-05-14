@@ -265,6 +265,7 @@ export async function addSiteMember({
   return await db
     .insert(siteMembers1)
     .values({ siteId, memberId: userId, role })
+    .onConflictDoNothing() // TODO what about on conflict update role?
     .returning()
     .then((r) => r[0]);
 }

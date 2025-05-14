@@ -2,9 +2,14 @@ import NextAuth from "next-auth";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "@/db/_db";
 import authConfig from "./auth.config";
-import { onUserSignUp } from "./actions";
-import { addLogMessage, getUserInternal } from "@/db";
+import {
+  acceptAllUserInvitations,
+  addLogMessage,
+  addSiteMember,
+  getUserInternal,
+} from "@/db";
 import { AccountRole } from "./types";
+import { demoSiteIds } from "./constants";
 
 declare module "next-auth" {
   interface User {
@@ -23,22 +28,14 @@ export const { handlers, auth } = NextAuth({
         token.picture = user.image;
       }
 
-      if (trigger === "signUp") {
-        await onUserSignUp(user.id);
+      const dbuser = await getUserInternal(token.id as string);
+      if (!dbuser) {
+        console.error("User not found in database", token);
+        return null;
       }
-
-      if (trigger) {
-        const dbuser = await getUserInternal(user.id);
-        if (!dbuser) {
-          console.error("User not found in database");
-          addLogMessage(
-          { message: "User not found in database", userId: user.id });
-          return null;
-        }
-        token.id = dbuser.id;
-        token.role = dbuser.role;
-        token.picture = dbuser.image;
-      }
+      token.id = dbuser.id;
+      token.role = dbuser.role;
+      token.picture = dbuser.image;
 
       return token;
     },
@@ -46,6 +43,27 @@ export const { handlers, auth } = NextAuth({
       session.user.id = token.id as string;
       session.user.role = (token.role as AccountRole) || "guest";
       return session;
+    },
+  },
+  events: {
+    createUser: async ({ user }) => {
+      await addLogMessage({
+        userId: user.id,
+        message: `User ${user.name} (${user.email}) signed up`,
+      });
+      const userId = user.id;
+
+      if (!userId) {
+        console.error("User ID is not defined");
+        return;
+      }
+
+      await Promise.all(
+        demoSiteIds.map(async (siteId) => {
+          addSiteMember({ siteId, userId, role: "member" });
+        }),
+      );
+      await acceptAllUserInvitations({ userId });
     },
   },
   ...authConfig,
