@@ -101,7 +101,7 @@ export default async function Page(props: {
       : "description";
 
   return (
-    <DefaultLayout className="px-8">
+    <DefaultLayout>
       <div className="flex flex-col sm:flex-row gap-4 sm:items-center pb-3">
         <Button variant="secondary" asChild>
           <Link href={`/sites`} className="flex items-center gap-2">

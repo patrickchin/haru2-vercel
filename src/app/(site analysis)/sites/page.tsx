@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { DefaultLayout } from "@/components/page-layouts";
 import { SiteAndExtra } from "@/lib/types";
 import { Card } from "@/components/ui/card";
-import { InfoBox } from "@/components/info-box";
 
 function EmptySitesList() {
   return <p>You currently do not have any sites registered with us</p>;
@@ -17,7 +16,7 @@ async function SiteItem({ site }: { site?: SiteAndExtra }) {
   // const reports = await Actions.listSiteReports(site.id);
   if (!site) return <div>Invalid Site Project</div>;
   return (
-    <Card className="hover:bg-accent ">
+    <li className="hover:bg-accent border-b last:border-b-0">
       <Link
         href={`/sites/${site.id}`}
         className="flex flex-col sm:flex-row sm:items-center gap-3 p-4"
@@ -27,32 +26,38 @@ async function SiteItem({ site }: { site?: SiteAndExtra }) {
             <h2 className="whitespace-nowrap overflow-ellipsis font-semibold text-lg">
               Site {site.id}: {site.title}
             </h2>
-            {site.myRole ? (
+            <div>
+              {site.myRole ? (
+                <p>
+                  You are a{" "}
+                  <span className="capitalize font-semibold">
+                    {site.myRole}
+                  </span>{" "}
+                  of this site.
+                </p>
+              ) : (
+                <p>You are not a member of this site.</p>
+              )}
+            </div>
+          </div>
+          <div className="text-right">
+            {site.lastReportDate ? (
               <p>
-                You are a{" "}
-                <span className="capitalize font-semibold">{site.myRole}</span>{" "}
-                of this site.
+                Last report published{" "}
+                <span className="font-semibold">
+                  {site.lastReportDate.toDateString()}
+                </span>
               </p>
             ) : (
-              <p>You are not a member of this site.</p>
+              <p>No reports published</p>
             )}
           </div>
-          {site.lastReportDate ? (
-            <p>
-              Last report published{" "}
-              <span className="font-semibold">
-                {site.lastReportDate.toDateString()}
-              </span>
-            </p>
-          ) : (
-            <p>No reports published</p>
-          )}
         </div>
         <Button variant="secondary">
           <LucideArrowRight className="w-3.5" />
         </Button>
       </Link>
-    </Card>
+    </li>
   );
 }
 
@@ -64,15 +69,13 @@ async function SitesList() {
   }
 
   return (
-    <ol className="min-w-96 flex flex-col gap-4">
-      {sites?.map((site, i) => {
-        return (
-          <li key={i}>
-            <SiteItem site={site} />
-          </li>
-        );
-      })}
-    </ol>
+    <Card className="w-full p-0 overflow-hidden">
+      <ol>
+        {sites?.map((site, i) => {
+          return <SiteItem site={site} key={site.id} />;
+        })}
+      </ol>
+    </Card>
   );
 }
 

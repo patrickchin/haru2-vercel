@@ -30,7 +30,7 @@ export default async function Page({
   ]);
 
   return (
-    <DefaultLayout className="max-w-none relative p-0 pb-12">
+    <DefaultLayout className="max-w-none relative p-0 pb-12 [&>section]:px-3">
       <section className="w-full sticky top-0 bg-background z-30 py-4 border-b">
         <div className="w-full max-w-5xl mx-auto">
           {/* <Suspense fallback={<ReportTitleBarDisplay />}> */}
@@ -53,21 +53,21 @@ export default async function Page({
         </WarningBox>
       )}
 
-      <section className="w-full mx-auto">
+      <section className="w-full mx-auto px-3">
         <FileDisplayDialogCarousel {...props} />
       </section>
 
-      <section className="w-full max-w-5xl mx-auto flex flex-col gap-4">
+      <section className="w-full max-w-5xl mx-auto flex flex-col gap-4 px-3">
         <ReportSiteDetails report={report} />
         <ReportActivities report={report} />
         <ReportSections reportId={reportId} />
       </section>
 
-      <section className="w-full max-w-5xl mx-auto">
+      <section className="w-full max-w-5xl mx-auto px-3">
         <ReportSignatureSection {...props} />
       </section>
 
-      <section className="w-full max-w-5xl mx-auto">
+      <section className="w-full max-w-5xl mx-auto px-3">
         <Suspense fallback={<div>Loading comments ...</div>}>
           {commentsSectionId && (
             <CommentsSection

@@ -28,7 +28,7 @@ export default async function Page({
         </div>
       </section>
 
-      <div className="w-full max-w-5xl mx-auto mt-4">
+      <div className="w-full max-w-5xl mx-auto mt-4 px-3">
         <InfoBox className="text-base">
           <p>This project does not have any published reports yet.</p>
         </InfoBox>

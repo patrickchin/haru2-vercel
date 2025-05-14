@@ -56,7 +56,7 @@ export default async function Page({
   if (!report) notFound();
 
   return (
-    <DefaultLayout className="max-w-none relative pt-0">
+    <DefaultLayout className="max-w-none relative p-0">
       <div className="w-full sticky top-0 z-30 py-4 bg-background border-b shadow-md">
         <div className="max-w-5xl mx-auto">
           <EditReportHeader report={report} />
