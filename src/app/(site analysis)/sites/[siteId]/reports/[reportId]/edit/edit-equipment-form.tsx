@@ -3,7 +3,6 @@ import {
   useForm,
   useFieldArray,
   UseFormReturn,
-  FieldArrayWithId,
   UseFieldArrayRemove,
 } from "react-hook-form";
 import useSWR from "swr";
@@ -65,6 +64,11 @@ function EquipmentTableRow({
   const isRowDirty = dirtyEquipment
     ? Object.values(dirtyEquipment).every((value) => value === true)
     : false;
+
+  const quantity = form.watch(`equipment.${index}.quantity`);
+  const cost = form.watch(`equipment.${index}.cost`);
+  const costUnits = form.watch(`equipment.${index}.costUnits`);
+  const totalCost = (quantity ?? 0) * (cost ? parseFloat(cost) : 0);
 
   return (
     <TableRow className={isRowDirty ? "bg-yellow-50 dark:bg-stone-800" : ""}>
@@ -133,6 +137,11 @@ function EquipmentTableRow({
             </FormItem>
           )}
         />
+      </TableCell>
+      <TableCell>
+        <div className="text-right whitespace-nowrap">
+          {totalCost.toLocaleString()} {costUnits}
+        </div>
       </TableCell>
       <TableCell>
         <FormField
@@ -288,8 +297,11 @@ function EditEquipmentForm({
                 <TableHead className="text-center min-w-28 w-2/12">
                   Quantity
                 </TableHead>
-                <TableHead className="text-center min-w-40 w-3/12">
+                <TableHead className="text-center min-w-32 w-3/12">
                   Cost
+                </TableHead>
+                <TableHead className="text-center min-w-20 w-1/12">
+                  Total Cost
                 </TableHead>
                 <TableHead className="text-center min-w-28 w-2/12">
                   Ownership
