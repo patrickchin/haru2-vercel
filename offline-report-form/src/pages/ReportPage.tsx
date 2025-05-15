@@ -7,31 +7,32 @@ import {
   LucideMoveLeft,
   LucidePersonStanding,
 } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
 
 function ReportPageForm({
-  setCurrentPage,
   form,
   updateReport,
 }: {
-  setCurrentPage: (page: string) => void;
   form: any;
   updateReport: () => void;
 }) {
-  const { register, control, handleSubmit, setValue, getValues, reset } = form;
+  const { register } = form;
+  const navigate = useNavigate();
+  const { reportKey } = useParams<{ reportKey: string }>();
 
   return (
     <>
       <header className="font-bold text-xl flex items-center gap-4">
         <Button
           type="button"
-          onClick={() => setCurrentPage("reportList")}
+          onClick={() => navigate("/")}
           variant={"secondary"}
         >
           <LucideMoveLeft /> Reports List
         </Button>
         Harpa Pro Offline Report Form
       </header>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 grow">
         <Table>
           <TableBody>
             <TableRow>
@@ -74,14 +75,14 @@ function ReportPageForm({
         </Table>
         <Button
           type="button"
-          onClick={() => setCurrentPage("activities")}
+          onClick={() => navigate(`/report/${reportKey}/activities`)}
           variant="secondary"
         >
           Construction Activities <LucidePersonStanding />
         </Button>
         <Button
           type="button"
-          onClick={() => setCurrentPage("details")}
+          onClick={() => navigate(`/report/${reportKey}/details`)}
           variant="secondary"
         >
           Details <LucideEllipsis />

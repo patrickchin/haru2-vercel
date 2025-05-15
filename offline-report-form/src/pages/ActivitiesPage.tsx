@@ -3,17 +3,18 @@ import ActivitiesList from "@/components/ActivitiesList";
 import { LucideMoveLeft } from "lucide-react";
 import { useFieldArray } from "react-hook-form";
 import Footer from "@/components/Footer";
+import { useNavigate, useParams } from "react-router-dom";
 
 function ActivitiesPage({
-  setCurrentPage,
   form,
   updateReport,
 }: {
-  setCurrentPage: (page: string) => void;
   form: any;
   updateReport: () => void;
 }) {
-  const { register, control, handleSubmit, setValue, getValues, reset } = form;
+  const { register, control } = form;
+  const { reportKey } = useParams<{ reportKey: string }>();
+  const navigate = useNavigate();
 
   const {
     fields: activityFields,
@@ -29,14 +30,14 @@ function ActivitiesPage({
       <header className="font-bold text-xl flex items-center gap-4">
         <Button
           type="button"
-          onClick={() => setCurrentPage("report")}
+          onClick={() => navigate(`/report/${reportKey}`)}
           variant={"secondary"}
         >
           <LucideMoveLeft /> Back
         </Button>
         Construction Activities
       </header>
-      <div>
+      <div className="grow">
         <ActivitiesList
           register={register}
           control={control}

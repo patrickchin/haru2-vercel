@@ -2,31 +2,32 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { LucideMoveLeft } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
 
 function DetailsPage({
-  setCurrentPage,
   form,
   updateReport,
 }: {
-  setCurrentPage: (page: string) => void;
   form: any;
   updateReport: () => void;
 }) {
-  const { register, control, handleSubmit, setValue, getValues, reset } = form;
+  const { register } = form;
+  const { reportKey } = useParams<{ reportKey: string }>();
+  const navigate = useNavigate();
 
   return (
     <>
       <header className="font-bold text-xl flex items-center gap-4">
         <Button
           type="button"
-          onClick={() => setCurrentPage("report")}
+          onClick={() => navigate(`/report/${reportKey}`)}
           variant={"secondary"}
         >
           <LucideMoveLeft /> Back
         </Button>
         Extra Details
       </header>
-      <div>
+      <div className="grow">
         <Textarea
           {...register("extraDetails")}
           rows={5}

@@ -1,23 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { LucideX } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function ReportsListPage({
   allReports,
   newReport,
-  selectReport,
   deleteReport,
 }: {
   allReports: Record<string, any>;
   newReport: () => void;
-  selectReport: (key: string) => void;
   deleteReport: (key: string) => void;
 }) {
+  const navigate = useNavigate();
+
   return (
     <>
-      <header className="font-bold p-4 text-xl flex items-center">
+      <header className="font-bold text-xl flex items-center">
         Reports List
       </header>
-      <div className="p-4 flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
         <ol className="flex flex-col rounded border">
           {Object.values(allReports).length === 0 && (
             <li className="text-muted-foreground text-center text-sm p-4 py-20">
@@ -28,7 +29,7 @@ function ReportsListPage({
             <li
               key={report.key}
               onClick={() => {
-                selectReport(report.key);
+                navigate(`/report/${report.key}`);
               }}
               className="flex items-center justify-between p-4 border-b last:border-b-0 hover:bg-blue-100 cursor-pointer"
             >
