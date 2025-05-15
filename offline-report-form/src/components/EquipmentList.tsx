@@ -4,8 +4,8 @@ import {
   UseFieldArrayRemove,
   UseFormRegister,
 } from "react-hook-form";
-import { Button } from "./components/ui/button";
-import { Input } from "./components/ui/input";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import {
   Table,
   TableHead,
@@ -13,7 +13,7 @@ import {
   TableCell,
   TableBody,
   TableHeader,
-} from "./components/ui/table";
+} from "./ui/table";
 import { LucideX } from "lucide-react";
 
 export default function EquipmentList({

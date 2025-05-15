@@ -1,20 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import MaterialsList from "./MaterialsList";
-import ActivitiesList from "./ActivitiesList";
-import EquipmentList from "./EquipmentList";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Card } from "./components/ui/card";
-import {
-  LucideConstruction,
-  LucideCuboid,
-  LucideEllipsis,
-  LucideForklift,
-  LucidePersonStanding,
-} from "lucide-react";
+import { LucideConstruction } from "lucide-react";
+import ReportsListPage from "./pages/ReportsListPage";
+import ReportPage from "./pages/ReportPage";
+import MaterialsPage from "./pages/MaterialsPage";
+import EquipmentPage from "./pages/EquipmentPage";
+import ActivitiesPage from "./pages/ActivitiesPage";
+import ExtraDetailsPage from "./pages/ExtraDetailsPage";
+import { v1 as uuidv1 } from "uuid";
 
 export default function App() {
   const { register, control, handleSubmit, setValue, getValues, reset } =
@@ -51,21 +46,76 @@ export default function App() {
     console.log(data);
   };
 
-  const saveToLocalStorage = () => {
-    const formData = getValues();
-    localStorage.setItem("formData", JSON.stringify(formData));
+  const [savedReports, setSavedReports] = useState<string[]>([]);
+  const [selectedReport, setSelectedReport] = useState<string | null>(null);
+
+  // Helper to get all reports from localStorage
+  const getAllReports = () => {
+    const reports = localStorage.getItem("reports");
+    return reports ? JSON.parse(reports) : {};
   };
 
-  const loadFromLocalStorage = React.useCallback(() => {
-    const savedData = localStorage.getItem("formData")
-      ? JSON.parse(localStorage.getItem("formData") as string)
-      : null;
-    if (savedData) {
-      Object.keys(savedData).forEach((key) => {
-        setValue(key, savedData[key]);
-      });
+  // Helper to save all reports to localStorage
+  const saveAllReports = (reports: Record<string, any>) => {
+    localStorage.setItem("reports", JSON.stringify(reports));
+  };
+
+  const getAllReportTitles = () => {
+    const reports = getAllReports();
+    return Object.values(reports).map(
+      (r: any) => r.reportTitle || "Untitled Report",
+    );
+  };
+
+  const saveToLocalStorage = () => {
+    const formData = getValues();
+    let key = formData.reportKey;
+    if (!key) {
+      key = uuidv1();
+      formData.reportKey = key;
     }
-  }, [setValue]);
+    const title = formData.reportTitle?.trim();
+    if (!title) {
+      alert("Please enter a Report Title before saving.");
+      return;
+    }
+    const reports = getAllReports();
+    reports[key] = formData;
+    saveAllReports(reports);
+    setSavedReports(getAllReportTitles());
+    setSelectedReport(key);
+  };
+
+  const loadFromLocalStorage = React.useCallback(
+    (key?: string) => {
+      const reportKey = key || selectedReport;
+      if (!reportKey) {
+        alert("Select a report to load.");
+        return;
+      }
+      const reports = getAllReports();
+      const savedData = reports[reportKey] || null;
+      if (savedData) {
+        Object.keys(savedData).forEach((k) => {
+          setValue(k, savedData[k]);
+        });
+        setSelectedReport(reportKey);
+      }
+    },
+    [setValue, selectedReport],
+  );
+
+  const deleteReport = (key: string) => {
+    const reports = getAllReports();
+    delete reports[key];
+    saveAllReports(reports);
+    setSavedReports(getAllReportTitles());
+    if (selectedReport === key) setSelectedReport(null);
+  };
+
+  useEffect(() => {
+    setSavedReports(getAllReportTitles());
+  }, []);
 
   const resetForm = () => {
     reset({
@@ -76,6 +126,7 @@ export default function App() {
       extraDetails: "",
       reportDate: new Date().toISOString().split("T")[0],
     });
+    setSelectedReport(null);
   };
 
   const exportToFile = () => {
@@ -91,13 +142,9 @@ export default function App() {
     URL.revokeObjectURL(url);
   };
 
-  React.useEffect(() => {
-    loadFromLocalStorage();
-  }, [loadFromLocalStorage]);
-
   const getCurrentPage = () => {
     const params = new URLSearchParams(window.location.search);
-    return params.get("page") || "form";
+    return params.get("page") || "reports";
   };
 
   const setCurrentPage = (page: string) => {
@@ -127,15 +174,36 @@ export default function App() {
     setCurrentPageState(getCurrentPage());
   }, [window.location.search]);
 
-  const goToMaterialsList = () => setCurrentPage("materials");
-  const goToEquipmentList = () => setCurrentPage("equipment");
-  const goToActivitiesList = () => setCurrentPage("activities");
-  const goToExtraDetails = () => setCurrentPage("extraDetails");
-  const goBack = () => setCurrentPage("form");
+  const addNewReport = () => {
+    const key = uuidv1();
+    const baseTitle = "Untitled Report";
+    let title = baseTitle;
+    let counter = 1;
+    const existingTitles = getAllReportTitles();
+    while (existingTitles.includes(title)) {
+      title = `${baseTitle} ${++counter}`;
+    }
+    const newReport = {
+      reportKey: key,
+      reportTitle: title,
+      materials: [],
+      equipment: [],
+      activities: [],
+      extraDetails: "",
+      reportDate: new Date().toISOString().split("T")[0],
+    };
+    const reports = getAllReports();
+    reports[key] = newReport;
+    saveAllReports(reports);
+    setSavedReports(getAllReportTitles());
+    setSelectedReport(key);
+    reset(newReport);
+    setCurrentPage("report");
+  };
 
   return (
     <div className="bg-gradient-to-t from-sky-100 to-indigo-200 min-h-screen flex items-center justify-center">
-      <Button asChild variant="outline" size="lg" className="text-base">
+      <Button asChild variant="outline" size="lg" className="text-base hidden">
         <a
           href="https://www.harpapro.com/sites"
           target="_blank"
@@ -149,197 +217,57 @@ export default function App() {
         </a>
       </Button>
       <Card className="w-full max-w-2xl mx-auto min-h-96">
-        {currentPage === "form" ? (
-          <>
-            <header className="font-bold p-4 text-xl">
-              Harpa Pro Offline Report Form
-            </header>
-            <div>
-              <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="flex flex-col gap-4 p-4"
-              >
-                <Table>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell className="pr-4">
-                        <label htmlFor="reportTitle">Report Title</label>
-                      </TableCell>
-                      <TableCell>
-                        <Input
-                          type="text"
-                          id="reportTitle"
-                          {...register("reportTitle")}
-                        />
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="pr-4">
-                        <label htmlFor="reporterName">Reporter Name</label>
-                      </TableCell>
-                      <TableCell>
-                        <Input
-                          type="text"
-                          id="reporterName"
-                          {...register("reporterName")}
-                        />
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="pr-4">
-                        <label htmlFor="reportDate">Report Date</label>
-                      </TableCell>
-                      <TableCell>
-                        <Input
-                          type="date"
-                          id="reportDate"
-                          {...register("reportDate")}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-
-                <Button
-                  type="button"
-                  onClick={goToMaterialsList}
-                  variant="secondary"
-                >
-                  Materials Storage List <LucideCuboid />
-                </Button>
-
-                <Button
-                  type="button"
-                  onClick={goToEquipmentList}
-                  variant="secondary"
-                >
-                  Equipment Storage List <LucideForklift />
-                </Button>
-
-                <Button
-                  type="button"
-                  onClick={goToActivitiesList}
-                  variant="secondary"
-                >
-                  Construction Activities <LucidePersonStanding />
-                </Button>
-
-                <Button
-                  type="button"
-                  onClick={goToExtraDetails}
-                  variant="secondary"
-                >
-                  Extra Details <LucideEllipsis />
-                </Button>
-
-                <div className="flex flex-col md:flex-row gap-2 p-4 border rounded bg-muted">
-                  <Button
-                    type="button"
-                    onClick={saveToLocalStorage}
-                    variant="outline"
-                  >
-                    Save to Cache
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={loadFromLocalStorage}
-                    variant="outline"
-                  >
-                    Load from Cache
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={resetForm}
-                    variant="destructive"
-                  >
-                    Reset Form
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={exportToFile}
-                    variant="default"
-                  >
-                    Export to File
-                  </Button>
-                </div>
-              </form>
-            </div>
-          </>
+        {currentPage === "reports" ? (
+          <ReportsListPage
+            savedReports={savedReports}
+            loadFromLocalStorage={(title: string) => {
+              loadFromLocalStorage(title);
+              setCurrentPage("report");
+            }}
+            deleteReport={deleteReport}
+            addNewReport={addNewReport}
+          />
+        ) : currentPage === "report" ? (
+          <ReportPage
+            register={register}
+            handleSubmit={handleSubmit}
+            onSubmit={onSubmit}
+            saveToLocalStorage={saveToLocalStorage}
+            loadFromLocalStorage={loadFromLocalStorage}
+            resetForm={resetForm}
+            exportToFile={exportToFile}
+            setCurrentPage={setCurrentPage}
+          />
         ) : currentPage === "materials" ? (
-          <>
-            <header className="font-bold p-4 text-xl flex items-center">
-              <Button type="button" onClick={goBack} className="mr-4">
-                Back
-              </Button>
-              Materials Storage List
-            </header>
-            <div className="p-4">
-              <MaterialsList
-                register={register}
-                fields={materialFields}
-                remove={removeMaterial}
-                append={appendMaterial}
-              />
-            </div>
-          </>
+          <MaterialsPage
+            register={register}
+            materialFields={materialFields}
+            removeMaterial={removeMaterial}
+            appendMaterial={appendMaterial}
+            setCurrentPage={setCurrentPage}
+          />
         ) : currentPage === "equipment" ? (
-          <>
-            <header className="font-bold p-4 text-xl flex items-center">
-              <Button type="button" onClick={goBack} className="mr-4">
-                Back
-              </Button>
-              Equipment List
-            </header>
-            <div className="p-4">
-              <EquipmentList
-                register={register}
-                fields={equipmentFields}
-                remove={removeEquipment}
-                append={appendEquipment}
-              />
-            </div>
-          </>
+          <EquipmentPage
+            register={register}
+            equipmentFields={equipmentFields}
+            removeEquipment={removeEquipment}
+            appendEquipment={appendEquipment}
+            setCurrentPage={setCurrentPage}
+          />
         ) : currentPage === "activities" ? (
-          <>
-            <header className="font-bold p-4 text-xl flex items-center">
-              <Button type="button" onClick={goBack} className="mr-4">
-                Back
-              </Button>
-              Construction Activities
-            </header>
-            <div className="p-4">
-              <ActivitiesList
-                register={register}
-                control={control}
-                fields={activityFields}
-                remove={removeActivity}
-              />
-              <Button
-                type="button"
-                onClick={() => appendActivity({})}
-                variant="default"
-              >
-                Add Activity
-              </Button>
-            </div>
-          </>
+          <ActivitiesPage
+            register={register}
+            control={control}
+            activityFields={activityFields}
+            removeActivity={removeActivity}
+            appendActivity={appendActivity}
+            setCurrentPage={setCurrentPage}
+          />
         ) : (
-          <>
-            <header className="font-bold p-4 text-xl flex items-center">
-              <Button type="button" onClick={goBack} className="mr-4">
-                Back
-              </Button>
-              Extra Details
-            </header>
-            <div className="p-4">
-              <Textarea
-                {...register("extraDetails")}
-                rows={5}
-                cols={50}
-                className="mb-4 p-2 border rounded w-full"
-              />
-            </div>
-          </>
+          <ExtraDetailsPage
+            register={register}
+            setCurrentPage={setCurrentPage}
+          />
         )}
       </Card>
     </div>

@@ -5,8 +5,9 @@ import {
   UseFormRegister,
   FieldArrayWithId,
 } from "react-hook-form";
-import { Button } from "./components/ui/button";
-import { Input } from "./components/ui/input";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { LucideX } from "lucide-react";
 
 function Material({
   register,
@@ -124,18 +125,27 @@ function Activity({
 
   return (
     <div className="activity-box mb-4 p-4 border rounded">
-      <div className="flex items-center mb-2">
-        <label className="mr-2">Activity Name:</label>
+      <div className="flex items-center gap-2">
+        <label>Activity Name:</label>
         <Input
           type="text"
           {...register(`activities.${index}.activityName`)}
           className="flex-1 p-2 border rounded"
         />
-        <Button type="button" onClick={() => setIsCollapsed(!isCollapsed)} variant="default">
+        <Button
+          type="button"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          variant="default"
+        >
           {isCollapsed ? "Show Details" : "Hide Details"}
         </Button>
-        <Button type="button" onClick={() => remove(index)} variant="destructive" className="ml-2">
-          Remove Activity
+        <Button
+          type="button"
+          size={"icon"}
+          onClick={() => remove(index)}
+          variant="destructive"
+        >
+          <LucideX />
         </Button>
       </div>
       {!isCollapsed && (
