@@ -8,6 +8,7 @@ import {
   LucidePersonStanding,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import { BASE_PATH } from "../App";
 
 function ReportPageForm({
   form,
@@ -25,7 +26,7 @@ function ReportPageForm({
       <header className="font-bold text-xl flex items-center gap-4">
         <Button
           type="button"
-          onClick={() => navigate("/")}
+          onClick={() => navigate(`/${BASE_PATH}/`)}
           variant={"secondary"}
         >
           <LucideMoveLeft /> Reports List
@@ -75,14 +76,14 @@ function ReportPageForm({
         </Table>
         <Button
           type="button"
-          onClick={() => navigate(`/report/${reportKey}/activities`)}
+          onClick={() => navigate(`/${BASE_PATH}/report/${reportKey}/activities`)}
           variant="secondary"
         >
           Construction Activities <LucidePersonStanding />
         </Button>
         <Button
           type="button"
-          onClick={() => navigate(`/report/${reportKey}/details`)}
+          onClick={() => navigate(`/${BASE_PATH}/report/${reportKey}/details`)}
           variant="secondary"
         >
           Details <LucideEllipsis />

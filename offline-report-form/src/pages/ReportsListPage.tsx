@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { LucideX } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { BASE_PATH } from "../App";
 
 function ReportsListPage({
   allReports,
@@ -29,7 +30,7 @@ function ReportsListPage({
             <li
               key={report.key}
               onClick={() => {
-                navigate(`/report/${report.key}`);
+                navigate(`/${BASE_PATH}/report/${report.key}`);
               }}
               className="flex items-center justify-between p-4 border-b last:border-b-0 hover:bg-blue-100 cursor-pointer"
             >

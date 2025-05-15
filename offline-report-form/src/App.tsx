@@ -16,6 +16,8 @@ import {
   useParams,
 } from "react-router-dom";
 
+export const BASE_PATH = "offline.html";
+
 // Helper component to wrap form logic and routing
 function AppRoutes({
   allReports,
@@ -38,7 +40,7 @@ function AppRoutes({
   return (
     <Routes>
       <Route
-        path="/"
+        path={`/${BASE_PATH}/`}
         element={
           <ReportsListPage
             allReports={allReports}
@@ -48,19 +50,19 @@ function AppRoutes({
         }
       />
       <Route
-        path="/report/:reportKey"
+        path={`/${BASE_PATH}/report/:reportKey`}
         element={
           <ReportPageForm form={form} updateReport={updateCurrentReport} />
         }
       />
       <Route
-        path="/report/:reportKey/activities"
+        path={`/${BASE_PATH}/report/:reportKey/activities`}
         element={
           <ActivitiesPage form={form} updateReport={updateCurrentReport} />
         }
       />
       <Route
-        path="/report/:reportKey/details"
+        path={`/${BASE_PATH}/report/:reportKey/details`}
         element={<DetailsPage form={form} updateReport={updateCurrentReport} />}
       />
     </Routes>
@@ -91,7 +93,7 @@ export default function App() {
     form.reset({ ...newReport });
     // Navigate to new report page
     window.location.hash = ""; // fallback for navigation
-    window.location.pathname = `/report/${key}`;
+    window.location.pathname = `/${BASE_PATH}/report/${key}`;
   };
 
   const updateCurrentReport = () => {
@@ -115,7 +117,7 @@ export default function App() {
     saveReportsLocalStorage(updatedReports);
     // If current report is deleted, go to list
     if (window.location.pathname.includes(key)) {
-      window.location.pathname = "/";
+      window.location.pathname = `/${BASE_PATH}/`;
     }
   };
 

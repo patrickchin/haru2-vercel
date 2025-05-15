@@ -4,6 +4,7 @@ import { LucideMoveLeft } from "lucide-react";
 import { useFieldArray } from "react-hook-form";
 import Footer from "@/components/Footer";
 import { useNavigate, useParams } from "react-router-dom";
+import { BASE_PATH } from "../App";
 
 function ActivitiesPage({
   form,
@@ -30,7 +31,7 @@ function ActivitiesPage({
       <header className="font-bold text-xl flex items-center gap-4">
         <Button
           type="button"
-          onClick={() => navigate(`/report/${reportKey}`)}
+          onClick={() => navigate(`/${BASE_PATH}/report/${reportKey}`)}
           variant={"secondary"}
         >
           <LucideMoveLeft /> Back
