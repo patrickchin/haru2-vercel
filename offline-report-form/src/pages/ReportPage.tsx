@@ -31,7 +31,7 @@ function ReportPageForm({
         >
           <LucideMoveLeft /> Reports List
         </Button>
-        Harpa Pro Offline Report Form
+        Offline Report Form
       </header>
       <div className="flex flex-col gap-4 grow">
         <Table>
