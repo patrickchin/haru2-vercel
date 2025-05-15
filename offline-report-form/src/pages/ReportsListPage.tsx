@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { LucideX, LucideMoveLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { BASE_PATH } from "../App";
 
 function ReportsListPage({
@@ -12,8 +11,6 @@ function ReportsListPage({
   newReport: () => void;
   deleteReport: (key: string) => void;
 }) {
-  const navigate = useNavigate();
-
   return (
     <>
       <header className="font-bold text-xl flex flex-col gap-4">
@@ -39,7 +36,12 @@ function ReportsListPage({
             <li
               key={report.key}
               onClick={() => {
-                navigate(`/${BASE_PATH}/report/${report.key}`);
+                window.history.pushState(
+                  {},
+                  "",
+                  `/${BASE_PATH}/?reportKey=${report.key}`
+                );
+                window.dispatchEvent(new PopStateEvent("popstate"));
               }}
               className="flex items-center justify-between p-4 border-b last:border-b-0 hover:bg-blue-100 cursor-pointer"
             >

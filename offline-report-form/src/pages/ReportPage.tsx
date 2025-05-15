@@ -7,8 +7,12 @@ import {
   LucideMoveLeft,
   LucidePersonStanding,
 } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
 import { BASE_PATH } from "../App";
+
+// Helper to extract reportKey from search params
+function getReportKeyFromSearch() {
+  return new URLSearchParams(window.location.search).get("reportKey") || "";
+}
 
 function ReportPageForm({
   form,
@@ -18,15 +22,17 @@ function ReportPageForm({
   updateReport: () => void;
 }) {
   const { register } = form;
-  const navigate = useNavigate();
-  const { reportKey } = useParams<{ reportKey: string }>();
+  const reportKey = getReportKeyFromSearch();
 
   return (
     <>
       <header className="font-bold text-xl flex items-center gap-4">
         <Button
           type="button"
-          onClick={() => navigate(`/${BASE_PATH}/`)}
+          onClick={() => {
+            window.history.pushState({}, "", `/${BASE_PATH}/`);
+            window.dispatchEvent(new PopStateEvent("popstate"));
+          }}
           variant={"secondary"}
         >
           <LucideMoveLeft /> Reports List
@@ -76,14 +82,28 @@ function ReportPageForm({
         </Table>
         <Button
           type="button"
-          onClick={() => navigate(`/${BASE_PATH}/report/${reportKey}/activities`)}
+          onClick={() => {
+            window.history.pushState(
+              {},
+              "",
+              `/${BASE_PATH}/?reportKey=${reportKey}&page=activities`
+            );
+            window.dispatchEvent(new PopStateEvent("popstate"));
+          }}
           variant="secondary"
         >
           Construction Activities <LucidePersonStanding />
         </Button>
         <Button
           type="button"
-          onClick={() => navigate(`/${BASE_PATH}/report/${reportKey}/details`)}
+          onClick={() => {
+            window.history.pushState(
+              {},
+              "",
+              `/${BASE_PATH}/?reportKey=${reportKey}&page=details`
+            );
+            window.dispatchEvent(new PopStateEvent("popstate"));
+          }}
           variant="secondary"
         >
           Details <LucideEllipsis />

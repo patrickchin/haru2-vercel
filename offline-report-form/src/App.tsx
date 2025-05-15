@@ -9,63 +9,78 @@ import ReportsListPage from "./pages/ReportsListPage";
 import ReportPageForm from "./pages/ReportPage";
 import ActivitiesPage from "./pages/ActivitiesPage";
 import DetailsPage from "./pages/DetailsPage";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useParams,
-} from "react-router-dom";
 
 export const BASE_PATH = "offline.html";
 
-// Helper component to wrap form logic and routing
-function AppRoutes({
+// Helper to extract search params
+function getSearchParams() {
+  return new URLSearchParams(window.location.search);
+}
+function getReportKeyFromSearch() {
+  return getSearchParams().get("reportKey") || "";
+}
+function getPageFromSearch() {
+  return getSearchParams().get("page") || "";
+}
+
+// Manual routing component using search params
+function ManualRoutes({
   allReports,
   form,
   newReport,
   deleteReport,
   updateCurrentReport,
 }: any) {
-  const { reportKey } = useParams<{ reportKey?: string }>();
+  const [search, setSearch] = useState(window.location.search);
 
-  // Reset form when selected report changes
   useEffect(() => {
+    const onPopState = () => setSearch(window.location.search);
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  useEffect(() => {
+    // Reset form when selected report changes
+    const reportKey = getReportKeyFromSearch();
     if (reportKey && allReports && allReports[reportKey]) {
       form.reset({ ...allReports[reportKey] });
     } else {
       form.reset();
     }
-  }, [reportKey, allReports]);
+    // eslint-disable-next-line
+  }, [search, allReports]);
 
+  const reportKey = getReportKeyFromSearch();
+  const page = getPageFromSearch();
+
+  // Routing logic
+  if (!reportKey) {
+    return (
+      <ReportsListPage
+        allReports={allReports}
+        newReport={newReport}
+        deleteReport={deleteReport}
+      />
+    );
+  }
+  if (reportKey && !page) {
+    return (
+      <ReportPageForm form={form} updateReport={updateCurrentReport} />
+    );
+  }
+  if (reportKey && page === "activities") {
+    return (
+      <ActivitiesPage form={form} updateReport={updateCurrentReport} />
+    );
+  }
+  if (reportKey && page === "details") {
+    return (
+      <DetailsPage form={form} updateReport={updateCurrentReport} />
+    );
+  }
+  // fallback
   return (
-    <Routes>
-      <Route
-        path={`/${BASE_PATH}/`}
-        element={
-          <ReportsListPage
-            allReports={allReports}
-            newReport={newReport}
-            deleteReport={deleteReport}
-          />
-        }
-      />
-      <Route
-        path={`/${BASE_PATH}/report/:reportKey`}
-        element={
-          <ReportPageForm form={form} updateReport={updateCurrentReport} />
-        }
-      />
-      <Route
-        path={`/${BASE_PATH}/report/:reportKey/activities`}
-        element={
-          <ActivitiesPage form={form} updateReport={updateCurrentReport} />
-        }
-      />
-      <Route
-        path={`/${BASE_PATH}/report/:reportKey/details`}
-        element={<DetailsPage form={form} updateReport={updateCurrentReport} />}
-      />
-    </Routes>
+    <div className="p-4">Page not found</div>
   );
 }
 
@@ -91,15 +106,15 @@ export default function App() {
     setAllReports(updatedReports);
     saveReportsLocalStorage(updatedReports);
     form.reset({ ...newReport });
-    // Navigate to new report page
-    window.location.hash = ""; // fallback for navigation
-    window.location.pathname = `/${BASE_PATH}/report/${key}`;
+    // Navigate to new report page using search params
+    window.location.hash = "";
+    window.history.pushState({}, "", `/${BASE_PATH}/?reportKey=${key}`);
+    window.dispatchEvent(new PopStateEvent("popstate"));
   };
 
   const updateCurrentReport = () => {
-    // Get reportKey from URL
-    const match = window.location.pathname.match(/\/report\/([^/]+)/);
-    const reportKey = match ? match[1] : null;
+    // Get reportKey from search params
+    const reportKey = getReportKeyFromSearch();
     if (!reportKey || !allReports) return;
     const updatedReports = {
       ...allReports,
@@ -116,8 +131,10 @@ export default function App() {
     setAllReports(updatedReports);
     saveReportsLocalStorage(updatedReports);
     // If current report is deleted, go to list
-    if (window.location.pathname.includes(key)) {
-      window.location.pathname = `/${BASE_PATH}/`;
+    const reportKey = getReportKeyFromSearch();
+    if (reportKey === key) {
+      window.history.pushState({}, "", `/${BASE_PATH}/`);
+      window.dispatchEvent(new PopStateEvent("popstate"));
     }
   };
 
@@ -132,19 +149,17 @@ export default function App() {
   }
 
   return (
-    <Router>
-      <div className="bg-gradient-to-t from-sky-100 to-indigo-200 min-h-screen flex justify-center p-2">
-        <div className="w-full max-w-2xl mx-auto p-3 flex flex-col gap-4 bg-background rounded-md">
-          <AppRoutes
-            allReports={allReports}
-            setAllReports={setAllReports}
-            form={form}
-            newReport={newReport}
-            deleteReport={deleteReport}
-            updateCurrentReport={updateCurrentReport}
-          />
-        </div>
+    <div className="bg-gradient-to-t from-sky-100 to-indigo-200 min-h-screen flex justify-center p-2">
+      <div className="w-full max-w-2xl mx-auto p-3 flex flex-col gap-4 bg-background rounded-md">
+        <ManualRoutes
+          allReports={allReports}
+          setAllReports={setAllReports}
+          form={form}
+          newReport={newReport}
+          deleteReport={deleteReport}
+          updateCurrentReport={updateCurrentReport}
+        />
       </div>
-    </Router>
+    </div>
   );
 }

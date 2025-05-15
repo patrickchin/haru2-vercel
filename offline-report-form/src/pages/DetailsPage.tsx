@@ -2,8 +2,12 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { LucideMoveLeft } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
 import { BASE_PATH } from "../App";
+
+// Helper to extract reportKey from search params
+function getReportKeyFromSearch() {
+  return new URLSearchParams(window.location.search).get("reportKey") || "";
+}
 
 function DetailsPage({
   form,
@@ -13,15 +17,17 @@ function DetailsPage({
   updateReport: () => void;
 }) {
   const { register } = form;
-  const { reportKey } = useParams<{ reportKey: string }>();
-  const navigate = useNavigate();
+  const reportKey = getReportKeyFromSearch();
 
   return (
     <>
       <header className="font-bold text-xl flex items-center gap-4">
         <Button
           type="button"
-          onClick={() => navigate(`/${BASE_PATH}/report/${reportKey}`)}
+          onClick={() => {
+            window.history.pushState({}, "", `/${BASE_PATH}/?reportKey=${reportKey}`);
+            window.dispatchEvent(new PopStateEvent("popstate"));
+          }}
           variant={"secondary"}
         >
           <LucideMoveLeft /> Back

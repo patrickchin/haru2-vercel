@@ -3,8 +3,12 @@ import ActivitiesList from "@/components/ActivitiesList";
 import { LucideMoveLeft } from "lucide-react";
 import { useFieldArray } from "react-hook-form";
 import Footer from "@/components/Footer";
-import { useNavigate, useParams } from "react-router-dom";
 import { BASE_PATH } from "../App";
+
+// Helper to extract reportKey from search params
+function getReportKeyFromSearch() {
+  return new URLSearchParams(window.location.search).get("reportKey") || "";
+}
 
 function ActivitiesPage({
   form,
@@ -14,8 +18,7 @@ function ActivitiesPage({
   updateReport: () => void;
 }) {
   const { register, control } = form;
-  const { reportKey } = useParams<{ reportKey: string }>();
-  const navigate = useNavigate();
+  const reportKey = getReportKeyFromSearch();
 
   const {
     fields: activityFields,
@@ -31,7 +34,10 @@ function ActivitiesPage({
       <header className="font-bold text-xl flex items-center gap-4">
         <Button
           type="button"
-          onClick={() => navigate(`/${BASE_PATH}/report/${reportKey}`)}
+          onClick={() => {
+            window.history.pushState({}, "", `/${BASE_PATH}/?reportKey=${reportKey}`);
+            window.dispatchEvent(new PopStateEvent("popstate"));
+          }}
           variant={"secondary"}
         >
           <LucideMoveLeft /> Back
