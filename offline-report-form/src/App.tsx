@@ -1,272 +1,160 @@
-import React, { useState, useEffect } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
 import { Card } from "./components/ui/card";
-import { LucideConstruction } from "lucide-react";
 import ReportsListPage from "./pages/ReportsListPage";
-import ReportPage from "./pages/ReportPage";
-import MaterialsPage from "./pages/MaterialsPage";
-import EquipmentPage from "./pages/EquipmentPage";
+import ReportPageForm from "./pages/ReportPage";
+import {
+  loadReportsLocalStorage,
+  saveReportsLocalStorage,
+} from "./lib/storage";
+import { useForm } from "react-hook-form";
 import ActivitiesPage from "./pages/ActivitiesPage";
-import ExtraDetailsPage from "./pages/ExtraDetailsPage";
+import DetailsPage from "./pages/DetailsPage";
 import { v1 as uuidv1 } from "uuid";
 
-export default function App() {
-  const { register, control, handleSubmit, setValue, getValues, reset } =
-    useForm();
-
-  const {
-    fields: materialFields,
-    append: appendMaterial,
-    remove: removeMaterial,
-  } = useFieldArray({
-    control,
-    name: "materials",
-  });
-
-  const {
-    fields: equipmentFields,
-    append: appendEquipment,
-    remove: removeEquipment,
-  } = useFieldArray({
-    control,
-    name: "equipment",
-  });
-
-  const {
-    fields: activityFields,
-    append: appendActivity,
-    remove: removeActivity,
-  } = useFieldArray({
-    control,
-    name: "activities",
-  });
-
-  const onSubmit = (data: any) => {
-    console.log(data);
+function getParams() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    page: params.get("page") || "reportList",
+    report: params.get("report") || null,
   };
+}
 
-  const [savedReports, setSavedReports] = useState<string[]>([]);
-  const [selectedReport, setSelectedReport] = useState<string | null>(null);
-
-  // Helper to get all reports from localStorage
-  const getAllReports = () => {
-    const reports = localStorage.getItem("reports");
-    return reports ? JSON.parse(reports) : {};
-  };
-
-  // Helper to save all reports to localStorage
-  const saveAllReports = (reports: Record<string, any>) => {
-    localStorage.setItem("reports", JSON.stringify(reports));
-  };
-
-  const getAllReportTitles = () => {
-    const reports = getAllReports();
-    return Object.values(reports).map(
-      (r: any) => r.reportTitle || "Untitled Report",
-    );
-  };
-
-  const saveToLocalStorage = () => {
-    const formData = getValues();
-    let key = formData.reportKey;
-    if (!key) {
-      key = uuidv1();
-      formData.reportKey = key;
-    }
-    const title = formData.reportTitle?.trim();
-    if (!title) {
-      alert("Please enter a Report Title before saving.");
-      return;
-    }
-    const reports = getAllReports();
-    reports[key] = formData;
-    saveAllReports(reports);
-    setSavedReports(getAllReportTitles());
-    setSelectedReport(key);
-  };
-
-  const loadFromLocalStorage = React.useCallback(
-    (key?: string) => {
-      const reportKey = key || selectedReport;
-      if (!reportKey) {
-        alert("Select a report to load.");
-        return;
-      }
-      const reports = getAllReports();
-      const savedData = reports[reportKey] || null;
-      if (savedData) {
-        Object.keys(savedData).forEach((k) => {
-          setValue(k, savedData[k]);
-        });
-        setSelectedReport(reportKey);
-      }
-    },
-    [setValue, selectedReport],
+function setParams(
+  { page, report }: { page?: string; report?: string | null },
+  setParamsStateFn?: (params: any) => void,
+) {
+  const params = new URLSearchParams(window.location.search);
+  if (page) params.set("page", page);
+  if (report) params.set("report", report);
+  else params.delete("report");
+  window.history.pushState(
+    {},
+    "",
+    `${window.location.pathname}?${params.toString()}`,
   );
+  // Immediately update state to reflect new params
+  if (setParamsStateFn) setParamsStateFn(getParams());
+}
 
-  const deleteReport = (key: string) => {
-    const reports = getAllReports();
-    delete reports[key];
-    saveAllReports(reports);
-    setSavedReports(getAllReportTitles());
-    if (selectedReport === key) setSelectedReport(null);
-  };
+export default function App() {
+  const form = useForm();
+  const [allReports, setAllReports] = useState<any | null>(null);
+  const [params, setParamsState] = useState(getParams());
 
+  // Sync state with URL params
   useEffect(() => {
-    setSavedReports(getAllReportTitles());
+    const sync = () => setParamsState(getParams());
+    window.addEventListener("popstate", sync);
+    return () => window.removeEventListener("popstate", sync);
   }, []);
 
-  const resetForm = () => {
-    reset({
-      reportTitle: "",
-      materials: [],
-      equipment: [],
-      activities: [],
-      extraDetails: "",
-      reportDate: new Date().toISOString().split("T")[0],
-    });
-    setSelectedReport(null);
-  };
-
-  const exportToFile = () => {
-    const formData = getValues();
-    const blob = new Blob([JSON.stringify(formData, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "harpapro-report.txt";
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const getCurrentPage = () => {
-    const params = new URLSearchParams(window.location.search);
-    return params.get("page") || "reports";
-  };
-
-  const setCurrentPage = (page: string) => {
-    const params = new URLSearchParams(window.location.search);
-    params.set("page", page);
-    window.history.pushState(
-      {},
-      "",
-      `${window.location.pathname}?${params.toString()}`,
-    );
-    setCurrentPageState(page);
-  };
-
-  const [currentPage, setCurrentPageState] = useState(getCurrentPage());
-
+  // Load reports on mount
   useEffect(() => {
-    const handlePopState = () => {
-      setCurrentPageState(getCurrentPage());
-    };
-    window.addEventListener("popstate", handlePopState);
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
+    setAllReports(loadReportsLocalStorage());
   }, []);
 
+  // Reset form when selected report changes
   useEffect(() => {
-    setCurrentPageState(getCurrentPage());
-  }, [window.location.search]);
-
-  const addNewReport = () => {
-    const key = uuidv1();
-    const baseTitle = "Untitled Report";
-    let title = baseTitle;
-    let counter = 1;
-    const existingTitles = getAllReportTitles();
-    while (existingTitles.includes(title)) {
-      title = `${baseTitle} ${++counter}`;
+    if (params.report && allReports && allReports[params.report]) {
+      form.reset({ ...allReports[params.report] });
+    } else {
+      form.reset();
     }
+  }, [params.report, allReports, form]);
+
+  const setCurrentPage = (page: string) =>
+    setParams(
+      { ...params, page, report: page === "reportList" ? null : params.report },
+      setParamsState,
+    );
+  const setSelectedReportUrl = (key: string | null) => {
+    setParams(
+      { ...params, report: key, page: key ? "report" : "reportList" },
+      setParamsState,
+    );
+    if (key && allReports && allReports[key]) {
+      form.reset({ ...allReports[key] });
+    } else {
+      form.reset({});
+    }
+  };
+
+  const newReport = () => {
+    const key = uuidv1();
     const newReport = {
-      reportKey: key,
-      reportTitle: title,
-      materials: [],
-      equipment: [],
+      key,
+      reportTitle: "New Report",
+      reporterName: "",
       activities: [],
-      extraDetails: "",
-      reportDate: new Date().toISOString().split("T")[0],
+      details: "", // TODO array of details
     };
-    const reports = getAllReports();
-    reports[key] = newReport;
-    saveAllReports(reports);
-    setSavedReports(getAllReportTitles());
-    setSelectedReport(key);
-    reset(newReport);
+    const updatedReports = { ...allReports, [key]: newReport };
+    setAllReports(updatedReports);
+    saveReportsLocalStorage(updatedReports);
+    setSelectedReportUrl(key);
+    form.reset({ ...newReport }); // because allReports is not yet updated
     setCurrentPage("report");
   };
 
+  const updateCurrentReport = () => {
+    if (!params.report || !allReports) return;
+    const updatedReports = {
+      ...allReports,
+      [params.report]: { ...allReports[params.report], ...form.getValues() },
+    };
+    setAllReports(updatedReports);
+    saveReportsLocalStorage(updatedReports);
+  };
+
+  const deleteReport = (key: string) => {
+    if (!allReports) return;
+    const updatedReports = { ...allReports };
+    delete updatedReports[key];
+    setAllReports(updatedReports);
+    saveReportsLocalStorage(updatedReports);
+    if (params.report === key) {
+      setSelectedReportUrl(null);
+      setCurrentPage("reportList");
+    }
+  };
+
+  if (!allReports) {
+    return (
+      <div className="bg-gradient-to-t from-sky-100 to-indigo-200 min-h-screen flex items-center justify-center">
+        <Card className="w-full max-w-2xl mx-auto">
+          <div className="p-4">Loading...</div>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-gradient-to-t from-sky-100 to-indigo-200 min-h-screen flex items-center justify-center">
-      <Button asChild variant="outline" size="lg" className="text-base hidden">
-        <a
-          href="https://www.harpapro.com/sites"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="absolute top-4 left-4 z-10"
-        >
-          <LucideConstruction />
-          <span className="font-bold whitespace-nowrap">
-            Harpa Pro Online Site
-          </span>
-        </a>
-      </Button>
-      <Card className="w-full max-w-2xl mx-auto min-h-96">
-        {currentPage === "reports" ? (
-          <ReportsListPage
-            savedReports={savedReports}
-            loadFromLocalStorage={(title: string) => {
-              loadFromLocalStorage(title);
-              setCurrentPage("report");
-            }}
-            deleteReport={deleteReport}
-            addNewReport={addNewReport}
-          />
-        ) : currentPage === "report" ? (
-          <ReportPage
-            register={register}
-            handleSubmit={handleSubmit}
-            onSubmit={onSubmit}
-            saveToLocalStorage={saveToLocalStorage}
-            loadFromLocalStorage={loadFromLocalStorage}
-            resetForm={resetForm}
-            exportToFile={exportToFile}
+      <Card className="w-full max-w-2xl mx-auto p-3 flex flex-col gap-4">
+        {params.page === "report" ? (
+          <ReportPageForm
+            form={form}
             setCurrentPage={setCurrentPage}
+            updateReport={updateCurrentReport}
           />
-        ) : currentPage === "materials" ? (
-          <MaterialsPage
-            register={register}
-            materialFields={materialFields}
-            removeMaterial={removeMaterial}
-            appendMaterial={appendMaterial}
-            setCurrentPage={setCurrentPage}
-          />
-        ) : currentPage === "equipment" ? (
-          <EquipmentPage
-            register={register}
-            equipmentFields={equipmentFields}
-            removeEquipment={removeEquipment}
-            appendEquipment={appendEquipment}
-            setCurrentPage={setCurrentPage}
-          />
-        ) : currentPage === "activities" ? (
+        ) : params.page === "activities" ? (
           <ActivitiesPage
-            register={register}
-            control={control}
-            activityFields={activityFields}
-            removeActivity={removeActivity}
-            appendActivity={appendActivity}
+            form={form}
             setCurrentPage={setCurrentPage}
+            updateReport={updateCurrentReport}
+          />
+        ) : params.page === "details" ? (
+          <DetailsPage
+            form={form}
+            setCurrentPage={setCurrentPage}
+            updateReport={updateCurrentReport}
           />
         ) : (
-          <ExtraDetailsPage
-            register={register}
-            setCurrentPage={setCurrentPage}
+          <ReportsListPage
+            allReports={allReports}
+            newReport={newReport}
+            selectReport={setSelectedReportUrl}
+            deleteReport={deleteReport}
           />
         )}
       </Card>

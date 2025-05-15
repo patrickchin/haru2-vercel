@@ -1,18 +1,32 @@
 import { Button } from "@/components/ui/button";
 import ActivitiesList from "@/components/ActivitiesList";
 import { LucideMoveLeft } from "lucide-react";
+import { useFieldArray } from "react-hook-form";
+import Footer from "@/components/Footer";
 
 function ActivitiesPage({
-  register,
-  control,
-  activityFields,
-  removeActivity,
-  appendActivity,
   setCurrentPage,
-}: any) {
+  form,
+  updateReport,
+}: {
+  setCurrentPage: (page: string) => void;
+  form: any;
+  updateReport: () => void;
+}) {
+  const { register, control, handleSubmit, setValue, getValues, reset } = form;
+
+  const {
+    fields: activityFields,
+    append: appendActivity,
+    remove: removeActivity,
+  } = useFieldArray({
+    control,
+    name: "activities",
+  });
+
   return (
     <>
-      <header className="font-bold p-4 text-xl flex items-center gap-4">
+      <header className="font-bold text-xl flex items-center gap-4">
         <Button
           type="button"
           onClick={() => setCurrentPage("report")}
@@ -22,7 +36,7 @@ function ActivitiesPage({
         </Button>
         Construction Activities
       </header>
-      <div className="p-4">
+      <div>
         <ActivitiesList
           register={register}
           control={control}
@@ -37,6 +51,7 @@ function ActivitiesPage({
           Add Activity
         </Button>
       </div>
+      <Footer updateReport={updateReport} />
     </>
   );
 }

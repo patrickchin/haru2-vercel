@@ -2,15 +2,15 @@ import { Button } from "@/components/ui/button";
 import { LucideX } from "lucide-react";
 
 function ReportsListPage({
-  savedReports,
-  loadFromLocalStorage,
+  allReports,
+  newReport,
+  selectReport,
   deleteReport,
-  addNewReport,
 }: {
-  savedReports: string[];
-  loadFromLocalStorage: (title: string) => void;
-  deleteReport: (title: string) => void;
-  addNewReport: () => void;
+  allReports: Record<string, any>;
+  newReport: () => void;
+  selectReport: (key: string) => void;
+  deleteReport: (key: string) => void;
 }) {
   return (
     <>
@@ -19,26 +19,35 @@ function ReportsListPage({
       </header>
       <div className="p-4 flex flex-col gap-4">
         <ol className="flex flex-col rounded border">
-          {savedReports.length === 0 && (
+          {Object.values(allReports).length === 0 && (
             <li className="text-muted-foreground text-center text-sm p-4 py-20">
               No saved reports.
             </li>
           )}
-          {savedReports.map((title) => (
+          {Object.values(allReports).map((report: any) => (
             <li
-              key={title}
+              key={report.key}
               onClick={() => {
-                loadFromLocalStorage(title);
+                selectReport(report.key);
               }}
               className="flex items-center justify-between p-4 border-b last:border-b-0 hover:bg-blue-100 cursor-pointer"
             >
-              <span className="font-mono underline">{title}</span>
+              <div className="flex flex-col">
+                <span className="font-mono underline">
+                  {report.reportTitle}
+                </span>
+                {report.createdAt && (
+                  <span className="text-xs text-muted-foreground">
+                    Created: {new Date(report.createdAt).toLocaleString()}
+                  </span>
+                )}
+              </div>
               <Button
                 type="button"
                 variant="secondary"
                 onClick={(e) => {
                   e.stopPropagation(); // Prevent triggering the onClick of the li
-                  deleteReport(title);
+                  deleteReport(report.key);
                 }}
                 title="Delete"
               >
@@ -48,7 +57,7 @@ function ReportsListPage({
           ))}
         </ol>
         <div className="flex gap-2">
-          <Button type="button" onClick={addNewReport} variant="default">
+          <Button type="button" onClick={() => newReport()} variant="default">
             Add New Report
           </Button>
         </div>

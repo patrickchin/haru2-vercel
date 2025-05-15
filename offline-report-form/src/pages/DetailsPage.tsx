@@ -1,17 +1,22 @@
+import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { LucideMoveLeft } from "lucide-react";
 
-function ExtraDetailsPage({
-  register,
+function DetailsPage({
   setCurrentPage,
+  form,
+  updateReport,
 }: {
-  register: any;
   setCurrentPage: (page: string) => void;
+  form: any;
+  updateReport: () => void;
 }) {
+  const { register, control, handleSubmit, setValue, getValues, reset } = form;
+
   return (
     <>
-      <header className="font-bold p-4 text-xl flex items-center gap-4">
+      <header className="font-bold text-xl flex items-center gap-4">
         <Button
           type="button"
           onClick={() => setCurrentPage("report")}
@@ -21,7 +26,7 @@ function ExtraDetailsPage({
         </Button>
         Extra Details
       </header>
-      <div className="p-4">
+      <div>
         <Textarea
           {...register("extraDetails")}
           rows={5}
@@ -29,8 +34,9 @@ function ExtraDetailsPage({
           className="mb-4 p-2 border rounded w-full"
         />
       </div>
+      <Footer updateReport={updateReport} />
     </>
   );
 }
 
-export default ExtraDetailsPage;
+export default DetailsPage;
