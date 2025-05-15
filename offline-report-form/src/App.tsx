@@ -123,7 +123,7 @@ export default function App() {
 
   if (!allReports) {
     return (
-      <div className="bg-gradient-to-t from-sky-100 to-indigo-200 min-h-screen flex items-center justify-center">
+      <div className="bg-gradient-to-t from-sky-100 to-indigo-200 h-full flex items-center justify-center">
         <div className="w-full max-w-2xl mx-auto p-3 flex flex-col gap-4 bg-background rounded-md">
           <div className="p-4">Loading...</div>
         </div>
