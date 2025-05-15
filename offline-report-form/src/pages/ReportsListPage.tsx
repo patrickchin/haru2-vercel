@@ -16,8 +16,8 @@ function ReportsListPage({
 
   return (
     <>
-      <header className="font-bold text-xl flex items-center gap-4">
-        <Button type="button" variant={"secondary"} asChild>
+      <header className="font-bold text-xl flex flex-col gap-4">
+        <Button type="button" variant={"default"} asChild>
           <a
             href="https://www.harpapro.com"
             target="_blank"
