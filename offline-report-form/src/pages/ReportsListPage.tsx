@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { LucideX } from "lucide-react";
+import { LucideX, LucideMoveLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { BASE_PATH } from "../App";
 
@@ -16,8 +16,17 @@ function ReportsListPage({
 
   return (
     <>
-      <header className="font-bold text-xl flex items-center">
-        Reports List
+      <header className="font-bold text-xl flex items-center gap-4">
+        <Button type="button" variant={"secondary"} asChild>
+          <a
+            href="https://www.harpapro.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <LucideMoveLeft /> Back to Online Site
+          </a>
+        </Button>
+        <span>Harpa Pro Offline Reports</span>
       </header>
       <div className="flex flex-col gap-4">
         <ol className="flex flex-col rounded border">
