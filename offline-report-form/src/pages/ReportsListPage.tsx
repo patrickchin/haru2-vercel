@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { LucideX, LucideMoveLeft } from "lucide-react";
+import { LucideX, LucideMoveLeft, LucidePlus } from "lucide-react";
 
 function ReportsListPage({
   allReports,
@@ -44,9 +44,9 @@ function ReportsListPage({
                 <span className="font-mono underline">
                   {report.reportTitle}
                 </span>
-                {report.createdAt && (
+                {report.reportDate && (
                   <span className="text-xs text-muted-foreground">
-                    Created: {new Date(report.createdAt).toLocaleString()}
+                    {new Date(report.reportDate).toDateString()}
                   </span>
                 )}
               </div>
@@ -64,9 +64,15 @@ function ReportsListPage({
             </li>
           ))}
         </ol>
-        <div className="flex gap-2">
+        <div className="flex gap-2 justify-end">
+          <Button type="button" variant="outline">
+            Do nothing
+          </Button>
+          <Button type="button" onClick={() => alert("asdf")} variant="outline">
+            Do Alert
+          </Button>
           <Button type="button" onClick={() => newReport()} variant="default">
-            Add New Report
+            New Report <LucidePlus />
           </Button>
         </div>
       </div>
