@@ -7,7 +7,6 @@ import {
   LucideMoveLeft,
   LucidePersonStanding,
 } from "lucide-react";
-import { BASE_PATH } from "../App";
 
 // Helper to extract reportKey from search params
 function getReportKeyFromSearch() {
@@ -30,7 +29,7 @@ function ReportPageForm({
         <Button
           type="button"
           onClick={() => {
-            window.history.pushState({}, "", `/${BASE_PATH}/`);
+            window.history.pushState({}, "", "?");
             window.dispatchEvent(new PopStateEvent("popstate"));
           }}
           variant={"secondary"}
@@ -86,7 +85,7 @@ function ReportPageForm({
             window.history.pushState(
               {},
               "",
-              `/${BASE_PATH}/?reportKey=${reportKey}&page=activities`
+              `?reportKey=${reportKey}&page=activities`,
             );
             window.dispatchEvent(new PopStateEvent("popstate"));
           }}
@@ -100,7 +99,7 @@ function ReportPageForm({
             window.history.pushState(
               {},
               "",
-              `/${BASE_PATH}/?reportKey=${reportKey}&page=details`
+              `?reportKey=${reportKey}&page=details`,
             );
             window.dispatchEvent(new PopStateEvent("popstate"));
           }}

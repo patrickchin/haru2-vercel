@@ -10,8 +10,6 @@ import ReportPageForm from "./pages/ReportPage";
 import ActivitiesPage from "./pages/ActivitiesPage";
 import DetailsPage from "./pages/DetailsPage";
 
-export const BASE_PATH = "offline.html";
-
 // Helper to extract search params
 function getSearchParams() {
   return new URLSearchParams(window.location.search);
@@ -64,24 +62,16 @@ function ManualRoutes({
     );
   }
   if (reportKey && !page) {
-    return (
-      <ReportPageForm form={form} updateReport={updateCurrentReport} />
-    );
+    return <ReportPageForm form={form} updateReport={updateCurrentReport} />;
   }
   if (reportKey && page === "activities") {
-    return (
-      <ActivitiesPage form={form} updateReport={updateCurrentReport} />
-    );
+    return <ActivitiesPage form={form} updateReport={updateCurrentReport} />;
   }
   if (reportKey && page === "details") {
-    return (
-      <DetailsPage form={form} updateReport={updateCurrentReport} />
-    );
+    return <DetailsPage form={form} updateReport={updateCurrentReport} />;
   }
   // fallback
-  return (
-    <div className="p-4">Page not found</div>
-  );
+  return <div className="p-4">Page not found</div>;
 }
 
 export default function App() {
@@ -108,7 +98,7 @@ export default function App() {
     form.reset({ ...newReport });
     // Navigate to new report page using search params
     window.location.hash = "";
-    window.history.pushState({}, "", `/${BASE_PATH}/?reportKey=${key}`);
+    window.history.pushState({}, "", `?reportKey=${key}`);
     window.dispatchEvent(new PopStateEvent("popstate"));
   };
 
@@ -133,7 +123,7 @@ export default function App() {
     // If current report is deleted, go to list
     const reportKey = getReportKeyFromSearch();
     if (reportKey === key) {
-      window.history.pushState({}, "", `/${BASE_PATH}/`);
+      window.history.pushState({}, "", `?`);
       window.dispatchEvent(new PopStateEvent("popstate"));
     }
   };

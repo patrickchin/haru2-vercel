@@ -3,7 +3,6 @@ import ActivitiesList from "@/components/ActivitiesList";
 import { LucideMoveLeft } from "lucide-react";
 import { useFieldArray } from "react-hook-form";
 import Footer from "@/components/Footer";
-import { BASE_PATH } from "../App";
 
 // Helper to extract reportKey from search params
 function getReportKeyFromSearch() {
@@ -35,7 +34,7 @@ function ActivitiesPage({
         <Button
           type="button"
           onClick={() => {
-            window.history.pushState({}, "", `/${BASE_PATH}/?reportKey=${reportKey}`);
+            window.history.pushState({}, "", `?reportKey=${reportKey}`);
             window.dispatchEvent(new PopStateEvent("popstate"));
           }}
           variant={"secondary"}

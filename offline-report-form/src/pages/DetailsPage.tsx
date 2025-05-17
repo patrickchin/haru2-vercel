@@ -2,7 +2,6 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { LucideMoveLeft } from "lucide-react";
-import { BASE_PATH } from "../App";
 
 // Helper to extract reportKey from search params
 function getReportKeyFromSearch() {
@@ -25,7 +24,7 @@ function DetailsPage({
         <Button
           type="button"
           onClick={() => {
-            window.history.pushState({}, "", `/${BASE_PATH}/?reportKey=${reportKey}`);
+            window.history.pushState({}, "", `?reportKey=${reportKey}`);
             window.dispatchEvent(new PopStateEvent("popstate"));
           }}
           variant={"secondary"}

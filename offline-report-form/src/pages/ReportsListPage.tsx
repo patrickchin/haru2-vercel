@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { LucideX, LucideMoveLeft } from "lucide-react";
-import { BASE_PATH } from "../App";
 
 function ReportsListPage({
   allReports,
@@ -36,11 +35,7 @@ function ReportsListPage({
             <li
               key={report.key}
               onClick={() => {
-                window.history.pushState(
-                  {},
-                  "",
-                  `/${BASE_PATH}/?reportKey=${report.key}`
-                );
+                window.history.pushState({}, "", `?reportKey=${report.key}`);
                 window.dispatchEvent(new PopStateEvent("popstate"));
               }}
               className="flex items-center justify-between p-4 border-b last:border-b-0 hover:bg-blue-100 cursor-pointer"
