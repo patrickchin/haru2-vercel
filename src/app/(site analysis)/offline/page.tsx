@@ -14,17 +14,21 @@ export default function Page() {
       <Card className="mt-8 bg-muted">
         <CardContent className="py-20 text-center">
           <p>
-            Download the offline form to fill out. When you&apos;re back online you
-            can upload the form to a new site report.
+            Download the offline form to fill out. When you&apos;re back online
+            you can upload the form to a new site report.
           </p>
           <div className="flex gap-4 mt-4 justify-center">
             <Button asChild variant="secondary">
-              <Link href="/offline.html">
+              <Link href="offline.html">
                 View <LucideEye className="w-4" />
               </Link>
             </Button>
             <Button asChild>
-              <Link href="/offline.html" download="offline.html" target="_blank">
+              <Link
+                href="offline.html"
+                download="harpa-pro-offline-report-form.html"
+                target="_blank"
+              >
                 Download <LucideDownload className="w-4" />
               </Link>
             </Button>
