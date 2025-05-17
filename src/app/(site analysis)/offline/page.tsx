@@ -7,37 +7,6 @@ import { LucideDownload, LucideEye } from "lucide-react";
 import Link from "next/link";
 
 export default function Page() {
-  async function handleDownload() {
-    const res = await fetch("/offline.html");
-    const blob = await res.blob();
-    // Use File System Access API if available
-    if ("showSaveFilePicker" in window) {
-      // @ts-ignore
-      const handle = await window.showSaveFilePicker({
-        suggestedName: "harpa-pro-offline-report-form.html",
-        types: [
-          {
-            description: "HTML File",
-            accept: { "text/html": [".html"] },
-          },
-        ],
-      });
-      const writable = await handle.createWritable();
-      await writable.write(blob);
-      await writable.close();
-    } else {
-      // Fallback: use a temporary <a> element to trigger download with filename
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "harpa-pro-offline-report-form.html";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => window.URL.revokeObjectURL(url), 10000);
-    }
-  }
-
   return (
     <DefaultLayout>
       <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
@@ -56,8 +25,10 @@ export default function Page() {
                 View <LucideEye className="w-4" />
               </Link>
             </Button>
-            <Button onClick={handleDownload}>
-              Download <LucideDownload className="w-4" />
+            <Button asChild>
+              <Link href="/api/download/offline">
+                Download <LucideDownload className="w-4" />
+              </Link>
             </Button>
           </div>
         </CardContent>
