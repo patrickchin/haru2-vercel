@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { v1 as uuidv1 } from "uuid";
 import { useForm } from "react-hook-form";
 import {
   loadReportsLocalStorage,
@@ -19,6 +18,15 @@ function getReportKeyFromSearch() {
 }
 function getPageFromSearch() {
   return getSearchParams().get("page") || "";
+}
+
+// Helper to get/set next report key in localStorage
+function getNextReportKey() {
+  const val = localStorage.getItem("nextReportKey");
+  return val ? parseInt(val, 10) : 1;
+}
+function setNextReportKey(val: number) {
+  localStorage.setItem("nextReportKey", String(val));
 }
 
 // Manual routing component using search params
@@ -84,11 +92,13 @@ export default function App() {
   }, []);
 
   const newReport = () => {
-    const key = uuidv1();
+    const key = getNextReportKey();
+    setNextReportKey(key + 1);
     const newReport = {
       key,
-      reportTitle: "New Report",
+      reportTitle: `New Report ${key}`,
       reporterName: "",
+      reportDate: new Date().toISOString().split("T")[0],
       activities: [],
       details: "",
     };
@@ -128,27 +138,21 @@ export default function App() {
     }
   };
 
-  if (!allReports) {
-    return (
-      <div className="bg-gradient-to-t from-sky-100 to-indigo-200 h-full flex items-center justify-center">
-        <div className="w-full max-w-2xl mx-auto p-3 flex flex-col gap-4 bg-background rounded-md">
-          <div className="p-4">Loading...</div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-gradient-to-t from-sky-100 to-indigo-200 min-h-screen flex justify-center p-2">
       <div className="w-full max-w-2xl mx-auto p-3 flex flex-col gap-4 bg-background rounded-md">
-        <ManualRoutes
-          allReports={allReports}
-          setAllReports={setAllReports}
-          form={form}
-          newReport={newReport}
-          deleteReport={deleteReport}
-          updateCurrentReport={updateCurrentReport}
-        />
+        {allReports ? (
+          <ManualRoutes
+            allReports={allReports}
+            setAllReports={setAllReports}
+            form={form}
+            newReport={newReport}
+            deleteReport={deleteReport}
+            updateCurrentReport={updateCurrentReport}
+          />
+        ) : (
+          <div className="p-4">Loading...</div>
+        )}
       </div>
     </div>
   );
