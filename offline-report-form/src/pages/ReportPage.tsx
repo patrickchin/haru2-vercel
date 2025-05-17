@@ -8,30 +8,27 @@ import {
   LucidePersonStanding,
 } from "lucide-react";
 
-// Helper to extract reportKey from search params
-function getReportKeyFromSearch() {
-  return new URLSearchParams(window.location.search).get("reportKey") || "";
-}
-
 function ReportPageForm({
   form,
   updateReport,
+  onBack,
+  onActivities,
+  onDetails,
 }: {
   form: any;
   updateReport: () => void;
+  onBack: () => void;
+  onActivities: () => void;
+  onDetails: () => void;
 }) {
   const { register } = form;
-  const reportKey = getReportKeyFromSearch();
 
   return (
     <>
       <header className="font-bold text-xl flex items-center gap-4">
         <Button
           type="button"
-          onClick={() => {
-            window.history.pushState({}, "", "?");
-            window.dispatchEvent(new PopStateEvent("popstate"));
-          }}
+          onClick={onBack}
           variant={"secondary"}
         >
           <LucideMoveLeft /> Reports List
@@ -81,28 +78,14 @@ function ReportPageForm({
         </Table>
         <Button
           type="button"
-          onClick={() => {
-            window.history.pushState(
-              {},
-              "",
-              `?reportKey=${reportKey}&page=activities`,
-            );
-            window.dispatchEvent(new PopStateEvent("popstate"));
-          }}
+          onClick={onActivities}
           variant="secondary"
         >
           Construction Activities <LucidePersonStanding />
         </Button>
         <Button
           type="button"
-          onClick={() => {
-            window.history.pushState(
-              {},
-              "",
-              `?reportKey=${reportKey}&page=details`,
-            );
-            window.dispatchEvent(new PopStateEvent("popstate"));
-          }}
+          onClick={onDetails}
           variant="secondary"
         >
           Details <LucideEllipsis />

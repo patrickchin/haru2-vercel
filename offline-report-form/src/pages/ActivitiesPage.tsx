@@ -4,20 +4,16 @@ import { LucideMoveLeft } from "lucide-react";
 import { useFieldArray } from "react-hook-form";
 import Footer from "@/components/Footer";
 
-// Helper to extract reportKey from search params
-function getReportKeyFromSearch() {
-  return new URLSearchParams(window.location.search).get("reportKey") || "";
-}
-
 function ActivitiesPage({
   form,
   updateReport,
+  onBack,
 }: {
   form: any;
   updateReport: () => void;
+  onBack: () => void;
 }) {
   const { register, control } = form;
-  const reportKey = getReportKeyFromSearch();
 
   const {
     fields: activityFields,
@@ -33,10 +29,7 @@ function ActivitiesPage({
       <header className="font-bold text-xl flex items-center gap-4">
         <Button
           type="button"
-          onClick={() => {
-            window.history.pushState({}, "", `?reportKey=${reportKey}`);
-            window.dispatchEvent(new PopStateEvent("popstate"));
-          }}
+          onClick={onBack}
           variant={"secondary"}
         >
           <LucideMoveLeft /> Back

@@ -3,30 +3,23 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { LucideMoveLeft } from "lucide-react";
 
-// Helper to extract reportKey from search params
-function getReportKeyFromSearch() {
-  return new URLSearchParams(window.location.search).get("reportKey") || "";
-}
-
 function DetailsPage({
   form,
   updateReport,
+  onBack,
 }: {
   form: any;
   updateReport: () => void;
+  onBack: () => void;
 }) {
   const { register } = form;
-  const reportKey = getReportKeyFromSearch();
 
   return (
     <>
       <header className="font-bold text-xl flex items-center gap-4">
         <Button
           type="button"
-          onClick={() => {
-            window.history.pushState({}, "", `?reportKey=${reportKey}`);
-            window.dispatchEvent(new PopStateEvent("popstate"));
-          }}
+          onClick={onBack}
           variant={"secondary"}
         >
           <LucideMoveLeft /> Back

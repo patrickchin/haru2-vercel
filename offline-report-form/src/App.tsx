@@ -9,17 +9,6 @@ import ReportPageForm from "./pages/ReportPage";
 import ActivitiesPage from "./pages/ActivitiesPage";
 import DetailsPage from "./pages/DetailsPage";
 
-// Helper to extract search params
-function getSearchParams() {
-  return new URLSearchParams(window.location.search);
-}
-function getReportKeyFromSearch() {
-  return getSearchParams().get("reportKey") || "";
-}
-function getPageFromSearch() {
-  return getSearchParams().get("page") || "";
-}
-
 // Helper to get/set next report key in localStorage
 function getNextReportKey() {
   const val = localStorage.getItem("nextReportKey");
@@ -29,67 +18,31 @@ function setNextReportKey(val: number) {
   localStorage.setItem("nextReportKey", String(val));
 }
 
-// Manual routing component using search params
-function ManualRoutes({
-  allReports,
-  form,
-  newReport,
-  deleteReport,
-  updateCurrentReport,
-}: any) {
-  const [search, setSearch] = useState(window.location.search);
-
-  useEffect(() => {
-    const onPopState = () => setSearch(window.location.search);
-    window.addEventListener("popstate", onPopState);
-    return () => window.removeEventListener("popstate", onPopState);
-  }, []);
-
-  useEffect(() => {
-    // Reset form when selected report changes
-    const reportKey = getReportKeyFromSearch();
-    if (reportKey && allReports && allReports[reportKey]) {
-      form.reset({ ...allReports[reportKey] });
-    } else {
-      form.reset();
-    }
-    // eslint-disable-next-line
-  }, [search, allReports]);
-
-  const reportKey = getReportKeyFromSearch();
-  const page = getPageFromSearch();
-
-  // Routing logic
-  if (!reportKey) {
-    return (
-      <ReportsListPage
-        allReports={allReports}
-        newReport={newReport}
-        deleteReport={deleteReport}
-      />
-    );
-  }
-  if (reportKey && !page) {
-    return <ReportPageForm form={form} updateReport={updateCurrentReport} />;
-  }
-  if (reportKey && page === "activities") {
-    return <ActivitiesPage form={form} updateReport={updateCurrentReport} />;
-  }
-  if (reportKey && page === "details") {
-    return <DetailsPage form={form} updateReport={updateCurrentReport} />;
-  }
-  // fallback
-  return <div className="p-4">Page not found</div>;
-}
-
 export default function App() {
   const form = useForm();
   const [allReports, setAllReports] = useState<any | null>(null);
+
+  // Routing state
+  const [route, setRoute] = useState<{ page: string; reportKey?: string }>({
+    page: "list",
+  });
 
   // Load reports on mount
   useEffect(() => {
     setAllReports(loadReportsLocalStorage());
   }, []);
+
+  // Reset form when switching reports
+  useEffect(() => {
+    if (
+      route.page === "report" &&
+      route.reportKey &&
+      allReports &&
+      allReports[route.reportKey]
+    ) {
+      form.reset({ ...allReports[route.reportKey] });
+    }
+  }, [route.page, route.reportKey, allReports, form]);
 
   const newReport = () => {
     const key = getNextReportKey();
@@ -106,15 +59,11 @@ export default function App() {
     setAllReports(updatedReports);
     saveReportsLocalStorage(updatedReports);
     form.reset({ ...newReport });
-    // Navigate to new report page using search params
-    window.location.hash = "";
-    window.history.pushState({}, "", `?reportKey=${key}`);
-    window.dispatchEvent(new PopStateEvent("popstate"));
+    setRoute({ page: "report", reportKey: String(key) });
   };
 
   const updateCurrentReport = () => {
-    // Get reportKey from search params
-    const reportKey = getReportKeyFromSearch();
+    const reportKey = route.reportKey;
     if (!reportKey || !allReports) return;
     const updatedReports = {
       ...allReports,
@@ -130,29 +79,70 @@ export default function App() {
     delete updatedReports[key];
     setAllReports(updatedReports);
     saveReportsLocalStorage(updatedReports);
-    // If current report is deleted, go to list
-    const reportKey = getReportKeyFromSearch();
-    if (reportKey === key) {
-      window.history.pushState({}, "", `?`);
-      window.dispatchEvent(new PopStateEvent("popstate"));
+    if (route.reportKey === key) {
+      setRoute({ page: "list" });
     }
   };
+
+  // Manual routing logic
+  let pageContent = null;
+  if (allReports) {
+    if (route.page === "list") {
+      pageContent = (
+        <ReportsListPage
+          allReports={allReports}
+          newReport={newReport}
+          deleteReport={deleteReport}
+          onSelectReport={(key: string) =>
+            setRoute({ page: "report", reportKey: String(key) })
+          }
+        />
+      );
+    } else if (route.page === "report" && route.reportKey) {
+      pageContent = (
+        <ReportPageForm
+          form={form}
+          updateReport={updateCurrentReport}
+          onBack={() => setRoute({ page: "list" })}
+          onActivities={() =>
+            setRoute({ page: "activities", reportKey: route.reportKey })
+          }
+          onDetails={() =>
+            setRoute({ page: "details", reportKey: route.reportKey })
+          }
+        />
+      );
+    } else if (route.page === "activities" && route.reportKey) {
+      pageContent = (
+        <ActivitiesPage
+          form={form}
+          updateReport={updateCurrentReport}
+          onBack={() =>
+            setRoute({ page: "report", reportKey: route.reportKey })
+          }
+        />
+      );
+    } else if (route.page === "details" && route.reportKey) {
+      pageContent = (
+        <DetailsPage
+          form={form}
+          updateReport={updateCurrentReport}
+          onBack={() =>
+            setRoute({ page: "report", reportKey: route.reportKey })
+          }
+        />
+      );
+    } else {
+      pageContent = <div className="p-4">Page not found</div>;
+    }
+  } else {
+    pageContent = <div className="p-4">Loading...</div>;
+  }
 
   return (
     <div className="bg-gradient-to-t from-sky-100 to-indigo-200 min-h-screen flex justify-center p-2">
       <div className="w-full max-w-2xl mx-auto p-3 flex flex-col gap-4 bg-background rounded-md">
-        {allReports ? (
-          <ManualRoutes
-            allReports={allReports}
-            setAllReports={setAllReports}
-            form={form}
-            newReport={newReport}
-            deleteReport={deleteReport}
-            updateCurrentReport={updateCurrentReport}
-          />
-        ) : (
-          <div className="p-4">Loading...</div>
-        )}
+        {pageContent}
       </div>
     </div>
   );

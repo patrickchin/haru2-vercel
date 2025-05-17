@@ -5,10 +5,12 @@ function ReportsListPage({
   allReports,
   newReport,
   deleteReport,
+  onSelectReport,
 }: {
   allReports: Record<string, any>;
   newReport: () => void;
   deleteReport: (key: string) => void;
+  onSelectReport: (key: string) => void;
 }) {
   return (
     <>
@@ -34,10 +36,7 @@ function ReportsListPage({
           {Object.values(allReports).map((report: any) => (
             <li
               key={report.key}
-              onClick={() => {
-                window.history.pushState({}, "", `?reportKey=${report.key}`);
-                window.dispatchEvent(new PopStateEvent("popstate"));
-              }}
+              onClick={() => onSelectReport(report.key)}
               className="flex items-center justify-between p-4 border-b last:border-b-0 hover:bg-blue-100 cursor-pointer"
             >
               <div className="flex flex-col">
@@ -54,7 +53,7 @@ function ReportsListPage({
                 type="button"
                 variant="secondary"
                 onClick={(e) => {
-                  e.stopPropagation(); // Prevent triggering the onClick of the li
+                  e.stopPropagation();
                   deleteReport(report.key);
                 }}
                 title="Delete"
