@@ -24,7 +24,7 @@ export default function Page() {
               </Link>
             </Button>
             <Button asChild>
-              <Link href="/offline.html" download target="_blank">
+              <Link href="/offline.html" download="offline.html" target="_blank">
                 Download <LucideDownload className="w-4" />
               </Link>
             </Button>
