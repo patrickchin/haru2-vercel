@@ -46,3 +46,5 @@ certificates
 
 pgdata
 pgdata*
+
+/public/offline.html
