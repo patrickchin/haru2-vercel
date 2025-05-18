@@ -63,13 +63,7 @@ function ReportsListPage({
             </li>
           ))}
         </ol>
-        <div className="flex gap-2 justify-end">
-          <Button type="button" variant="outline">
-            Do nothing
-          </Button>
-          <Button type="button" onClick={() => alert("asdf")} variant="outline">
-            Do Alert
-          </Button>
+        <div className="flex gap-2 justify-center">
           <Button type="button" onClick={() => newReport()} variant="default">
             New Report <LucidePlus />
           </Button>

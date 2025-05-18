@@ -7,6 +7,7 @@ import {
   LucideMoveLeft,
   LucidePersonStanding,
 } from "lucide-react";
+import { UseFormReturn } from "react-hook-form";
 
 function ReportPageForm({
   form,
@@ -15,7 +16,7 @@ function ReportPageForm({
   onActivities,
   onDetails,
 }: {
-  form: any;
+  form: UseFormReturn;
   updateReport: () => void;
   onBack: () => void;
   onActivities: () => void;
@@ -88,7 +89,7 @@ function ReportPageForm({
           onClick={onDetails}
           variant="secondary"
         >
-          Details <LucideEllipsis />
+          Detailed Sections <LucideEllipsis />
         </Button>
       </div>
       <Footer updateReport={updateReport} />

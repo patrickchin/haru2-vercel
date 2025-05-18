@@ -6,8 +6,11 @@ import {
 } from "./lib/storage";
 import ReportsListPage from "./pages/ReportsListPage";
 import ReportPageForm from "./pages/ReportPage";
-import ActivitiesPage from "./pages/ActivitiesPage";
+import ActivityListPage from "./pages/ActivityListPage";
 import DetailsPage from "./pages/DetailsPage";
+import ActivityPage from "./pages/ActivityPage";
+import MaterialsPage from "./pages/MaterialsPage";
+import EquipmentPage from "./pages/EquipmentPage";
 
 // Helper to get/set next report key in localStorage
 function getNextReportKey() {
@@ -23,7 +26,7 @@ export default function App() {
   const [allReports, setAllReports] = useState<any | null>(null);
 
   // Routing state
-  const [route, setRoute] = useState<{ page: string; reportKey?: string }>({
+  const [route, setRoute] = useState<{ page: string; reportKey?: string; activityIndex?: number }>({
     page: "list",
   });
 
@@ -114,11 +117,65 @@ export default function App() {
       );
     } else if (route.page === "activities" && route.reportKey) {
       pageContent = (
-        <ActivitiesPage
+        <ActivityListPage
           form={form}
           updateReport={updateCurrentReport}
           onBack={() =>
             setRoute({ page: "report", reportKey: route.reportKey })
+          }
+          onEditActivity={(idx: number) =>
+            setRoute({ page: "activity", reportKey: route.reportKey, activityIndex: idx })
+          }
+        />
+      );
+    } else if (route.page === "activity" && route.reportKey && typeof route.activityIndex === "number") {
+      pageContent = (
+        <ActivityPage
+          form={form}
+          activityIndex={route.activityIndex}
+          updateReport={updateCurrentReport}
+          onBack={() =>
+            setRoute({ page: "activities", reportKey: route.reportKey })
+          }
+          onMaterials={() =>
+            setRoute({
+              page: "materials",
+              reportKey: route.reportKey,
+              activityIndex: route.activityIndex,
+            })
+          }
+          onEquipment={() =>
+            setRoute({
+              page: "equipment",
+              reportKey: route.reportKey,
+              activityIndex: route.activityIndex,
+            })
+          }
+        />
+      );
+    } else if (route.page === "materials" && route.reportKey && typeof route.activityIndex === "number") {
+      pageContent = (
+        <MaterialsPage
+          activityIndex={route.activityIndex}
+          onBack={() =>
+            setRoute({
+              page: "activity",
+              reportKey: route.reportKey,
+              activityIndex: route.activityIndex,
+            })
+          }
+        />
+      );
+    } else if (route.page === "equipment" && route.reportKey && typeof route.activityIndex === "number") {
+      pageContent = (
+        <EquipmentPage
+          activityIndex={route.activityIndex}
+          onBack={() =>
+            setRoute({
+              page: "activity",
+              reportKey: route.reportKey,
+              activityIndex: route.activityIndex,
+            })
           }
         />
       );
