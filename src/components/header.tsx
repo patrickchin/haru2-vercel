@@ -31,7 +31,7 @@ export function MainNav({ className }: { className?: string }) {
     { name: "About Us", href: "/about" },
     // { name: "Contact Us", href: "/contact", },
     // { name: "Docs", href: "/docs" },
-    { name: "Offline", href: "/offline" },
+    // { name: "Offline", href: "/offline" },
   ];
 
   const userNav = [
