@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, ChangeEvent } from "react";
-import useSWR, { KeyedMutator } from "swr";
+import useSWR from "swr";
 import { HaruFile, SiteReportSection } from "@/lib/types";
 import { uploadReportSectionFile } from "@/lib/utils/upload";
 import { useForm } from "react-hook-form";
@@ -12,7 +12,6 @@ import * as Schemas from "@/db/schema";
 
 import Image from "next/image";
 import {
-  LucideChevronDown,
   LucideLoader2,
   LucideLoaderCircle,
   LucidePlus,
@@ -57,14 +56,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import prettyBytes from "pretty-bytes";
 import { SaveRevertForm } from "@/components/save-revert-form";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { DeleteSectionButton } from "./delete-section";
+import { InputWithDefaults } from "@/components/input-with-defaults";
 
 // DUPLICATED FROM edit-upload.tsx can be improved
 function FileListTable({
@@ -296,13 +289,13 @@ function UpdateSiteReportSection({
     "Health and Safety",
     "Site Personnel",
     "Site Conditions",
-    null,
+    // undefined,
 
     "Materials Quality Check",
     "Materials and Equipment",
     "Security",
     "Environment",
-    null,
+    // undefined,
 
     "Work Quality",
     "Visitor and Public Interaction",
@@ -330,42 +323,17 @@ function UpdateSiteReportSection({
                 name="title"
                 render={({ field }) => (
                   <FormItem className="grow">
-                    <div className="w-full flex flex-col md:flex-row gap-3">
-                      <FormControl>
-                        <Input
-                          className="grow max-w-[30rem] md:text-base"
-                          placeholder="Enter a Section Title ..."
-                          name={field.name}
-                          onChange={field.onChange}
-                          value={field.value || ""}
-                        />
-                      </FormControl>
-                      <DropdownMenu modal={false}>
-                        <Button asChild variant="outline">
-                          <DropdownMenuTrigger>
-                            Select Default Title <LucideChevronDown />
-                          </DropdownMenuTrigger>
-                        </Button>
-                        <DropdownMenuContent className="p-4">
-                          {sectionTitles.map((t, i) =>
-                            t ? (
-                              <DropdownMenuItem
-                                key={i}
-                                onSelect={() =>
-                                  form.setValue(field.name, t, {
-                                    shouldDirty: true,
-                                  })
-                                }
-                              >
-                                {t}
-                              </DropdownMenuItem>
-                            ) : (
-                              <DropdownMenuSeparator key={i} />
-                            ),
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
+                    <FormControl>
+                      <InputWithDefaults
+                        defaultOptions={sectionTitles}
+                        value={field.value || ""}
+                        className="grow max-w-[30rem] md:text-base"
+                        placeholder="Enter a Section Title ..."
+                        name={field.name}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+
                     <FormMessage />
                   </FormItem>
                 )}

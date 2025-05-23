@@ -55,6 +55,53 @@ import {
 } from "@/components/ui/alert-dialog";
 import { InputDate } from "@/components/input-date";
 import { dateDiffInDays } from "@/lib/utils";
+import { InputWithDefaults } from "@/components/input-with-defaults";
+
+const defaultActivityGroups = [
+  {
+    label: "Site Work",
+    options: [
+      "Site Preparation",
+      "Sit Improvements",
+      "Site Utilities",
+      "Off-Site work",
+    ],
+  },
+  {
+    label: "Sub-Structure",
+    options: ["Foundations", "Basement Construction"],
+  },
+  {
+    label: "Top-Structure",
+    options: ["Structure Construction", "Exterior Enclosure", "Roofing"],
+  },
+  {
+    label: "Interiors",
+    options: [
+      "Interior Construction",
+      "Stairs Construction",
+      "Interior Finishes",
+    ],
+  },
+  {
+    label: "Services",
+    options: [
+      "Elevators/Escalators",
+      "Plumbing",
+      "HVAC",
+      "Fire Protection",
+      "Electrical",
+    ],
+  },
+  {
+    label: "Equipment & Furnishings",
+    options: ["Equipment", "Furnishings"],
+  },
+  {
+    label: "Demolition & Special Construction",
+    options: ["Building Demolition", "Special Construction"],
+  },
+];
 
 function EditUsedEquipment({
   site,
@@ -464,8 +511,9 @@ function EditActivityNameForm({
           render={({ field }) => (
             <FormItem className="md:col-span-2">
               <FormControl>
-                <Input
-                  className="md:text-base"
+                <InputWithDefaults
+                  defaultOptionGroups={defaultActivityGroups}
+                  className="grow max-w-[30rem] md:text-base"
                   placeholder="Enter an Activity ..."
                   name={field.name}
                   onChange={field.onChange}
