@@ -29,7 +29,7 @@ export function DefaultLayout({
   className?: string;
 }) {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen min-w-fit">
       <Header />
       <main
         className={cn(

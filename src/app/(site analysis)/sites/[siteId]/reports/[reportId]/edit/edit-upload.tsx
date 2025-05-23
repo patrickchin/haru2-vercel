@@ -58,7 +58,7 @@ function UploadAndManageFilesSection({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex gap-4 items-center">
+      <div className="flex flex-wrap gap-4 items-center">
         <h3 className="font-bold capitalize text-lg">
           Report Overview {type}s
         </h3>

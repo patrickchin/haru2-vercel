@@ -154,10 +154,10 @@ export default function Header() {
 
   return (
     <div className="border-b bg-background w-full shadow-md">
-      <div className="flex gap-2 min-h-16 md:h-16 items-start px-8 mx-auto max-w-7xl">
+      <div className="flex flex-wrap gap-2 min-h-16 md:h-16 items-start px-8 mx-auto max-w-7xl">
         <Link href="/" className="mr-4 flex items-center space-x-2 h-16">
           <LucideConstruction className="h-6 w-6" />
-          <span className="font-bold whitespace-nowrap">
+          <span className="font-bold whitespace-nowrap hidden sm:block">
             Harpa Pro
           </span>
         </Link>
