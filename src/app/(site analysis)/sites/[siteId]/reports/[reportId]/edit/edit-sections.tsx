@@ -56,8 +56,7 @@ function VoiceNoteRecorder({
       setMediaRecorder(recorder);
       let chunks: Blob[] = [];
       recorder.ondataavailable = (e) => {
-        console.log("Audio chunk available", e.data);
-          chunks.push(e.data);
+        chunks.push(e.data);
       };
       recorder.onstop = async () => {
         const audioBlob = new Blob(chunks, { type: "audio/webm" });
@@ -98,7 +97,6 @@ function VoiceNoteRecorder({
     <div className="flex flex-wrap items-center gap-2">
       <Button
         variant={isRecording ? "destructive" : "secondary"}
-        size="icon"
         onClick={isRecording ? stopRecording : startRecording}
         disabled={isUploadingVoice}
         aria-label={isRecording ? "Stop Recording" : "Start Recording"}
@@ -108,14 +106,14 @@ function VoiceNoteRecorder({
         ) : (
           <LucideMic className="w-5 h-5" />
         )}
+        <span>
+          {isRecording
+            ? "Recording..."
+            : isUploadingVoice
+              ? "Uploading voice note..."
+              : "Record Voice Note"}
+        </span>
       </Button>
-      <span className="text-sm">
-        {isRecording
-          ? "Recording..."
-          : isUploadingVoice
-            ? "Uploading voice note..."
-            : "Record Voice Note"}
-      </span>
     </div>
   );
 }
@@ -167,7 +165,6 @@ function UpdateSiteReportSectionFiles({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-4">
-        <h3 className="font-medium">Section Files</h3>
         <Button asChild variant="secondary">
           <Label
             htmlFor={`upload-file-section-${section.id}`}
@@ -182,12 +179,12 @@ function UpdateSiteReportSectionFiles({
               disabled={isUploading}
               multiple
             />
-            <span className="capitalize">Upload Section Image</span>
             {isUploading ? (
               <LucideLoader2 className="animate-spin h-5 w-5" />
             ) : (
               <LucidePlus className="w-4 h-4" />
             )}
+            <span className="capitalize">Add Image</span>
           </Label>
         </Button>
         <VoiceNoteRecorder sectionId={section.id} mutateFiles={mutateFiles} />
