@@ -27,8 +27,8 @@ import { cn } from "@/lib/utils";
 export function MainNav({ className }: { className?: string }) {
   const { data: session } = useSession();
   const pathname = usePathname();
-  const globalNav = [
-    { name: "About Us", href: "/about" },
+  const globalNav: { name: string; href: string }[] = [
+    // { name: "About Us", href: "/about" },
     // { name: "Contact Us", href: "/contact", },
     // { name: "Docs", href: "/docs" },
     // { name: "Offline", href: "/offline" },
