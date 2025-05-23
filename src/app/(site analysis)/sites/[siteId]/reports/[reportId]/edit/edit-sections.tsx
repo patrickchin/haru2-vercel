@@ -95,7 +95,7 @@ function VoiceNoteRecorder({
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       <Button
         variant={isRecording ? "destructive" : "secondary"}
         size="icon"
@@ -166,7 +166,7 @@ function UpdateSiteReportSectionFiles({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-4">
         <h3 className="font-medium">Section Files</h3>
         <Button asChild variant="secondary">
           <Label

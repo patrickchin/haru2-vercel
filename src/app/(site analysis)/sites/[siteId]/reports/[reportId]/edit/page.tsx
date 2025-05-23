@@ -17,7 +17,7 @@ import { EditReportActivities } from "./edit-activities";
 
 async function EditReportHeader({ report }: { report: SiteReport }) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+    <div className="flex flex-col flex-wrap sm:flex-row sm:items-center gap-4">
       <Button asChild variant="secondary">
         <Link
           href={`/sites/${report.siteId}/reports/${report.id}`}
@@ -27,7 +27,7 @@ async function EditReportHeader({ report }: { report: SiteReport }) {
           Back To Report
         </Link>
       </Button>
-      <h1 className="font-semibold text-2xl grow whitespace-nowrap">
+      <h1 className="font-semibold text-2xl grow">
         Editing Site Report #{report.id}: {report.createdAt?.toDateString()}
       </h1>
       <DeleteReportButton
