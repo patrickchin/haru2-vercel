@@ -1,6 +1,11 @@
 import Image from "next/image";
 import { HaruFile } from "@/lib/types";
-import { LucideTrash2, LucideVideo } from "lucide-react";
+import {
+  LucidePause,
+  LucidePlay,
+  LucideTrash2,
+  LucideVideo,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -87,6 +92,9 @@ export function FileListTable({
                     <LucideVideo className="h-5 w-5" />
                   </div>
                 )}
+                {file.type?.startsWith("audio/") && (
+                  <AudioPlayer url={file.url || ""} />
+                )}
               </TableCell>
               <TableCell className="overflow-ellipsis overflow-hidden text-nowrap">
                 {file.filename}
@@ -141,5 +149,56 @@ export function FileListTable({
         )}
       </TableBody>
     </Table>
+  );
+}
+
+import { useRef, useState } from "react";
+
+function AudioPlayer({ url }: { url: string }) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const handlePlayPause = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      audio.play();
+    }
+  };
+
+  const handleReset = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.currentTime = 0;
+    audio.pause();
+    setIsPlaying(false);
+  };
+
+  return (
+    <div className="flex items-center justify-center gap-1">
+      <audio
+        ref={audioRef}
+        src={url}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onEnded={() => setIsPlaying(false)}
+        className="hidden"
+      />
+      <Button
+        size="icon"
+        variant="ghost"
+        onClick={handlePlayPause}
+        onDoubleClick={handleReset}
+        type="button"
+      >
+        {isPlaying ? (
+          <LucidePause className="h-4 w-4" />
+        ) : (
+          <LucidePlay className="h-4 w-4" />
+        )}
+      </Button>
+    </div>
   );
 }
