@@ -47,7 +47,6 @@ function VoiceNoteRecorder({
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null,
   );
-  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const [isUploadingVoice, setIsUploadingVoice] = useState(false);
 
   async function startRecording() {
@@ -55,14 +54,13 @@ function VoiceNoteRecorder({
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder = new window.MediaRecorder(stream);
       setMediaRecorder(recorder);
-      setAudioChunks([]);
+      let chunks: Blob[] = [];
       recorder.ondataavailable = (e) => {
         console.log("Audio chunk available", e.data);
-        if (e.data.size > 0) setAudioChunks((prev) => [...prev, e.data]);
+          chunks.push(e.data);
       };
       recorder.onstop = async () => {
-        console.log("Recording stopped", audioChunks);
-        const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+        const audioBlob = new Blob(chunks, { type: "audio/webm" });
         await uploadVoiceNote(audioBlob);
       };
       recorder.start();
