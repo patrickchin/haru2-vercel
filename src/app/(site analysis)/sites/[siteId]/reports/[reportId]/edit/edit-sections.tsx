@@ -10,13 +10,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as Actions from "@/lib/actions";
 import * as Schemas from "@/db/schema";
 
-import Image from "next/image";
 import {
   LucideLoader2,
   LucideLoaderCircle,
   LucidePlus,
-  LucideTrash2,
-  LucideVideo,
+  LucideMic,
+  LucideStopCircle,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/lib/hooks/use-toast";
@@ -31,149 +30,95 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Textarea } from "@/components/ui/textarea";
-import prettyBytes from "pretty-bytes";
 import { SaveRevertForm } from "@/components/save-revert-form";
 import { DeleteSectionButton } from "./delete-section";
 import { InputWithDefaults } from "@/components/input-with-defaults";
+import { FileListTable } from "@/components/file-list-table";
 
-// DUPLICATED FROM edit-upload.tsx can be improved
-function FileListTable({
-  files,
-  handleFileDelete,
-  type,
+function VoiceNoteRecorder({
+  sectionId,
+  mutateFiles,
 }: {
-  files: HaruFile[] | undefined;
-  handleFileDelete: (file: HaruFile) => Promise<void>;
-  type: string;
+  sectionId: number;
+  mutateFiles: () => Promise<any>;
 }) {
+  const [isRecording, setIsRecording] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
+    null,
+  );
+  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+  const [isUploadingVoice, setIsUploadingVoice] = useState(false);
+
+  async function startRecording() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new window.MediaRecorder(stream);
+      setMediaRecorder(recorder);
+      setAudioChunks([]);
+      recorder.ondataavailable = (e) => {
+        console.log("Audio chunk available", e.data);
+        if (e.data.size > 0) setAudioChunks((prev) => [...prev, e.data]);
+      };
+      recorder.onstop = async () => {
+        console.log("Recording stopped", audioChunks);
+        const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+        await uploadVoiceNote(audioBlob);
+      };
+      recorder.start();
+      setIsRecording(true);
+    } catch (e) {
+      toast({ description: "Microphone access denied or unavailable." });
+    }
+  }
+
+  function stopRecording() {
+    if (mediaRecorder) {
+      mediaRecorder.stop();
+      setIsRecording(false);
+      setMediaRecorder(null);
+    }
+  }
+
+  async function uploadVoiceNote(blob: Blob) {
+    setIsUploadingVoice(true);
+    try {
+      const file = new File([blob], `voice-note-${Date.now()}.webm`, {
+        type: "audio/webm",
+      });
+      await uploadReportSectionFile(sectionId, file);
+      await mutateFiles();
+      toast({ description: "Voice note uploaded successfully." });
+    } catch (e) {
+      toast({ description: `Voice note upload error: ${e}` });
+    } finally {
+      setIsUploadingVoice(false);
+    }
+  }
+
   return (
-    <Table className="border rounded">
-      <TableHeader>
-        <TableRow className="[&>th]:border-r">
-          <TableHead></TableHead>
-          <TableHead></TableHead>
-          <TableHead className="text-nowrap">File Name</TableHead>
-          <TableHead className="text-nowrap">File Size</TableHead>
-          <TableHead></TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {files && files.length > 0 ? (
-          files?.map((file, i) => (
-            <TableRow key={file.id} className="[&>td]:border-r">
-              <TableCell className="w-8 text-center">{i + 1}</TableCell>
-              <TableCell className="w-12 h-12 overflow-ellipsis overflow-hidden text-nowrap p-0 relative">
-                {file.type?.startsWith("image/") && (
-                  <TooltipProvider
-                    delayDuration={0}
-                    disableHoverableContent={true}
-                  >
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="w-full h-full relative flex justify-center items-center border-4 border-background">
-                          <Image
-                            src={file.url || ""}
-                            alt={""}
-                            width={40}
-                            height={40}
-                            className="object-cover absolute"
-                          />
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent side="right" className="">
-                        <Image
-                          src={file.url || ""}
-                          alt={""}
-                          width={384}
-                          height={384}
-                          className="object-contain"
-                        />
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
-                {file.type?.startsWith("video/") && (
-                  <div className="w-full h-full flex justify-center items-center">
-                    <LucideVideo className="h-5 w-5" />
-                  </div>
-                )}
-              </TableCell>
-              <TableCell className="overflow-ellipsis overflow-hidden text-nowrap">
-                {file.filename}
-              </TableCell>
-              <TableCell className="w-24 whitespace-nowrap bg-red-">
-                {file.uploadedAt?.toDateString() ?? "--"}
-              </TableCell>
-              <TableCell className="w-24 whitespace-nowrap bg-red-">
-                {file.uploader?.name ?? "--"}
-              </TableCell>
-              <TableCell className="w-24 whitespace-nowrap bg-red-">
-                {file.filesize && prettyBytes(file.filesize)}
-              </TableCell>
-              <TableCell className="w-12">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button size="icon" variant="outline">
-                      <LucideTrash2 className="h-3.5 w-3.5" />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogTitle>Delete File</DialogTitle>
-                    <DialogDescription>
-                      Are you sure you want to delete the file{" "}
-                      <strong>{file.filename}</strong>?
-                    </DialogDescription>
-                    <div className="flex gap-2 justify-end">
-                      <DialogClose asChild>
-                        <Button variant="secondary">Cancel</Button>
-                      </DialogClose>
-                      <DialogClose asChild>
-                        <Button
-                          variant="destructive"
-                          onClick={() => handleFileDelete(file)}
-                        >
-                          Delete
-                        </Button>
-                      </DialogClose>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </TableCell>
-            </TableRow>
-          ))
+    <div className="flex items-center gap-2">
+      <Button
+        variant={isRecording ? "destructive" : "secondary"}
+        size="icon"
+        onClick={isRecording ? stopRecording : startRecording}
+        disabled={isUploadingVoice}
+        aria-label={isRecording ? "Stop Recording" : "Start Recording"}
+      >
+        {isRecording ? (
+          <LucideStopCircle className="w-5 h-5 animate-pulse" />
         ) : (
-          <TableRow>
-            <TableCell colSpan={999} className="h-24 text-center">
-              No {type}s have been uploaded
-            </TableCell>
-            <TableHead></TableHead>
-          </TableRow>
+          <LucideMic className="w-5 h-5" />
         )}
-      </TableBody>
-    </Table>
+      </Button>
+      <span className="text-sm">
+        {isRecording
+          ? "Recording..."
+          : isUploadingVoice
+            ? "Uploading voice note..."
+            : "Record Voice Note"}
+      </span>
+    </div>
   );
 }
 
@@ -185,7 +130,7 @@ function UpdateSiteReportSectionFiles({
   section: SiteReportSection;
 }) {
   const { data: files, mutate: mutateFiles } = useSWR<HaruFile[]>(
-    `/api/report/${reportId}/sections/${section.id}/files`, // api route doesn't really exist
+    `/api/report/${reportId}/sections/${section.id}/files`,
     async () => {
       const files = await Actions.listSiteReportSectionFiles(section.id);
       return files || [];
@@ -195,7 +140,7 @@ function UpdateSiteReportSectionFiles({
   async function handleFileDelete(file: HaruFile) {
     try {
       await Actions.deleteSiteReportFile({ reportId, fileId: file.id });
-      await mutateFiles(); // Refresh the file list after deletion
+      await mutateFiles();
       toast({ description: `File deleted successfully: ${file.filename}` });
     } catch (e) {
       toast({ description: `Delete Error: ${e}` });
@@ -247,6 +192,7 @@ function UpdateSiteReportSectionFiles({
             )}
           </Label>
         </Button>
+        <VoiceNoteRecorder sectionId={section.id} mutateFiles={mutateFiles} />
       </div>
       {files && files.length > 0 && (
         <FileListTable
