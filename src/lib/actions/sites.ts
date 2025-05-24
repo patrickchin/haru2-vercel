@@ -276,6 +276,7 @@ export async function getSiteMemberRole(
     activityId,
     invitationId,
     commentsSectionId,
+    fileId,
   }: {
     siteId?: number;
     reportId?: number;
@@ -283,6 +284,7 @@ export async function getSiteMemberRole(
     activityId?: number;
     invitationId?: number;
     commentsSectionId?: number;
+    fileId?: number;
   },
   session?: Session | null,
 ): Promise<SiteMemberRole> {
@@ -304,6 +306,8 @@ export async function getSiteMemberRole(
       role = await db.getCommentsSectionRole({ commentsSectionId, userId });
     } else if (invitationId) {
       role = await db.getInvitationRole({ invitationId, userId });
+    } else if (fileId) {
+      role = await db.getFileRole({ fileId, userId });
     }
   }
   if (!role) {

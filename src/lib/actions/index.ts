@@ -4,4 +4,5 @@ export * from "./sites";
 export * from "./reports";
 
 export * from "./comments";
+export * from "./files";
 export * from "./misc";

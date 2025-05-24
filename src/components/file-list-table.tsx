@@ -1,10 +1,19 @@
+"use client";
+
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { HaruFile } from "@/lib/types";
+import prettyBytes from "pretty-bytes";
+import * as Actions from "@/lib/actions";
+
 import {
   LucidePause,
   LucidePlay,
   LucideTrash2,
   LucideVideo,
+  LucideEdit,
+  LucideCheck,
+  LucideX,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,17 +38,24 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import prettyBytes from "pretty-bytes";
+import { Input } from "@/components/ui/input";
 
 export function FileListTable({
   files,
   handleFileDelete,
-  type,
 }: {
   files: HaruFile[] | undefined;
   handleFileDelete: (file: HaruFile) => Promise<void>;
-  type: string;
 }) {
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [filenameDraft, setFilenameDraft] = useState<string>("");
+
+  const handleFilenameSave = async (file: HaruFile, filename: string) => {
+    await Actions.updateFile({ fileId: file.id, filename});
+    file.filename = filename;;
+    setEditingId(null);
+  };
+
   if (!files || files.length === 0) return null;
   return (
     <Table className="border rounded overflow-x-auto">
@@ -96,7 +112,50 @@ export function FileListTable({
               )}
             </TableCell>
             <TableCell className="overflow-ellipsis overflow-hidden text-nowrap">
-              {file.filename}
+              {editingId === String(file.id) ? (
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={filenameDraft}
+                    autoFocus
+                    onChange={(e) => setFilenameDraft(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleFilenameSave(file, filenameDraft);
+                      if (e.key === "Escape") setEditingId(null);
+                    }}
+                  />
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => handleFilenameSave(file, filenameDraft)}
+                    aria-label="Save filename"
+                  >
+                    <LucideCheck className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => setEditingId(null)}
+                    aria-label="Cancel edit"
+                  >
+                    <LucideX className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <span className="flex items-center gap-1">
+                  <span>{file.filename}</span>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="ml-1"
+                    onClick={() => {
+                      setEditingId(String(file.id));
+                      setFilenameDraft(file.filename ?? "");
+                    }}
+                  >
+                    <LucideEdit className="h-4 w-4" />
+                  </Button>
+                </span>
+              )}
             </TableCell>
             <TableCell className="w-24 whitespace-nowrap bg-red-">
               {file.uploadedAt?.toDateString() ?? "--"}
@@ -142,8 +201,6 @@ export function FileListTable({
     </Table>
   );
 }
-
-import { useRef, useState } from "react";
 
 function AudioPlayer({ url }: { url: string }) {
   const audioRef = useRef<HTMLAudioElement>(null);

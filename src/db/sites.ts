@@ -34,6 +34,9 @@ import {
   siteReportDetails1,
   siteActivityMaterials1,
   siteReportActivity1,
+  fileGroupFiles1,
+  files1,
+  siteReportSections1,
 } from "./schema";
 
 export async function getAllSites(userId?: string): Promise<SiteAndExtra[]> {
@@ -224,6 +227,60 @@ export async function ensureSiteCommentsSection(siteId: number) {
 
     return commentsSectionId2;
   });
+}
+
+export async function getFileRole({
+  fileId,
+  userId,
+}: {
+  fileId: number;
+  userId: string;
+}) {
+  // man this is a horrible function, but it works for now
+
+  let role = undefined;
+
+  role = db
+    .select({ role: siteMembers1.role })
+    .from(siteMembers1)
+    .innerJoin(siteDetails1, eq(siteDetails1.id, siteMembers1.siteId))
+    .innerJoin(fileGroups1, eq(fileGroups1.id, siteDetails1.fileGroupId))
+    .innerJoin(fileGroupFiles1, eq(fileGroupFiles1.fileGroupId, fileGroups1.id))
+    .innerJoin(files1, eq(files1.id, fileGroupFiles1.fileId))
+    .where(and(eq(siteMembers1.memberId, userId), eq(files1.id, fileId)))
+    .limit(1)
+    .then((r) => (r && r.length ? r[0].role : null));
+  if (role) return role;
+
+  role = db
+    .select({ role: siteMembers1.role })
+    .from(siteMembers1)
+    .innerJoin(siteDetails1, eq(siteDetails1.id, siteMembers1.siteId))
+    .innerJoin(siteReports1, eq(siteReports1.siteId, siteDetails1.id))
+    .innerJoin(fileGroups1, eq(fileGroups1.id, siteReports1.fileGroupId))
+    .innerJoin(fileGroupFiles1, eq(fileGroupFiles1.fileGroupId, fileGroups1.id))
+    .innerJoin(files1, eq(files1.id, fileGroupFiles1.fileId))
+    .where(and(eq(siteMembers1.memberId, userId), eq(files1.id, fileId)))
+    .limit(1)
+    .then((r) => (r && r.length ? r[0].role : null));
+  if (role) return role;
+
+  role = db
+    .select({ role: siteMembers1.role })
+    .from(siteMembers1)
+    .innerJoin(siteDetails1, eq(siteDetails1.id, siteMembers1.siteId))
+    .innerJoin(siteReports1, eq(siteReports1.siteId, siteDetails1.id))
+    .innerJoin(
+      siteReportSections1,
+      eq(siteReportSections1.reportId, siteReports1.id),
+    )
+    .innerJoin(fileGroups1, eq(fileGroups1.id, siteReportSections1.fileGroupId))
+    .innerJoin(fileGroupFiles1, eq(fileGroupFiles1.fileGroupId, fileGroups1.id))
+    .innerJoin(files1, eq(files1.id, fileGroupFiles1.fileId))
+    .where(and(eq(siteMembers1.memberId, userId), eq(files1.id, fileId)))
+    .limit(1)
+    .then((r) => (r && r.length ? r[0].role : null));
+  if (role) return role;
 }
 
 export async function ensureSiteFilesSection(siteId: number) {
