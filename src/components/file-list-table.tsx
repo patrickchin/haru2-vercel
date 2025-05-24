@@ -42,7 +42,7 @@ export function FileListTable({
   type: string;
 }) {
   return (
-    <Table className="border rounded">
+    <Table className="border rounded overflow-x-auto">
       <TableHeader>
         <TableRow className="[&>th]:border-r">
           <TableHead></TableHead>

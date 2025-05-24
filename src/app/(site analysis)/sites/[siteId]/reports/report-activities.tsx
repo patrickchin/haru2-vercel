@@ -50,7 +50,7 @@ async function ReportActivity({
           {activity.endOfDate?.toDateString()}
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="outline">

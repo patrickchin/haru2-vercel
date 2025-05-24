@@ -62,7 +62,7 @@ const defaultActivityGroups = [
     label: "Site Work",
     options: [
       "Site Preparation",
-      "Sit Improvements",
+      "Site Improvements",
       "Site Utilities",
       "Off-Site work",
     ],
@@ -494,7 +494,7 @@ function EditActivityNameForm({
   return (
     <Form {...form}>
       <form
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"
+        className="flex flex-col gap-3"
         onSubmit={form.handleSubmit(async (data: SchemaType) => {
           const newActivity = await mutate(
             Actions.updateSiteActivity({
@@ -509,7 +509,7 @@ function EditActivityNameForm({
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem className="md:col-span-2">
+            <FormItem>
               <FormControl>
                 <InputWithDefaults
                   defaultOptionGroups={defaultActivityGroups}
@@ -525,67 +525,73 @@ function EditActivityNameForm({
           )}
         />
 
-        <div className="hidden lg:block"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div className="flex gap-2">
+            <FormField
+              control={form.control}
+              name="startDate"
+              render={({ field }) => (
+                <FormItem className="flex-grow">
+                  <FormControl>
+                    <InputDate
+                      field={field}
+                      prefix={
+                        <span className="text-sm font-semibold">
+                          Start Date:{" "}
+                        </span>
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={() => form.setValue("startDate", null)}
+            >
+              <LucideEraser />
+            </Button>
+          </div>
 
-        <div className="flex gap-2">
-          <FormField
-            control={form.control}
-            name="startDate"
-            render={({ field }) => (
-              <FormItem className="flex-grow">
-                <FormControl>
-                  <InputDate
-                    field={field}
-                    prefix={
-                      <span className="text-sm font-semibold">
-                        Start Date:{" "}
-                      </span>
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={() => form.setValue("startDate", null)}
-          >
-            <LucideEraser />
-          </Button>
+          <div className="flex gap-2">
+            <FormField
+              control={form.control}
+              name="endOfDate"
+              render={({ field }) => (
+                <FormItem className="flex-grow">
+                  <FormControl>
+                    <InputDate
+                      field={field}
+                      prefix={
+                        <span className="text-sm font-semibold">
+                          End Date:{" "}
+                        </span>
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={() => form.setValue("endOfDate", null)}
+            >
+              <LucideEraser />
+            </Button>
+          </div>
         </div>
 
-        <div className="flex gap-2">
-          <FormField
-            control={form.control}
-            name="endOfDate"
-            render={({ field }) => (
-              <FormItem className="flex-grow">
-                <FormControl>
-                  <InputDate
-                    field={field}
-                    prefix={
-                      <span className="text-sm font-semibold">End Date: </span>
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={() => form.setValue("endOfDate", null)}
-          >
-            <LucideEraser />
-          </Button>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <EditUsedMaterials site={site} activityId={activity.id} />
+          <EditUsedEquipment site={site} activityId={activity.id} />
+          <EditSitePersonnel activity={activity} mutate={mutate} />
         </div>
-
-        <div className="block lg:hidden"></div>
 
         <div className="flex gap-2 justify-end items-center">
           <SaveRevertForm form={form} />
@@ -595,10 +601,6 @@ function EditActivityNameForm({
             onSubmit={mutate}
           />
         </div>
-
-        <EditUsedMaterials site={site} activityId={activity.id} />
-        <EditUsedEquipment site={site} activityId={activity.id} />
-        <EditSitePersonnel activity={activity} mutate={mutate} />
       </form>
     </Form>
   );
