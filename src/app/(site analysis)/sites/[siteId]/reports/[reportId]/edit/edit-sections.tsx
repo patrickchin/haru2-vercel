@@ -59,7 +59,7 @@ function VoiceNoteRecorder({
         chunks.push(e.data);
       };
       recorder.onstop = async () => {
-        const audioBlob = new Blob(chunks, { type: "audio/webm" });
+        const audioBlob = new Blob(chunks, { type: "audio/mp4" });
         await uploadVoiceNote(audioBlob);
       };
       recorder.start();
@@ -80,8 +80,8 @@ function VoiceNoteRecorder({
   async function uploadVoiceNote(blob: Blob) {
     setIsUploadingVoice(true);
     try {
-      const file = new File([blob], `voice-note-${Date.now()}.webm`, {
-        type: "audio/webm",
+      const file = new File([blob], `voice-note-${Date.now()}.mp4`, {
+        type: "audio/mp4",
       });
       await uploadReportSectionFile(sectionId, file);
       await mutateFiles();
@@ -193,7 +193,6 @@ function UpdateSiteReportSectionFiles({
         <FileListTable
           files={files}
           handleFileDelete={handleFileDelete}
-          type={"image"}
         />
       )}
     </div>
