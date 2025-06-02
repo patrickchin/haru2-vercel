@@ -42,10 +42,7 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import {
-  editReportRoles,
-  editSiteRoles,
-} from "@/lib/permissions";
+import { editReportRoles, editSiteRoles } from "@/lib/permissions";
 import {
   Collapsible,
   CollapsibleContent,
@@ -141,7 +138,7 @@ function SiteMemberSelectRole({
 
   return (
     <Select
-      disabled={member.role === "owner" || isUpdating || disabled}
+      disabled={editSiteRoles.includes(member.role) || isUpdating || disabled}
       onValueChange={async (r) => {
         try {
           setIsUpdating(true);
