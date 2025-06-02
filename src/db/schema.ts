@@ -148,8 +148,14 @@ export const fileGroups1 = pgTable("fileGroups1", {
 export const fileGroupFiles1 = pgTable(
   "fileGroupFiles1",
   {
-    fileGroupId: integer("fileGroupId").references(() => fileGroups1.id),
-    fileId: integer("fileId").references(() => files1.id),
+    fileGroupId: integer("fileGroupId")
+      .references(() => fileGroups1.id)
+      .notNull(),
+    fileId: integer("fileId")
+      .references(() => files1.id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
   },
   (t) => [primaryKey({ columns: [t.fileGroupId, t.fileId] })],
 );
@@ -215,8 +221,10 @@ export const siteMembers1 = pgTable(
   "siteMembers1",
   {
     id: serial("id").unique(),
-    siteId: integer("siteId").references(() => sites1.id),
-    memberId: text("memberId"), // .references(() => users1.id),
+    siteId: integer("siteId")
+      .references(() => sites1.id)
+      .notNull(),
+    memberId: text("memberId").notNull(), // .references(() => users1.id),
     role: siteMemberRole("role").default("member"),
 
     dateAdded: timestamp("dateAdded", { mode: "date", withTimezone: true })
@@ -375,13 +383,14 @@ export const siteActivity1 = pgTable("siteActivity1", {
 export const siteActivityMaterials1 = pgTable(
   "siteActivityMaterials1",
   {
-    siteActivityId: integer("siteActivityId").references(
-      () => siteActivity1.id,
-      { onDelete: "cascade" },
-    ),
-    materialId: integer("materialId").references(() => materials1.id, {
-      onDelete: "cascade",
-    }),
+    siteActivityId: integer("siteActivityId")
+      .references(() => siteActivity1.id, { onDelete: "cascade" })
+      .notNull(),
+    materialId: integer("materialId")
+      .references(() => materials1.id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
   },
   (t) => [primaryKey({ columns: [t.siteActivityId, t.materialId] })],
 );
@@ -389,13 +398,14 @@ export const siteActivityMaterials1 = pgTable(
 export const siteActivityEquipment1 = pgTable(
   "siteActivityEquipment1",
   {
-    siteActivityId: integer("siteActivityId").references(
-      () => siteActivity1.id,
-      { onDelete: "cascade" },
-    ),
-    equipmentId: integer("equipmentId").references(() => equipment1.id, {
-      onDelete: "cascade",
-    }),
+    siteActivityId: integer("siteActivityId")
+      .references(() => siteActivity1.id, { onDelete: "cascade" })
+      .notNull(),
+    equipmentId: integer("equipmentId")
+      .references(() => equipment1.id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
   },
   (t) => [primaryKey({ columns: [t.siteActivityId, t.equipmentId] })],
 );
@@ -403,10 +413,12 @@ export const siteActivityEquipment1 = pgTable(
 export const siteReportActivity1 = pgTable(
   "siteReportActivity1",
   {
-    siteReportId: integer("siteReportId").references(() => siteReports1.id),
-    siteActivityId: integer("siteActivityId").references(
-      () => siteActivity1.id,
-    ),
+    siteReportId: integer("siteReportId")
+      .references(() => siteReports1.id)
+      .notNull(),
+    siteActivityId: integer("siteActivityId")
+      .references(() => siteActivity1.id, { onDelete: "cascade" })
+      .notNull(),
   },
   (t) => [primaryKey({ columns: [t.siteReportId, t.siteActivityId] })],
 );
