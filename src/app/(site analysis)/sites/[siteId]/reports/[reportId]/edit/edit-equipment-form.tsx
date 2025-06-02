@@ -210,9 +210,17 @@ function EditEquipmentForm({
   isLoading: boolean;
   updateAction: (equipment: SiteEquipmentNew[]) => Promise<any>;
 }) {
+  const initialCurrency = getCountryCurrency(site.countryCode) || "USD";
+  const [defaultCurrency, setDefaultCurrency] = useState(initialCurrency);
+
   const form = useForm<SchemaType>({
     resolver: zodResolver(schema),
-    defaultValues: equipment && { equipment: equipment },
+    defaultValues: equipment && {
+      equipment: (equipment || []).map((item: any) => ({
+        ...item,
+        costUnits: item?.costUnits || initialCurrency,
+      })),
+    },
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -238,10 +246,67 @@ function EditEquipmentForm({
     );
   }
 
-  const defaultCurrency = getCountryCurrency(site.countryCode);
+  const equipmentValues = form.watch("equipment") || [];
+  const currencySums = equipmentValues.reduce(
+    (acc: Record<string, number>, item: any) => {
+      const quantity = item?.quantity ?? 0;
+      const cost = item?.cost ? parseFloat(item.cost) : 0;
+      const currency = item?.costUnits || defaultCurrency;
+      if (!acc[currency]) acc[currency] = 0;
+      acc[currency] += quantity * cost;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   return (
     <Form {...form}>
+      <div className="flex items-center justify-end gap-3">
+        <div className="flex items-center gap-2">
+          <Select value={defaultCurrency} onValueChange={setDefaultCurrency}>
+            <SelectTrigger>
+              <span className="text-sm mr-2">Default Currency: </span>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {currencies.map((currency) => (
+                <SelectItem value={currency} key={currency}>
+                  {currency}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="grow"></div>
+        <Input
+          className="w-fit"
+          placeholder="Paste to Import"
+          readOnly
+          onPaste={(e) => {
+            e.preventDefault();
+            const stringContent = e.clipboardData.getData("text");
+            append(JSON.parse(stringContent).equipment);
+          }}
+        />
+        <Button
+          type="button"
+          variant="default"
+          onClick={async () => {
+            const jsonValues = JSON.stringify(form.getValues());
+            if (!jsonValues) return;
+            await navigator.clipboard.writeText(jsonValues);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+          }}
+          className={cn(
+            copied
+              ? "hover:bg-green-900 bg-green-950 dark:hover:bg-green-200 dark:bg-green-100"
+              : "",
+          )}
+        >
+          Export to Clipboard {copied && <LucideCheck />}
+        </Button>
+      </div>
       <form
         className="flex flex-col gap-4 grow"
         onSubmit={form.handleSubmit(
@@ -256,37 +321,6 @@ function EditEquipmentForm({
           },
         )}
       >
-        <div className="flex items-center justify-end gap-3">
-          <Input
-            className="w-fit"
-            placeholder="Paste to Import"
-            readOnly
-            onPaste={(e) => {
-              e.preventDefault();
-              const stringContent = e.clipboardData.getData("text");
-              append(JSON.parse(stringContent).equipment);
-            }}
-          />
-          <Button
-            type="button"
-            variant="default"
-            onClick={async () => {
-              const jsonValues = JSON.stringify(form.getValues());
-              if (!jsonValues) return;
-              await navigator.clipboard.writeText(jsonValues);
-              setCopied(true);
-              setTimeout(() => setCopied(false), 2000);
-            }}
-            className={cn(
-              copied
-                ? "hover:bg-green-900 bg-green-950 dark:hover:bg-green-200 dark:bg-green-100"
-                : "",
-            )}
-          >
-            Export to Clipboard {copied && <LucideCheck />}
-          </Button>
-        </div>
-
         <ScrollArea className="grow h-1 border rounded-md">
           <Table>
             <TableHeader>
@@ -320,6 +354,15 @@ function EditEquipmentForm({
                   form={form}
                   remove={remove}
                 />
+              ))}
+              {Object.entries(currencySums).map(([currency, sum]) => (
+                <TableRow key={currency}>
+                  <TableCell colSpan={3} />
+                  <TableCell className="text-right font-bold whitespace-nowrap">
+                    {sum.toLocaleString()} {currency}
+                  </TableCell>
+                  <TableCell colSpan={3} />
+                </TableRow>
               ))}
             </TableBody>
           </Table>

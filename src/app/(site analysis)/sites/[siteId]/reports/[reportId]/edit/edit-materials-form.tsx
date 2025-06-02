@@ -40,8 +40,8 @@ import {
   LucideX,
   LucideCheck,
 } from "lucide-react";
-import { SiteDetails, SiteMaterial, SiteMaterialNew } from "@/lib/types";
-import { getCountryCurrency } from "@/lib/constants";
+import { SiteMaterial, SiteMaterialNew } from "@/lib/types";
+import { currencies, getCountryCurrency } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 const schema = z.object({
@@ -252,9 +252,17 @@ function EditMaterialsForm({
   isLoading: boolean;
   updateAction: (materials: SiteMaterialNew[]) => Promise<any>;
 }) {
+  const initialCurrency = defaultCurrency || getCountryCurrency("US") || "USD";
+  const [selectedCurrency, setSelectedCurrency] = useState(initialCurrency);
+
   const form = useForm<SchemaType>({
     resolver: zodResolver(schema),
-    defaultValues: materials && { materials: materials },
+    defaultValues: materials && {
+      materials: (materials || []).map((item: any) => ({
+        ...item,
+        unitCostCurrency: item?.unitCostCurrency || initialCurrency,
+      })),
+    },
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -272,6 +280,19 @@ function EditMaterialsForm({
 
   const [copied, setCopied] = useState(false);
 
+  const materialsValues = form.watch("materials") || [];
+  const currencySums = materialsValues.reduce(
+    (acc: Record<string, number>, item: any) => {
+      const quantity = item?.quantity ?? 0;
+      const unitCost = item?.unitCost ? parseFloat(item.unitCost) : 0;
+      const currency = item?.unitCostCurrency || selectedCurrency;
+      if (!acc[currency]) acc[currency] = 0;
+      acc[currency] += quantity * unitCost;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center grow">
@@ -282,6 +303,52 @@ function EditMaterialsForm({
 
   return (
     <Form {...form}>
+      <div className="flex items-center justify-end gap-3">
+        <div className="flex items-center gap-2">
+          <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
+            <SelectTrigger>
+              <span className="text-sm mr-2">Default Currency: </span>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {currencies.map((currency) => (
+                <SelectItem value={currency} key={currency}>
+                  {currency}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="grow"></div>
+        <Input
+          className="w-fit"
+          placeholder="Paste to Import"
+          readOnly
+          onPaste={(e) => {
+            e.preventDefault();
+            const stringContent = e.clipboardData.getData("text");
+            append(JSON.parse(stringContent).materials);
+          }}
+        />
+        <Button
+          type="button"
+          variant="default"
+          onClick={async () => {
+            const jsonValues = JSON.stringify(form.getValues());
+            if (!jsonValues) return;
+            await navigator.clipboard.writeText(jsonValues);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+          }}
+          className={cn(
+            copied
+              ? "hover:bg-green-900 bg-green-950 dark:hover:bg-green-200 dark:bg-green-100"
+              : "",
+          )}
+        >
+          Export to Clipboard {copied && <LucideCheck />}
+        </Button>
+      </div>
       <form
         className="flex flex-col gap-4 grow"
         onSubmit={form.handleSubmit(
@@ -295,37 +362,6 @@ function EditMaterialsForm({
           },
         )}
       >
-        <div className="flex items-center justify-end gap-3">
-          <Input
-            className="w-fit"
-            placeholder="Paste to Import"
-            readOnly
-            onPaste={(e) => {
-              e.preventDefault();
-              const stringContent = e.clipboardData.getData("text");
-              append(JSON.parse(stringContent).materials);
-            }}
-          />
-          <Button
-            type="button"
-            variant="default"
-            onClick={async () => {
-              const jsonValues = JSON.stringify(form.getValues());
-              if (!jsonValues) return;
-              await navigator.clipboard.writeText(jsonValues);
-              setCopied(true);
-              setTimeout(() => setCopied(false), 2000);
-            }}
-            className={cn(
-              copied
-                ? "hover:bg-green-900 bg-green-950 dark:hover:bg-green-200 dark:bg-green-100"
-                : "",
-            )}
-          >
-            Export to Clipboard {copied && <LucideCheck />}
-          </Button>
-        </div>
-
         <ScrollArea className="grow h-1 border rounded-md">
           <Table>
             <TableHeader>
@@ -360,6 +396,15 @@ function EditMaterialsForm({
                   remove={remove}
                 />
               ))}
+              {Object.entries(currencySums).map(([currency, sum]) => (
+                <TableRow key={currency}>
+                  <TableCell colSpan={4} />
+                  <TableCell className="text-right font-bold whitespace-nowrap">
+                    {sum.toLocaleString()} {currency}
+                  </TableCell>
+                  <TableCell colSpan={2} />
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
           <ScrollBar orientation="vertical" />
@@ -375,9 +420,9 @@ function EditMaterialsForm({
                 quantity: null,
                 quantityUnit: null,
                 unitCost: null,
-                unitCostCurrency: defaultCurrency,
+                unitCostCurrency: selectedCurrency,
                 totalCost: null,
-                totalCostCurrency: defaultCurrency,
+                totalCostCurrency: selectedCurrency,
                 condition: null,
               })
             }
