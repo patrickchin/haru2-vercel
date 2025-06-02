@@ -176,6 +176,7 @@ export const sites1 = pgTable("sites1", {
     mode: "date",
     withTimezone: true,
   }).defaultNow(),
+  lastReportIndex: integer("lastReportIndex").default(0),
 });
 
 export const siteDetails1 = pgTable("siteDetails1", {
@@ -260,6 +261,8 @@ export const siteReports1 = pgTable("siteReports1", {
     .notNull()
     .unique()
     .$defaultFn(() => crypto.randomUUID()),
+  index: integer("index"),
+  title: text("title"),
   reporterId: text("reporterId"), // .references(() => users1.id),
   siteId: integer("siteId").references(() => sites1.id),
   createdAt: timestamp("createdAt", {

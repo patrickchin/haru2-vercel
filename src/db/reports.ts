@@ -9,6 +9,7 @@ import {
   inArray,
   isNotNull,
   isNull,
+  sql,
 } from "drizzle-orm";
 import {
   SiteActivity,
@@ -38,8 +39,10 @@ import {
   siteReportDetails1,
   siteReports1,
   siteReportSections1,
+  sites1,
   users1,
 } from "@/db/schema";
+import assert from "assert";
 
 const SiteReportColumns = {
   ...getTableColumns(siteReports1),
@@ -122,6 +125,8 @@ export async function addSiteReport(
   siteReport: SiteReportNew,
 ): Promise<SiteReportAll> {
   return db.transaction(async (tx) => {
+    assert(siteReport.siteId);
+
     const fileGroup = await tx
       .insert(fileGroups1)
       .values({})
@@ -134,12 +139,22 @@ export async function addSiteReport(
       .returning()
       .then((r) => r[0]);
 
+    const site = await tx
+      .update(sites1)
+      .set({
+        lastReportIndex: sql`${sites1.lastReportIndex} + 1`,
+      })
+      .where(eq(sites1.id, siteReport.siteId))
+      .returning()
+      .then((r) => r[0]);
+
     const report = await tx
       .insert(siteReports1)
       .values({
         ...siteReport,
         fileGroupId: fileGroup.id,
         commentsSectionId: commentsSection.id,
+        index: site.lastReportIndex,
       })
       .returning()
       .then((r) => r[0]);
