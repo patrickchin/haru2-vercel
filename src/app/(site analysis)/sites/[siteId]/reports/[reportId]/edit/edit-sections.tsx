@@ -190,10 +190,7 @@ function UpdateSiteReportSectionFiles({
         <VoiceNoteRecorder sectionId={section.id} mutateFiles={mutateFiles} />
       </div>
       {files && files.length > 0 && (
-        <FileListTable
-          files={files}
-          handleFileDelete={handleFileDelete}
-        />
+        <FileListTable files={files} handleFileDelete={handleFileDelete} />
       )}
     </div>
   );
