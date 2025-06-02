@@ -281,6 +281,8 @@ export async function getFileRole({
     .limit(1)
     .then((r) => (r && r.length ? r[0].role : null));
   if (role) return role;
+
+  return role;
 }
 
 export async function ensureSiteFilesSection(siteId: number) {
@@ -393,7 +395,7 @@ export async function getSiteRole({
 
 export async function addSiteInvitation(
   siteId: number,
-  values: { email?: string },
+  values: { email: string },
 ) {
   return db
     .insert(siteInvitations1)

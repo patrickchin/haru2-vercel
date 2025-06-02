@@ -164,7 +164,7 @@ async function addSiteMemberInvite({
   name,
 }: {
   siteId: number;
-  email?: string;
+  email: string;
   name?: string | null;
 }) {
   const maxNameLen = 20;

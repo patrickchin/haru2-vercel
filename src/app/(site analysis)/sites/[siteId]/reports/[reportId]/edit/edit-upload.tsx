@@ -89,7 +89,6 @@ function UploadAndManageFilesSection({
       <FileListTable
         files={files}
         handleFileDelete={handleFileDelete}
-        type={type}
       />
     </div>
   );

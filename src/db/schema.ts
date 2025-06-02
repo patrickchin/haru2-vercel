@@ -242,8 +242,10 @@ export const siteInvitations1 = pgTable(
       .notNull()
       .unique()
       .$defaultFn(() => crypto.randomUUID()),
-    siteId: integer("siteId").references(() => sites1.id),
-    email: text("email"),
+    siteId: integer("siteId")
+      .references(() => sites1.id)
+      .notNull(),
+    email: text("email").notNull(),
 
     dateAdded: timestamp("dateAdded", { mode: "date", withTimezone: true })
       .notNull()
