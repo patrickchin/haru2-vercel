@@ -70,6 +70,8 @@ function EquipmentTableRow({
   const costUnits = form.watch(`equipment.${index}.costUnits`);
   const totalCost = (quantity ?? 0) * (cost ? parseFloat(cost) : 0);
 
+  const defaultConditions = ["New", "Used", "Damaged", "Repaired"];
+
   return (
     <TableRow className={isRowDirty ? "bg-yellow-50 dark:bg-stone-800" : ""}>
       <TableCell>
@@ -178,6 +180,34 @@ function EquipmentTableRow({
                 {...field}
                 value={field.value ?? ""}
               />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </TableCell>
+      <TableCell>
+        <FormField
+          name={`equipment.${index}.condition`}
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex">
+                <Input
+                  {...field}
+                  value={field.value ?? ""}
+                  className="grow rounded-r-none min-w-28"
+                />
+                <Select onValueChange={field.onChange} defaultValue="">
+                  <SelectTrigger className="border-l-0 rounded-l-none w-12" />
+                  <SelectContent align="end">
+                    {defaultConditions.map((cond) => (
+                      <SelectItem key={cond} value={cond}>
+                        {cond}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <FormMessage />
             </FormItem>
           )}
@@ -343,6 +373,9 @@ function EditEquipmentForm({
                 <TableHead className="text-center min-w-28 w-2/12">
                   Operation Time (Hours)
                 </TableHead>
+                <TableHead className="text-center min-w-24 w-2/12">
+                  Condition
+                </TableHead>
                 <TableHead className="text-center w-1/12"></TableHead>
               </TableRow>
             </TableHeader>
@@ -381,6 +414,7 @@ function EditEquipmentForm({
                 costUnits: defaultCurrency,
                 ownership: null,
                 operationTimeHours: null,
+                condition: null, // Add condition field
               })
             }
           >
