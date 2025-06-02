@@ -164,7 +164,7 @@ export async function ReportSections({ reportId }: { reportId: number }) {
   return (
     <Card className="overflow-hidden">
       <Collapsible defaultOpen={true}>
-        <CardHeader className="flex flex-row justify-between items-center bg-green-100 dark:bg-green-950 py-0">
+        <CardHeader className="flex flex-row justify-between items-center bg-green-100 dark:bg-green-950 space-y-0 py-0">
           <CardTitle className="text-lg py-6">Report Detail Sections</CardTitle>
           <div>
             <Button variant="outline" asChild>
