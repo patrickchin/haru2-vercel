@@ -48,7 +48,7 @@ export default function Page() {
             >
               <p className="font-extrabold">
                 <span className="pr-2 text-xl">
-                  Setup your own team or Hire our experts
+                  Setup your team and start organizing your site reports
                 </span>
                 <Button
                   asChild
