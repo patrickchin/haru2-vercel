@@ -372,6 +372,8 @@ export const siteActivity1 = pgTable("siteActivity1", {
   name: varchar("name"),
   description: varchar("description"),
 
+  details: varchar("details"),
+
   contractors: varchar("contractors"),
   engineers: varchar("engineers"),
   visitors: varchar("visitors"),

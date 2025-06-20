@@ -480,6 +480,7 @@ function EditActivity({
     name: true,
     startDate: true,
     endOfDate: true,
+    details: true,
   });
   type SchemaType = z.infer<typeof schema>;
   const form = useForm<SchemaType>({
@@ -488,6 +489,7 @@ function EditActivity({
       name: activity.name || "",
       startDate: activity.startDate,
       endOfDate: activity.endOfDate,
+      details: activity.details || "",
     },
   });
 
@@ -593,6 +595,25 @@ function EditActivity({
               <EditUsedEquipment site={site} activityId={activity.id} />
               <EditSitePersonnel activity={activity} mutate={mutate} />
             </div>
+
+            <FormField
+              control={form.control}
+              name="details"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      value={field.value || ""}
+                      className="focus:bg-background"
+                      placeholder="Enter details for this activity ..."
+                      autoResize={true}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <div className="flex gap-2 justify-end items-center">
               <SaveRevertForm form={form} />

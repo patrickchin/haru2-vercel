@@ -177,6 +177,11 @@ async function ReportActivity({
           </DialogContent>
         </Dialog>
       </div>
+      {activity.details && (
+        <div className="whitespace-pre-line p-2 rounded border">
+          {activity.details}
+        </div>
+      )}
     </div>
   );
 }
