@@ -95,7 +95,7 @@ export async function ReportTitleBarDisplay({
         </Button>
       </div>
 
-      <div className="grow flex w-full sm:w-fit">
+      <div className="grow flex flex-col">
         <Popover>
           <PopoverTrigger asChild disabled={!report}>
             <Button
