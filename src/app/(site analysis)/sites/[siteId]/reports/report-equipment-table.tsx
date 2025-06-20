@@ -105,7 +105,7 @@ function EquipmentTable({
   });
 
   return (
-    <div className="w-full h-full pl-1 flex flex-col gap-2">
+    <div className="w-full h-full pl-1 flex flex-col gap-2 min-h-0 grow">
       <div className="flex items-center justify-between py-4">
         <Input
           placeholder="Filter equipment names..."
@@ -116,7 +116,7 @@ function EquipmentTable({
           className="max-w-sm"
         />
       </div>
-      <ScrollArea className="grow rounded-md border max-w-full overflow-hidden">
+      <ScrollArea className="flex-1 min-h-0 rounded-md border max-w-full overflow-hidden">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
