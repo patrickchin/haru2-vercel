@@ -57,7 +57,7 @@ export default async function Page({
 
   return (
     <DefaultLayout className="max-w-none relative p-0">
-      <div className="w-full sticky top-0 z-30 py-4 bg-background border-b shadow-md px-4">
+      <div className="w-full sm:sticky top-0 z-30 py-4 bg-background border-b shadow-md px-4">
         <div className="max-w-5xl mx-auto">
           <EditReportHeader report={report} />
         </div>
