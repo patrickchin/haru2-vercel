@@ -5,11 +5,19 @@ import { SiteDetails, SiteMemberRole } from "@/lib/types";
 import { editSiteRoles } from "@/lib/permissions";
 import * as Actions from "@/lib/actions";
 
-import { LucideMoveLeft, LucideMoveRight } from "lucide-react";
+import {
+  LucideMoveLeft,
+  LucideMoveRight,
+  FileText,
+  Users,
+  ClipboardList,
+  Package,
+} from "lucide-react";
 
 import SiteMembers from "./site-members";
 import { EditSiteTitle } from "./edit-title";
 import { EditSiteDescription } from "./edit-description";
+import { SiteReportsList } from "./site-reports-list";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -125,7 +133,7 @@ export default async function Page(props: {
             href={`/sites/${siteId}/reports`}
             className="flex items-center gap-2 [&_svg]:size-6"
           >
-            Click Here to View Reports
+            View Your Latest Report
             <LucideMoveRight />
           </Link>
         </Button>
@@ -133,18 +141,30 @@ export default async function Page(props: {
 
       <Tabs defaultValue={tab} className="w-full gap-4">
         <Card className="mb-8 overflow-hidden">
-          <TabsList className="w-full h-auto p-1 [&_button]:h-12 justify-start overflow-x-auto">
+          <TabsList className="w-full h-auto p-1 [&_button]:h-12 [&_button]:px-4 justify-start overflow-x-auto gap-2">
             <TabsTriggerSearchParams searchParamsKey="tab" value="description">
+              <FileText size={16} className="mr-1" />
               Description
             </TabsTriggerSearchParams>
             <TabsTriggerSearchParams searchParamsKey="tab" value="members">
+              <Users size={16} className="mr-1" />
               Members
             </TabsTriggerSearchParams>
-            <TabsTriggerSearchParams searchParamsKey="tab" value="files">
+            {/* <TabsTriggerSearchParams searchParamsKey="tab" value="files">
+              <Folder size={16} className="mr-1" />
               Files
+            </TabsTriggerSearchParams> */}
+            <TabsTriggerSearchParams searchParamsKey="tab" value="reports">
+              <ClipboardList size={16} className="mr-1" />
+              Reports
             </TabsTriggerSearchParams>
             <div className="grow"></div>
-            <TabsTriggerSearchParams searchParamsKey="tab" value="materials" className="hidden">
+            <TabsTriggerSearchParams
+              searchParamsKey="tab"
+              value="materials"
+              className="hidden"
+            >
+              <Package size={16} className="mr-1" />
               Materials
             </TabsTriggerSearchParams>
           </TabsList>
@@ -168,11 +188,14 @@ export default async function Page(props: {
           <SiteMembers site={site} members={members} />
         </TabsContent>
 
-        <TabsContent value="comments" className="space-y-4">
-        </TabsContent>
+        <TabsContent value="comments" className="space-y-4"></TabsContent>
 
         <TabsContent value="files" className="space-y-4">
           <SiteFiles site={site} role={role} />
+        </TabsContent>
+
+        <TabsContent value="reports" className="space-y-4">
+          <SiteReportsList siteId={site.id} />
         </TabsContent>
 
         <TabsContent value="materials" className="space-y-4">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { TabsTrigger } from "./ui/tabs";
 import React from "react";
 
@@ -11,7 +11,6 @@ export function TabsTriggerSearchParams({
 }: React.ComponentProps<typeof TabsTrigger> & {
   searchParamsKey: string;
 }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const newQueryString = React.useMemo(() => {

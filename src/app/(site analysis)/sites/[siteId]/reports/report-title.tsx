@@ -86,7 +86,7 @@ export async function ReportTitleBarDisplay({
       <div>
         <Button variant="secondary" asChild>
           <Link
-            href={`/sites/${site?.id ?? ""}`}
+            href={`/sites/${site?.id ?? ""}?tab=reports`}
             className="flex gap-2 w-full h-full items-center"
           >
             <LucideMoveLeft className="h-5" />
