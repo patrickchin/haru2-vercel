@@ -195,7 +195,7 @@ export default async function Page(props: {
         </TabsContent>
 
         <TabsContent value="reports" className="space-y-4">
-          <SiteReportsList siteId={site.id} />
+          <SiteReportsList siteId={site.id} role={role} />
         </TabsContent>
 
         <TabsContent value="materials" className="space-y-4">

@@ -3,20 +3,32 @@ import * as Actions from "@/lib/actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, LucidePlus, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SiteReport } from "@/lib/types";
+import { SiteMemberRole, SiteReport } from "@/lib/types";
+import { editReportRoles } from "@/lib/permissions";
 
-export async function SiteReportsList({ siteId }: { siteId: number }) {
+export async function SiteReportsList({
+  siteId,
+  role,
+}: {
+  siteId: number;
+  role?: SiteMemberRole;
+}) {
   const reports = await Actions.listSiteReports(siteId);
+  const canEdit = !!(
+    role && editReportRoles.includes(role as (typeof editReportRoles)[number])
+  );
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Site Reports</CardTitle>
-        <Button asChild variant="secondary">
-          <Link href={`/sites/${siteId}/reports/new`}>
-            <LucidePlus /> New Report
-          </Link>
-        </Button>
+        {canEdit && (
+          <Button asChild variant="secondary">
+            <Link href={`/sites/${siteId}/reports/new`}>
+              <LucidePlus /> New Report
+            </Link>
+          </Button>
+        )}
       </CardHeader>
       <CardContent>
         {reports && reports.length > 0 ? (
@@ -56,11 +68,13 @@ export async function SiteReportsList({ siteId }: { siteId: number }) {
                   </div>
                 </div>
                 <div className="flex gap-2 items-end">
-                  <Button asChild variant="outline">
-                    <Link href={`/sites/${siteId}/reports/${report.id}/edit`}>
-                      <Pencil /> Edit
-                    </Link>
-                  </Button>
+                  {canEdit && (
+                    <Button asChild variant="outline">
+                      <Link href={`/sites/${siteId}/reports/${report.id}/edit`}>
+                        <Pencil /> Edit
+                      </Link>
+                    </Button>
+                  )}
                   <Button asChild variant="outline">
                     <Link href={`/sites/${siteId}/reports/${report.id}`}>
                       <Eye /> View
