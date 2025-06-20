@@ -1,7 +1,7 @@
 import Link from "next/link";
 import * as Actions from "@/lib/actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, Pencil } from "lucide-react";
+import { Eye, LucidePlus, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SiteReport } from "@/lib/types";
 
@@ -10,8 +10,13 @@ export async function SiteReportsList({ siteId }: { siteId: number }) {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Site Reports</CardTitle>
+        <Button asChild variant="secondary">
+          <Link href={`/sites/${siteId}/reports/new`}>
+            <LucidePlus /> New Report
+          </Link>
+        </Button>
       </CardHeader>
       <CardContent>
         {reports && reports.length > 0 ? (
