@@ -106,12 +106,12 @@ export async function ReportTitleBarDisplay({
         </Button>
       </div>
 
-      <div className="grow flex flex-col min-w-0">
+      <div className="grow flex flex-col sm:flex-row min-w-0">
         <Dialog>
           <DialogTrigger asChild disabled={!report}>
             <Button
               variant="secondary"
-              className="items-center gap-4 border-2 rounded border-primary w-full"
+              className="items-center gap-4 border-2 rounded border-primary "
             >
               <h1 className="text-xl sm:text-2xl font-semibold grow text-start truncate overflow-hidden text-ellipsis min-w-0 max-w-xs sm:max-w-md md:max-w-lg lg:max-w-2xl">
                 {report
