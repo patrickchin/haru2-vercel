@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import * as Actions from "@/lib/actions";
-import { SiteMaterial, SiteReport } from "@/lib/types";
+import { SiteMaterial } from "@/lib/types";
 import useSWR from "swr";
 
 import {
@@ -22,6 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { LucideLoaderCircle } from "lucide-react";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export const columns: ColumnDef<SiteMaterial>[] = [
   {
@@ -109,7 +110,7 @@ function MaterialsTable({
   });
 
   return (
-    <div className="w-full pl-1">
+    <div className="w-full h-full pl-1 flex flex-col gap-2">
       <div className="flex items-center justify-between py-4">
         <Input
           placeholder="Filter material names..."
@@ -120,7 +121,7 @@ function MaterialsTable({
           className="max-w-sm"
         />
       </div>
-      <div className="rounded-md border">
+      <ScrollArea className="grow rounded-md border max-w-full overflow-hidden">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -129,6 +130,7 @@ function MaterialsTable({
                   return (
                     <TableHead
                       key={header.id}
+                      className="whitespace-nowrap"
                       style={{ width: `${header.getSize()}px` }}
                     >
                       {header.isPlaceholder
@@ -148,7 +150,7 @@ function MaterialsTable({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 flex justify-center items-center"
+                  className="h-24 flex justify-center items-center whitespace-nowrap"
                 >
                   <LucideLoaderCircle className="animate-spin size-4" />
                 </TableCell>
@@ -160,7 +162,7 @@ function MaterialsTable({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="whitespace-nowrap">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
@@ -173,7 +175,7 @@ function MaterialsTable({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="h-24 text-center whitespace-nowrap"
                 >
                   No results.
                 </TableCell>
@@ -181,7 +183,8 @@ function MaterialsTable({
             )}
           </TableBody>
         </Table>
-      </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
     </div>
   );
 }

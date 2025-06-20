@@ -9,7 +9,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { LucideCuboid, LucideForklift, LucideUsers } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { UsedMaterialsTable } from "./report-materials-table";
 import { UsedEquipmentTable } from "./report-equipment-table";
 import * as Actions from "@/lib/actions";
@@ -64,12 +63,7 @@ async function ReportActivity({
             <DialogDescription className="sr-only">
               Materials Used Table
             </DialogDescription>
-            <ScrollArea className="grow h-1 pr-3">
-              <UsedMaterialsTable
-                reportId={reportId}
-                activityId={activity.id}
-              />
-            </ScrollArea>
+            <UsedMaterialsTable reportId={reportId} activityId={activity.id} />
           </DialogContent>
         </Dialog>
 
@@ -86,12 +80,7 @@ async function ReportActivity({
             <DialogDescription className="sr-only">
               Equipment Used List Table
             </DialogDescription>
-            <ScrollArea className="grow h-1 pr-3">
-              <UsedEquipmentTable
-                reportId={reportId}
-                activityId={activity.id}
-              />
-            </ScrollArea>
+            <UsedEquipmentTable reportId={reportId} activityId={activity.id} />
           </DialogContent>
         </Dialog>
 
