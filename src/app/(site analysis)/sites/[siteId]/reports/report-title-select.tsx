@@ -17,16 +17,17 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { WarningBox } from "@/components/info-box";
 import { SiteDetails, SiteReport } from "@/lib/types/site";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export async function ReportListPopup({
   site,
@@ -38,30 +39,40 @@ export async function ReportListPopup({
   if (!site) return <div>invalid site</div>;
 
   const reports = await Actions.listSiteReports(site.id);
-  const noReports = <div className="w-full px-16">No reports</div>;
+  const noReports = (
+    <div className="px-16 py-8 text-muted-foreground text-center">
+      No reports
+    </div>
+  );
   if (!reports) return noReports;
   if (reports.length < 1) return noReports;
 
   return (
-    <ScrollArea className="flex flex-col max-h-[60svh] p-0">
-      <ol>
+    <ScrollArea className="rounded-lg border">
+      <ol className="divide-y">
         {reports.map((r) => (
-          <li key={r.id} className="w-full">
-            <Button variant="link" asChild className="w-full px-8 py-5">
+          <li key={r.id}>
+            <Button
+              variant="ghost"
+              asChild
+              className={cn(
+                "w-full p-6 flex text-lg font-semibold min-w-0",
+                report && report.id === r.id
+                  ? "pointer-events-none opacity-60 bg-muted text-muted-foreground"
+                  : "hover:bg-primary/5 hover:text-primary",
+              )}
+            >
               <Link
                 href={`/sites/${site.id}/reports/${r.id}`}
-                className={cn(
-                  "flex gap-4 w-full text-xl",
-                  report && report.id === r.id
-                    ? "pointer-events-none opacity-50"
-                    : "",
-                )}
+                className="flex gap-4 w-full items-center min-w-0"
               >
-                <span className="grow">
+                <span className="grow min-w-0 truncate text-left">
                   {`#${r.index} - ${r.title || r.createdAt?.toDateString()}`}
                 </span>
-                <span>{!r.publishedAt && "(unpublished)"}</span>
-                <LucideChevronRight className="" />
+                <span className="text-sm text-muted-foreground font-normal ml-2 whitespace-nowrap">
+                  {!r.publishedAt && "(unpublished)"}
+                </span>
+                <LucideChevronRight className="ml-2 h-4 w-4 opacity-60 shrink-0" />
               </Link>
             </Button>
           </li>
@@ -87,7 +98,7 @@ export async function ReportTitleBarDisplay({
         <Button variant="secondary" asChild>
           <Link
             href={`/sites/${site?.id ?? ""}?tab=reports`}
-            className="flex gap-2 w-full h-full items-center"
+            className="flex gap-2 items-center"
           >
             <LucideMoveLeft className="h-5" />
             Back to Project
@@ -95,32 +106,26 @@ export async function ReportTitleBarDisplay({
         </Button>
       </div>
 
-      <div className="grow flex flex-col">
-        <Popover>
-          <PopoverTrigger asChild disabled={!report}>
+      <div className="grow flex flex-col min-w-0">
+        <Dialog>
+          <DialogTrigger asChild disabled={!report}>
             <Button
               variant="secondary"
-              className="items-center gap-4 border-2 rounded border-primary"
+              className="items-center gap-4 border-2 rounded border-primary w-full"
             >
-              <h1 className="text-xl sm:text-2xl font-semibold grow text-start">
+              <h1 className="text-xl sm:text-2xl font-semibold grow text-start truncate overflow-hidden text-ellipsis min-w-0 max-w-xs sm:max-w-md md:max-w-lg lg:max-w-2xl">
                 {report
                   ? `#${report.index} - ${report.title || report.createdAt?.toDateString()}`
                   : "This site has no reports yet"}
               </h1>
               <LucideChevronDown />
             </Button>
-          </PopoverTrigger>
-          <PopoverContent
-            className="px-0 py-4 w-full rounded border-2 border-primary shadow-xl"
-            align="center"
-            side="bottom"
-            sideOffset={12}
-            sticky="always"
-            avoidCollisions={false}
-          >
+          </DialogTrigger>
+          <DialogContent className="max-w-4xl w-full">
+            <DialogTitle>Select a Report</DialogTitle>
             <ReportListPopup site={site} report={report} />
-          </PopoverContent>
-        </Popover>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="">
@@ -129,7 +134,7 @@ export async function ReportTitleBarDisplay({
           session.user &&
           memberRole &&
           editReportRoles.includes(memberRole) && (
-            <div className="grid grid-cols-2 w-full sm:w-fit sm:flex gap-4">
+            <div className="grid grid-cols-2 sm:w-fit sm:flex gap-4">
               {report &&
                 (!report.publishedAt || allowEditAfterPublish ? (
                   <Button variant="secondary" asChild>
