@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import * as Actions from "@/lib/actions";
 
-import { ReportTitleBar } from "./report-title";
+import { ReportTitleBar } from "./report-title-select";
 
 import { DefaultLayout } from "@/components/page-layouts";
 import { InfoBox } from "@/components/info-box";

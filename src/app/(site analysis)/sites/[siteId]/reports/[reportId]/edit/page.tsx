@@ -14,6 +14,7 @@ import { EditReportSections } from "./edit-sections";
 import { PublishButton } from "./publish-button";
 import { DeleteReportButton } from "./delete-report";
 import { EditReportActivities } from "./edit-activities";
+import { EditReportTitle } from "./edit-report-title";
 
 async function EditReportHeader({ report }: { report: SiteReport }) {
   return (
@@ -28,7 +29,7 @@ async function EditReportHeader({ report }: { report: SiteReport }) {
         </Link>
       </Button>
       <h1 className="font-semibold text-2xl grow">
-        Editing Site Report #{report.id}: {report.createdAt?.toDateString()}
+        Editing Site Report #{report.index}
       </h1>
       <DeleteReportButton
         siteId={report.siteId}
@@ -74,6 +75,7 @@ export default async function Page({
         allowEditAfterPublish ||
         session?.user?.role === "admin" ? (
           <>
+            <EditReportTitle report={report} />
             <EditReportFiles reportId={reportId} />
             <EditReportActivities siteId={siteId} reportId={reportId} />
             <EditReportSections siteId={siteId} reportId={reportId} />

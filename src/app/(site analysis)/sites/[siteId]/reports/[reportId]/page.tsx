@@ -2,10 +2,10 @@ import { Suspense } from "react";
 import * as Actions from "@/lib/actions";
 import { DefaultLayout } from "@/components/page-layouts";
 import { FileDisplayDialogCarousel } from "../report-file-viewer";
-import { ReportTitleBar } from "../report-title";
 
 import { ErrorBox, WarningBox } from "@/components/info-box";
 import CommentsSection from "@/components/comments-section";
+import { ReportTitleBar } from "../report-title-select";
 import { ReportSignatureSection } from "../report-sign";
 import { ReportSections } from "../report-sections";
 import { ReportSiteDetails } from "../report-site-details";

@@ -26,14 +26,14 @@ export async function SiteReportsList({ siteId }: { siteId: number }) {
                 key={report.id}
                 className="flex flex-col sm:flex-row gap-4 p-4 sm:items-center justify-end [&:not(:last-child)]:border-b"
               >
-                <div className="flex flex-row flex-wrap grow gap-4">
+                <div className="flex flex-row grow gap-4">
                   <div className="grow">
                     <Link
                       href={`/sites/${siteId}/reports/${report.id}`}
                       className="font-semibold hover:underline"
                     >
-                      Report #{report.id}
-                      {report.title ? `: ${report.title}` : ""}
+                      #{report.index}{" "}
+                      {report.title || report.createdAt?.toDateString()}
                     </Link>
                     {report.reporter && (
                       <div className="text-sm text-muted-foreground">
@@ -42,7 +42,7 @@ export async function SiteReportsList({ siteId }: { siteId: number }) {
                     )}
                   </div>
 
-                  <div className="text-sm text-muted-foreground text-end">
+                  <div className="text-sm text-muted-foreground text-end whitespace-nowrap flex flex-col justify-center items-end">
                     {report.createdAt && (
                       <div>Created: {report.createdAt.toDateString()}</div>
                     )}

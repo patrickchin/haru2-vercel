@@ -10,7 +10,7 @@ import { LucideLoader2, LucidePlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/lib/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { FileListTable } from "@/components/file-list-table";
 
@@ -54,13 +54,11 @@ export function EditReportFiles({ reportId }: { reportId: number }) {
   }
 
   return (
-    <Card className="bg-background p-4">
-      <CardContent className="flex flex-col gap-8 p-4">
+    <Card>
+      <CardContent className="flex flex-col gap-8 p-6">
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap gap-4 items-center justify-between">
-            <h3 className="font-bold capitalize text-lg">
-              Images and Videos
-            </h3>
+            <CardTitle>Images and Videos</CardTitle>
             <Button asChild variant="secondary">
               <Label
                 htmlFor={`upload-report-file`}

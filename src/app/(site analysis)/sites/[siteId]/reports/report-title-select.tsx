@@ -58,7 +58,7 @@ export async function ReportListPopup({
                 )}
               >
                 <span className="grow">
-                  {`#${r.index} - ${r.createdAt?.toDateString()}`}
+                  {`#${r.index} - ${r.title || r.createdAt?.toDateString()}`}
                 </span>
                 <span>{!r.publishedAt && "(unpublished)"}</span>
                 <LucideChevronRight className="" />
@@ -104,7 +104,7 @@ export async function ReportTitleBarDisplay({
             >
               <h1 className="text-xl sm:text-2xl font-semibold grow text-start">
                 {report
-                  ? `#${report.index} - ${report.createdAt?.toDateString()}`
+                  ? `#${report.index} - ${report.title || report.createdAt?.toDateString()}`
                   : "This site has no reports yet"}
               </h1>
               <LucideChevronDown />
