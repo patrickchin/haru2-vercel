@@ -36,7 +36,7 @@ function EditReportTitleForm({ report }: { report: SiteReport }) {
           form.reset(newData);
           inputRef.current?.blur(); // unfocus input after submit
         })}
-        className="flex gap-4 grow"
+        className="flex flex-col sm:flex-row gap-4 grow"
       >
         <FormField
           control={form.control}
@@ -66,7 +66,7 @@ function EditReportTitleForm({ report }: { report: SiteReport }) {
 
 export function EditReportTitle({ report }: { report: SiteReport }) {
   return (
-    <Card className="flex flex-row p-6 gap-4 items-center">
+    <Card className="flex flex-col sm:flex-row p-6 gap-4 sm:items-center">
       <CardTitle>Report Title</CardTitle>
       <CardContent className="p-0 grow">
         <EditReportTitleForm report={report} />
