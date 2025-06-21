@@ -2,14 +2,18 @@ import { allSiteMemberRoles, SiteMemberRole } from "@/lib/types";
 
 export const viewSiteRoles: SiteMemberRole[] = allSiteMemberRoles;
 export const editSiteRoles: SiteMemberRole[] = [
-  "supervisor",
   "owner",
+  "architect",
   "manager",
+  "supervisor",
 ];
 
 export const editReportRoles: SiteMemberRole[] = [
-  "supervisor",
   "owner",
+  "architect",
+  "manager",
+  "supervisor",
+  "contractor",
 ];
 
 export const allowEditAfterPublish = true;
