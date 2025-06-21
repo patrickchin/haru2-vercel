@@ -209,7 +209,7 @@ export default function SiteMembers({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Members</CardTitle>
+        <CardTitle>Member Management</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div className="p-4 pt-0 text-base">
@@ -280,7 +280,7 @@ export default function SiteMembers({
               {invitations?.map((i) => (
                 <li
                   key={i.id}
-                  className="flex flex-col sm:flex-row gap-4 p-4 bg-background justify-between [&:not(:last-child)]:border-b"
+                  className="flex flex-col sm:flex-row gap-4 p-4 justify-between [&:not(:last-child)]:border-b"
                 >
                   <div className="flex gap-3 items-center grow">
                     <HaruUserAvatar className="w-8 h-8" />
@@ -307,13 +307,13 @@ export default function SiteMembers({
           </div>
         ) : null}
         <div className="space-y-2">
-          <div className="font-semibold">Members</div>
+          <div className="font-semibold">Existing Members</div>
           <ul className="border rounded overflow-hidden">
             {members?.map((m) => {
               return (
                 <li
                   key={m.id}
-                  className="flex flex-col sm:flex-row gap-4 p-4 bg-background justify-between [&:not(:last-child)]:border-b"
+                  className="flex flex-col sm:flex-row gap-4 p-4 justify-between [&:not(:last-child)]:border-b"
                 >
                   <div className="flex gap-3 items-center">
                     <HaruUserAvatar user={m.user} className="w-8 h-8" />
