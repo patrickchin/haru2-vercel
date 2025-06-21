@@ -19,6 +19,7 @@ export async function addLogMessage(values: HaruLogMessageNew) {
   console.log(values.message);
   return db.insert(logs1).values({
     userId: session?.user?.id,
+    username: session?.user?.name,
     ...values,
   });
 }

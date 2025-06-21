@@ -488,6 +488,7 @@ export const logs1 = pgTable("logs1", {
   message: varchar("message"),
 
   userId: text("userId"),
+  username: text("username"),
   siteId: integer("siteId"),
   reportId: integer("reportId"),
   activityId: integer("activityId"),

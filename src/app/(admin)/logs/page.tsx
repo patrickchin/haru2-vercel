@@ -35,7 +35,7 @@ export default async function Page(props: {
               <TableHead className="w-1">Id</TableHead>
               <TableHead className="w-1">Date</TableHead>
               <TableHead className="w-1">Time</TableHead>
-              <TableHead className="w-1">User Id</TableHead>
+              <TableHead className="w-1">User</TableHead>
               <TableHead className="w-full">Message</TableHead>
               <TableHead className="w-1">Site Id</TableHead>
               <TableHead className="w-1">Report Id</TableHead>
@@ -55,7 +55,7 @@ export default async function Page(props: {
                 <TableCell className="whitespace-nowrap">
                   {l.createdAt.toLocaleTimeString()}
                 </TableCell>
-                <TableCell>{l.userId}</TableCell>
+                <TableCell>{l.username || l.userId}</TableCell>
                 <TableCell>{l.message}</TableCell>
                 <TableCell>{l.siteId}</TableCell>
                 <TableCell>{l.reportId}</TableCell>
