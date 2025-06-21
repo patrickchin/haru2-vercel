@@ -104,6 +104,19 @@ function EquipmentTable({
     getFilteredRowModel: getFilteredRowModel(),
   });
 
+  const totalCostsByCurrency = React.useMemo(() => {
+    const totals: Record<string, number> = {};
+    (equipment ?? []).forEach((eq) => {
+      const quantity = eq.quantity ?? 0;
+      const cost = eq.cost ? parseFloat(eq.cost) : 0;
+      const currency = eq.costUnits || "-";
+      const total = quantity * cost;
+      if (!totals[currency]) totals[currency] = 0;
+      totals[currency] += total;
+    });
+    return totals;
+  }, [equipment]);
+
   return (
     <div className="w-full h-full pl-1 flex flex-col gap-2 min-h-0 grow">
       <div className="flex items-center justify-between py-4">
@@ -180,6 +193,14 @@ function EquipmentTable({
         </Table>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
+      <div className="flex flex-wrap gap-2 items-center text-sm border rounded p-2">
+        <span className="p-2 font-bold">Total Costs:</span>
+        {Object.entries(totalCostsByCurrency).map(([currency, total]) => (
+          <div key={currency} className="p-2 font-bold">
+            {total ? total.toLocaleString() : 0} {currency}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

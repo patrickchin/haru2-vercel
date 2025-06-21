@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/table";
 import { LucideLoaderCircle } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
 
 export const columns: ColumnDef<SiteMaterial>[] = [
   {
@@ -109,6 +110,19 @@ function MaterialsTable({
     getFilteredRowModel: getFilteredRowModel(),
   });
 
+  const totalCostsByCurrency = React.useMemo(() => {
+    const totals: Record<string, number> = {};
+    (materials ?? []).forEach((mat) => {
+      const quantity = mat.quantity ?? 0;
+      const cost = mat.unitCost ? parseFloat(mat.unitCost) : 0;
+      const currency = mat.unitCostCurrency || "-";
+      const total = quantity * cost;
+      if (!totals[currency]) totals[currency] = 0;
+      totals[currency] += total;
+    });
+    return totals;
+  }, [materials]);
+
   return (
     <div className="w-full h-full pl-1 flex flex-col gap-2 min-h-0 grow">
       <div className="flex items-center justify-between py-4">
@@ -185,6 +199,14 @@ function MaterialsTable({
         </Table>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
+      <div className="flex flex-wrap gap-2 items-center text-sm border rounded p-2">
+        <span className="p-2 font-bold">Total Costs:</span>
+        {Object.entries(totalCostsByCurrency).map(([currency, total]) => (
+          <div key={currency} className="p-2 font-bold">
+            {total ? total.toLocaleString() : 0} {currency}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
