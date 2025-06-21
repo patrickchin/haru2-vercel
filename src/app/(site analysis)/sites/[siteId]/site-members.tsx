@@ -138,7 +138,7 @@ function SiteMemberSelectRole({
 
   return (
     <Select
-      disabled={editSiteRoles.includes(member.role) || isUpdating || disabled}
+      disabled={member.role === "owner" || isUpdating || disabled}
       onValueChange={async (r) => {
         try {
           setIsUpdating(true);
@@ -209,7 +209,7 @@ export default function SiteMembers({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Member Management</CardTitle>
+        <CardTitle>Members</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div className="p-4 pt-0 text-base">
@@ -307,7 +307,7 @@ export default function SiteMembers({
           </div>
         ) : null}
         <div className="space-y-2">
-          <div className="font-semibold">Existing Members</div>
+          <div className="font-semibold">Members</div>
           <ul className="border rounded overflow-hidden">
             {members?.map((m) => {
               return (
