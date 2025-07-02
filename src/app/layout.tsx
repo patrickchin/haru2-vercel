@@ -12,7 +12,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { VercelAnalytics } from "./vercel-analytics";
 
 let title = "Harpa Pro";
-let description = "Plan and organise and your construction projects";
+let description = "Plan and organize your construction projects";
 
 export const metadata = {
   title,
