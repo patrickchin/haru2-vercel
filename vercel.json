@@ -1,0 +1,3 @@
+{
+  "buildCommand": "pnpm offline && pnpm build"
+}
